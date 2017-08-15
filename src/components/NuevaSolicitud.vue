@@ -3,55 +3,68 @@
     <v-container>
       <v-layout row wrap>
         <v-flex xs8>
+          <form v-on:submit.prevent="submit">
+
           <v-toolbar class="indigo" dark>
             <v-toolbar-title class="white--text">Nueva Solicitud</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
 
 
-          <!-- CONTAINER DE NUEVO PROFESIONAL -->
+          <!-- CONTAINER DE DATOS BASICOS DE PROFESIONAL -->
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.profesional">
-                <div slot="header">Datos del Profesional</div>
+                <div slot="header">Datos Básicos</div>
                 <v-container>
                   <v-layout row>
                     <v-flex xs6>
-                      <v-text-field label="Nombre"></v-text-field>
-                      <v-text-field label="DNI"></v-text-field>
+                      <v-text-field label="Nombre" v-model="profesional.nombre"
+                        tabindex="1">
+                      </v-text-field>
+                      <v-text-field label="DNI" v-model="profesional.dni"
+                        tabindex="3">
+                      </v-text-field>
                       <v-select
-                        :items="['Femenino','Masculino']"
-                        v-model="profesional.sexo"
-                        label="Sexo"
-                        single-line
-                        bottom>
+                        :items="select_items.sexo" v-model="profesional.sexo"
+                        label="Sexo" single-line bottom tabindex="5">
                       </v-select>
                       <v-text-field
-                         :value="dates_formatted.profesional"
+                         tabindex="7"
+                         v-model="profesional.fechaNacimiento"
                          label="Fecha de Nacimiento"
                          @focusin="show.fechaNacimiento = true"
                          @focusout="show.fechaNacimiento = false">
                       </v-text-field>
                       <v-date-picker
-                        v-model="profesional.fechaNacimiento"
                         :date-format="formatDate"
-                        :formatted-value.sync="dates_formatted.profesional"
+                        :formatted-value.sync="profesional.fechaNacimiento"
                         v-show="show.fechaNacimiento">
                       </v-date-picker>
-                      <v-text-field label="Nacionalidad"></v-text-field>
+                      <v-text-field label="Nacionalidad" v-model="profesional.nacionalidad"
+                        tabindex="9">
+                      </v-text-field>
                     </v-flex>
                     <v-flex xs6>
-                      <v-text-field label="Apellido"></v-text-field>
-                      <v-text-field label="CUIT"></v-text-field>
+                      <v-text-field label="Apellido" v-model="profesional.apellido"
+                        tabindex="2">
+                      </v-text-field>
+                      <v-text-field label="CUIT" v-model="profesional.cuit"
+                        tabindex="4">
+                      </v-text-field>
                       <v-select
-                        :items="['Casada/o', 'Soltera/o']"
-                        v-model="profesional.sexo"
+                        tabindex="6"
+                        :items="select_items.estadoCivil"
+                        v-model="profesional.estadoCivil"
                         label="Estado Civil"
-                        single-line
-                        bottom>
+                        single-line bottom>
                       </v-select>
-                      <v-text-field label="Lugar Nacimiento"></v-text-field>
-                      <v-text-field label="Observaciones"></v-text-field>
+                      <v-text-field label="Lugar Nacimiento" v-model="profesional.lugarNacimiento"
+                        tabindex="8">
+                      </v-text-field>
+                      <v-text-field label="Observaciones" v-model="profesional.observaciones"
+                        tabindex="10">
+                      </v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -59,6 +72,73 @@
             </v-expansion-panel>
           </v-container>
 
+
+          <!-- CONTAINER DE DOMICILIOS -->
+          <v-container>
+            <v-expansion-panel expand>
+              <v-expansion-panel-content v-model="expand.domicilios">
+                <div slot="header">Domicilios</div>
+                <v-container>
+                  <v-card>
+                    <v-card-title>Domicilio Real</v-card-title>
+                    <v-layout row>
+                      <v-flex xs6>
+                        <v-text-field label="Calle" v-model="profesional.domicilioReal.calle">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6>
+                        <v-text-field label="Nro" v-model="profesional.domicilioReal.numero">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <v-flex xs6>
+                        <v-text-field label="Código Postal" v-model="profesional.domicilioReal.codpostal">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6>
+                        <v-select
+                          :items="select_items.localidades"
+                          label="Localidad"
+                          single-line bottom
+                          v-model="profesional.domicilioReal.localidad">
+                        </v-select>
+                      </v-flex>
+                    </v-layout>
+                  </v-card>
+
+                  <v-card>
+                    <v-card-title>Domicilio Legal</v-card-title>
+                    <v-layout row>
+                      <v-flex xs6>
+                        <v-text-field label="Calle" v-model="profesional.domicilioLegal.calle">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6>
+                        <v-text-field label="Nro" v-model="profesional.domicilioLegal.numero">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout row>
+                      <v-flex xs6>
+                        <v-text-field label="Código Postal" v-model="profesional.domicilioLegal.codpostal">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6>
+                        <v-select
+                          :items="select_items.localidades"
+                          label="Localidad"
+                          single-line bottom
+                          v-model="profesional.domicilioLegal.localidad">
+                        </v-select>
+                      </v-flex>
+                    </v-layout>
+                  </v-card>
+
+                </v-container>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-container>
 
 
           <!-- CONTAINER DE CONTACTOS -->
@@ -70,7 +150,7 @@
                   <v-layout row>
                     <v-flex xs6>
                       <v-select
-                        :items="['Fijo', 'Celular', 'Email', 'Web']"
+                        :items="select_items.tipoContacto"
                         label="Tipo de Contacto"
                         single-line
                         bottom
@@ -133,16 +213,15 @@
                     </v-flex>
                     <v-flex xs6>
                       <v-text-field
-                         :value="dates_formatted.titulo"
+                         v-model="nueva_formacion.fecha"
                          label="Fecha"
                          readonly
                          @focusin="show.fechaTitulo = true"
                          @focusout="show.fechaTitulo = false">
                       </v-text-field>
                       <v-date-picker
-                        v-model="nueva_formacion.fecha"
                         :date-format="formatDate"
-                        :formatted-value.sync="dates_formatted.titulo"
+                        :formatted-value.sync="nueva_formacion.fecha"
                         v-show="show.fechaTitulo">
                       </v-date-picker>
                       <v-text-field label="Institución" v-model="nueva_formacion.institucion">
@@ -184,11 +263,32 @@
             </v-expansion-panel>
           </v-container>
 
+          <v-btn light type="submit" style="float:right;">Enviar Solicitud</v-btn>
 
+          </form>
         </v-flex>
 
         <v-flex xs4>
-
+          <v-toolbar class="indigo" dark>
+            <v-toolbar-title class="white--text">Datos del Profesional</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+          <v-container>
+            <v-card>
+              <v-card-text id="info-profesional">
+                <div><b>Nombre: </b> {{ profesional.nombre }} </div>
+                <div><b>Apellido: </b> {{ profesional.apellido }} </div>
+                <div><b>DNI: </b> {{ profesional.dni }} </div>
+                <div><b>CUIT: </b> {{ profesional.cuit }} </div>
+                <div><b>Sexo: </b> {{ profesional.sexo }} </div>
+                <div><b>Estado Civil: </b> {{ profesional.estadoCivil }} </div>
+                <div><b>Fecha de Nacimiento: </b> {{ profesional.fechaNacimiento }} </div>
+                <div><b>Lugar de Nacimiento: </b> {{ profesional.lugarNacimiento }} </div>
+                <div><b>Nacionalidad: </b> {{ profesional.nacionalidad }} </div>
+                <div><b>Observaciones: </b> {{profesional.observaciones }} </div>
+              </v-card-text>
+            </v-card>
+          </v-container>
         </v-flex>
       </v-layout>
     </v-container>
@@ -196,17 +296,72 @@
 </template>
 
 <script>
+import * as axios from 'axios';
+
 export default {
   name: 'nueva-solicitud',
   data () {
     return {
-      dates_formatted: {
-        titulo: null,
-        profesional: null
+      select_items: {
+        localidades: [{
+          text: 'Neuquén',
+          value: 1
+        }],
+
+        sexo: [
+          {
+            text: 'Femenino',
+            value: 'F'
+          }, {
+            text: 'Masculino',
+            value: 'M'
+          }
+        ],
+
+        tipoContacto: [
+          {
+            text: 'Fijo',
+            value: 'fijo'
+          },
+          {
+            text: 'Celular',
+            value: 'celular'
+          },
+          {
+            text: 'Email',
+            value: 'email'
+          },
+          {
+            text: 'Web',
+            value: 'web'
+          }
+        ],
+
+        estadoCivil: [
+          {
+            text: 'Casada/o',
+            value: 'casado'
+          },
+          {
+            text: 'Soltera/o',
+            value: 'soltero'
+          },
+          {
+            text: 'Viuda/o',
+            value: 'viudo'
+          },
+          {
+            text: 'Concubina/o',
+            value: 'concubino'
+          },
+
+
+        ]
       },
 
       expand: {
         profesional: true,
+        domicilios: false,
         contactos: false,
         formaciones: false
       },
@@ -222,6 +377,15 @@ export default {
         fechaNacimiento: null,
         nacionalidad: '',
         observaciones: '',
+        domicilioReal: {
+          calle: '',
+          numero: '',
+          codpostal: '',
+          localidad: null
+        },
+        domicilioLegal: {
+
+        },
         contactos: [],
         formaciones: []
       },
@@ -274,7 +438,7 @@ export default {
       this.profesional.formaciones.push({
         tipo: this.nueva_formacion.tipo,
         titulo: this.nueva_formacion.titulo,
-        fecha: this.dates_formatted.titulo,
+        fecha: this.nueva_formacion.fecha,
         institucion: this.nueva_formacion.institucion
       });
       this.nuevo_contacto = {
@@ -288,9 +452,18 @@ export default {
     removeFormacion: function(index) {
       this.profesional.formaciones.splice(index, 1);
     },
+
+    submit: function() {
+      axios.post('http://localhost:3400/profesionales', this.profesional)
+           .then(r => console.log(r.data))
+           .catch(e => console.error(e));
+    },
   }
 }
 </script>
 
 <style scoped>
+#info-profesional div {
+  margin-bottom: 10px;
+}
 </style>

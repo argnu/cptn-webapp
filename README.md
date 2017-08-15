@@ -1,9 +1,7 @@
+## TODO
 - Validadores de formulario.
+- Datepicker como modal.
 - Campos que faltan:
   * Condicion AFIP.
   * FotoArchivo.
   * Firma.
-  * Cuáles son los diferentes estados civiles?
-- Importar datos:
-  * Localidades.
-  * Instituciones
