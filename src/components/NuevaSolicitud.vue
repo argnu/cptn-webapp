@@ -10,59 +10,90 @@
             <v-spacer></v-spacer>
           </v-toolbar>
 
+          <v-container>
+            <v-card>
+              <v-card-text>
+                <h6>Datos Solicitud</h6>
+                <v-layout row>
+                  <v-flex xs6>
+                    <v-text-field
+                       v-model="solicitud.fecha"
+                       label="Fecha de Solicitud"
+                       @focusin="show.fechaSolicitud = true"
+                       @focusout="show.fechaSolicitud = false">
+                    </v-text-field>
+                    <v-date-picker
+                      :date-format="formatDate"
+                      :formatted-value.sync="solicitud.fecha"
+                      v-show="show.fechaSolicitud">
+                    </v-date-picker>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-select
+                      :items="select_items.delegacion" v-model="solicitud.delegacion"
+                      label="Delegación" single-line bottom>
+                    </v-select>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </v-container>
+
 
           <!-- CONTAINER DE DATOS BASICOS DE PROFESIONAL -->
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.profesional">
-                <div slot="header">Datos Básicos</div>
+                <div slot="header">
+                  <h6>Datos Básicos</h6>
+                </div>
                 <v-container>
                   <v-layout row>
                     <v-flex xs6>
-                      <v-text-field label="Nombre" v-model="profesional.nombre"
+                      <v-text-field label="Nombre" v-model="solicitud.profesional.nombre"
                         tabindex="1">
                       </v-text-field>
-                      <v-text-field label="DNI" v-model="profesional.dni"
+                      <v-text-field label="DNI" v-model="solicitud.profesional.dni"
                         tabindex="3">
                       </v-text-field>
                       <v-select
-                        :items="select_items.sexo" v-model="profesional.sexo"
+                        :items="select_items.sexo" v-model="solicitud.profesional.sexo"
                         label="Sexo" single-line bottom tabindex="5">
                       </v-select>
                       <v-text-field
                          tabindex="7"
-                         v-model="profesional.fechaNacimiento"
+                         v-model="solicitud.profesional.fechaNacimiento"
                          label="Fecha de Nacimiento"
                          @focusin="show.fechaNacimiento = true"
                          @focusout="show.fechaNacimiento = false">
                       </v-text-field>
                       <v-date-picker
                         :date-format="formatDate"
-                        :formatted-value.sync="profesional.fechaNacimiento"
+                        :formatted-value.sync="solicitud.profesional.fechaNacimiento"
                         v-show="show.fechaNacimiento">
                       </v-date-picker>
-                      <v-text-field label="Nacionalidad" v-model="profesional.nacionalidad"
+                      <v-text-field label="Nacionalidad" v-model="solicitud.profesional.nacionalidad"
                         tabindex="9">
                       </v-text-field>
                     </v-flex>
                     <v-flex xs6>
-                      <v-text-field label="Apellido" v-model="profesional.apellido"
+                      <v-text-field label="Apellido" v-model="solicitud.profesional.apellido"
                         tabindex="2">
                       </v-text-field>
-                      <v-text-field label="CUIT" v-model="profesional.cuit"
+                      <v-text-field label="CUIT" v-model="solicitud.profesional.cuit"
                         tabindex="4">
                       </v-text-field>
                       <v-select
                         tabindex="6"
                         :items="select_items.estadoCivil"
-                        v-model="profesional.estadoCivil"
+                        v-model="solicitud.profesional.estadoCivil"
                         label="Estado Civil"
                         single-line bottom>
                       </v-select>
-                      <v-text-field label="Lugar Nacimiento" v-model="profesional.lugarNacimiento"
+                      <v-text-field label="Lugar Nacimiento" v-model="solicitud.profesional.lugarNacimiento"
                         tabindex="8">
                       </v-text-field>
-                      <v-text-field label="Observaciones" v-model="profesional.observaciones"
+                      <v-text-field label="Observaciones" v-model="solicitud.profesional.observaciones"
                         tabindex="10">
                       </v-text-field>
                     </v-flex>
@@ -77,23 +108,23 @@
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.domicilios">
-                <div slot="header">Domicilios</div>
+                <div slot="header"><h6>Domicilios</h6></div>
                 <v-container>
                   <v-card>
                     <v-card-title>Domicilio Real</v-card-title>
                     <v-layout row>
                       <v-flex xs6>
-                        <v-text-field label="Calle" v-model="profesional.domicilioReal.calle">
+                        <v-text-field label="Calle" v-model="solicitud.profesional.domicilioReal.calle">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6>
-                        <v-text-field label="Nro" v-model="profesional.domicilioReal.numero">
+                        <v-text-field label="Nro" v-model="solicitud.profesional.domicilioReal.numero">
                         </v-text-field>
                       </v-flex>
                     </v-layout>
                     <v-layout row>
                       <v-flex xs6>
-                        <v-text-field label="Código Postal" v-model="profesional.domicilioReal.codpostal">
+                        <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioReal.codpostal">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6>
@@ -101,7 +132,7 @@
                           :items="select_items.localidades"
                           label="Localidad"
                           single-line bottom
-                          v-model="profesional.domicilioReal.localidad">
+                          v-model="solicitud.profesional.domicilioReal.localidad">
                         </v-select>
                       </v-flex>
                     </v-layout>
@@ -111,17 +142,17 @@
                     <v-card-title>Domicilio Legal</v-card-title>
                     <v-layout row>
                       <v-flex xs6>
-                        <v-text-field label="Calle" v-model="profesional.domicilioLegal.calle">
+                        <v-text-field label="Calle" v-model="solicitud.profesional.domicilioLegal.calle">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6>
-                        <v-text-field label="Nro" v-model="profesional.domicilioLegal.numero">
+                        <v-text-field label="Nro" v-model="solicitud.profesional.domicilioLegal.numero">
                         </v-text-field>
                       </v-flex>
                     </v-layout>
                     <v-layout row>
                       <v-flex xs6>
-                        <v-text-field label="Código Postal" v-model="profesional.domicilioLegal.codpostal">
+                        <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioLegal.codpostal">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6>
@@ -129,7 +160,7 @@
                           :items="select_items.localidades"
                           label="Localidad"
                           single-line bottom
-                          v-model="profesional.domicilioLegal.localidad">
+                          v-model="solicitud.profesional.domicilioLegal.localidad">
                         </v-select>
                       </v-flex>
                     </v-layout>
@@ -145,7 +176,7 @@
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.contactos">
-                <div slot="header">Contactos</div>
+                <div slot="header"><h6>Contactos</h6></div>
                 <v-container>
                   <v-layout row>
                     <v-flex xs6>
@@ -166,7 +197,7 @@
 
                   <v-data-table
                       :headers="['Tipo', 'Valor']"
-                      :items="profesional.contactos"
+                      :items="solicitud.profesional.contactos"
                       hide-actions
                       class="elevation-1"
                       no-data-text="No hay contactos">
@@ -197,7 +228,7 @@
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.formaciones">
-                <div slot="header">Formaciones</div>
+                <div slot="header"><h6>Formaciones</h6></div>
                 <v-container>
                   <v-layout row>
                     <v-flex xs6>
@@ -235,7 +266,7 @@
 
                   <v-data-table
                       :headers="['Tipo', 'Título', 'Fecha', 'Institución']"
-                      :items="profesional.formaciones"
+                      :items="solicitud.profesional.formaciones"
                       hide-actions
                       class="elevation-1"
                       no-data-text="No hay formaciones"
@@ -276,16 +307,16 @@
           <v-container>
             <v-card>
               <v-card-text id="info-profesional">
-                <div><b>Nombre: </b> {{ profesional.nombre }} </div>
-                <div><b>Apellido: </b> {{ profesional.apellido }} </div>
-                <div><b>DNI: </b> {{ profesional.dni }} </div>
-                <div><b>CUIT: </b> {{ profesional.cuit }} </div>
-                <div><b>Sexo: </b> {{ profesional.sexo }} </div>
-                <div><b>Estado Civil: </b> {{ profesional.estadoCivil }} </div>
-                <div><b>Fecha de Nacimiento: </b> {{ profesional.fechaNacimiento }} </div>
-                <div><b>Lugar de Nacimiento: </b> {{ profesional.lugarNacimiento }} </div>
-                <div><b>Nacionalidad: </b> {{ profesional.nacionalidad }} </div>
-                <div><b>Observaciones: </b> {{profesional.observaciones }} </div>
+                <div><b>Nombre: </b> {{ solicitud.profesional.nombre }} </div>
+                <div><b>Apellido: </b> {{ solicitud.profesional.apellido }} </div>
+                <div><b>DNI: </b> {{ solicitud.profesional.dni }} </div>
+                <div><b>CUIT: </b> {{ solicitud.profesional.cuit }} </div>
+                <div><b>Sexo: </b> {{ solicitud.profesional.sexo }} </div>
+                <div><b>Estado Civil: </b> {{ solicitud.profesional.estadoCivil }} </div>
+                <div><b>Fecha de Nacimiento: </b> {{ solicitud.profesional.fechaNacimiento }} </div>
+                <div><b>Lugar de Nacimiento: </b> {{ solicitud.profesional.lugarNacimiento }} </div>
+                <div><b>Nacionalidad: </b> {{ solicitud.profesional.nacionalidad }} </div>
+                <div><b>Observaciones: </b> {{solicitud.profesional.observaciones }} </div>
               </v-card-text>
             </v-card>
           </v-container>
@@ -366,31 +397,36 @@ export default {
         formaciones: false
       },
 
-      profesional: {
-        nombre: '',
-        apellido: '',
-        dni: '',
-        cuit: '',
-        sexo: '',
-        estadoCivil: '',
-        lugarNacimiento: '',
-        fechaNacimiento: null,
-        nacionalidad: '',
-        observaciones: '',
-        domicilioReal: {
-          calle: '',
-          numero: '',
-          codpostal: '',
-          localidad: null
-        },
-        domicilioLegal: {
+      solicitud: {
+        fecha: null,
+        delegacion: null,
+        profesional: {
+          nombre: '',
+          apellido: '',
+          dni: '',
+          cuit: '',
+          sexo: '',
+          estadoCivil: '',
+          lugarNacimiento: '',
+          fechaNacimiento: null,
+          nacionalidad: '',
+          observaciones: '',
+          domicilioReal: {
+            calle: '',
+            numero: '',
+            codpostal: '',
+            localidad: null
+          },
+          domicilioLegal: {
 
-        },
-        contactos: [],
-        formaciones: []
+          },
+          contactos: [],
+          formaciones: []
+        }
       },
 
       show: {
+        fechaSolicitud: false,
         fechaNacimiento: false,
         fechaTitulo: false
       },
@@ -420,7 +456,7 @@ export default {
     },
 
     addContacto: function() {
-      this.profesional.contactos.push({
+      this.solicitud.profesional.contactos.push({
         tipo: this.nuevo_contacto.tipo,
         valor: this.nuevo_contacto.valor
       });
@@ -431,11 +467,11 @@ export default {
     },
 
     removeContacto: function(index) {
-      this.profesional.contactos.splice(index, 1);
+      this.solicitud.profesional.contactos.splice(index, 1);
     },
 
     addFormacion: function() {
-      this.profesional.formaciones.push({
+      this.solicitud.profesional.formaciones.push({
         tipo: this.nueva_formacion.tipo,
         titulo: this.nueva_formacion.titulo,
         fecha: this.nueva_formacion.fecha,
@@ -450,11 +486,11 @@ export default {
     },
 
     removeFormacion: function(index) {
-      this.profesional.formaciones.splice(index, 1);
+      this.solicitud.profesional.formaciones.splice(index, 1);
     },
 
     submit: function() {
-      axios.post('http://localhost:3400/profesionales', this.profesional)
+      axios.post('http://localhost:3400/solicitudes', this.solicitud)
            .then(r => console.log(r.data))
            .catch(e => console.error(e));
     },
@@ -465,5 +501,9 @@ export default {
 <style scoped>
 #info-profesional div {
   margin-bottom: 10px;
+}
+
+h6 {
+  padding-top: 10px;
 }
 </style>

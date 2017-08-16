@@ -1,7 +1,15 @@
 ## TODO
-- Validadores de formulario.
+- Select de delegaciones.
+- Fecha de solicitud.
 - Datepicker como modal.
+- Validadores de formulario
 - Campos que faltan:
   * Condicion AFIP.
   * FotoArchivo.
   * Firma.
+
+## Develop
+Ejecutar los siguientes comandos:
+
+* npm install
+* npm run dev
