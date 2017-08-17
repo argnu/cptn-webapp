@@ -20,9 +20,11 @@
                        v-model="solicitud.fecha"
                        label="Fecha de Solicitud"
                        @focusin="show.fechaSolicitud = true"
-                       @focusout="show.fechaSolicitud = false">
+                       @focusout="show.fechaSolicitud = false"
+                       @change="chgFecha(solicitud.fecha, 'solicitud')">
                     </v-text-field>
                     <v-date-picker
+                      v-model="datepicker.solicitud"
                       :date-format="formatDate"
                       :formatted-value.sync="solicitud.fecha"
                       v-show="show.fechaSolicitud">
@@ -65,9 +67,11 @@
                          v-model="solicitud.profesional.fechaNacimiento"
                          label="Fecha de Nacimiento"
                          @focusin="show.fechaNacimiento = true"
-                         @focusout="show.fechaNacimiento = false">
+                         @focusout="show.fechaNacimiento = false"
+                         @change="chgFecha(solicitud.profesional.fechaNacimiento, 'profesional')">
                       </v-text-field>
                       <v-date-picker
+                        v-model="datepicker.fechaNacimiento"
                         :date-format="formatDate"
                         :formatted-value.sync="solicitud.profesional.fechaNacimiento"
                         v-show="show.fechaNacimiento">
@@ -246,11 +250,12 @@
                       <v-text-field
                          v-model="nueva_formacion.fecha"
                          label="Fecha"
-                         readonly
                          @focusin="show.fechaTitulo = true"
-                         @focusout="show.fechaTitulo = false">
+                         @focusout="show.fechaTitulo = false"
+                         @change="chgFecha(nueva_formacion.fecha, 'titulo')">
                       </v-text-field>
                       <v-date-picker
+                        v-model="datepicker.titulo"
                         :date-format="formatDate"
                         :formatted-value.sync="nueva_formacion.fecha"
                         v-show="show.fechaTitulo">
@@ -328,11 +333,18 @@
 
 <script>
 import * as axios from 'axios';
+import * as utils from '@/utils';
 
 export default {
   name: 'nueva-solicitud',
   data () {
     return {
+      datepicker: {
+        profesional: null,
+        solicitud: null,
+        titulo: null
+      },
+
       select_items: {
         localidades: [{
           text: 'Neuquén',
@@ -447,12 +459,17 @@ export default {
 
   methods: {
     formatDate: function(date_string) {
-      let date = new Date(date_string);
-      let dia = date.getDate();
-      dia = (dia.toString().length == 1) ? '0'+dia : dia;
-      let mes = date.getMonth()+1;
-      mes = (mes.toString().length == 1) ? '0'+mes : mes;
-      return `${dia}/${mes}/${date.getFullYear()}`;
+      return utils.formatDate(date_string);
+    },
+
+    chgFecha: function(orig, att) {
+      let [dia, mes, anio] = orig.split('/');
+      let date = new Date(`${anio}-${mes}-${dia}T20:12:26.033Z`);
+      if (isNaN( date.getTime())) {
+        this.datepicker[att] = null;
+        return;
+      }
+      this.datepicker[att] = date.toISOString();
     },
 
     addContacto: function() {
