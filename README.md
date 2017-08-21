@@ -1,4 +1,6 @@
 ## TODO
+- Crear clases (Modelos).
+- Crear Mixins de filters.
 - Select de delegaciones.
 - Fecha de solicitud.
 - Datepicker como modal.
