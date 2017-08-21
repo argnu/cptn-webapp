@@ -1,6 +1,19 @@
 <template>
   <v-app>
     <v-container>
+
+      <v-snackbar
+        :timeout="6000"
+        :bottom="true"
+        :right="true"
+        :success="snackbar.context === 'success'"
+        :error="snackbar.context === 'error'"
+        v-model="snackbar.show"
+      >
+        {{ snackbar.msg }}
+        <v-btn flat class="white--text" @click.native="snackbar.show = false">Cerrar</v-btn>
+      </v-snackbar>
+
       <v-layout row wrap>
         <v-flex xs8>
           <form v-on:submit.prevent="submit">
@@ -16,24 +29,14 @@
                 <h6>Datos Solicitud</h6>
                 <v-layout row>
                   <v-flex xs6>
-                    <v-text-field
-                       v-model="solicitud.fecha"
-                       label="Fecha de Solicitud"
-                       @focusin="show.fechaSolicitud = true"
-                       @focusout="show.fechaSolicitud = false"
-                       @change="chgFecha(solicitud.fecha, 'solicitud')">
-                    </v-text-field>
-                    <v-date-picker
-                      v-model="datepicker.solicitud"
-                      :date-format="formatDate"
-                      :formatted-value.sync="solicitud.fecha"
-                      v-show="show.fechaSolicitud">
-                    </v-date-picker>
+                    <input-fecha v-model="solicitud.fecha" label="Fecha de Solicitud">
+                    </input-fecha>
                   </v-flex>
                   <v-flex xs6>
                     <v-select
-                      :items="select_items.delegacion" v-model="solicitud.delegacion"
-                      label="Delegación" single-line bottom>
+                      autocomplete
+                      v-bind:items="select_items.delegacion" v-model="solicitud.delegacion"
+                      label="Delegación">
                     </v-select>
                   </v-flex>
                 </v-layout>
@@ -62,20 +65,10 @@
                         :items="select_items.sexo" v-model="solicitud.profesional.sexo"
                         label="Sexo" single-line bottom tabindex="5">
                       </v-select>
-                      <v-text-field
-                         tabindex="7"
-                         v-model="solicitud.profesional.fechaNacimiento"
-                         label="Fecha de Nacimiento"
-                         @focusin="show.fechaNacimiento = true"
-                         @focusout="show.fechaNacimiento = false"
-                         @change="chgFecha(solicitud.profesional.fechaNacimiento, 'profesional')">
-                      </v-text-field>
-                      <v-date-picker
-                        v-model="datepicker.fechaNacimiento"
-                        :date-format="formatDate"
-                        :formatted-value.sync="solicitud.profesional.fechaNacimiento"
-                        v-show="show.fechaNacimiento">
-                      </v-date-picker>
+                      <input-fecha
+                          v-model="solicitud.profesional.fechaNacimiento"
+                          label="Fecha de Nacimiento">
+                      </input-fecha>
                       <v-text-field label="Nacionalidad" v-model="solicitud.profesional.nacionalidad"
                         tabindex="9">
                       </v-text-field>
@@ -114,61 +107,57 @@
               <v-expansion-panel-content v-model="expand.domicilios">
                 <div slot="header"><h6>Domicilios</h6></div>
                 <v-container>
-                  <v-card>
-                    <v-card-title>Domicilio Real</v-card-title>
-                    <v-layout row>
-                      <v-flex xs6>
-                        <v-text-field label="Calle" v-model="solicitud.profesional.domicilioReal.calle">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-text-field label="Nro" v-model="solicitud.profesional.domicilioReal.numero">
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                      <v-flex xs6>
-                        <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioReal.codpostal">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-select
-                          :items="select_items.localidades"
-                          label="Localidad"
-                          single-line bottom
-                          v-model="solicitud.profesional.domicilioReal.localidad">
-                        </v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-card>
+                  Domicilio Real
+                  <v-layout row>
+                    <v-flex xs6>
+                      <v-text-field label="Calle" v-model="solicitud.profesional.domicilioReal.calle">
+                      </v-text-field>
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-text-field label="Nro" v-model="solicitud.profesional.domicilioReal.numero">
+                      </v-text-field>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout row>
+                    <v-flex xs6>
+                      <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioReal.codpostal">
+                      </v-text-field>
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-select
+                        autocomplete
+                        :items="select_items.localidades"
+                        label="Localidad"
+                        v-model="solicitud.profesional.domicilioReal.localidad">
+                      </v-select>
+                    </v-flex>
+                  </v-layout>
 
-                  <v-card>
-                    <v-card-title>Domicilio Legal</v-card-title>
-                    <v-layout row>
-                      <v-flex xs6>
-                        <v-text-field label="Calle" v-model="solicitud.profesional.domicilioLegal.calle">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-text-field label="Nro" v-model="solicitud.profesional.domicilioLegal.numero">
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                      <v-flex xs6>
-                        <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioLegal.codpostal">
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-select
-                          :items="select_items.localidades"
-                          label="Localidad"
-                          single-line bottom
-                          v-model="solicitud.profesional.domicilioLegal.localidad">
-                        </v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-card>
+                  Domicilio Legal
+                  <v-layout row>
+                    <v-flex xs6>
+                      <v-text-field label="Calle" v-model="solicitud.profesional.domicilioLegal.calle">
+                      </v-text-field>
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-text-field label="Nro" v-model="solicitud.profesional.domicilioLegal.numero">
+                      </v-text-field>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout row>
+                    <v-flex xs6>
+                      <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioLegal.codpostal">
+                      </v-text-field>
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-select
+                        :items="select_items.localidades"
+                        label="Localidad"
+                        single-line bottom
+                        v-model="solicitud.profesional.domicilioLegal.localidad">
+                      </v-select>
+                    </v-flex>
+                  </v-layout>
 
                 </v-container>
               </v-expansion-panel-content>
@@ -200,7 +189,7 @@
                   </v-layout>
 
                   <v-data-table
-                      :headers="['Tipo', 'Valor']"
+                      :headers="headers.contacto"
                       :items="solicitud.profesional.contactos"
                       hide-actions
                       class="elevation-1"
@@ -247,19 +236,10 @@
                       </v-text-field>
                     </v-flex>
                     <v-flex xs6>
-                      <v-text-field
-                         v-model="nueva_formacion.fecha"
-                         label="Fecha"
-                         @focusin="show.fechaTitulo = true"
-                         @focusout="show.fechaTitulo = false"
-                         @change="chgFecha(nueva_formacion.fecha, 'titulo')">
-                      </v-text-field>
-                      <v-date-picker
-                        v-model="datepicker.titulo"
-                        :date-format="formatDate"
-                        :formatted-value.sync="nueva_formacion.fecha"
-                        v-show="show.fechaTitulo">
-                      </v-date-picker>
+                      <input-fecha
+                          v-model="nueva_formacion.fecha"
+                          label="Fecha">
+                      </input-fecha>
                       <v-text-field label="Institución" v-model="nueva_formacion.institucion">
                       </v-text-field>
                     </v-flex>
@@ -270,7 +250,7 @@
 
 
                   <v-data-table
-                      :headers="['Tipo', 'Título', 'Fecha', 'Institución']"
+                      :headers="headers.formacion"
                       :items="solicitud.profesional.formaciones"
                       hide-actions
                       class="elevation-1"
@@ -278,7 +258,7 @@
                       style="margin-top:30px">
                     <template slot="headers" scope="props">
                       <th v-for="header of props.headers" style="padding: 20px">
-                        {{ header }}
+                        {{ header.text }}
                       </th>
                       <th></th>
                     </template>
@@ -304,7 +284,7 @@
           </form>
         </v-flex>
 
-        <v-flex xs4>
+        <div class="stuck">
           <v-toolbar class="indigo" dark>
             <v-toolbar-title class="white--text">Datos del Profesional</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -325,7 +305,7 @@
               </v-card-text>
             </v-card>
           </v-container>
-        </v-flex>
+        </div>
       </v-layout>
     </v-container>
   </v-app>
@@ -334,22 +314,42 @@
 <script>
 import * as axios from 'axios';
 import * as utils from '@/utils';
+import { Solicitud, Contacto, Formacion } from '@/model/Solicitud';
+import InputFecha from '@/components/base/InputFecha';
 
 export default {
   name: 'nueva-solicitud',
   data () {
     return {
-      datepicker: {
-        profesional: null,
-        solicitud: null,
-        titulo: null
+      snackbar: {
+        msg: '',
+        show: false,
+        context: ''
       },
 
       select_items: {
-        localidades: [{
-          text: 'Neuquén',
-          value: 1
-        }],
+        localidades: [
+          {
+            text: 'Neuquén',
+            value: 1
+          },
+          {
+            text: 'Neulen',
+            value: 2
+          },
+          {
+            text: 'Río Negro',
+            value: 3
+          },
+          {
+            text: 'Chos Malal',
+            value: 4
+          },
+          {
+            text: 'Chichinales',
+            value: 5
+          },
+        ],
 
         sexo: [
           {
@@ -397,90 +397,56 @@ export default {
             text: 'Concubina/o',
             value: 'concubino'
           },
+        ],
 
-
+        delegacion: [
+          {
+            text: 'Neuquén',
+            value: 1
+          },
+          {
+            text: 'Cipo',
+            value: 2
+          },
+          {
+            text: 'Leo',
+            value: 3
+          }
         ]
       },
 
       expand: {
         profesional: true,
-        domicilios: false,
-        contactos: false,
-        formaciones: false
+        domicilios: true,
+        contactos: true,
+        formaciones: true
       },
 
-      solicitud: {
-        fecha: null,
-        delegacion: null,
-        profesional: {
-          nombre: '',
-          apellido: '',
-          dni: '',
-          cuit: '',
-          sexo: '',
-          estadoCivil: '',
-          lugarNacimiento: '',
-          fechaNacimiento: null,
-          nacionalidad: '',
-          observaciones: '',
-          domicilioReal: {
-            calle: '',
-            numero: '',
-            codpostal: '',
-            localidad: null
-          },
-          domicilioLegal: {
+      solicitud: new Solicitud(),
 
-          },
-          contactos: [],
-          formaciones: []
-        }
-      },
+      nuevo_contacto: new Contacto(),
+      nueva_formacion: new Formacion(),
 
-      show: {
-        fechaSolicitud: false,
-        fechaNacimiento: false,
-        fechaTitulo: false
-      },
+      headers: {
+        contactos: [
+          { text: 'Tipo', value: 'tipo' },
+          { text: 'Valor', value: 'valor' },
+        ],
 
-      nuevo_contacto: {
-        tipo: '',
-        valor: ''
-      },
-
-      nueva_formacion: {
-        tipo: '',
-        titulo: '',
-        fecha: null,
-        institucion: ''
-      },
+        formacion: [
+          { text: 'Tipo', value: 'tipo' },
+          { text: 'Título', value: 'titulo' },
+          { text: 'Fecha', value: 'fecha' },
+          { text: 'Institución', value: 'institucion' }
+        ]
+      }
     }
   },
 
   methods: {
-    formatDate: function(date_string) {
-      return utils.formatDate(date_string);
-    },
-
-    chgFecha: function(orig, att) {
-      let [dia, mes, anio] = orig.split('/');
-      let date = new Date(`${anio}-${mes}-${dia}T20:12:26.033Z`);
-      if (isNaN( date.getTime())) {
-        this.datepicker[att] = null;
-        return;
-      }
-      this.datepicker[att] = date.toISOString();
-    },
-
     addContacto: function() {
-      this.solicitud.profesional.contactos.push({
-        tipo: this.nuevo_contacto.tipo,
-        valor: this.nuevo_contacto.valor
-      });
-      this.nuevo_contacto = {
-        tipo: '',
-        valor: ''
-      }
+      this.solicitud.profesional.contactos.push(this.nuevo_contacto);
+      this.nuevo_contacto = new Contacto();
     },
 
     removeContacto: function(index) {
@@ -488,18 +454,8 @@ export default {
     },
 
     addFormacion: function() {
-      this.solicitud.profesional.formaciones.push({
-        tipo: this.nueva_formacion.tipo,
-        titulo: this.nueva_formacion.titulo,
-        fecha: this.nueva_formacion.fecha,
-        institucion: this.nueva_formacion.institucion
-      });
-      this.nuevo_contacto = {
-        tipo: '',
-        titulo: '',
-        fecha: null,
-        institucion: ''
-      }
+      this.solicitud.profesional.formaciones.push(this.nueva_formacion);
+      this.nuevo_contacto = new Formacion();
     },
 
     removeFormacion: function(index) {
@@ -508,9 +464,26 @@ export default {
 
     submit: function() {
       axios.post('http://localhost:3400/solicitudes', this.solicitud)
-           .then(r => console.log(r.data))
-           .catch(e => console.error(e));
+           .then(r => {
+             if (r.status != 201) {
+               this.submitError();
+             }
+             this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+             this.snackbar.context = 'success';
+             this.snackbar.show = true;
+           })
+           .catch(e => this.submitError());
     },
+
+    submitError: function() {
+      this.snackbar.msg = 'Ha ocurrido un error en la carga';
+      this.snackbar.context = 'error';
+      this.snackbar.show = true;
+    },
+  },
+
+  components: {
+    InputFecha
   }
 }
 </script>
@@ -522,5 +495,13 @@ export default {
 
 h6 {
   padding-top: 10px;
+}
+
+.stuck {
+    position: fixed;
+    right: 10px;
+    width: 30%;
+    word-wrap: break-word;
+    /*overflow: auto;*/
 }
 </style>

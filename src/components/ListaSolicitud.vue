@@ -76,6 +76,7 @@ export default {
   name: 'lista-solicitud',
   data () {
     return {
+      labelFecha: 'hola',
       select_items: {
         estado: [
           {
@@ -110,7 +111,7 @@ export default {
 
   filters: {
     formatFecha: function(str) {
-      return utils.formatDate(str);
+      return utils.formatFecha(str);
     },
 
     upperFirst: function(str) {
@@ -143,7 +144,13 @@ export default {
   },
 
   methods: {
+    mostralo: function(x) {
+      alert(x);
+    }
   },
+
+  components: {
+  }
 
 }
 </script>
