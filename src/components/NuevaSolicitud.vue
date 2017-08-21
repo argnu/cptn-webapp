@@ -1,19 +1,33 @@
 <template>
+
   <v-app>
     <v-container>
+    <v-toolbar dark class="primary">
+    <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-btn icon>
+      <v-icon>search</v-icon>
+    </v-btn>
+      </v-toolbar>
       <v-layout row wrap>
+      
         <v-flex xs8>
           <form v-on:submit.prevent="submit">
-
           <v-toolbar class="indigo" dark>
-            <v-toolbar-title class="white--text">Nueva Solicitud</v-toolbar-title>
+            <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
 
           <v-container>
-            <v-card>
+           <v-stepper v-model="e6" vertical>
+    <v-stepper-step step="1" editable v-bind:complete="e6 > 1">
+     Datos Solicitud
+      <small>fechas</small>
+    </v-stepper-step>
+    <v-stepper-content step="1">
+      <v-card height="200px">
               <v-card-text>
-                <h6>Datos Solicitud</h6>
                 <v-layout row>
                   <v-flex xs6>
                     <v-text-field
@@ -37,6 +51,26 @@
                 </v-layout>
               </v-card-text>
             </v-card>
+      <v-btn primary @click.native="e6 = 2">Continuar</v-btn>
+    </v-stepper-content>
+    <v-stepper-step step="2" editable v-bind:complete="e6 > 2">Datos Básicos</v-stepper-step>
+    <v-stepper-content step="2">
+      <v-card class="grey lighten-1 z-depth-1 mb-5" height="200px"></v-card>
+      <v-btn primary @click.native="e6 = 3">Continuar</v-btn>
+      <v-btn flat>Cancelar</v-btn>
+    </v-stepper-content>
+    <v-stepper-step step="3" editable v-bind:complete="e6 > 3">Domicilios</v-stepper-step>
+    <v-stepper-content step="3">
+      <v-card class="grey lighten-1 z-depth-1 mb-5" height="200px"></v-card>
+      <v-btn primary @click.native="e6 = 4">Continue</v-btn>
+    </v-stepper-content>
+    <v-stepper-step step="4" editable>Contactos</v-stepper-step>
+    <v-stepper-content step="4">
+      <v-card class="grey lighten-1 z-depth-1 mb-5" height="200px"></v-card>
+      <v-btn primary @click.native="e6 = 1">Continue</v-btn>
+    </v-stepper-content>
+</v-stepper>
+            
           </v-container>
 
 
@@ -293,8 +327,17 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-container>
+          <v-layout row>
+          <v-flex>
+                 <v-btn class="red white--text">Cancelar
+      <v-icon dark right>block</v-icon>
+</v-btn>
+          </v-flex>
+              <v-btn class="primary white--text">Guardar Solicitud
+      <v-icon dark right>check_circle</v-icon>
+    </v-btn>          
+          </v-layout>
 
-          <v-btn light type="submit" style="float:right;">Enviar Solicitud</v-btn>
 
           </form>
         </v-flex>
@@ -323,6 +366,9 @@
         </v-flex>
       </v-layout>
     </v-container>
+        <v-footer class="indigo">
+      <span class="white--text"></span>
+</v-footer>
   </v-app>
 </template>
 
@@ -333,6 +379,7 @@ export default {
   name: 'nueva-solicitud',
   data () {
     return {
+       e6: 1,
       select_items: {
         localidades: [{
           text: 'Neuquén',
