@@ -2,7 +2,7 @@
   <v-layout row>
     <v-text-field :label="label" v-model="date_formatted" @input="update"
       append-icon="event" :append-icon-cb="() => show_dialog = true"
-      @change="updatePicker">
+      @change="updatePicker" :rules="rules" :error="error">
     </v-text-field>
     <v-dialog
       v-model="show_dialog"
@@ -19,20 +19,22 @@ import * as utils from '@/utils';
 
 export default {
   name: 'input-fecha',
-  props: ['value', 'label'],
+  props: ['value', 'label', 'rules', 'error'],
   data () {
     return {
-      datepicker: new Date().toISOString(),
+      datepicker: '',
       show_dialog: false,
-      date_formatted: null
+      date_formatted: ''
     }
   },
 
   watch: {
     datepicker: function(new_date) {
-      let formatted = utils.formatFecha(new_date);
-      this.date_formatted = formatted;
-      this.$emit('input', this.date_formatted);
+      if (new_date) {
+        let formatted = utils.formatFecha(new_date);
+        this.date_formatted = formatted;
+        this.$emit('input', this.date_formatted);
+      }
     },
 
     value: function(new_val) {
@@ -54,7 +56,7 @@ export default {
           this.datepicker = null;
           return;
         }
-        this.datepicker = date.toISOString();        
+        this.datepicker = date.toISOString();
       }
     }
   },

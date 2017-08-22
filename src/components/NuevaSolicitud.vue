@@ -44,20 +44,26 @@
                       <v-card-text>
                         <v-layout row>
                           <v-flex xs6>
-                            <input-fecha v-model="solicitud.fecha" label="Fecha de Solicitud">
+                            <input-fecha
+                              v-model="solicitud.fecha"
+                              label="Fecha de Solicitud"
+                              :rules="validation.solicitud.fecha"
+                            >
                             </input-fecha>
                           </v-flex>
                           <v-flex xs6 class="ml-5">
                             <v-select
                               autocomplete
                               v-bind:items="select_items.delegacion" v-model="solicitud.delegacion"
-                              label="Delegación">
+                              label="Delegación"
+                              :rules="validation.solicitud.delegacion"
+                            >
                             </v-select>
                           </v-flex>
                         </v-layout>
                       </v-card-text>
                     </v-card>
-                    <v-btn primary @click.native="step = 2" class="right">Continuar</v-btn>
+                    <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -70,27 +76,40 @@
                     <v-card-text>
                       <v-layout row>
                         <v-flex xs6>
-                          <v-text-field label="Nombre" v-model="solicitud.profesional.nombre"
-                            tabindex="1">
+                          <v-text-field
+                            label="Nombre"
+                            v-model="solicitud.profesional.nombre"
+                            tabindex="1"
+                            :rules="validation.profesional.nombre"
+                          >
                           </v-text-field>
-                          <v-text-field label="DNI" v-model="solicitud.profesional.dni"
+                          <v-text-field
+                            label="DNI"
+                            v-model="solicitud.profesional.dni"
+                            :rules="validation.profesional.dni"
                             tabindex="3">
                           </v-text-field>
                           <v-select
-                            :items="select_items.sexo" v-model="solicitud.profesional.sexo"
+                            :items="select_items.sexo"
+                            v-model="solicitud.profesional.sexo"
                             label="Sexo" single-line bottom tabindex="5">
                           </v-select>
                           <input-fecha
                               v-model="solicitud.profesional.fechaNacimiento"
-                              label="Fecha de Nacimiento">
+                              label="Fecha de Nacimiento"
+                              :rules="validation.profesional.fechaNacimiento"
+                          >
                           </input-fecha>
                           <v-text-field label="Nacionalidad" v-model="solicitud.profesional.nacionalidad"
                             tabindex="9">
                           </v-text-field>
                         </v-flex>
                         <v-flex xs6>
-                          <v-text-field label="Apellido" v-model="solicitud.profesional.apellido"
-                            tabindex="2">
+                          <v-text-field label="Apellido"
+                            v-model="solicitud.profesional.apellido"
+                            :rules="validation.profesional.apellido"
+                            tabindex="2"
+                          >
                           </v-text-field>
                           <v-text-field label="CUIT" v-model="solicitud.profesional.cuit"
                             tabindex="4">
@@ -112,7 +131,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="step = 3" class="right">Continuar</v-btn>
+                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="step = 1" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -127,25 +146,31 @@
                         Domicilio Real
                         <v-layout row>
                           <v-flex xs6>
-                            <v-text-field label="Calle" v-model="solicitud.profesional.domicilioReal.calle">
+                            <v-text-field
+                              label="Calle"
+                              v-model="solicitud.profesional.domicilioReal.calle"
+                              :rules="validation.domicilioReal.calle"
+                            >
                             </v-text-field>
                           </v-flex>
                           <v-flex xs6>
-                            <v-text-field label="Nro" v-model="solicitud.profesional.domicilioReal.numero">
+                            <v-text-field
+                              label="Nro"
+                              v-model="solicitud.profesional.domicilioReal.numero"
+                              :rules="validation.domicilioReal.numero"
+                            >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
                         <v-layout row>
                           <v-flex xs6>
-                            <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioReal.codpostal">
-                            </v-text-field>
-                          </v-flex>
-                          <v-flex xs6>
                             <v-select
                               autocomplete
                               :items="select_items.localidades"
                               label="Localidad"
-                              v-model="solicitud.profesional.domicilioReal.localidad">
+                              v-model="solicitud.profesional.domicilioReal.localidad"
+                              :rules="validation.domicilioReal.localidad"
+                            >
                             </v-select>
                           </v-flex>
                         </v-layout>
@@ -153,31 +178,37 @@
                         Domicilio Legal
                         <v-layout row>
                           <v-flex xs6>
-                            <v-text-field label="Calle" v-model="solicitud.profesional.domicilioLegal.calle">
+                            <v-text-field
+                              label="Calle"
+                              v-model="solicitud.profesional.domicilioLegal.calle"
+                              :rules="validation.domicilioLegal.calle"
+                              >
                             </v-text-field>
                           </v-flex>
                           <v-flex xs6>
-                            <v-text-field label="Nro" v-model="solicitud.profesional.domicilioLegal.numero">
+                            <v-text-field
+                              label="Nro"
+                              v-model="solicitud.profesional.domicilioLegal.numero"
+                              :rules="validation.domicilioLegal.numero"
+                            >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
                         <v-layout row>
                           <v-flex xs6>
-                            <v-text-field label="Código Postal" v-model="solicitud.profesional.domicilioLegal.codpostal">
-                            </v-text-field>
-                          </v-flex>
-                          <v-flex xs6>
                             <v-select
                               :items="select_items.localidades"
                               label="Localidad"
                               single-line bottom
-                              v-model="solicitud.profesional.domicilioLegal.localidad">
+                              v-model="solicitud.profesional.domicilioLegal.localidad"
+                              :rules="validation.domicilioLegal.localidad"
+                            >
                             </v-select>
                           </v-flex>
                         </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="step = 4" class="right">Continuar</v-btn>
+                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -197,11 +228,17 @@
                               label="Tipo de Contacto"
                               single-line
                               bottom
-                              v-model="nuevo_contacto.tipo">
+                              v-model="nuevo_contacto.tipo"
+                              :rules="validation.contacto.tipo"
+                            >
                             </v-select>
                           </v-flex>
                           <v-flex xs6>
-                            <v-text-field label="Valor" v-model="nuevo_contacto.valor">
+                            <v-text-field
+                              label="Dato"
+                              v-model="nuevo_contacto.dato"
+                              :rules="validation.contacto.dato"
+                            >
                             </v-text-field>
                           </v-flex>
                           <v-btn light @click="addContacto">Agregar</v-btn>
@@ -220,8 +257,8 @@
                             <th></th>
                           </template>
                           <template slot="items" scope="props">
-                            <td>{{ props.item.tipo }}</td>
-                            <td>{{ props.item.valor }}</td>
+                            <td>{{ props.item.tipo | upperFirst }}</td>
+                            <td>{{ props.item.dato }}</td>
                             <td style="width:30px">
                               <v-btn icon @click="removeContacto(props.index)">
                                 <v-icon>delete</v-icon>
@@ -232,7 +269,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="step = 5" class="right">Continuar</v-btn>
+                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="step = 3" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -252,17 +289,29 @@
                               label="Tipo de Formación"
                               single-line
                               bottom
-                              v-model="nueva_formacion.tipo">
+                              v-model="nueva_formacion.tipo"
+                              :rules="validation.formacion.tipo"
+                            >
                             </v-select>
-                            <v-text-field label="Título" v-model="nueva_formacion.titulo">
+                            <v-text-field
+                              label="Título"
+                              v-model="nueva_formacion.titulo"
+                              :rules="validation.formacion.titulo"
+                            >
                             </v-text-field>
                           </v-flex>
                           <v-flex xs6>
                             <input-fecha
-                                v-model="nueva_formacion.fecha"
-                                label="Fecha">
+                              v-model="nueva_formacion.fecha"
+                              label="Fecha"
+                              :rules="validation.formacion.fecha"
+                            >
                             </input-fecha>
-                            <v-text-field label="Institución" v-model="nueva_formacion.institucion">
+                            <v-text-field
+                              label="Institución"
+                              v-model="nueva_formacion.institucion"
+                              :rules="validation.formacion.institucion"
+                            >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
@@ -352,11 +401,62 @@ import * as axios from 'axios';
 import * as utils from '@/utils';
 import { Solicitud, Contacto, Formacion } from '@/model/Solicitud';
 import InputFecha from '@/components/base/InputFecha';
+import ValidatorMixin from '@/components/ValidatorMixin';
+import FiltersMixin from '@/components/FiltersMixin';
+
+
+function validRules(value, rules) {
+  for (let rule of rules) {
+    if (! (rule(value) === true)) return false;
+  }
+  return true;
+};
+
+function validObject(original, rules) {
+  for(let att in rules) {
+    if (!validRules(original[att], rules[att])) return false;
+  }
+  return true;
+}
 
 export default {
   name: 'nueva-solicitud',
+  mixins: [ValidatorMixin, FiltersMixin],
   data () {
     return {
+      validation: {
+          solicitud: {
+            fecha: [],
+            delegacion: []
+          },
+          profesional: {
+            nombre: [],
+            apellido: [],
+            dni: [],
+            fechaNacimiento: []
+          },
+          domicilioLegal: {
+            calle: [],
+            numero: [],
+            localidad: [],
+          },
+          domicilioReal: {
+            calle: [],
+            numero: [],
+            localidad: [],
+          },
+          contacto: {
+            tipo: [],
+            dato: []
+          },
+          formacion: {
+            tipo: [],
+            institucion: [],
+            fecha: [],
+            titulo: []
+          }
+      },
+
       step: 1,
 
       snackbar: {
@@ -468,7 +568,7 @@ export default {
       headers: {
         contactos: [
           { text: 'Tipo', value: 'tipo' },
-          { text: 'Valor', value: 'valor' },
+          { text: 'Dato', value: 'dato' },
         ],
 
         formacion: [
@@ -483,8 +583,14 @@ export default {
 
   methods: {
     addContacto: function() {
-      this.solicitud.profesional.contactos.push(this.nuevo_contacto);
-      this.nuevo_contacto = new Contacto();
+      this.validation.contacto.tipo = [ this.rules.required ];
+      this.validation.contacto.dato = [ this.rules.required ];
+       if ( validObject(this.nuevo_contacto, this.validation.contacto) ) {
+         this.solicitud.profesional.contactos.push(this.nuevo_contacto);
+         this.validation.contacto.tipo = [];
+         this.validation.contacto.dato = [];
+         this.nuevo_contacto = new Contacto();
+       }
     },
 
     removeContacto: function(index) {
@@ -492,8 +598,18 @@ export default {
     },
 
     addFormacion: function() {
-      this.solicitud.profesional.formaciones.push(this.nueva_formacion);
-      this.nuevo_contacto = new Formacion();
+      this.validation.formacion.tipo = [ this.rules.required ];
+      this.validation.formacion.institucion = [ this.rules.required ];
+      this.validation.formacion.titulo = [ this.rules.required ];
+      this.validation.formacion.fecha = [ this.rules.required, this.rules.fecha ];
+      if ( validObject(this.nueva_formacion, this.validation.formacion) ) {
+        this.solicitud.profesional.formaciones.push(this.nueva_formacion);
+        this.nueva_formacion = new Formacion();
+        this.validation.formacion.tipo = [];
+        this.validation.formacion.institucion = [];
+        this.validation.formacion.titulo = [];
+        this.validation.formacion.fecha = [];
+      }
     },
 
     removeFormacion: function(index) {
@@ -518,6 +634,40 @@ export default {
       this.snackbar.context = 'error';
       this.snackbar.show = true;
     },
+
+    nextStep: function() {
+      if (this.step == 1) {
+        this.validation.solicitud.fecha = [ this.rules.required, this.rules.fecha ];
+        this.validation.solicitud.delegacion = [ this.rules.required ];
+        if ( validObject(this.solicitud, this.validation.solicitud) ) this.step = +this.step + 1;
+      }
+
+      else if (this.step == 2) {
+        this.validation.profesional.nombre = [ this.rules.required ];
+        this.validation.profesional.apellido = [ this.rules.required ];
+        this.validation.profesional.dni = [ this.rules.required, this.rules.number ];
+        this.validation.profesional.fechaNacimiento = [ this.rules.required, this.rules.fecha ];
+        let profesional = this.solicitud.profesional;
+        if ( validObject(profesional, this.validation.profesional)) this.step = +this.step + 1;
+      }
+
+      else if (this.step == 3) {
+        this.validation.domicilioReal.calle = [ this.rules.required ];
+        this.validation.domicilioReal.numero = [ this.rules.required, this.rules.number ];
+        this.validation.domicilioReal.localidad = [ this.rules.required ];
+
+        this.validation.domicilioLegal.calle = [ this.rules.required ];
+        this.validation.domicilioLegal.numero = [ this.rules.required, this.rules.number ];
+        this.validation.domicilioLegal.localidad = [ this.rules.required ];
+        let domicilioR = this.solicitud.profesional.domicilioReal;
+        let domicilioL = this.solicitud.profesional.domicilioReal;
+        if ( validObject(domicilioR, this.validation.domicilioReal)
+          && validObject(domicilioL, this.validation.domicilioLegal)
+        ) this.step = +this.step + 1;
+      }
+
+      else this.step = +this.step + 1;
+    }
   },
 
   components: {

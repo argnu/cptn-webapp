@@ -55,10 +55,10 @@
               </template>
               <template slot="items" scope="props">
                 <td>{{ props.item.fecha | formatFecha }}</td>
+                <td>{{ props.item.estado | upperFirst }}</td>
                 <td>{{ props.item.profesional.dni }}</td>
                 <td>{{ props.item.profesional.nombre }}</td>
                 <td>{{ props.item.profesional.apellido }}</td>
-                <td>{{ props.item.estado | upperFirst }}</td>
               </template>
             </v-data-table>
           </v-container>
@@ -97,8 +97,8 @@ export default {
         filtros: true
       },
       columnas: [
-        'Fecha', 'DNI', 'Nombre',
-        'Apellido', 'Estado'
+        'Fecha', 'Estado', 'DNI', 'Nombre',
+        'Apellido'
       ],
       solicitudes: [],
       filtros: {

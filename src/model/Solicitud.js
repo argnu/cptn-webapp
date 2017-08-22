@@ -18,7 +18,6 @@ export class Domicilio {
   constructor() {
     this.calle = '';
     this.numero = '';
-    this.codpostal = '';
     this.localidad = '';
   }
 }
