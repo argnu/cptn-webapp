@@ -307,11 +307,15 @@
                               :rules="validation.formacion.fecha"
                             >
                             </input-fecha>
-                            <v-text-field
+                            <v-select
+                              :items="select_items.instituciones"
                               label="Institución"
+                              single-line
+                              bottom
                               v-model="nueva_formacion.institucion"
                               :rules="validation.formacion.institucion"
                             >
+                            </v-select>
                             </v-text-field>
                           </v-flex>
                         </v-layout>
@@ -337,7 +341,7 @@
                             <td>{{ props.item.tipo }}</td>
                             <td>{{ props.item.titulo }}</td>
                             <td>{{ props.item.fecha }}</td>
-                            <td>{{ props.item.institucion }}</td>
+                            <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
                               <v-btn icon @click="removeFormacion(props.index)">
                                 <v-icon>delete</v-icon>
@@ -466,6 +470,13 @@ export default {
       },
 
       select_items: {
+        instituciones: [
+            {
+              text: 'Universidad Nacional del Comahue',
+              value: 1
+            }
+        ],
+
         localidades: [
           {
             text: 'Neuquén',
@@ -582,6 +593,10 @@ export default {
   },
 
   methods: {
+    getInstitucion: function(id) {
+        return this.select_items.instituciones.find(i => id == i.value ).text;
+    },
+
     addContacto: function() {
       this.validation.contacto.tipo = [ this.rules.required ];
       this.validation.contacto.dato = [ this.rules.required ];
@@ -625,6 +640,7 @@ export default {
              this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
              this.snackbar.context = 'success';
              this.snackbar.show = true;
+             this.solicitud = new Solicitud();
            })
            .catch(e => this.submitError());
     },
