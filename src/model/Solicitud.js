@@ -1,3 +1,24 @@
+export class Beneficiario {
+  constructor() {
+    this.dni = '';
+    this.apellido = '';
+    this.nombre = '';
+    this.fechaNacimiento = '';
+    this.vinculo = '';
+    this.invalidez = false;
+  }
+}
+
+export class Subsidiario {
+  constructor() {
+    this.dni = '';
+    this.apellido = '';
+    this.nombre = '';
+    this.porcentaje = '';
+  }
+}
+
+
 export class Contacto {
   constructor() {
     this.tipo = '';
@@ -38,6 +59,12 @@ export class Profesional {
     this.domicilioLegal = new Domicilio();
     this.contactos = [];
     this.formaciones = [];
+    this.relacionLaboral = 'dependencia';
+    this.empresa = '';
+    this.serviciosPrestados = '';
+    this.cajaPrevisional = '';
+    this.beneficiarios = [];
+    this.subsidiarios = [];
   }
 }
 

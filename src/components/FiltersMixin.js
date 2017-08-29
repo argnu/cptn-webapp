@@ -7,7 +7,11 @@ export default {
     },
 
     upperFirst: function(str) {
-      return utils.upperFirst(str);
+      return str ? utils.upperFirst(str) : '';
+    },
+
+    boolean: function(v) {
+      return v ? 'Sí' : 'No'
     }
   },
 }

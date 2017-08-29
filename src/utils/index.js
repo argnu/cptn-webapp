@@ -11,3 +11,7 @@ export function formatFecha(date_string) {
 export function upperFirst(str) {
   return str[0].toUpperCase() + str.substring(1, str.length);
 }
+
+export function changeGenero(srt) {
+  return str.substring(0, str.length - 1) + 'a';
+}

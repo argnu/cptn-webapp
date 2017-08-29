@@ -260,7 +260,7 @@
                             <td>{{ props.item.tipo | upperFirst }}</td>
                             <td>{{ props.item.dato }}</td>
                             <td style="width:30px">
-                              <v-btn icon @click="removeContacto(props.index)">
+                              <v-btn icon @click="removeContacto('contactos', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -285,7 +285,7 @@
                         <v-layout row>
                           <v-flex xs6>
                             <v-select
-                              :items="['Grado', 'Posgrado']"
+                              :items="select_items.tipoFormacion"
                               label="Tipo de Formación"
                               single-line
                               bottom
@@ -343,7 +343,7 @@
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
-                              <v-btn icon @click="removeFormacion(props.index)">
+                              <v-btn icon @click="removeFormacion('formaciones', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -352,13 +352,244 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn class="primary white--text right" @click.native="submit">
-                    Guardar Solicitud
-                    <v-icon dark right>check_circle</v-icon>
-                  </v-btn>
+                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="step = 4" class="right">Volver</v-btn>
                 </v-stepper-content>
 
+
+                <!-- PASO 6: DATOS ADICIONALES -->
+                 <v-stepper-step step="6" editable v-bind:complete="step > 6">
+                  Datos Adicionales
+                 </v-stepper-step>
+                 <v-stepper-content step="6">
+                   <v-card class="grey lighten-4 elevation-4 mb-2">
+                       <v-card-text>
+                         <v-layout row>
+                           <v-flex xs6>
+                             <v-radio
+                                label="Relación de Dependencia"
+                                v-model="solicitud.profesional.relacionLaboral"
+                                value="dependencia"
+                              >
+                             </v-radio>
+                             <v-radio
+                                label="Autónomo"
+                                v-model="solicitud.profesional.relacionLaboral"
+                                value="autonomo"
+                              >
+                             </v-radio>
+                           </v-flex>
+                           <v-flex xs6 class="ml-5">
+                             <v-text-field
+                                label="Empresa"
+                                v-show="solicitud.profesional.relacionLaboral == 'dependencia'"
+                                v-model="solicitud.profesional.empresa"
+                              >
+                             </v-text-field>
+                             <v-text-field
+                                label="Servicios Prestados"
+                                v-show="solicitud.profesional.relacionLaboral == 'autonomo'"
+                                v-model="solicitud.profesional.serviciosPrestados"
+                              >
+                             </v-text-field>
+                           </v-flex>
+                         </v-layout>
+                       </v-card-text>
+                     </v-card>
+                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn flat @click.native="step = 5" class="right">Volver</v-btn>
+                 </v-stepper-content>
+
+
+
+                <!-- PASO 7: CAJA PREVISIONAL -->
+                 <v-stepper-step step="7" editable v-bind:complete="step > 7">
+                  Caja Previsional
+                 </v-stepper-step>
+                 <v-stepper-content step="7">
+                   <v-card class="grey lighten-4 elevation-4 mb-2">
+                       <v-card-text>
+                         <v-layout row>
+                           <v-flex xs6>
+                             <v-radio
+                                label="Ya poseo Caja Previsional"
+                                value="poseo"
+                                v-model="cajaPrevisional"
+                              >
+                             </v-radio>
+                           </v-flex>
+                           <v-flex xs6>
+                             <v-text-field
+                                label="Nombre"
+                                v-show="cajaPrevisional == 'poseo'"
+                                v-model="solicitud.profesional.cajaPrevisional"
+                              >
+                             </v-text-field>
+                           </v-flex>
+                         </v-layout>
+
+                         <v-layout row>
+                           <v-flex>
+                             <v-radio
+                                label="Solicitar Alta"
+                                value="alta"
+                                v-model="cajaPrevisional"
+                              >
+                             </v-radio>
+                           </v-flex>
+                         </v-layout>
+
+                         <v-layout row v-show="cajaPrevisional == 'alta'">
+                           <v-flex xs6>
+                             <v-text-field
+                                label="DNI"
+                                v-model="nuevo_beneficiario.dni"
+                              >
+                             </v-text-field>
+                             <v-text-field
+                                label="Apellido"
+                                v-model="nuevo_beneficiario.apellido"
+                              >
+                             </v-text-field>
+                             <v-text-field
+                                label="Nombre"
+                                v-model="nuevo_beneficiario.nombre"
+                              >
+                             </v-text-field>
+                           </v-flex>
+                           <v-flex xs6>
+                             <input-fecha
+                               v-model="nuevo_beneficiario.fechaNacimiento"
+                               label="Fecha de Nacimiento"
+                               :rules="validation.formacion.fecha"
+                             >
+                             </input-fecha>
+                             <v-text-field
+                                label="Vínculo"
+                                v-model="nuevo_beneficiario.vinculo"
+                              >
+                             </v-text-field>
+                             <v-checkbox
+                                label="Invalidez"
+                                v-model="nuevo_beneficiario.invalidez"
+                              >
+                             </v-checkbox>
+                           </v-flex>
+                         </v-layout>
+
+                         <div v-show="cajaPrevisional == 'alta'">
+                           <v-btn class="right mb-4" light @click="addBeneficiario">
+                             Agregar
+                           </v-btn>
+                           <v-data-table
+                               :headers="headers.beneficiarios"
+                               :items="solicitud.profesional.beneficiarios"
+                               hide-actions
+                               class="elevation-1"
+                               no-data-text="No hay beneficiarios">
+                             <template slot="headers" scope="props">
+                               <th v-for="header of props.headers" style="padding: 20px">
+                                 {{ header.text }}
+                               </th>
+                               <th></th>
+                             </template>
+                             <template slot="items" scope="props">
+                               <td>{{ props.item.dni }}</td>
+                               <td>{{ props.item.apellido }}</td>
+                               <td>{{ props.item.nombre }}</td>
+                               <td>{{ props.item.fechaNacimiento }}</td>
+                               <td>{{ props.item.vinculo }}</td>
+                               <td>{{ props.item.invalidez | boolean }}</td>
+                               <td style="width:30px">
+                                 <v-btn icon @click="removeElem('beneficiarios', props.index)">
+                                   <v-icon>delete</v-icon>
+                                 </v-btn>
+                               </td>
+                             </template>
+                           </v-data-table>
+                         </div>
+                       </v-card-text>
+                     </v-card>
+                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                 </v-stepper-content>
+
+
+
+                <!-- PASO 7: SUBSIDIO POR FALLECIMIENTO -->
+                 <v-stepper-step step="8" editable v-bind:complete="step > 8">
+                  Subsidio Por Fallecimiento
+                 </v-stepper-step>
+                 <v-stepper-content step="8">
+                   <v-card class="grey lighten-4 elevation-4 mb-2">
+                       <v-card-text>
+                         <v-layout row>
+                           <v-flex xs6>
+                             <v-text-field
+                                label="DNI"
+                                v-model="nuevo_subsidiario.dni"
+                              >
+                             </v-text-field>
+                             <v-text-field
+                                label="Apellido"
+                                v-model="nuevo_subsidiario.apellido"
+                              >
+                             </v-text-field>
+                           </v-flex>
+                           <v-flex xs6>
+                             <v-text-field
+                                label="Nombre"
+                                v-model="nuevo_subsidiario.nombre"
+                              >
+                             </v-text-field>
+                             <v-text-field
+                                label="Porcentaje"
+                                v-model="nuevo_subsidiario.porcentaje"
+                              >
+                             </v-text-field>
+                           </v-flex>
+                         </v-layout>
+
+                         <v-btn class="right mb-4" light @click="addSubsidiario">
+                           Agregar
+                         </v-btn>
+
+                         <v-data-table
+                             :headers="headers.subsidiarios"
+                             :items="solicitud.profesional.subsidiarios"
+                             hide-actions
+                             class="elevation-1"
+                             no-data-text="No hay subsidiarios">
+                           <template slot="headers" scope="props">
+                             <th v-for="header of props.headers" style="padding: 20px">
+                               {{ header.text }}
+                             </th>
+                             <th></th>
+                           </template>
+                           <template slot="items" scope="props">
+                             <td>{{ props.item.dni }}</td>
+                             <td>{{ props.item.apellido }}</td>
+                             <td>{{ props.item.nombre }}</td>
+                             <td>{{ props.item.porcentaje }}</td>
+                             <td style="width:30px">
+                               <v-btn icon @click="removeElem('subsidiarios', props.index)">
+                                 <v-icon>delete</v-icon>
+                               </v-btn>
+                             </td>
+                           </template>
+                         </v-data-table>
+
+                       </v-card-text>
+                     </v-card>
+                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                 </v-stepper-content>
+
+
+                 <v-btn class="primary white--text right" @click.native="submit">
+                   Guardar Solicitud
+                   <v-icon dark right>check_circle</v-icon>
+                 </v-btn>
               </v-stepper>
 
           </v-container>
@@ -382,8 +613,8 @@
                 <div><b>Apellido: </b> {{ solicitud.profesional.apellido }} </div>
                 <div><b>DNI: </b> {{ solicitud.profesional.dni }} </div>
                 <div><b>CUIT: </b> {{ solicitud.profesional.cuit }} </div>
-                <div><b>Sexo: </b> {{ solicitud.profesional.sexo }} </div>
-                <div><b>Estado Civil: </b> {{ solicitud.profesional.estadoCivil }} </div>
+                <div><b>Sexo: </b> {{ solicitud.profesional.sexo | upperFirst }} </div>
+                <div><b>Estado Civil: </b> {{ solicitud.profesional.estadoCivil | upperFirst }} </div>
                 <div><b>Fecha de Nacimiento: </b> {{ solicitud.profesional.fechaNacimiento }} </div>
                 <div><b>Lugar de Nacimiento: </b> {{ solicitud.profesional.lugarNacimiento }} </div>
                 <div><b>Nacionalidad: </b> {{ solicitud.profesional.nacionalidad }} </div>
@@ -403,11 +634,20 @@
 <script>
 import * as axios from 'axios';
 import * as utils from '@/utils';
-import { Solicitud, Contacto, Formacion } from '@/model/Solicitud';
+import { Solicitud, Contacto, Formacion,
+         Beneficiario, Subsidiario } from '@/model/Solicitud';
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/ValidatorMixin';
 import FiltersMixin from '@/components/FiltersMixin';
 
+function getItemsSelect(data) {
+  return data.map(e => {
+    return {
+      text: utils.upperFirst(e.valor),
+      value: e.valor
+    }
+  });
+}
 
 function validRules(value, rules) {
   for (let rule of rules) {
@@ -428,6 +668,8 @@ export default {
   mixins: [ValidatorMixin, FiltersMixin],
   data () {
     return {
+      cajaPrevisional: 'poseo',
+
       validation: {
           solicitud: {
             fecha: [],
@@ -500,54 +742,6 @@ export default {
           },
         ],
 
-        sexo: [
-          {
-            text: 'Femenino',
-            value: 'F'
-          }, {
-            text: 'Masculino',
-            value: 'M'
-          }
-        ],
-
-        tipoContacto: [
-          {
-            text: 'Fijo',
-            value: 'fijo'
-          },
-          {
-            text: 'Celular',
-            value: 'celular'
-          },
-          {
-            text: 'Email',
-            value: 'email'
-          },
-          {
-            text: 'Web',
-            value: 'web'
-          }
-        ],
-
-        estadoCivil: [
-          {
-            text: 'Casada/o',
-            value: 'casado'
-          },
-          {
-            text: 'Soltera/o',
-            value: 'soltero'
-          },
-          {
-            text: 'Viuda/o',
-            value: 'viudo'
-          },
-          {
-            text: 'Concubina/o',
-            value: 'concubino'
-          },
-        ],
-
         delegacion: [
           {
             text: 'Neuquén',
@@ -575,6 +769,8 @@ export default {
 
       nuevo_contacto: new Contacto(),
       nueva_formacion: new Formacion(),
+      nuevo_beneficiario: new Beneficiario(),
+      nuevo_subsidiario: new Subsidiario(),
 
       headers: {
         contactos: [
@@ -587,9 +783,36 @@ export default {
           { text: 'Título', value: 'titulo' },
           { text: 'Fecha', value: 'fecha' },
           { text: 'Institución', value: 'institucion' }
+        ],
+
+        beneficiarios: [
+          { text: 'DNI', value: 'dni' },
+          { text: 'Apellido', value: 'apellido' },
+          { text: 'Nombre', value: 'nombre' },
+          { text: 'Fecha de Nacimiento', value: 'fechaNacimiento' },
+          { text: 'Vínculo', value: 'vinculo' },
+          { text: 'Invalidez', value: 'invalidez' }
+        ],
+
+        subsidiarios: [
+          { text: 'DNI', value: 'dni' },
+          { text: 'Apellido', value: 'apellido' },
+          { text: 'Nombre', value: 'nombre' },
+          { text: 'Porcentaje', value: 'porcentaje' }
         ]
       }
     }
+  },
+
+  created: function() {
+    axios.get('http://localhost:3400/opciones')
+         .then(r => {
+           this.select_items.sexo = getItemsSelect(r.data.sexo)
+           this.select_items.estadoCivil = getItemsSelect(r.data.estadocivil);
+           this.select_items.tipoContacto = getItemsSelect(r.data.contacto);
+           this.select_items.tipoFormacion = getItemsSelect(r.data.formacion);
+         })
+         .catch(e => console.error(e));
   },
 
   methods: {
@@ -608,8 +831,8 @@ export default {
        }
     },
 
-    removeContacto: function(index) {
-      this.solicitud.profesional.contactos.splice(index, 1);
+    removeElem: function(tipo, index) {
+      this.solicitud.profesional[tipo].splice(index, 1);
     },
 
     addFormacion: function() {
@@ -627,11 +850,16 @@ export default {
       }
     },
 
-    removeFormacion: function(index) {
-      this.solicitud.profesional.formaciones.splice(index, 1);
+    addBeneficiario: function() {
+      this.solicitud.profesional.beneficiarios.push(this.nuevo_beneficiario);
+    },
+
+    addSubsidiario: function() {
+      this.solicitud.profesional.subsidiarios.push(this.nuevo_subsidiario);
     },
 
     submit: function() {
+      console.log(JSON.stringify(this.solicitud));
       axios.post('http://localhost:3400/solicitudes', this.solicitud)
            .then(r => {
              if (r.status != 201) {
