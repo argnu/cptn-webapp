@@ -65,6 +65,7 @@ export class Profesional {
     this.cajaPrevisional = '';
     this.beneficiarios = [];
     this.subsidiarios = [];
+    this.publicar = false;
   }
 }
 
@@ -73,5 +74,7 @@ export class Solicitud {
     this.fecha = '';
     this.delegacion = '';
     this.profesional = new Profesional();
+    this.exencionArt10 = false;
+    this.exencionArt6 = false;
   }
 }

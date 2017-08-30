@@ -516,7 +516,7 @@
 
 
 
-                <!-- PASO 7: SUBSIDIO POR FALLECIMIENTO -->
+                <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
                  <v-stepper-step step="8" editable v-bind:complete="step > 8">
                   Subsidio Por Fallecimiento
                  </v-stepper-step>
@@ -586,10 +586,54 @@
                  </v-stepper-content>
 
 
-                 <v-btn class="primary white--text right" @click.native="submit">
-                   Guardar Solicitud
-                   <v-icon dark right>check_circle</v-icon>
-                 </v-btn>
+
+                 <!-- PASO 9: DECLARACION Y EXENCIONES -->
+                  <v-stepper-step step="9" editable v-bind:complete="step > 9">
+                   Declaración y Exenciones
+                  </v-stepper-step>
+                  <v-stepper-content step="9">
+                    <v-card class="grey lighten-4 elevation-4 mb-2">
+                        <v-card-text>
+                          <blockquote>
+                            Declaro bajo juramento que no he desarrollado actividades dentro del teerritorio de la Provinca de Neuquén, previo a la fecha de inscripción.
+  Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo Profesional de Técnicos de Neuquén.
+
+  Nota: de comprobarse la falsedad de la presente Declaración Jurada el Consejo Profesional aplicará al profesional una sanción consistente en duplo de la matrículo anual vigente.
+  Art 29, Ley 708
+</blockquote>
+
+                          <v-checkbox label="De Acuerdo" v-model="deAcuerdo">
+                          </v-checkbox>
+
+                          <v-checkbox
+                             class="ma-0 pa-0"
+                             label="Solicitar Exención Art. 10"
+                             v-model="solicitud.exencionArt10"
+                           >
+                          </v-checkbox>
+
+                          <v-checkbox
+                             class="ma-0 pa-0"
+                             label="Solicitar Exención Art. 6"
+                             v-model="solicitud.exencionArt6"
+                           >
+                          </v-checkbox>
+
+                          <v-checkbox
+                             class="ma-0 pa-0"
+                             label="Permitir la publicación de los datos"
+                             v-model="solicitud.profesional.publicar"
+                           >
+                          </v-checkbox>
+
+                        </v-card-text>
+                      </v-card>
+                      <v-btn class="primary white--text right" @click.native="submit">
+                        Guardar Solicitud
+                        <v-icon dark right>check_circle</v-icon>
+                      </v-btn>
+                      <v-btn flat @click.native="step = 7" class="right">Volver</v-btn>
+                  </v-stepper-content>
               </v-stepper>
 
           </v-container>
@@ -668,6 +712,7 @@ export default {
   mixins: [ValidatorMixin, FiltersMixin],
   data () {
     return {
+      deAcuerdo: false,
       cajaPrevisional: 'poseo',
 
       validation: {
@@ -755,7 +800,13 @@ export default {
             text: 'Leo',
             value: 3
           }
-        ]
+        ],
+
+        sexo: [],
+        estadoCivil: [],
+        tipoContacto: [],
+        tipoFormacion: [],
+        relacionLaboral: []
       },
 
       expand: {
