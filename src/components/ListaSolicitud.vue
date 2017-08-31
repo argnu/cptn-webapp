@@ -120,7 +120,7 @@ export default {
   },
 
   created: function() {
-      axios.get('http://localhost:3400/solicitudes')
+      axios.get('http://localhost:3400/api/solicitudes')
            .then(r => {
              this.solicitudes = r.data
            })

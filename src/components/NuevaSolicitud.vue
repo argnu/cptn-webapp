@@ -90,6 +90,7 @@
                             tabindex="3">
                           </v-text-field>
                           <v-select
+                            autocomplete
                             :items="select_items.sexo"
                             v-model="solicitud.profesional.sexo"
                             label="Sexo" single-line bottom tabindex="5">
@@ -115,6 +116,7 @@
                             tabindex="4">
                           </v-text-field>
                           <v-select
+                            autocomplete
                             tabindex="6"
                             :items="select_items.estadoCivil"
                             v-model="solicitud.profesional.estadoCivil"
@@ -143,9 +145,25 @@
                 <v-stepper-content step="3">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
-                        Domicilio Real
+                        <span>Domicilio Real</span>
                         <v-layout row>
                           <v-flex xs6>
+                            <v-select
+                              autocomplete
+                              :items="select_items.paises"
+                              label="País"
+                              @change="changePais('real')"
+                              v-model="solicitud.profesional.domicilioReal.pais"
+                            >
+                            </v-select>
+                            <v-select
+                              autocomplete
+                              :items="select_items.departamentos.real"
+                              label="Departamento"
+                              @change="changeDepartamento('real')"
+                              v-model="solicitud.profesional.domicilioReal.departamento"
+                            >
+                            </v-select>
                             <v-text-field
                               label="Calle"
                               v-model="solicitud.profesional.domicilioReal.calle"
@@ -154,6 +172,22 @@
                             </v-text-field>
                           </v-flex>
                           <v-flex xs6>
+                            <v-select
+                              autocomplete
+                              :items="select_items.provincias.real"
+                              label="Provincia"
+                              @change="changeProvincia('real')"
+                              v-model="solicitud.profesional.domicilioReal.provincia"
+                            >
+                            </v-select>
+                            <v-select
+                              autocomplete
+                              :items="select_items.localidades.real"
+                              label="Localidad"
+                              v-model="solicitud.profesional.domicilioReal.localidad"
+                              :rules="validation.domicilioReal.localidad"
+                            >
+                            </v-select>
                             <v-text-field
                               label="Nro"
                               v-model="solicitud.profesional.domicilioReal.numero"
@@ -162,48 +196,56 @@
                             </v-text-field>
                           </v-flex>
                         </v-layout>
+
+                        <span>Domicilio Legal</span>
                         <v-layout row>
                           <v-flex xs6>
                             <v-select
                               autocomplete
-                              :items="select_items.localidades"
-                              label="Localidad"
-                              v-model="solicitud.profesional.domicilioReal.localidad"
-                              :rules="validation.domicilioReal.localidad"
+                              :items="select_items.paises"
+                              label="País"
+                              @change="changePais('legal')"
+                              v-model="solicitud.profesional.domicilioLegal.pais"
                             >
                             </v-select>
-                          </v-flex>
-                        </v-layout>
-
-                        Domicilio Legal
-                        <v-layout row>
-                          <v-flex xs6>
+                            <v-select
+                              autocomplete
+                              :items="select_items.departamentos.legal"
+                              label="Departamento"
+                              @change="changeDepartamento('legal')"
+                              v-model="solicitud.profesional.domicilioLegal.departamento"
+                            >
+                            </v-select>
                             <v-text-field
                               label="Calle"
                               v-model="solicitud.profesional.domicilioLegal.calle"
                               :rules="validation.domicilioLegal.calle"
-                              >
+                            >
                             </v-text-field>
                           </v-flex>
                           <v-flex xs6>
+                            <v-select
+                              autocomplete
+                              :items="select_items.provincias.legal"
+                              label="Provincia"
+                              @change="changeProvincia('legal')"
+                              v-model="solicitud.profesional.domicilioLegal.provincia"
+                            >
+                            </v-select>
+                            <v-select
+                              autocomplete
+                              :items="select_items.localidades.legal"
+                              label="Localidad"
+                              v-model="solicitud.profesional.domicilioLegal.localidad"
+                              :rules="validation.domicilioLegal.localidad"
+                            >
+                            </v-select>
                             <v-text-field
                               label="Nro"
                               v-model="solicitud.profesional.domicilioLegal.numero"
                               :rules="validation.domicilioLegal.numero"
                             >
                             </v-text-field>
-                          </v-flex>
-                        </v-layout>
-                        <v-layout row>
-                          <v-flex xs6>
-                            <v-select
-                              :items="select_items.localidades"
-                              label="Localidad"
-                              single-line bottom
-                              v-model="solicitud.profesional.domicilioLegal.localidad"
-                              :rules="validation.domicilioLegal.localidad"
-                            >
-                            </v-select>
                           </v-flex>
                         </v-layout>
                     </v-card-text>
@@ -224,6 +266,7 @@
                         <v-layout row>
                           <v-flex xs6>
                             <v-select
+                              autocomplete
                               :items="select_items.tipoContacto"
                               label="Tipo de Contacto"
                               single-line
@@ -285,6 +328,7 @@
                         <v-layout row>
                           <v-flex xs6>
                             <v-select
+                              autocomplete
                               :items="select_items.tipoFormacion"
                               label="Tipo de Formación"
                               single-line
@@ -308,6 +352,7 @@
                             >
                             </input-fecha>
                             <v-select
+                              autocomplete
                               :items="select_items.instituciones"
                               label="Institución"
                               single-line
@@ -684,11 +729,11 @@ import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/ValidatorMixin';
 import FiltersMixin from '@/components/FiltersMixin';
 
-function getItemsSelect(data) {
+function getItemsSelect(data, textKey, valueKey) {
   return data.map(e => {
     return {
-      text: utils.upperFirst(e.valor),
-      value: e.valor
+      text: utils.upperFirst(e[textKey]),
+      value: e[valueKey]
     }
   });
 }
@@ -764,29 +809,6 @@ export default {
             }
         ],
 
-        localidades: [
-          {
-            text: 'Neuquén',
-            value: 1
-          },
-          {
-            text: 'Neulen',
-            value: 2
-          },
-          {
-            text: 'Río Negro',
-            value: 3
-          },
-          {
-            text: 'Chos Malal',
-            value: 4
-          },
-          {
-            text: 'Chichinales',
-            value: 5
-          },
-        ],
-
         delegacion: [
           {
             text: 'Neuquén',
@@ -806,7 +828,20 @@ export default {
         estadoCivil: [],
         tipoContacto: [],
         tipoFormacion: [],
-        relacionLaboral: []
+        relacionLaboral: [],
+        paises: [],
+        provincias: {
+          real: [],
+          legal: []
+        },
+        departamentos: {
+          real: [],
+          legal: []
+        },
+        localidades: {
+          real: [],
+          legal: []
+        }
       },
 
       expand: {
@@ -856,17 +891,45 @@ export default {
   },
 
   created: function() {
-    axios.get('http://localhost:3400/opciones')
-         .then(r => {
-           this.select_items.sexo = getItemsSelect(r.data.sexo)
-           this.select_items.estadoCivil = getItemsSelect(r.data.estadocivil);
-           this.select_items.tipoContacto = getItemsSelect(r.data.contacto);
-           this.select_items.tipoFormacion = getItemsSelect(r.data.formacion);
-         })
-         .catch(e => console.error(e));
+    Promise.all([
+      axios.get('http://localhost:3400/api/paises'),
+      axios.get('http://localhost:3400/api/opciones')
+    ])
+    .then(r => {
+      this.select_items.paises = getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.sexo = getItemsSelect(r[1].data.sexo, 'valor', 'valor')
+      this.select_items.estadoCivil = getItemsSelect(r[1].data.estadocivil, 'valor', 'valor');
+      this.select_items.tipoContacto = getItemsSelect(r[1].data.contacto, 'valor', 'valor');
+      this.select_items.tipoFormacion = getItemsSelect(r[1].data.formacion, 'valor', 'valor');
+    })
+    .catch(e => console.error(e));
   },
 
   methods: {
+    changePais: function(tipoDomicilio) {
+      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
+      let pais = this.solicitud.profesional[domicilio].pais;
+      axios.get(`http://localhost:3400/api/provincias?pais=${pais}`)
+           .then(r => this.select_items.provincias[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+           .catch(e => console.error(e));
+    },
+
+    changeProvincia: function(tipoDomicilio) {
+      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
+      let provincia = this.solicitud.profesional[domicilio].pais;
+      axios.get(`http://localhost:3400/api/departamentos?provincia=${provincia}`)
+           .then(r => this.select_items.departamentos[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+           .catch(e => console.error(e));
+    },
+
+    changeDepartamento: function(tipoDomicilio) {
+      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
+      let departamento = this.solicitud.profesional[domicilio].pais;
+      axios.get(`http://localhost:3400/api/localidades?departamento=${departamento}`)
+           .then(r => this.select_items.localidades[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+           .catch(e => console.error(e));
+    },
+
     getInstitucion: function(id) {
         return this.select_items.instituciones.find(i => id == i.value ).text;
     },
@@ -911,7 +974,7 @@ export default {
 
     submit: function() {
       console.log(JSON.stringify(this.solicitud));
-      axios.post('http://localhost:3400/solicitudes', this.solicitud)
+      axios.post('http://localhost:3400/api/solicitudes', this.solicitud)
            .then(r => {
              if (r.status != 201) {
                this.submitError();

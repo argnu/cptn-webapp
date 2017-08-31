@@ -40,6 +40,9 @@ export class Domicilio {
     this.calle = '';
     this.numero = '';
     this.localidad = '';
+    this.pais = '';
+    this.provincia = '';
+    this.departamento = '';
   }
 }
 
