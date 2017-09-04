@@ -279,8 +279,8 @@
                           <v-flex xs6>
                             <v-text-field
                               label="Dato"
-                              v-model="nuevo_contacto.dato"
-                              :rules="validation.contacto.dato"
+                              v-model="nuevo_contacto.valor"
+                              :rules="validation.contacto.valor"
                             >
                             </v-text-field>
                           </v-flex>
@@ -301,7 +301,7 @@
                           </template>
                           <template slot="items" scope="props">
                             <td>{{ props.item.tipo | upperFirst }}</td>
-                            <td>{{ props.item.dato }}</td>
+                            <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
                               <v-btn icon @click="removeContacto('contactos', props.index)">
                                 <v-icon>delete</v-icon>
@@ -936,11 +936,11 @@ export default {
 
     addContacto: function() {
       this.validation.contacto.tipo = [ this.rules.required ];
-      this.validation.contacto.dato = [ this.rules.required ];
+      this.validation.contacto.valor = [ this.rules.required ];
        if ( validObject(this.nuevo_contacto, this.validation.contacto) ) {
          this.solicitud.profesional.contactos.push(this.nuevo_contacto);
          this.validation.contacto.tipo = [];
-         this.validation.contacto.dato = [];
+         this.validation.contacto.valor = [];
          this.nuevo_contacto = new Contacto();
        }
     },
