@@ -278,7 +278,7 @@
                           </v-flex>
                           <v-flex xs6>
                             <v-text-field
-                              label="Dato"
+                              label="Valor"
                               v-model="nuevo_contacto.valor"
                               :rules="validation.contacto.valor"
                             >
@@ -724,7 +724,7 @@
 import * as axios from 'axios';
 import * as utils from '@/utils';
 import { Solicitud, Contacto, Formacion,
-         Beneficiario, Subsidiario } from '@/model/Solicitud';
+         Beneficiario, Subsidiario } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/ValidatorMixin';
 import FiltersMixin from '@/components/FiltersMixin';
@@ -783,7 +783,7 @@ export default {
           },
           contacto: {
             tipo: [],
-            dato: []
+            valor: []
           },
           formacion: {
             tipo: [],
@@ -844,14 +844,7 @@ export default {
         }
       },
 
-      expand: {
-        profesional: true,
-        domicilios: true,
-        contactos: true,
-        formaciones: true
-      },
-
-      solicitud: new Solicitud(),
+      solicitud: new Solicitud('profesional'),
 
       nuevo_contacto: new Contacto(),
       nueva_formacion: new Formacion(),
@@ -861,7 +854,7 @@ export default {
       headers: {
         contactos: [
           { text: 'Tipo', value: 'tipo' },
-          { text: 'Dato', value: 'dato' },
+          { text: 'Valor', value: 'valor' },
         ],
 
         formacion: [
