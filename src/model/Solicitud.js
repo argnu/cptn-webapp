@@ -58,6 +58,7 @@ export class Profesional {
     this.fechaNacimiento = '';
     this.nacionalidad = '';
     this.observaciones = '';
+    this.condafip = null;
     this.domicilioReal = new Domicilio();
     this.domicilioLegal = new Domicilio();
     this.contactos = [];

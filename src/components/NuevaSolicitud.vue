@@ -104,7 +104,14 @@
                           <v-text-field label="Nacionalidad" v-model="solicitud.profesional.nacionalidad"
                             tabindex="9">
                           </v-text-field>
+                          <v-select
+                            autocomplete
+                            :items="select_items.condafip"
+                            v-model="solicitud.profesional.condafip"
+                            label="Condición AFIP" single-line bottom tabindex="5">
+                          </v-select>
                         </v-flex>
+
                         <v-flex xs6>
                           <v-text-field label="Apellido"
                             v-model="solicitud.profesional.apellido"
@@ -829,6 +836,7 @@ export default {
         tipoContacto: [],
         tipoFormacion: [],
         relacionLaboral: [],
+        condafip: [],
         paises: [],
         provincias: {
           real: [],
@@ -842,13 +850,6 @@ export default {
           real: [],
           legal: []
         }
-      },
-
-      expand: {
-        profesional: true,
-        domicilios: true,
-        contactos: true,
-        formaciones: true
       },
 
       solicitud: new Solicitud(),
@@ -899,6 +900,7 @@ export default {
       this.select_items.paises = getItemsSelect(r[0].data, 'nombre', 'id')
       this.select_items.sexo = getItemsSelect(r[1].data.sexo, 'valor', 'valor')
       this.select_items.estadoCivil = getItemsSelect(r[1].data.estadocivil, 'valor', 'valor');
+      this.select_items.condafip = getItemsSelect(r[1].data.condafip, 'valor', 'valor');
       this.select_items.tipoContacto = getItemsSelect(r[1].data.contacto, 'valor', 'valor');
       this.select_items.tipoFormacion = getItemsSelect(r[1].data.formacion, 'valor', 'valor');
     })
