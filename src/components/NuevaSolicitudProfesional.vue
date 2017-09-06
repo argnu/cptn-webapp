@@ -78,55 +78,55 @@
                         <v-flex xs6>
                           <v-text-field
                             label="Nombre"
-                            v-model="solicitud.profesional.nombre"
+                            v-model="solicitud.entidad.nombre"
                             tabindex="1"
                             :rules="validation.profesional.nombre"
                           >
                           </v-text-field>
                           <v-text-field
                             label="DNI"
-                            v-model="solicitud.profesional.dni"
+                            v-model="solicitud.entidad.dni"
                             :rules="validation.profesional.dni"
                             tabindex="3">
                           </v-text-field>
                           <v-select
                             autocomplete
                             :items="select_items.sexo"
-                            v-model="solicitud.profesional.sexo"
+                            v-model="solicitud.entidad.sexo"
                             label="Sexo" single-line bottom tabindex="5">
                           </v-select>
                           <input-fecha
-                              v-model="solicitud.profesional.fechaNacimiento"
+                              v-model="solicitud.entidad.fechaNacimiento"
                               label="Fecha de Nacimiento"
                               :rules="validation.profesional.fechaNacimiento"
                           >
                           </input-fecha>
-                          <v-text-field label="Nacionalidad" v-model="solicitud.profesional.nacionalidad"
+                          <v-text-field label="Nacionalidad" v-model="solicitud.entidad.nacionalidad"
                             tabindex="9">
                           </v-text-field>
                         </v-flex>
                         <v-flex xs6>
                           <v-text-field label="Apellido"
-                            v-model="solicitud.profesional.apellido"
+                            v-model="solicitud.entidad.apellido"
                             :rules="validation.profesional.apellido"
                             tabindex="2"
                           >
                           </v-text-field>
-                          <v-text-field label="CUIT" v-model="solicitud.profesional.cuit"
+                          <v-text-field label="CUIT" v-model="solicitud.entidad.cuit"
                             tabindex="4">
                           </v-text-field>
                           <v-select
                             autocomplete
                             tabindex="6"
                             :items="select_items.estadoCivil"
-                            v-model="solicitud.profesional.estadoCivil"
+                            v-model="solicitud.entidad.estadoCivil"
                             label="Estado Civil"
                             single-line bottom>
                           </v-select>
-                          <v-text-field label="Lugar Nacimiento" v-model="solicitud.profesional.lugarNacimiento"
+                          <v-text-field label="Lugar Nacimiento" v-model="solicitud.entidad.lugarNacimiento"
                             tabindex="8">
                           </v-text-field>
-                          <v-text-field label="Observaciones" v-model="solicitud.profesional.observaciones"
+                          <v-text-field label="Observaciones" v-model="solicitud.entidad.observaciones"
                             tabindex="10">
                           </v-text-field>
                         </v-flex>
@@ -153,7 +153,7 @@
                               :items="select_items.paises"
                               label="País"
                               @change="changePais('real')"
-                              v-model="solicitud.profesional.domicilioReal.pais"
+                              v-model="solicitud.entidad.domicilioReal.pais"
                             >
                             </v-select>
                             <v-select
@@ -161,12 +161,12 @@
                               :items="select_items.departamentos.real"
                               label="Departamento"
                               @change="changeDepartamento('real')"
-                              v-model="solicitud.profesional.domicilioReal.departamento"
+                              v-model="solicitud.entidad.domicilioReal.departamento"
                             >
                             </v-select>
                             <v-text-field
                               label="Calle"
-                              v-model="solicitud.profesional.domicilioReal.calle"
+                              v-model="solicitud.entidad.domicilioReal.calle"
                               :rules="validation.domicilioReal.calle"
                             >
                             </v-text-field>
@@ -177,20 +177,20 @@
                               :items="select_items.provincias.real"
                               label="Provincia"
                               @change="changeProvincia('real')"
-                              v-model="solicitud.profesional.domicilioReal.provincia"
+                              v-model="solicitud.entidad.domicilioReal.provincia"
                             >
                             </v-select>
                             <v-select
                               autocomplete
                               :items="select_items.localidades.real"
                               label="Localidad"
-                              v-model="solicitud.profesional.domicilioReal.localidad"
+                              v-model="solicitud.entidad.domicilioReal.localidad"
                               :rules="validation.domicilioReal.localidad"
                             >
                             </v-select>
                             <v-text-field
                               label="Nro"
-                              v-model="solicitud.profesional.domicilioReal.numero"
+                              v-model="solicitud.entidad.domicilioReal.numero"
                               :rules="validation.domicilioReal.numero"
                             >
                             </v-text-field>
@@ -205,7 +205,7 @@
                               :items="select_items.paises"
                               label="País"
                               @change="changePais('legal')"
-                              v-model="solicitud.profesional.domicilioLegal.pais"
+                              v-model="solicitud.entidad.domicilioLegal.pais"
                             >
                             </v-select>
                             <v-select
@@ -213,12 +213,12 @@
                               :items="select_items.departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
-                              v-model="solicitud.profesional.domicilioLegal.departamento"
+                              v-model="solicitud.entidad.domicilioLegal.departamento"
                             >
                             </v-select>
                             <v-text-field
                               label="Calle"
-                              v-model="solicitud.profesional.domicilioLegal.calle"
+                              v-model="solicitud.entidad.domicilioLegal.calle"
                               :rules="validation.domicilioLegal.calle"
                             >
                             </v-text-field>
@@ -229,20 +229,20 @@
                               :items="select_items.provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
-                              v-model="solicitud.profesional.domicilioLegal.provincia"
+                              v-model="solicitud.entidad.domicilioLegal.provincia"
                             >
                             </v-select>
                             <v-select
                               autocomplete
                               :items="select_items.localidades.legal"
                               label="Localidad"
-                              v-model="solicitud.profesional.domicilioLegal.localidad"
+                              v-model="solicitud.entidad.domicilioLegal.localidad"
                               :rules="validation.domicilioLegal.localidad"
                             >
                             </v-select>
                             <v-text-field
                               label="Nro"
-                              v-model="solicitud.profesional.domicilioLegal.numero"
+                              v-model="solicitud.entidad.domicilioLegal.numero"
                               :rules="validation.domicilioLegal.numero"
                             >
                             </v-text-field>
@@ -289,7 +289,7 @@
 
                         <v-data-table
                             :headers="headers.contacto"
-                            :items="solicitud.profesional.contactos"
+                            :items="solicitud.entidad.contactos"
                             hide-actions
                             class="elevation-1"
                             no-data-text="No hay contactos">
@@ -371,7 +371,7 @@
 
                         <v-data-table
                             :headers="headers.formacion"
-                            :items="solicitud.profesional.formaciones"
+                            :items="solicitud.entidad.formaciones"
                             hide-actions
                             class="elevation-1"
                             no-data-text="No hay formaciones"
@@ -413,13 +413,13 @@
                            <v-flex xs6>
                              <v-radio
                                 label="Relación de Dependencia"
-                                v-model="solicitud.profesional.relacionLaboral"
+                                v-model="solicitud.entidad.relacionLaboral"
                                 value="dependencia"
                               >
                              </v-radio>
                              <v-radio
                                 label="Autónomo"
-                                v-model="solicitud.profesional.relacionLaboral"
+                                v-model="solicitud.entidad.relacionLaboral"
                                 value="autonomo"
                               >
                              </v-radio>
@@ -427,14 +427,14 @@
                            <v-flex xs6 class="ml-5">
                              <v-text-field
                                 label="Empresa"
-                                v-show="solicitud.profesional.relacionLaboral == 'dependencia'"
-                                v-model="solicitud.profesional.empresa"
+                                v-show="solicitud.entidad.relacionLaboral == 'dependencia'"
+                                v-model="solicitud.entidad.empresa"
                               >
                              </v-text-field>
                              <v-text-field
                                 label="Servicios Prestados"
-                                v-show="solicitud.profesional.relacionLaboral == 'autonomo'"
-                                v-model="solicitud.profesional.serviciosPrestados"
+                                v-show="solicitud.entidad.relacionLaboral == 'autonomo'"
+                                v-model="solicitud.entidad.serviciosPrestados"
                               >
                              </v-text-field>
                            </v-flex>
@@ -467,7 +467,7 @@
                              <v-text-field
                                 label="Nombre"
                                 v-show="cajaPrevisional == 'poseo'"
-                                v-model="solicitud.profesional.cajaPrevisional"
+                                v-model="solicitud.entidad.cajaPrevisional"
                               >
                              </v-text-field>
                            </v-flex>
@@ -528,7 +528,7 @@
                            </v-btn>
                            <v-data-table
                                :headers="headers.beneficiarios"
-                               :items="solicitud.profesional.beneficiarios"
+                               :items="solicitud.entidad.beneficiarios"
                                hide-actions
                                class="elevation-1"
                                no-data-text="No hay beneficiarios">
@@ -601,7 +601,7 @@
 
                          <v-data-table
                              :headers="headers.subsidiarios"
-                             :items="solicitud.profesional.subsidiarios"
+                             :items="solicitud.entidad.subsidiarios"
                              hide-actions
                              class="elevation-1"
                              no-data-text="No hay subsidiarios">
@@ -667,7 +667,7 @@
                           <v-checkbox
                              class="ma-0 pa-0"
                              label="Permitir la publicación de los datos"
-                             v-model="solicitud.profesional.publicar"
+                             v-model="solicitud.entidad.publicar"
                            >
                           </v-checkbox>
 
@@ -698,16 +698,16 @@
           <v-container>
             <v-card>
               <v-card-text id="info-profesional">
-                <div><b>Nombre: </b> {{ solicitud.profesional.nombre }} </div>
-                <div><b>Apellido: </b> {{ solicitud.profesional.apellido }} </div>
-                <div><b>DNI: </b> {{ solicitud.profesional.dni }} </div>
-                <div><b>CUIT: </b> {{ solicitud.profesional.cuit }} </div>
-                <div><b>Sexo: </b> {{ solicitud.profesional.sexo | upperFirst }} </div>
-                <div><b>Estado Civil: </b> {{ solicitud.profesional.estadoCivil | upperFirst }} </div>
-                <div><b>Fecha de Nacimiento: </b> {{ solicitud.profesional.fechaNacimiento }} </div>
-                <div><b>Lugar de Nacimiento: </b> {{ solicitud.profesional.lugarNacimiento }} </div>
-                <div><b>Nacionalidad: </b> {{ solicitud.profesional.nacionalidad }} </div>
-                <div><b>Observaciones: </b> {{solicitud.profesional.observaciones }} </div>
+                <div><b>Nombre: </b> {{ solicitud.entidad.nombre }} </div>
+                <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
+                <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
+                <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
+                <div><b>Sexo: </b> {{ solicitud.entidad.sexo | upperFirst }} </div>
+                <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil | upperFirst }} </div>
+                <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
+                <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
+                <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
+                <div><b>Observaciones: </b> {{solicitud.entidad.observaciones }} </div>
               </v-card-text>
             </v-card>
           </v-container>
@@ -726,31 +726,9 @@ import * as utils from '@/utils';
 import { Solicitud, Contacto, Formacion,
          Beneficiario, Subsidiario } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
-import ValidatorMixin from '@/components/ValidatorMixin';
-import FiltersMixin from '@/components/FiltersMixin';
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import FiltersMixin from '@/components/mixins/FiltersMixin';
 
-function getItemsSelect(data, textKey, valueKey) {
-  return data.map(e => {
-    return {
-      text: utils.upperFirst(e[textKey]),
-      value: e[valueKey]
-    }
-  });
-}
-
-function validRules(value, rules) {
-  for (let rule of rules) {
-    if (! (rule(value) === true)) return false;
-  }
-  return true;
-};
-
-function validObject(original, rules) {
-  for(let att in rules) {
-    if (!validRules(original[att], rules[att])) return false;
-  }
-  return true;
-}
 
 export default {
   name: 'nueva-solicitud',
@@ -889,11 +867,11 @@ export default {
       axios.get('http://localhost:3400/api/opciones')
     ])
     .then(r => {
-      this.select_items.paises = getItemsSelect(r[0].data, 'nombre', 'id')
-      this.select_items.sexo = getItemsSelect(r[1].data.sexo, 'valor', 'valor')
-      this.select_items.estadoCivil = getItemsSelect(r[1].data.estadocivil, 'valor', 'valor');
-      this.select_items.tipoContacto = getItemsSelect(r[1].data.contacto, 'valor', 'valor');
-      this.select_items.tipoFormacion = getItemsSelect(r[1].data.formacion, 'valor', 'valor');
+      this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.sexo = utils.getItemsSelect(r[1].data.sexo, 'valor', 'valor')
+      this.select_items.estadoCivil = utils.getItemsSelect(r[1].data.estadocivil, 'valor', 'id');
+      this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
+      this.select_items.tipoFormacion = utils.getItemsSelect(r[1].data.formacion, 'valor', 'id');
     })
     .catch(e => console.error(e));
   },
@@ -901,25 +879,25 @@ export default {
   methods: {
     changePais: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let pais = this.solicitud.profesional[domicilio].pais;
-      axios.get(`http://localhost:3400/api/provincias?pais=${pais}`)
-           .then(r => this.select_items.provincias[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let pais = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/provincias?pais_id=${pais}`)
+           .then(r => this.select_items.provincias[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
     changeProvincia: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.profesional[domicilio].pais;
-      axios.get(`http://localhost:3400/api/departamentos?provincia=${provincia}`)
-           .then(r => this.select_items.departamentos[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let provincia = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/departamentos?provincia_id=${provincia}`)
+           .then(r => this.select_items.departamentos[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
     changeDepartamento: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.profesional[domicilio].pais;
-      axios.get(`http://localhost:3400/api/localidades?departamento=${departamento}`)
-           .then(r => this.select_items.localidades[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let departamento = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/localidades?departamento_id=${departamento}`)
+           .then(r => this.select_items.localidades[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
@@ -930,8 +908,8 @@ export default {
     addContacto: function() {
       this.validation.contacto.tipo = [ this.rules.required ];
       this.validation.contacto.valor = [ this.rules.required ];
-       if ( validObject(this.nuevo_contacto, this.validation.contacto) ) {
-         this.solicitud.profesional.contactos.push(this.nuevo_contacto);
+       if ( utils.validObject(this.nuevo_contacto, this.validation.contacto) ) {
+         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
          this.validation.contacto.tipo = [];
          this.validation.contacto.valor = [];
          this.nuevo_contacto = new Contacto();
@@ -939,7 +917,7 @@ export default {
     },
 
     removeElem: function(tipo, index) {
-      this.solicitud.profesional[tipo].splice(index, 1);
+      this.solicitud.entidad[tipo].splice(index, 1);
     },
 
     addFormacion: function() {
@@ -947,8 +925,8 @@ export default {
       this.validation.formacion.institucion = [ this.rules.required ];
       this.validation.formacion.titulo = [ this.rules.required ];
       this.validation.formacion.fecha = [ this.rules.required, this.rules.fecha ];
-      if ( validObject(this.nueva_formacion, this.validation.formacion) ) {
-        this.solicitud.profesional.formaciones.push(this.nueva_formacion);
+      if ( utils.validObject(this.nueva_formacion, this.validation.formacion) ) {
+        this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         this.nueva_formacion = new Formacion();
         this.validation.formacion.tipo = [];
         this.validation.formacion.institucion = [];
@@ -958,11 +936,11 @@ export default {
     },
 
     addBeneficiario: function() {
-      this.solicitud.profesional.beneficiarios.push(this.nuevo_beneficiario);
+      this.solicitud.entidad.beneficiarios.push(this.nuevo_beneficiario);
     },
 
     addSubsidiario: function() {
-      this.solicitud.profesional.subsidiarios.push(this.nuevo_subsidiario);
+      this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
     },
 
     submit: function() {
@@ -990,7 +968,7 @@ export default {
       if (this.step == 1) {
         this.validation.solicitud.fecha = [ this.rules.required, this.rules.fecha ];
         this.validation.solicitud.delegacion = [ this.rules.required ];
-        if ( validObject(this.solicitud, this.validation.solicitud) ) this.step = +this.step + 1;
+        if ( utils.validObject(this.solicitud, this.validation.solicitud) ) this.step = +this.step + 1;
       }
 
       else if (this.step == 2) {
@@ -998,8 +976,8 @@ export default {
         this.validation.profesional.apellido = [ this.rules.required ];
         this.validation.profesional.dni = [ this.rules.required, this.rules.number ];
         this.validation.profesional.fechaNacimiento = [ this.rules.required, this.rules.fecha ];
-        let profesional = this.solicitud.profesional;
-        if ( validObject(profesional, this.validation.profesional)) this.step = +this.step + 1;
+        let profesional = this.solicitud.entidad;
+        if ( utils.validObject(profesional, this.validation.profesional)) this.step = +this.step + 1;
       }
 
       else if (this.step == 3) {
@@ -1010,9 +988,9 @@ export default {
         this.validation.domicilioLegal.calle = [ this.rules.required ];
         this.validation.domicilioLegal.numero = [ this.rules.required, this.rules.number ];
         this.validation.domicilioLegal.localidad = [ this.rules.required ];
-        let domicilioR = this.solicitud.profesional.domicilioReal;
-        let domicilioL = this.solicitud.profesional.domicilioReal;
-        if ( validObject(domicilioR, this.validation.domicilioReal)
+        let domicilioR = this.solicitud.entidad.domicilioReal;
+        let domicilioL = this.solicitud.entidad.domicilioReal;
+        if ( utils.validObject(domicilioR, this.validation.domicilioReal)
           && validObject(domicilioL, this.validation.domicilioLegal)
         ) this.step = +this.step + 1;
       }

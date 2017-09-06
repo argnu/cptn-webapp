@@ -76,7 +76,7 @@
                         <v-flex xs6>
                           <v-text-field
                             label="Nombre"
-                            v-model="solicitud.empresa.nombre"
+                            v-model="solicitud.entidad.nombre"
                             tabindex="1"
                           >
                           </v-text-field>
@@ -84,12 +84,12 @@
                           <v-select
                             autocomplete
                             :items="select_items.tipoEmpresa"
-                            v-model="solicitud.empresa.tipoEmpresa"
+                            v-model="solicitud.entidad.tipoEmpresa"
                             label="Tipo de Empresa" single-line bottom tabindex="5">
                           </v-select>
 
                           <input-fecha
-                              v-model="solicitud.empresa.fechaConstitucion"
+                              v-model="solicitud.entidad.fechaConstitucion"
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
@@ -98,13 +98,13 @@
                         <v-flex xs6>
                           <v-text-field
                             label="CUIT"
-                            v-model="solicitud.empresa.cuit"
+                            v-model="solicitud.entidad.cuit"
                             tabindex="1"
                           >
                           </v-text-field>
 
                           <input-fecha
-                              v-model="solicitud.empresa.fechaInicio"
+                              v-model="solicitud.entidad.fechaInicio"
                               label="Fecha de Inicio de Actividades"
                           >
                           </input-fecha>
@@ -112,7 +112,7 @@
                           <v-select
                             autocomplete
                             :items="select_items.tipoSociedad"
-                            v-model="solicitud.empresa.tipoSociedad"
+                            v-model="solicitud.entidad.tipoSociedad"
                             label="Tipo de Sociedad" single-line bottom tabindex="5">
                           </v-select>
                         </v-flex>
@@ -139,7 +139,7 @@
                               :items="select_items.paises"
                               label="País"
                               @change="changePais('real')"
-                              v-model="solicitud.empresa.domicilioReal.pais"
+                              v-model="solicitud.entidad.domicilioReal.pais"
                             >
                             </v-select>
                             <v-select
@@ -147,12 +147,12 @@
                               :items="select_items.departamentos.real"
                               label="Departamento"
                               @change="changeDepartamento('real')"
-                              v-model="solicitud.empresa.domicilioReal.departamento"
+                              v-model="solicitud.entidad.domicilioReal.departamento"
                             >
                             </v-select>
                             <v-text-field
                               label="Calle"
-                              v-model="solicitud.empresa.domicilioReal.calle"
+                              v-model="solicitud.entidad.domicilioReal.calle"
                             >
                             </v-text-field>
                           </v-flex>
@@ -162,19 +162,19 @@
                               :items="select_items.provincias.real"
                               label="Provincia"
                               @change="changeProvincia('real')"
-                              v-model="solicitud.empresa.domicilioReal.provincia"
+                              v-model="solicitud.entidad.domicilioReal.provincia"
                             >
                             </v-select>
                             <v-select
                               autocomplete
                               :items="select_items.localidades.real"
                               label="Localidad"
-                              v-model="solicitud.empresa.domicilioReal.localidad"
+                              v-model="solicitud.entidad.domicilioReal.localidad"
                             >
                             </v-select>
                             <v-text-field
                               label="Nro"
-                              v-model="solicitud.empresa.domicilioReal.numero"
+                              v-model="solicitud.entidad.domicilioReal.numero"
                             >
                             </v-text-field>
                           </v-flex>
@@ -188,7 +188,7 @@
                               :items="select_items.paises"
                               label="País"
                               @change="changePais('legal')"
-                              v-model="solicitud.empresa.domicilioLegal.pais"
+                              v-model="solicitud.entidad.domicilioLegal.pais"
                             >
                             </v-select>
                             <v-select
@@ -196,12 +196,12 @@
                               :items="select_items.departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
-                              v-model="solicitud.empresa.domicilioLegal.departamento"
+                              v-model="solicitud.entidad.domicilioLegal.departamento"
                             >
                             </v-select>
                             <v-text-field
                               label="Calle"
-                              v-model="solicitud.empresa.domicilioLegal.calle"
+                              v-model="solicitud.entidad.domicilioLegal.calle"
                             >
                             </v-text-field>
                           </v-flex>
@@ -211,19 +211,19 @@
                               :items="select_items.provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
-                              v-model="solicitud.empresa.domicilioLegal.provincia"
+                              v-model="solicitud.entidad.domicilioLegal.provincia"
                             >
                             </v-select>
                             <v-select
                               autocomplete
                               :items="select_items.localidades.legal"
                               label="Localidad"
-                              v-model="solicitud.empresa.domicilioLegal.localidad"
+                              v-model="solicitud.entidad.domicilioLegal.localidad"
                             >
                             </v-select>
                             <v-text-field
                               label="Nro"
-                              v-model="solicitud.empresa.domicilioLegal.numero"
+                              v-model="solicitud.entidad.domicilioLegal.numero"
                             >
                             </v-text-field>
                           </v-flex>
@@ -257,7 +257,7 @@
                           </v-flex>
                           <v-flex xs6>
                             <v-text-field
-                              label="Dato"
+                              label="Valor"
                               v-model="nuevo_contacto.valor"
                             >
                             </v-text-field>
@@ -267,7 +267,7 @@
 
                         <v-data-table
                             :headers="headers.contacto"
-                            :items="solicitud.empresa.contactos"
+                            :items="solicitud.entidad.contactos"
                             hide-actions
                             class="elevation-1"
                             no-data-text="No hay contactos">
@@ -278,7 +278,7 @@
                             <th></th>
                           </template>
                           <template slot="items" scope="props">
-                            <td>{{ props.item.tipo | upperFirst }}</td>
+                            <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
                               <v-btn icon @click="removeContacto('contactos', props.index)">
@@ -308,7 +308,11 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                  <!-- <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn> -->
+                  <v-btn class="primary white--text right" @click.native="submit">
+                    Guardar Solicitud
+                    <v-icon dark right>check_circle</v-icon>
+                  </v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -331,7 +335,7 @@
           <v-container>
             <v-card>
               <v-card-text id="info-empresa">
-                <div><b>Nombre: </b> {{ solicitud.empresa.nombre }} </div>
+                <div><b>Nombre: </b> {{ solicitud.entidad.nombre }} </div>
                 <!-- <div><b>Apellido: </b> {{ solicitud.profesional.apellido }} </div>
                 <div><b>DNI: </b> {{ solicitud.profesional.dni }} </div>
                 <div><b>CUIT: </b> {{ solicitud.profesional.cuit }} </div>
@@ -358,31 +362,8 @@ import * as axios from 'axios';
 import * as utils from '@/utils';
 import { Solicitud, Contacto, Empresa } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
-import ValidatorMixin from '@/components/ValidatorMixin';
-import FiltersMixin from '@/components/FiltersMixin';
-
-function getItemsSelect(data, textKey, valueKey) {
-  return data.map(e => {
-    return {
-      text: utils.upperFirst(e[textKey]),
-      value: e[valueKey]
-    }
-  });
-}
-
-function validRules(value, rules) {
-  for (let rule of rules) {
-    if (! (rule(value) === true)) return false;
-  }
-  return true;
-};
-
-function validObject(original, rules) {
-  for(let att in rules) {
-    if (!validRules(original[att], rules[att])) return false;
-  }
-  return true;
-}
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import FiltersMixin from '@/components/mixins/FiltersMixin';
 
 export default {
   name: 'nueva-solicitud-empresa',
@@ -447,62 +428,68 @@ export default {
   created: function() {
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones')
+      axios.get('http://localhost:3400/api/opciones?sort=valor')
     ])
     .then(r => {
-      this.select_items.paises = getItemsSelect(r[0].data, 'nombre', 'id')
-      this.select_items.tipoContacto = getItemsSelect(r[1].data.contacto, 'valor', 'valor');
+      this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
+      this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.tipoempresa, 'valor', 'id');
+      this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
     })
     .catch(e => console.error(e));
   },
 
   methods: {
+    getTipoContacto: function(id) {
+      return this.select_items.tipoContacto.find(o => o.value == id).text;
+    },
+
     changePais: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let pais = this.solicitud.empresa[domicilio].pais;
-      axios.get(`http://localhost:3400/api/provincias?pais=${pais}`)
-           .then(r => this.select_items.provincias[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let pais = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/provincias?pais_id=${pais}`)
+           .then(r => this.select_items.provincias[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
     changeProvincia: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.empresa[domicilio].pais;
-      axios.get(`http://localhost:3400/api/departamentos?provincia=${provincia}`)
-           .then(r => this.select_items.departamentos[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let provincia = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/departamentos?provincia_id=${provincia}`)
+           .then(r => this.select_items.departamentos[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
     changeDepartamento: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.empresa[domicilio].pais;
-      axios.get(`http://localhost:3400/api/localidades?departamento=${departamento}`)
-           .then(r => this.select_items.localidades[tipoDomicilio] = getItemsSelect(r.data, 'nombre', 'id'))
+      let departamento = this.solicitud.entidad[domicilio].pais;
+      axios.get(`http://localhost:3400/api/localidades?departamento_id=${departamento}`)
+           .then(r => this.select_items.localidades[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
            .catch(e => console.error(e));
     },
 
     addContacto: function() {
-       this.solicitud.empresa.contactos.push(this.nuevo_contacto);
+       this.solicitud.entidad.contactos.push(this.nuevo_contacto);
        this.nuevo_contacto = new Contacto();
     },
 
     removeElem: function(tipo, index) {
-      this.solicitud.empresa[tipo].splice(index, 1);
+      this.solicitud.entidad[tipo].splice(index, 1);
     },
 
     submit: function() {
       console.log(JSON.stringify(this.solicitud));
-      // axios.post('http://localhost:3400/api/solicitudes', this.solicitud)
-      //      .then(r => {
-      //        if (r.status != 201) {
-      //          this.submitError();
-      //        }
-      //        this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-      //        this.snackbar.context = 'success';
-      //        this.snackbar.show = true;
-      //        this.solicitud = new Solicitud();
-      //      })
-      //      .catch(e => this.submitError());
+      axios.post('http://localhost:3400/api/solicitudes', this.solicitud)
+           .then(r => {
+             if (r.status != 201) {
+               this.submitError();
+             }
+             this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+             this.snackbar.context = 'success';
+             this.snackbar.show = true;
+             this.solicitud = new Solicitud('empresa');
+           })
+           .catch(e => this.submitError());
     },
 
     submitError: function() {
