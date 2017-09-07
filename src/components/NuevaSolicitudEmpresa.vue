@@ -304,7 +304,42 @@
                     <v-card-text>
                       <v-container>
                         <v-layout row>
+                            <v-select
+                              autocomplete
+                              :items="select_items.tipoIncumbencia"
+                              label="Incumbencias"
+                              single-line
+                              bottom
+                              v-model="nueva_incumbencia"
+                            >
+                          </v-select>
+                          <v-btn light @click="addIncumbencia">Agregar</v-btn>
                         </v-layout>
+
+
+                          <v-data-table
+                              :headers="headers.incumbencias"
+                              :items="solicitud.entidad.incumbencias"
+                              hide-actions
+                              class="elevation-1"
+                              no-data-text="No hay incumbencias">
+                            <template slot="headers" scope="props">
+                              <th v-for="header of props.headers" style="padding: 20px">
+                                {{ header.text }}
+                              </th>
+                              <th></th>
+                            </template>
+                            <template slot="items" scope="props">
+                              <td>{{ getTipoIncumbencia(props.item) }}</td>
+                              <td style="width:30px">
+                                <v-btn icon @click="removeElem('incumbencias', props.index)">
+                                  <v-icon>delete</v-icon>
+                                </v-btn>
+                              </td>
+                            </template>
+                          </v-data-table>
+
+
                       </v-container>
                     </v-card-text>
                   </v-card>
@@ -336,15 +371,11 @@
             <v-card>
               <v-card-text id="info-empresa">
                 <div><b>Nombre: </b> {{ solicitud.entidad.nombre }} </div>
-                <!-- <div><b>Apellido: </b> {{ solicitud.profesional.apellido }} </div>
-                <div><b>DNI: </b> {{ solicitud.profesional.dni }} </div>
-                <div><b>CUIT: </b> {{ solicitud.profesional.cuit }} </div>
-                <div><b>Sexo: </b> {{ solicitud.profesional.sexo | upperFirst }} </div>
-                <div><b>Estado Civil: </b> {{ solicitud.profesional.estadoCivil | upperFirst }} </div>
-                <div><b>Fecha de Nacimiento: </b> {{ solicitud.profesional.fechaNacimiento }} </div>
-                <div><b>Lugar de Nacimiento: </b> {{ solicitud.profesional.lugarNacimiento }} </div>
-                <div><b>Nacionalidad: </b> {{ solicitud.profesional.nacionalidad }} </div>
-                <div><b>Observaciones: </b> {{solicitud.profesional.observaciones }} </div> -->
+                <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
+                <div><b>Fecha de Inicio de Actividades: </b> {{ solicitud.entidad.fechaInicio }} </div>
+                <div><b>Fecha de Constitución: </b> {{ solicitud.entidad.fechaConstitucion }} </div>
+                <div><b>Tipo de Empresa: </b> {{ getTipoEmpresa(solicitud.entidad.tipoEmpresa) }} </div>
+                <div><b>Tipo de Sociedad: </b> {{ getTipoSociedad(solicitud.entidad.tipoSociedad) }} </div>
               </v-card-text>
             </v-card>
           </v-container>
@@ -397,6 +428,7 @@ export default {
         tipoContacto: [],
         tipoEmpresa: [],
         tipoSociedad: [],
+        tipoIncumbencia: [],
         paises: [],
         provincias: {
           real: [],
@@ -415,11 +447,15 @@ export default {
       solicitud: new Solicitud('empresa'),
 
       nuevo_contacto: new Contacto(),
+      nueva_incumbencia: '',
 
       headers: {
         contactos: [
           { text: 'Tipo', value: 'tipo' },
           { text: 'Valor', value: 'valor' },
+        ],
+        incumbencias: [
+          { text: 'Nombre', value: 'valor' },
         ]
       }
     }
@@ -433,8 +469,9 @@ export default {
     .then(r => {
       this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
       this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
-      this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.tipoempresa, 'valor', 'id');
+      this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.empresa, 'valor', 'id');
       this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
+      this.select_items.tipoIncumbencia = utils.getItemsSelect(r[1].data.incumbencia, 'valor', 'id');
     })
     .catch(e => console.error(e));
   },
@@ -442,6 +479,21 @@ export default {
   methods: {
     getTipoContacto: function(id) {
       return this.select_items.tipoContacto.find(o => o.value == id).text;
+    },
+
+    getTipoEmpresa: function(id) {
+      let empresa = this.select_items.tipoEmpresa.find(o => o.value == id);
+      return empresa ? empresa.text : '';
+    },
+
+    getTipoSociedad: function(id) {
+      let sociedad = this.select_items.tipoSociedad.find(o => o.value == id);
+      return sociedad ? sociedad.text : '';
+    },
+
+    getTipoIncumbencia: function(id) {
+      let incumbencia = this.select_items.tipoIncumbencia.find(o => o.value == id);
+      return incumbencia ? incumbencia.text : '';
     },
 
     changePais: function(tipoDomicilio) {
@@ -471,6 +523,11 @@ export default {
     addContacto: function() {
        this.solicitud.entidad.contactos.push(this.nuevo_contacto);
        this.nuevo_contacto = new Contacto();
+    },
+
+    addIncumbencia: function() {
+       this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
+       this.nueva_incumbencia = '';
     },
 
     removeElem: function(tipo, index) {

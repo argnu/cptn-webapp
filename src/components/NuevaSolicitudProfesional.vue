@@ -702,8 +702,8 @@
                 <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
                 <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
                 <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
-                <div><b>Sexo: </b> {{ solicitud.entidad.sexo | upperFirst }} </div>
-                <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil | upperFirst }} </div>
+                <div><b>Sexo: </b> {{ solicitud.entidad.sexo }} </div>
+                <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil }} </div>
                 <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
                 <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
                 <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
@@ -864,7 +864,7 @@ export default {
   created: function() {
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones')
+      axios.get('http://localhost:3400/api/opciones?sort=valor')
     ])
     .then(r => {
       this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')

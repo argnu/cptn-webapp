@@ -15,7 +15,7 @@ export default new Router({
       component: NuevaSolicitudProfesional
     },
     {
-      path: '/lista',
+      path: '/solicitudes/lista',
       name: 'ListaSolicitud',
       component: ListaSolicitud
     },

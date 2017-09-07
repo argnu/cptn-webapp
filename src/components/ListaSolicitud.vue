@@ -8,6 +8,23 @@
             <v-spacer></v-spacer>
           </v-toolbar>
 
+          <v-container>
+            <v-card>
+              <v-card-title>
+                Tipo de Entidad
+              </v-card-title>
+              <v-card-text class="grey lighten-4">
+                <v-select
+                  :items="select_items.tipo"
+                  label="Tipo de Entidad"
+                  single-line bottom
+                  v-model="tipoEntidad"
+                >
+                </v-select>
+              </v-card-text>
+            </v-card>
+          </v-container>
+
 
           <v-container>
             <v-expansion-panel expand>
@@ -25,12 +42,14 @@
                     </v-flex>
                     <v-flex xs4>
                       <v-text-field
+                         v-show="filtros.tipo == 'profesional'"
                          v-model="filtros.dni"
                          label="DNI">
                       </v-text-field>
                     </v-flex>
                     <v-flex xs4>
                       <v-text-field
+                         v-show="filtros.tipo == 'profesional'"
                          v-model="filtros.apellido"
                          label="Apellido">
                       </v-text-field>
@@ -49,16 +68,22 @@
                 class="elevation-1"
                 no-data-text="No hay solicitudes">
               <template slot="headers" scope="props">
+                <th style="text-align:left">Validar</th>
                 <th v-for="header of props.headers" style="padding: 20px;text-align:left">
-                  <b>{{ header }}</b>
+                  <b>{{ header.text }}</b>
                 </th>
               </template>
               <template slot="items" scope="props">
+                <td>
+                  <v-btn icon class="green--text">
+                    <v-icon dark>check_circle</v-icon>
+                  </v-btn>
+                </td>
                 <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
-                <td>{{ props.item.profesional.dni }}</td>
-                <td>{{ props.item.profesional.nombre }}</td>
-                <td>{{ props.item.profesional.apellido }}</td>
+                <td v-if="filtros.tipo == 'profesional'">{{ props.item.entidad.dni }}</td>
+                <td >{{ props.item.entidad.nombre }}</td>
+                <td v-if="filtros.tipo == 'profesional'">{{ props.item.entidad.apellido }}</td>
               </template>
             </v-data-table>
           </v-container>
@@ -91,21 +116,47 @@ export default {
             text: 'Rechazada',
             value: 'rechazada'
           }
+        ],
+        tipo: [
+          {
+            text: 'Profesionales',
+            value: 'profesional'
+          },
+          {
+            text: 'Empresas',
+            value: 'empresa'
+          }
         ]
       },
+
       expand: {
         filtros: true
       },
+
       columnas: [
-        'Fecha', 'Estado', 'DNI', 'Nombre',
-        'Apellido'
+        {
+          text: 'Fecha',
+          value: 'fecha'
+        },
+        {
+          text: 'Estado',
+          value: 'estado'
+        },
+        {
+          text: 'Nombre',
+          value: 'nombre'
+        }
       ],
+
       solicitudes: [],
+
       filtros: {
         estado: 'pendiente',
         dni: '',
-        apellido: ''
-      }
+        apellido: '',
+      },
+
+      tipoEntidad: '',
     }
   },
 
@@ -119,14 +170,6 @@ export default {
     }
   },
 
-  created: function() {
-      axios.get('http://localhost:3400/api/solicitudes')
-           .then(r => {
-             this.solicitudes = r.data
-           })
-           .catch(e => console.error(e));
-  },
-
   computed: {
     solicitudes_filter: function() {
       if (!this.filtros.estado.length && !this.filtros.dni.length
@@ -134,8 +177,10 @@ export default {
         return this.solicitudes;
       else {
         return this.solicitudes.filter(s => {
-          if (!s.profesional.apellido.toLowerCase().includes(this.filtros.apellido)) return false;
-          if (!s.profesional.dni.includes(this.filtros.dni)) return false;
+          if (this.tipoEntidad == 'profesional'
+            &&  !s.entidad.apellido.toLowerCase().includes(this.filtros.apellido)) return false;
+          if (this.tipoEntidad == 'profesional'
+            &&  !s.entidad.dni.includes(this.filtros.dni)) return false;
           if (s.estado != this.filtros.estado) return false;
           return true;
         })
@@ -143,10 +188,17 @@ export default {
     }
   },
 
-  methods: {
-    mostralo: function(x) {
-      alert(x);
+  watch: {
+    tipoEntidad: function(tipo) {
+      this.solicitudes = [];
+      axios.get(`http://localhost:3400/api/solicitudes?tipoEntidad=${tipo}`)
+           .then(r => this.solicitudes = r.data)
+           .catch(e => console.error(e));
     }
+  },
+
+  methods: {
+
   },
 
   components: {
