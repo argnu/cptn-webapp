@@ -410,26 +410,26 @@
                              <v-radio
                                 label="Relación de Dependencia"
                                 v-model="solicitud.entidad.relacionLaboral"
-                                value="dependencia"
+                                value="1"
                               >
                              </v-radio>
                              <v-radio
                                 label="Autónomo"
                                 v-model="solicitud.entidad.relacionLaboral"
-                                value="autonomo"
+                                value="2"
                               >
                              </v-radio>
                            </v-flex>
                            <v-flex xs6 class="ml-5">
                              <v-text-field
                                 label="Empresa"
-                                v-show="solicitud.entidad.relacionLaboral == 'dependencia'"
+                                v-show="solicitud.entidad.relacionLaboral == 1"
                                 v-model="solicitud.entidad.empresa"
                               >
                              </v-text-field>
                              <v-text-field
                                 label="Servicios Prestados"
-                                v-show="solicitud.entidad.relacionLaboral == 'autonomo'"
+                                v-show="solicitud.entidad.relacionLaboral == 2"
                                 v-model="solicitud.entidad.serviciosPrestados"
                               >
                              </v-text-field>

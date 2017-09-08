@@ -54,7 +54,7 @@ export class Profesional {
     this.domicilioLegal = new Domicilio();
     this.contactos = [];
     this.formaciones = [];
-    this.relacionLaboral = 'dependencia';
+    this.relacionLaboral = 1;
     this.empresa = '';
     this.serviciosPrestados = '';
     this.cajaPrevisional = '';

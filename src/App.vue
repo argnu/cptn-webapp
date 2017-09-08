@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       drawer: {
-        show: false,
+        show: true,
         items: [
           { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
           { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
