@@ -1,16 +1,5 @@
 <template>
-
-  <v-app>
-    <v-container>
-    <v-toolbar dark class="primary">
-      <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>search</v-icon>
-      </v-btn>
-    </v-toolbar>
-
+  <v-container>
       <v-snackbar
         :timeout="6000"
         :bottom="true"
@@ -93,6 +82,13 @@
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
+
+                          <v-select
+                            autocomplete
+                            :items="select_items.condafip"
+                            v-model="solicitud.entidad.condafip"
+                            label="Condición AFIP" single-line bottom tabindex="5">
+                          </v-select>
                         </v-flex>
 
                         <v-flex xs6>
@@ -382,10 +378,6 @@
         </div>
       </v-layout>
     </v-container>
-        <v-footer class="indigo">
-      <span class="white--text"></span>
-</v-footer>
-  </v-app>
 </template>
 
 <script>
@@ -472,6 +464,7 @@ export default {
       this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.empresa, 'valor', 'id');
       this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
       this.select_items.tipoIncumbencia = utils.getItemsSelect(r[1].data.incumbencia, 'valor', 'id');
+      this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
     })
     .catch(e => console.error(e));
   },

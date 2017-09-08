@@ -1,6 +1,5 @@
 <template>
-  <v-app>
-    <v-container>
+  <v-container>
       <v-layout row wrap>
         <v-flex xs12>
           <v-toolbar class="indigo" dark>
@@ -42,16 +41,35 @@
                     </v-flex>
                     <v-flex xs4>
                       <v-text-field
-                         v-show="filtros.tipo == 'profesional'"
-                         v-model="filtros.dni"
-                         label="DNI">
+                         v-show="tipoEntidad == 'profesional'"
+                         v-model="filtros.profesional.dni"
+                         label="DNI"
+                         @input="updateList"
+                      >
+                      </v-text-field>
+                      <v-text-field
+                         v-show="tipoEntidad == 'empresa'"
+                         v-model="filtros.empresa.cuit"
+                         label="CUIT"
+                         @input="updateList"
+                      >
                       </v-text-field>
                     </v-flex>
+
                     <v-flex xs4>
                       <v-text-field
-                         v-show="filtros.tipo == 'profesional'"
-                         v-model="filtros.apellido"
-                         label="Apellido">
+                         v-show="tipoEntidad == 'profesional'"
+                         v-model="filtros.profesional.apellido"
+                         label="Apellido"
+                         @input="updateList"
+                      >
+                      </v-text-field>
+                      <v-text-field
+                         v-show="tipoEntidad == 'empresa'"
+                         v-model="filtros.empresa.nombre"
+                         label="Nombre"
+                         @input="updateList"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
@@ -62,11 +80,15 @@
 
           <v-container>
             <v-data-table
-                :headers="columnas"
+                :headers="columnas[tipoEntidad]"
                 :items="solicitudes_filter"
-                hide-actions
                 class="elevation-1"
-                no-data-text="No hay solicitudes">
+                no-data-text="No se encontraron solicitudes"
+                no-results-text="No se encontraron solicitudes"
+                v-bind:pagination.sync="pagination"
+                :total-items="totalItems"
+                :loading="loading"
+                >
               <template slot="headers" scope="props">
                 <th style="text-align:left">Validar</th>
                 <th v-for="header of props.headers" style="padding: 20px;text-align:left">
@@ -81,27 +103,52 @@
                 </td>
                 <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
-                <td v-if="filtros.tipo == 'profesional'">{{ props.item.entidad.dni }}</td>
-                <td >{{ props.item.entidad.nombre }}</td>
-                <td v-if="filtros.tipo == 'profesional'">{{ props.item.entidad.apellido }}</td>
+                <template v-if="tipoEntidad == 'profesional'">
+                  <td>{{ props.item.entidad.nombre }}</td>
+                  <td>{{ props.item.entidad.apellido }}</td>
+                  <td>{{ props.item.entidad.dni }}</td>
+                </template>
+                <template v-if="tipoEntidad == 'empresa'">
+                  <td>{{ props.item.entidad.nombre }}</td>
+                  <td>{{ props.item.entidad.cuit }}</td>
+                </template>
               </template>
             </v-data-table>
           </v-container>
         </v-flex>
       </v-layout>
-    </v-container>
-  </v-app>
+
+      <!-- <div class="text-xs-center">
+        <v-pagination
+          :length="pagination.total"
+          v-model="pagination.page"
+          :total-visible="pagination.max">
+        </v-pagination>
+      </div> -->
+  </v-container>
 </template>
 
 <script>
 import * as axios from 'axios';
 import * as utils from '@/utils';
+import * as _ from 'lodash';
 
 export default {
   name: 'lista-solicitud',
   data () {
     return {
-      labelFecha: 'hola',
+      // pagination: {
+      //   total: 1,
+      //   page: 1,
+      //   max: 7,
+      //   per_page: 1
+      // },
+      totalItems: 0,
+      loading: false,
+      pagination: {
+         rowsPerPage: 1,
+      },
+
       select_items: {
         estado: [
           {
@@ -133,31 +180,70 @@ export default {
         filtros: true
       },
 
-      columnas: [
-        {
-          text: 'Fecha',
-          value: 'fecha'
-        },
-        {
-          text: 'Estado',
-          value: 'estado'
-        },
-        {
-          text: 'Nombre',
-          value: 'nombre'
-        }
-      ],
+      columnas: {
+        empresa: [
+            {
+              text: 'Fecha',
+              value: 'fecha'
+            },
+            {
+              text: 'Estado',
+              value: 'estado'
+            },
+            {
+              text: 'Nombre',
+              value: 'nombre'
+            },
+            {
+              text: 'CUIT',
+              value: 'cuit'
+            }
+        ],
+        profesional: [
+            {
+              text: 'Fecha',
+              value: 'fecha'
+            },
+            {
+              text: 'Estado',
+              value: 'estado'
+            },
+            {
+              text: 'Nombre',
+              value: 'nombre'
+            },
+            {
+              text: 'Apellido',
+              value: 'apellido'
+            },
+            {
+              text: 'DNI',
+              value: 'dni'
+            }
+        ]
+      },
 
       solicitudes: [],
 
       filtros: {
         estado: 'pendiente',
-        dni: '',
-        apellido: '',
+        profesional: {
+          dni: '',
+          apellido: ''
+        },
+        empresa: {
+          nombre: ''
+        }
       },
 
       tipoEntidad: '',
+
+      debouncedUpdate: null,
     }
+  },
+
+  created: function() {
+    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 600, { 'maxWait': 1000 });
   },
 
   filters: {
@@ -172,33 +258,49 @@ export default {
 
   computed: {
     solicitudes_filter: function() {
-      if (!this.filtros.estado.length && !this.filtros.dni.length
-        && !this.filtros.apellido.length)
-        return this.solicitudes;
-      else {
-        return this.solicitudes.filter(s => {
-          if (this.tipoEntidad == 'profesional'
-            &&  !s.entidad.apellido.toLowerCase().includes(this.filtros.apellido)) return false;
-          if (this.tipoEntidad == 'profesional'
-            &&  !s.entidad.dni.includes(this.filtros.dni)) return false;
-          if (s.estado != this.filtros.estado) return false;
-          return true;
-        })
-      }
+      let ini = (this.pagination.page - 1) * this.pagination. rowsPerPage;
+      return this.solicitudes.slice(ini, ini + this.pagination. rowsPerPage);
     }
   },
 
   watch: {
-    tipoEntidad: function(tipo) {
-      this.solicitudes = [];
-      axios.get(`http://localhost:3400/api/solicitudes?tipoEntidad=${tipo}`)
-           .then(r => this.solicitudes = r.data)
-           .catch(e => console.error(e));
+    tipoEntidad: function() {
+      this.updateSolicitudes()
+    },
+
+    pagination: {
+      handler () {
+        // this.updateSolicitudes();
+      },
+      deep: true
     }
   },
 
   methods: {
+    updateList: function() {
+      this.debouncedUpdate();
+    },
 
+    updateSolicitudes: function() {
+      this.loading = true;
+      this.solicitudes = [];
+      let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.tipoEntidad}`;
+      if (this.filtros.estado) url+=`&estado=${this.filtros.estado}`;
+      if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
+      if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
+      if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
+      if (this.filtros.empresa.nombre) url+=`&nombreEmpresa=${this.filtros.empresa.nombre}`;
+
+      axios.get(url)
+           .then(r => {
+             this.solicitudes = r.data;
+             this.totalItems = this.solicitudes.length;
+            //  this.pagination.total = this.totalItems / this.pagination.per_page;
+            //  this.page = 1;
+             this.loading = false;
+           })
+           .catch(e => console.error(e));
+    }
   },
 
   components: {

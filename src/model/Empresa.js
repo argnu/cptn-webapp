@@ -4,6 +4,7 @@ export class Empresa {
   constructor() {
     this.nombre = '';
     this.cuit = '';
+    this.condafip = '';
     this.fechaInicio = '';
     this.fechaConstitucion = '';
     this.tipoEmpresa = '';

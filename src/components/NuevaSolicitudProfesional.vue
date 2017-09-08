@@ -1,16 +1,5 @@
 <template>
-
-  <v-app>
-    <v-container>
-    <v-toolbar dark class="primary">
-      <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>search</v-icon>
-      </v-btn>
-    </v-toolbar>
-
+  <v-container>
       <v-snackbar
         :timeout="6000"
         :bottom="true"
@@ -107,7 +96,7 @@
                           <v-select
                             autocomplete
                             :items="select_items.condafip"
-                            v-model="solicitud.profesional.condafip"
+                            v-model="solicitud.entidad.condafip"
                             label="Condición AFIP" single-line bottom tabindex="5">
                           </v-select>
                         </v-flex>
@@ -720,11 +709,7 @@
           </v-container>
         </div>
       </v-layout>
-    </v-container>
-        <v-footer class="indigo">
-      <span class="white--text"></span>
-</v-footer>
-  </v-app>
+  </v-container>
 </template>
 
 <script>
@@ -830,7 +815,7 @@ export default {
         }
       },
 
-      solicitud: new Solicitud(),
+      solicitud: new Solicitud('profesional'),
 
       nuevo_contacto: new Contacto(),
       nueva_formacion: new Formacion(),
@@ -875,12 +860,12 @@ export default {
       axios.get('http://localhost:3400/api/opciones?sort=valor')
     ])
     .then(r => {
-      this.select_items.paises = getItemsSelect(r[0].data, 'nombre', 'id')
-      this.select_items.sexo = getItemsSelect(r[1].data.sexo, 'valor', 'valor')
-      this.select_items.estadoCivil = getItemsSelect(r[1].data.estadocivil, 'valor', 'valor');
-      this.select_items.condafip = getItemsSelect(r[1].data.condafip, 'valor', 'valor');
-      this.select_items.tipoContacto = getItemsSelect(r[1].data.contacto, 'valor', 'valor');
-      this.select_items.tipoFormacion = getItemsSelect(r[1].data.formacion, 'valor', 'valor');
+      this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.sexo = utils.getItemsSelect(r[1].data.sexo, 'valor', 'id')
+      this.select_items.estadoCivil = utils.getItemsSelect(r[1].data.estadocivil, 'valor', 'id');
+      this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
+      this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
+      this.select_items.tipoFormacion = utils.getItemsSelect(r[1].data.formacion, 'valor', 'id');
     })
     .catch(e => console.error(e));
   },
@@ -962,7 +947,7 @@ export default {
              this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
              this.snackbar.context = 'success';
              this.snackbar.show = true;
-             this.solicitud = new Solicitud();
+             this.solicitud = new Solicitud('profesional');
            })
            .catch(e => this.submitError());
     },
