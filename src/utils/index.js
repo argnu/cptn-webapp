@@ -15,3 +15,26 @@ export function upperFirst(str) {
 export function changeGenero(srt) {
   return str.substring(0, str.length - 1) + 'a';
 }
+
+export function getItemsSelect(data, textKey, valueKey) {
+  return data.map(e => {
+    return {
+      text: e[textKey],
+      value: e[valueKey]
+    }
+  });
+}
+
+export function validRules(value, rules) {
+  for (let rule of rules) {
+    if (! (rule(value) === true)) return false;
+  }
+  return true;
+}
+
+export function validObject(original, rules) {
+  for(let att in rules) {
+    if (!validRules(original[att], rules[att])) return false;
+  }
+  return true;
+}
