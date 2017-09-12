@@ -7,3 +7,4 @@ export {
 export { Domicilio } from '@/model/Domicilio';
 export { Empresa } from '@/model/Empresa';
 export { Solicitud } from '@/model/Solicitud';
+export { Matricula } from '@/model/Matricula';

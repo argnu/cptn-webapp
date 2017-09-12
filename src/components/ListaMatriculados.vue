@@ -1,47 +1,9 @@
 <template>
   <v-container>
-
-      <v-dialog v-model="show_validar" persistent width="50%">
-        <v-card>
-          <v-card-title>
-            <span class="headline">Aprobar Matrícula</span>
-          </v-card-title>
-          <v-card-text class="grey lighten-4">
-            <v-container>
-              <v-layout row>
-                <v-flex xs6>
-                  <input-fecha
-                    v-model="matricula.fechaActa"
-                    label="Fecha de Resolución"
-                  >
-                  </input-fecha>
-                </v-flex>
-                <v-flex xs6>
-                  <v-text-field
-                     v-model="matricula.numeroActa"
-                     label="N° Acta"
-                  >
-                  </v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-layout row>
-                <v-flex xs12>
-                  <v-btn class="right green white--text" @click.native="validarMatricula">
-                    Aprobar
-                    <v-icon dark right>check_circle</v-icon>
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
-
       <v-layout row wrap>
         <v-flex xs12>
           <v-toolbar class="indigo" dark>
-            <v-toolbar-title class="white--text">Listado de Solicitudes</v-toolbar-title>
+            <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
 
@@ -69,15 +31,7 @@
                 <div slot="header">Filtros de Búsqueda</div>
                 <v-container>
                   <v-layout row>
-                    <v-flex xs4>
-                      <v-select
-                        :items="select_items.estado"
-                        label="Estado de Solicitud"
-                        single-line bottom
-                        v-model="filtros.estado">
-                      </v-select>
-                    </v-flex>
-                    <v-flex xs4>
+                    <v-flex xs4 class="ml-5">
                       <v-text-field
                          v-show="tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.dni"
@@ -94,7 +48,7 @@
                       </v-text-field>
                     </v-flex>
 
-                    <v-flex xs4>
+                    <v-flex xs4 class="ml-5">
                       <v-text-field
                          v-show="tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.apellido"
@@ -121,8 +75,8 @@
                 :headers="columnas[tipoEntidad]"
                 :items="solicitudes_filter"
                 class="elevation-1"
-                no-data-text="No se encontraron solicitudes"
-                no-results-text="No se encontraron solicitudes"
+                no-data-text="No se encontraron matriculados"
+                no-results-text="No se encontraron matriculados"
                 v-bind:pagination.sync="pagination"
                 :total-items="totalItems"
                 :loading="loading"
@@ -131,14 +85,9 @@
                 <th v-for="header of props.headers" style="padding: 20px;text-align:left">
                   <b>{{ header.text }}</b>
                 </th>
+                <th></th>
               </template>
               <template slot="items" scope="props">
-                <td>
-                  <v-btn icon class="green--text" @click="selectSolicitud(props.item.id)">
-                    <v-icon dark>check_circle</v-icon>
-                  </v-btn>
-                </td>
-                <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
                 <template v-if="tipoEntidad == 'profesional'">
                   <td>{{ props.item.entidad.nombre }}</td>
@@ -149,6 +98,16 @@
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.cuit }}</td>
                 </template>
+                <td>
+                  <v-select
+                    v-bind:items="['asdf', 'asdf']"
+                    v-model="e2"
+                    single-line
+                    auto
+                    append-icon="map"
+                    hide-details
+                  ></v-select>
+                </td>
               </template>
             </v-data-table>
           </v-container>
@@ -168,8 +127,6 @@ export default {
   name: 'lista-solicitud',
   data () {
     return {
-      matricula: new Matricula(),
-      show_validar: false,
       totalItems: 0,
       loading: false,
       pagination: {
@@ -177,20 +134,6 @@ export default {
       },
 
       select_items: {
-        estado: [
-          {
-            text: 'Pendiente',
-            value: 'pendiente'
-          },
-          {
-            text: 'Aprobada',
-            value: 'aprobada'
-          },
-          {
-            text: 'Rechazada',
-            value: 'rechazada'
-          }
-        ],
         tipo: [
           {
             text: 'Profesionales',
@@ -207,12 +150,18 @@ export default {
         filtros: true
       },
 
+      filtros: {
+        profesional: {
+          dni: '',
+          apellido: ''
+        },
+        empresa: {
+          nombre: ''
+        }
+      },
+
       columnas: {
         empresa: [
-            {
-              text: 'Validar',
-              value: 'validar'
-            },
             {
               text: 'Fecha',
               value: 'fecha'
@@ -228,13 +177,13 @@ export default {
             {
               text: 'CUIT',
               value: 'cuit'
+            },
+            {
+              text: 'Acciones',
+              value: 'acciones'
             }
         ],
         profesional: [
-            {
-              text: 'Validar',
-              value: 'validar'
-            },
             {
               text: 'Fecha',
               value: 'fecha'
@@ -258,26 +207,14 @@ export default {
         ]
       },
 
-      solicitudes: [],
-
-      filtros: {
-        estado: 'pendiente',
-        profesional: {
-          dni: '',
-          apellido: ''
-        },
-        empresa: {
-          nombre: ''
-        }
-      },
-
+      matriculas: [],
       tipoEntidad: '',
       debouncedUpdate: null
     }
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 600, { 'maxWait': 1000 });
+    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
   },
 
   filters: {
@@ -291,15 +228,15 @@ export default {
   },
 
   computed: {
-    solicitudes_filter: function() {
+    matriculas_filter: function() {
       let ini = (this.pagination.page - 1) * this.pagination. rowsPerPage;
-      return this.solicitudes.slice(ini, ini + this.pagination. rowsPerPage);
+      return this.matriculas.slice(ini, ini + this.pagination. rowsPerPage);
     }
   },
 
   watch: {
     tipoEntidad: function() {
-      this.updateSolicitudes()
+      this.updateMatriculas()
     },
 
     pagination: {
@@ -315,11 +252,10 @@ export default {
       this.debouncedUpdate();
     },
 
-    updateSolicitudes: function() {
+    updateMatriculas: function() {
       this.loading = true;
-      this.solicitudes = [];
-      let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.tipoEntidad}`;
-      if (this.filtros.estado) url+=`&estado=${this.filtros.estado}`;
+      this.matriculas = [];
+      let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.tipoEntidad}`;
       if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
       if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
       if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
