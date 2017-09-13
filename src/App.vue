@@ -63,7 +63,7 @@ export default {
   data() {
     return {
       drawer: {
-        show: true,
+        show: false,
         items: [
           { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
           { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },

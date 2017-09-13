@@ -4,7 +4,7 @@
     <v-layout row>
       <v-flex xs12>
         <!-- DATOS GENERALES -->
-        <v-card class="grey lighten-4">
+        <v-card>
           <v-card-title>
             <span class="title">Datos Generales</span>
           </v-card-title>
@@ -39,37 +39,37 @@
                   <v-container fluid>
                     <span class="title">Datos del Comitente</span>
                     <v-layout class="mt-5">
-                      <v-flex xs2>
+                      <v-flex xs6>
                         <v-radio label="Persona" value="persona" v-model="permiso.tipoComitente"></v-radio>
+                      </v-flex>
+                      <v-flex xs6>
                         <v-radio label="Empresa" value="empresa" v-model="permiso.tipoComitente"></v-radio>
                       </v-flex>
-                      <v-flex xs10>
-                        <v-layout v-show="permiso.tipoComitente == 'persona'">
-                          <v-flex xs6 class="mr-5">
-                            <v-text-field label="Nombre">
-                            </v-text-field>
-                            <v-text-field label="Apellido">
-                            </v-text-field>
-                          </v-flex>
-                          <v-flex xs6 class="mr-5">
-                            <v-text-field label="DNI">
-                            </v-text-field>
-                            <v-text-field label="Teléfono">
-                            </v-text-field>
-                          </v-flex>
-                        </v-layout>
-                        <v-layout v-show="permiso.tipoComitente == 'empresa'">
-                          <v-flex xs6 class="mr-5">
-                            <v-text-field label="Nombre">
-                            </v-text-field>
-                            <v-text-field label="Teléfono">
-                            </v-text-field>
-                          </v-flex>
-                          <v-flex xs6 class="mr-5">
-                            <v-text-field label="CUIT">
-                            </v-text-field>
-                          </v-flex>
-                        </v-layout>
+                    </v-layout>
+                    <v-layout v-show="permiso.tipoComitente == 'persona'">
+                      <v-flex xs6 class="mr-5">
+                        <v-text-field label="Nombre">
+                        </v-text-field>
+                        <v-text-field label="Apellido">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6 class="mr-5">
+                        <v-text-field label="DNI">
+                        </v-text-field>
+                        <v-text-field label="Teléfono">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout v-show="permiso.tipoComitente == 'empresa'">
+                      <v-flex xs6 class="mr-5">
+                        <v-text-field label="Nombre">
+                        </v-text-field>
+                        <v-text-field label="Teléfono">
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs6 class="mr-5">
+                        <v-text-field label="CUIT">
+                        </v-text-field>
                       </v-flex>
                     </v-layout>
                   </v-container>
@@ -130,7 +130,7 @@
     <v-layout row>
       <v-flex xs12>
         <!-- DATOS DE LAS TAREAS -->
-        <v-card class="grey lighten-4">
+        <v-card>
           <v-card-title>
             <span class="title">Tareas</span>
           </v-card-title>
@@ -152,18 +152,58 @@
               </v-flex>
             </v-layout>
 
-            <span class="subheading">Detalle</span>
+            <span class="subheading ml-5">Items</span>
             <v-layout row v-for="item of items_tarea" class="mx-5" key="item.texto">
                 <v-text-field
                   :label="item.texto"
                 >
                 </v-text-field>
             </v-layout>
+
             <v-layout row class="mx-5">
+              <v-flex xs5>
                 <v-text-field
-                  label="Extra"
+                  label="Descripción"
+                  v-model="nuevo_item.descripcion"
                 >
                 </v-text-field>
+              </v-flex>
+              <v-flex xs5>
+                <v-text-field
+                  label="Valor"
+                  v-model="nuevo_item.valor"
+                >
+                </v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-btn light @click="addItem">Agregar</v-btn>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row class="mx-5">
+                <v-data-table
+                    :headers="headers.items"
+                    :items="items_extra"
+                    hide-actions
+                    class="elevation-1"
+                    no-data-text="No hay items nuevos">
+                  <template slot="headers" scope="props">
+                    <th v-for="header of props.headers" style="padding: 20px">
+                      {{ header.text }}
+                    </th>
+                    <th></th>
+                  </template>
+                  <template slot="items" scope="props">
+                    <td>{{ props.item.descripcion }}</td>
+                    <td>{{ props.item.valor }}</td>
+                    <td style="width:30px">
+                      <v-btn icon @click="removeItemExtra(props.index)">
+                        <v-icon>delete</v-icon>
+                      </v-btn>
+                    </td>
+                  </template>
+                </v-data-table>
+
             </v-layout>
           </v-card-text>
         </v-card>
@@ -184,6 +224,19 @@
 </template>
 
 <script>
+class Item {
+  constructor() {
+    this.descripcion = '';
+    this.valor = '';
+  }
+
+  isValid() {
+    return this.descripcion.length
+      && this.valor.length;
+  }
+}
+
+
 export default {
   name: 'permiso-construccion',
   data () {
@@ -196,6 +249,13 @@ export default {
         tipoComitente: 'persona'
       },
 
+      headers: {
+          items: [
+            { text: 'Descripción', value: 'descripcion' },
+            { text: 'Valor', value: 'valor' }
+          ]
+      },
+
       items_tarea: [
           {
             texto: 'Cantidad de m2'
@@ -203,7 +263,11 @@ export default {
           {
             texto: 'Tipo de X'
           }
-      ]
+      ],
+
+      items_extra: [],
+
+      nuevo_item: new Item(),
     }
   },
 
@@ -211,6 +275,16 @@ export default {
   },
 
   methods: {
+    addItem: function() {
+      if (this.nuevo_item.isValid()) {
+        this.items_extra.push(this.nuevo_item);
+        this.nuevo_item = new Item();
+      }
+    },
+
+    removeItemExtra: function(i) {
+      this.items_extra.splice(i, 1);
+    }
   },
 
 }
