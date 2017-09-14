@@ -1,5 +1,4 @@
 ## TODO
-- Modificar los Select para usar autocompletar
 - Desactivar validadores al reiniciar formulario.
 - Validadores de formulario
 - Campos que faltan:

@@ -31,7 +31,7 @@ export default new Router({
       component: ListaMatriculados
     },
     {
-      path: '/matriculas/permiso',
+      path: '/matriculas/:id/permiso',
       name: 'PermisoConstruccion',
       component: PermisoConstruccion
     },

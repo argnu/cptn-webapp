@@ -2,6 +2,7 @@ import { Domicilio } from '@/model/Domicilio';
 
 export class Empresa {
   constructor() {
+    this.tipo = 'empresa';
     this.nombre = '';
     this.cuit = '';
     this.condafip = '';

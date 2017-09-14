@@ -39,6 +39,7 @@ export class Formacion {
 
 export class Profesional {
   constructor() {
+    this.tipo = 'profesional';
     this.condafip = '';
     this.nombre = '';
     this.apellido = '';
