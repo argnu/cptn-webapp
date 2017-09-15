@@ -203,7 +203,6 @@
                     </td>
                   </template>
                 </v-data-table>
-
             </v-layout>
           </v-card-text>
         </v-card>

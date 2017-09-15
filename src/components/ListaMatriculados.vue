@@ -24,7 +24,6 @@
             </v-card>
           </v-container>
 
-
           <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.filtros">
