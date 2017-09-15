@@ -11,7 +11,7 @@
               <v-layout row>
                 <v-flex xs6>
                   <input-fecha
-                    v-model="matricula.fechaActa"
+                    v-model="matricula.fechaResolucion"
                     label="Fecha de Resolución"
                   >
                   </input-fecha>
@@ -55,7 +55,7 @@
                   :items="select_items.tipo"
                   label="Tipo de Entidad"
                   single-line bottom
-                  v-model="tipoEntidad"
+                  v-model="filtros.tipoEntidad"
                 >
                 </v-select>
               </v-card-text>
@@ -74,19 +74,20 @@
                         :items="select_items.estado"
                         label="Estado de Solicitud"
                         single-line bottom
+                        autocomplete
                         v-model="filtros.estado">
                       </v-select>
                     </v-flex>
                     <v-flex xs4>
                       <v-text-field
-                         v-show="tipoEntidad == 'profesional'"
+                         v-show="filtros.tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.dni"
                          label="DNI"
                          @input="updateList"
                       >
                       </v-text-field>
                       <v-text-field
-                         v-show="tipoEntidad == 'empresa'"
+                         v-show="filtros.tipoEntidad == 'empresa'"
                          v-model="filtros.empresa.cuit"
                          label="CUIT"
                          @input="updateList"
@@ -96,14 +97,14 @@
 
                     <v-flex xs4>
                       <v-text-field
-                         v-show="tipoEntidad == 'profesional'"
+                         v-show="filtros.tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.apellido"
                          label="Apellido"
                          @input="updateList"
                       >
                       </v-text-field>
                       <v-text-field
-                         v-show="tipoEntidad == 'empresa'"
+                         v-show="filtros.tipoEntidad == 'empresa'"
                          v-model="filtros.empresa.nombre"
                          label="Nombre"
                          @input="updateList"
@@ -118,7 +119,7 @@
 
           <v-container>
             <v-data-table
-                :headers="columnas[tipoEntidad]"
+                :headers="columnas[filtros.tipoEntidad]"
                 :items="solicitudes_filter"
                 class="elevation-1"
                 no-data-text="No se encontraron solicitudes"
@@ -134,18 +135,22 @@
               </template>
               <template slot="items" scope="props">
                 <td>
-                  <v-btn icon class="green--text" @click="selectSolicitud(props.item.id)">
+                  <v-btn icon
+                    class="green--text"
+                    @click="selectSolicitud(props.item.id)"
+                    :disabled="props.item.estado == 'aprobada'"
+                  >
                     <v-icon dark>check_circle</v-icon>
                   </v-btn>
                 </td>
                 <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
-                <template v-if="tipoEntidad == 'profesional'">
+                <template v-if="filtros.tipoEntidad == 'profesional'">
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.apellido }}</td>
                   <td>{{ props.item.entidad.dni }}</td>
                 </template>
-                <template v-if="tipoEntidad == 'empresa'">
+                <template v-if="filtros.tipoEntidad == 'empresa'">
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.cuit }}</td>
                 </template>
@@ -173,7 +178,7 @@ export default {
       totalItems: 0,
       loading: false,
       pagination: {
-         rowsPerPage: 1,
+         rowsPerPage: 5,
       },
 
       select_items: {
@@ -262,6 +267,7 @@ export default {
 
       filtros: {
         estado: 'pendiente',
+        tipoEntidad: 'profesional',
         profesional: {
           dni: '',
           apellido: ''
@@ -271,7 +277,6 @@ export default {
         }
       },
 
-      tipoEntidad: '',
       debouncedUpdate: null
     }
   },
@@ -298,13 +303,15 @@ export default {
   },
 
   watch: {
-    tipoEntidad: function() {
-      this.updateSolicitudes()
+    filtros: {
+      handler () {
+        this.updateSolicitudes();
+      },
+      deep: true
     },
 
     pagination: {
       handler () {
-        // this.updateSolicitudes();
       },
       deep: true
     }
@@ -318,7 +325,7 @@ export default {
     updateSolicitudes: function() {
       this.loading = true;
       this.solicitudes = [];
-      let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.tipoEntidad}`;
+      let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
       if (this.filtros.estado) url+=`&estado=${this.filtros.estado}`;
       if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
       if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
@@ -329,8 +336,6 @@ export default {
            .then(r => {
              this.solicitudes = r.data;
              this.totalItems = this.solicitudes.length;
-            //  this.pagination.total = this.totalItems / this.pagination.per_page;
-            //  this.page = 1;
              this.loading = false;
            })
            .catch(e => console.error(e));
@@ -342,7 +347,13 @@ export default {
     },
 
     validarMatricula: function() {
-      axios.post('http://localhost:3400/api/matriculas', matricula);
+      axios.post('http://localhost:3400/api/matriculas', this.matricula)
+           .then(r => {
+             this.updateSolicitudes();
+             this.matricula = new Matricula();
+             this.show_validar = false;
+           })
+           .catch(e => console.error(e));
     }
   },
 

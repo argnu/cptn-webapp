@@ -1,7 +1,7 @@
 <template>
   <v-app>
 
-    <v-navigation-drawer absolute persistent light v-model="drawer.show" overflow>
+    <v-navigation-drawer temporary light v-model="drawer.show">
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
@@ -51,6 +51,13 @@
 
     <router-view></router-view>
 
+<v-layout row wrap class="ml-5">
+  <v-flex xs4>
+    <typeahead label="prueba" :items="items"></typeahead>
+  </v-flex>
+</v-layout>
+
+
     <v-footer class="indigo">
       <span class="white--text"></span>
     </v-footer>
@@ -58,6 +65,8 @@
 </template>
 
 <script>
+import Typeahead from '@/components/base/Typeahead';
+
 export default {
   name: 'app',
   data() {
@@ -69,7 +78,14 @@ export default {
           { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
           { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
         ],
-      }
+      },
+
+      items: [
+        { text: 'hola', value: 1 },
+        { text: 'chau', value: 2 },
+        { text: 'lala', value: 3 },
+        { text: 'lulu', value: 4 },
+      ]
     }
   },
 
@@ -78,6 +94,10 @@ export default {
       this.$router.push({path: route});
       this.drawer.show = false;
     }
+  },
+
+  components: {
+    Typeahead
   }
 }
 </script>

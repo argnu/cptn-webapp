@@ -17,7 +17,7 @@
                   :items="select_items.tipo"
                   label="Tipo de Entidad"
                   single-line bottom
-                  v-model="tipoEntidad"
+                  v-model="filtros.tipoEntidad"
                 >
                 </v-select>
               </v-card-text>
@@ -32,14 +32,14 @@
                   <v-layout row>
                     <v-flex xs4 class="ml-5">
                       <v-text-field
-                         v-show="tipoEntidad == 'profesional'"
+                         v-show="filtros.tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.dni"
                          label="DNI"
                          @input="updateList"
                       >
                       </v-text-field>
                       <v-text-field
-                         v-show="tipoEntidad == 'empresa'"
+                         v-show="filtros.tipoEntidad == 'empresa'"
                          v-model="filtros.empresa.cuit"
                          label="CUIT"
                          @input="updateList"
@@ -49,14 +49,14 @@
 
                     <v-flex xs4 class="ml-5">
                       <v-text-field
-                         v-show="tipoEntidad == 'profesional'"
+                         v-show="filtros.tipoEntidad == 'profesional'"
                          v-model="filtros.profesional.apellido"
                          label="Apellido"
                          @input="updateList"
                       >
                       </v-text-field>
                       <v-text-field
-                         v-show="tipoEntidad == 'empresa'"
+                         v-show="filtros.tipoEntidad == 'empresa'"
                          v-model="filtros.empresa.nombre"
                          label="Nombre"
                          @input="updateList"
@@ -71,8 +71,8 @@
 
           <v-container>
             <v-data-table
-                :headers="columnas[tipoEntidad]"
-                :items="solicitudes_filter"
+                :headers="columnas[filtros.tipoEntidad]"
+                :items="matriculas_filter"
                 class="elevation-1"
                 no-data-text="No se encontraron matriculados"
                 no-results-text="No se encontraron matriculados"
@@ -87,25 +87,28 @@
                 <th></th>
               </template>
               <template slot="items" scope="props">
+                <td>{{ props.item.fechaResolucion | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
-                <template v-if="tipoEntidad == 'profesional'">
+                <template v-if="filtros.tipoEntidad == 'profesional'">
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.apellido }}</td>
                   <td>{{ props.item.entidad.dni }}</td>
                 </template>
-                <template v-if="tipoEntidad == 'empresa'">
+                <template v-if="filtros.tipoEntidad == 'empresa'">
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.cuit }}</td>
                 </template>
                 <td>
-                  <v-select
-                    v-bind:items="['asdf', 'asdf']"
-                    v-model="e2"
-                    single-line
-                    auto
-                    append-icon="map"
-                    hide-details
-                  ></v-select>
+                  <v-menu>
+                    <v-btn icon slot="activator">
+                      <v-icon>settings</v-icon>
+                    </v-btn>
+                    <v-list>
+                      <v-list-tile @click="irPermiso(props.item.id)">
+                        <v-list-tile-title>Permiso de Construcción</v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
                 </td>
               </template>
             </v-data-table>
@@ -150,6 +153,7 @@ export default {
       },
 
       filtros: {
+        tipoEntidad: 'profesional',
         profesional: {
           dni: '',
           apellido: ''
@@ -207,7 +211,6 @@ export default {
       },
 
       matriculas: [],
-      tipoEntidad: '',
       debouncedUpdate: null
     }
   },
@@ -233,18 +236,20 @@ export default {
     }
   },
 
-  watch: {
-    tipoEntidad: function() {
-      this.updateMatriculas()
-    },
-
-    pagination: {
-      handler () {
-        // this.updateSolicitudes();
+    watch: {
+      filtros: {
+        handler () {
+          this.updateMatriculas();
+        },
+        deep: true
       },
-      deep: true
-    }
-  },
+
+      pagination: {
+        handler () {
+        },
+        deep: true
+      }
+    },
 
   methods: {
     updateList: function() {
@@ -254,7 +259,7 @@ export default {
     updateMatriculas: function() {
       this.loading = true;
       this.matriculas = [];
-      let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.tipoEntidad}`;
+      let url = `http://localhost:3400/api/matriculas?filtros.tipoEntidad=${this.filtros.tipoEntidad}`;
       if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
       if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
       if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
@@ -262,23 +267,17 @@ export default {
 
       axios.get(url)
            .then(r => {
-             this.solicitudes = r.data;
-             this.totalItems = this.solicitudes.length;
-            //  this.pagination.total = this.totalItems / this.pagination.per_page;
-            //  this.page = 1;
+             this.matriculas = r.data;
+             this.totalItems = this.matriculas.length;
              this.loading = false;
            })
            .catch(e => console.error(e));
     },
 
-    selectSolicitud: function(id) {
-      this.show_validar = true;
-      this.matricula.solicitud = id;
-    },
-
-    validarMatricula: function() {
-      axios.post('http://localhost:3400/api/matriculas', matricula);
+    irPermiso: function(id) {
+      this.$router.push(`/matriculas/${id}/permiso`);
     }
+
   },
 
   components: {

@@ -4,22 +4,28 @@
     <v-layout row>
       <v-flex xs12>
         <!-- DATOS GENERALES -->
-        <v-card>
+        <v-card v-if="matricula.entidad">
           <v-card-title>
             <span class="title">Datos Generales</span>
           </v-card-title>
           <v-card-text>
             <v-layout>
               <v-flex xs4 class="ma-4">
-                Número de Matrícula:
+                <span class="body-2">Número de Matrícula:</span> {{ matricula.numeroMatricula }}
               </v-flex>
-              <v-flex xs4 class="ma-4" v-show="matricula.tipoEntidad == 'profesional'">
-                Apellido: <br><br>
-                Nombre:
+              <v-flex xs4 class="ma-4" v-show="matricula.entidad.tipo == 'profesional'">
+                <span class="body-2">Apellido:</span>
+                <span class="body-1">{{ matricula.entidad.apellido }}</span>
+                <br><br>
+                <span class="body-2">Nombre:</span>
+                <span class="body-1">{{ matricula.entidad.nombre }}</span>
               </v-flex>
-              <v-flex xs6 class="ma-4" v-show="matricula.tipoEntidad == 'empresa'">
-                Nombre: <br><br>
-                CUIT:
+              <v-flex xs6 class="ma-4" v-show="matricula.entidad.tipo == 'empresa'">
+                <span class="body-2">Nombre:</span>
+                <span class="body-1">{{ matricula.entidad.nombre }}</span>
+                <br><br>
+                <span class="body-2">CUIT:</span>
+                <span class="body-1">{{ matricula.entidad.cuit }}</span>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -223,6 +229,8 @@
 </template>
 
 <script>
+import * as axios from 'axios';
+
 class Item {
   constructor() {
     this.descripcion = '';
@@ -240,9 +248,7 @@ export default {
   name: 'permiso-construccion',
   data () {
     return {
-      matricula: {
-          tipoEntidad: 'profesional'
-      },
+      matricula: {},
 
       permiso: {
         tipoComitente: 'persona'
@@ -271,6 +277,9 @@ export default {
   },
 
   created: function() {
+    axios.get(`http://localhost:3400/api/matriculas/${this.$route.params.id}`)
+         .then(r => this.matricula = r.data)
+         .catch(e => console.error(e));
   },
 
   methods: {
@@ -290,4 +299,7 @@ export default {
 </script>
 
 <style>
+  .body-1 {
+    margin-left: 10px;
+  }
 </style>
