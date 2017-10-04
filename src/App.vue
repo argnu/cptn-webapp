@@ -31,7 +31,7 @@
         <v-subheader v-text="'Matriculados'"></v-subheader>
         <v-list-tile @click="goto('/matriculas/lista')">
           <v-list-tile-action>
-            <v-icon>account_circle</v-icon>
+            <v-icon>view_list</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Listar</v-list-tile-title>
@@ -50,13 +50,6 @@
     </v-toolbar>
 
     <router-view></router-view>
-
-<v-layout row wrap class="ml-5">
-  <v-flex xs4>
-    <typeahead label="prueba" :items="items"></typeahead>
-  </v-flex>
-</v-layout>
-
 
     <v-footer class="indigo">
       <span class="white--text"></span>
@@ -78,14 +71,7 @@ export default {
           { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
           { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
         ],
-      },
-
-      items: [
-        { text: 'hola', value: 1 },
-        { text: 'chau', value: 2 },
-        { text: 'lala', value: 3 },
-        { text: 'lulu', value: 4 },
-      ]
+      }
     }
   },
 
