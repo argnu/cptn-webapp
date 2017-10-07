@@ -7,61 +7,60 @@
             <v-spacer></v-spacer>
           </v-toolbar>
 
-          <v-container>
-            <v-card>
-              <v-card-title>
-                Tipo de Entidad
-              </v-card-title>
-              <v-card-text class="grey lighten-4">
-                <v-select
-                  :items="select_items.tipo"
-                  label="Tipo de Entidad"
-                  single-line bottom
-                  v-model="filtros.tipoEntidad"
-                >
-                </v-select>
-              </v-card-text>
-            </v-card>
-          </v-container>
-
-          <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.filtros">
                 <div slot="header">Filtros de Búsqueda</div>
                 <v-container>
                   <v-layout row>
-                    <v-flex xs4 class="ml-5">
-                      <v-text-field
-                         v-show="filtros.tipoEntidad == 'profesional'"
-                         v-model="filtros.profesional.dni"
-                         label="DNI"
-                         @input="updateList"
+                    <v-flex xs3 class="ma-4">
+                      Tipo de Entidad
+                      <v-select
+                        :items="select_items.tipo"
+                        label="Tipo de Entidad"
+                        single-line bottom
+                        v-model="filtros.tipoEntidad"
                       >
-                      </v-text-field>
-                      <v-text-field
-                         v-show="filtros.tipoEntidad == 'empresa'"
-                         v-model="filtros.empresa.cuit"
-                         label="CUIT"
-                         @input="updateList"
-                      >
-                      </v-text-field>
+                      </v-select>
                     </v-flex>
 
-                    <v-flex xs4 class="ml-5">
-                      <v-text-field
-                         v-show="filtros.tipoEntidad == 'profesional'"
-                         v-model="filtros.profesional.apellido"
-                         label="Apellido"
-                         @input="updateList"
-                      >
-                      </v-text-field>
-                      <v-text-field
-                         v-show="filtros.tipoEntidad == 'empresa'"
-                         v-model="filtros.empresa.nombre"
-                         label="Nombre"
-                         @input="updateList"
-                      >
-                      </v-text-field>
+                    <v-flex xs3 class="ma-4">
+                      <br>
+                      <div v-show="filtros.tipoEntidad == 'profesional'">
+                        <v-text-field
+                           v-model="filtros.profesional.dni"
+                           label="DNI"
+                           @input="updateList"
+                        >
+                        </v-text-field>
+                      </div>
+                      <div v-show="filtros.tipoEntidad == 'empresa'">
+                        <v-text-field
+                           v-model="filtros.empresa.cuit"
+                           label="CUIT"
+                           @input="updateList"
+                        >
+                        </v-text-field>
+                      </div>
+                    </v-flex>
+
+                    <v-flex xs3 class="ma-4">
+                      <br>
+                      <div v-show="filtros.tipoEntidad == 'profesional'">
+                        <v-text-field
+                           v-model="filtros.profesional.apellido"
+                           label="Apellido"
+                           @input="updateList"
+                        >
+                        </v-text-field>
+                      </div>
+                      <div v-show="filtros.tipoEntidad == 'empresa'">
+                        <v-text-field
+                           v-model="filtros.empresa.nombre"
+                           label="Nombre"
+                           @input="updateList"
+                        >
+                        </v-text-field>
+                      </div>
                     </v-flex>
                   </v-layout>
                 </v-container>
