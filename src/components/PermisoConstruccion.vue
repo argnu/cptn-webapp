@@ -141,75 +141,74 @@
             <span class="title">Tareas</span>
           </v-card-title>
           <v-card-text>
-            <v-layout row>
-              <v-flex xs6>
-                <v-select
-                  autocomplete
-                  label="Tarea Principal"
-                >
-                </v-select>
-              </v-flex>
-              <v-flex xs6>
-                <v-select
-                  autocomplete
-                  label="Tareas Asociadas"
-                >
-                </v-select>
-              </v-flex>
-            </v-layout>
+            <v-container>
+              <v-layout row>
+                <v-flex xs6>
+                  <v-select
+                    autocomplete
+                    label="Categoría"
+                  >
+                  </v-select>
+                </v-flex>
+                <v-flex xs6>
+                  <v-select
+                    autocomplete
+                    label="Subcategoría"
+                  >
+                  </v-select>
+                </v-flex>
+              </v-layout>
 
-            <span class="subheading ml-5">Items</span>
-            <v-layout row v-for="item of items_tarea" class="mx-5" key="item.texto">
-                <v-text-field
-                  :label="item.texto"
-                >
-                </v-text-field>
-            </v-layout>
+              <span class="subheading">Items</span>
 
-            <v-layout row class="mx-5">
-              <v-flex xs5>
-                <v-text-field
-                  label="Descripción"
-                  v-model="nuevo_item.descripcion"
-                >
-                </v-text-field>
-              </v-flex>
-              <v-flex xs5>
-                <v-text-field
-                  label="Valor"
-                  v-model="nuevo_item.valor"
-                >
-                </v-text-field>
-              </v-flex>
-              <v-flex xs2>
-                <v-btn light @click="addItem">Agregar</v-btn>
-              </v-flex>
-            </v-layout>
+              <v-layout row class="mt-4">
+                <v-flex xs5>
+                  <typeahead
+                    label="Descripción"
+                    v-model="nuevo_item.descripcion"
+                    :items="items_tarea"
+                    @change="changeNuevoItem"
+                  >
+                  </typeahead>
+                </v-flex>
+                <v-flex xs5>
+                  <typeahead
+                    label="Valor"
+                    v-model="nuevo_item.valor"
+                    :items="nuevo_item.values"
+                  >
+                  </typeahead>
+                </v-flex>
+                <v-flex xs2>
+                  <v-btn light @click="addItem">Agregar</v-btn>
+                </v-flex>
+              </v-layout>
 
-            <v-layout row class="mx-5">
-                <v-data-table
-                    :headers="headers.items"
-                    :items="items_extra"
-                    hide-actions
-                    class="elevation-1"
-                    no-data-text="No hay items nuevos">
-                  <template slot="headers" scope="props">
-                    <th v-for="header of props.headers" style="padding: 20px">
-                      {{ header.text }}
-                    </th>
-                    <th></th>
-                  </template>
-                  <template slot="items" scope="props">
-                    <td>{{ props.item.descripcion }}</td>
-                    <td>{{ props.item.valor }}</td>
-                    <td style="width:30px">
-                      <v-btn icon @click="removeItemExtra(props.index)">
-                        <v-icon>delete</v-icon>
-                      </v-btn>
-                    </td>
-                  </template>
-                </v-data-table>
-            </v-layout>
+              <v-layout row class="mx-4">
+                  <v-data-table
+                      :headers="headers.items"
+                      :items="items_extra"
+                      hide-actions
+                      class="elevation-1"
+                      no-data-text="No hay items nuevos">
+                    <template slot="headers" scope="props">
+                      <th v-for="header of props.headers" style="padding: 20px">
+                        {{ header.text }}
+                      </th>
+                      <th></th>
+                    </template>
+                    <template slot="items" scope="props">
+                      <td>{{ getDescripcionItem(props.item.descripcion) }}</td>
+                      <td>{{ props.item.valor }}</td>
+                      <td style="width:30px">
+                        <v-btn icon @click="removeItemExtra(props.index)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </template>
+                  </v-data-table>
+              </v-layout>
+            </v-container>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -230,15 +229,17 @@
 
 <script>
 import * as axios from 'axios';
+import Typeahead from '@/components/base/Typeahead';
 
 class Item {
   constructor() {
     this.descripcion = '';
     this.valor = '';
+    this.values = [];
   }
 
   isValid() {
-    return this.descripcion.length
+    return (this.descripcion.toString().length)
       && this.valor.length;
   }
 }
@@ -263,10 +264,20 @@ export default {
 
       items_tarea: [
           {
-            texto: 'Cantidad de m2'
+            text: 'Cantidad de m2',
+            value: 1,
+            values: [
+              {text:'230', value: 230},
+              {text:'534', value: 534},
+            ]
           },
           {
-            texto: 'Tipo de X'
+            text: 'Tipo de Construcción',
+            value: 2,
+            values: [
+              {text:'Choza', value: 'Choza'},
+              {text:'Casa de barro', value: 'Casa de barro'},
+            ]
           }
       ],
 
@@ -292,8 +303,23 @@ export default {
 
     removeItemExtra: function(i) {
       this.items_extra.splice(i, 1);
+    },
+
+    getDescripcionItem: function(d) {
+      return Number.isInteger(d) ? this.items_tarea.find(i => i.value == d).text : d;
+    },
+
+    changeNuevoItem: function() {
+      if (Number.isInteger(this.nuevo_item.descripcion)) {
+        let item = this.items_tarea.find(i => i.value == this.nuevo_item.descripcion);
+        this.nuevo_item.values = item.values;
+      }
     }
   },
+
+  components: {
+    Typeahead
+  }
 
 }
 </script>

@@ -105,7 +105,7 @@
                     </v-btn>
                     <v-list>
                       <v-list-tile @click="irPermiso(props.item.id)">
-                        <v-list-tile-title>Permiso de Construcción</v-list-tile-title>
+                        <v-list-tile-title>Legajo Técnico</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
                   </v-menu>
@@ -132,7 +132,7 @@ export default {
       totalItems: 0,
       loading: false,
       pagination: {
-         rowsPerPage: 1,
+         rowsPerPage: 5,
       },
 
       select_items: {
