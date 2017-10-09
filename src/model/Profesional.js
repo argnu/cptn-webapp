@@ -55,10 +55,11 @@ export class Profesional {
     this.domicilioLegal = new Domicilio();
     this.contactos = [];
     this.formaciones = [];
-    this.relacionLaboral = 1;
+    this.relacionLaboral = "1";
     this.empresa = '';
     this.serviciosPrestados = '';
-    this.cajaPrevisional = '';
+    this.poseeCajaPrevisional = "true";
+    this.nombreCajaPrevisional = '';
     this.beneficiarios = [];
     this.subsidiarios = [];
     this.publicar = false;

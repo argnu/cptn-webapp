@@ -6,7 +6,7 @@
         <!-- DATOS GENERALES -->
         <v-card v-if="matricula.entidad">
           <v-card-title>
-            <span class="title">Datos Generales</span>
+            <span class="title ml-4">Datos Generales</span>
           </v-card-title>
           <v-card-text>
             <v-layout>
@@ -102,7 +102,8 @@
                         >
                         </v-text-field>
                       </v-flex>
-                      <v-flex xs6>
+
+                      <v-flex xs6 class="ml-4">
                         <v-select
                           autocomplete
                           label="Provincia"
@@ -138,19 +139,20 @@
         <!-- DATOS DE LAS TAREAS -->
         <v-card>
           <v-card-title>
-            <span class="title">Tareas</span>
+            <span class="title ml-4">Tareas</span>
           </v-card-title>
           <v-card-text>
-            <v-container>
+            <v-container class="mx-4">
               <v-layout row>
-                <v-flex xs6>
+                <v-flex xs6 class="mx-4">
                   <v-select
                     autocomplete
                     label="Categoría"
                   >
                   </v-select>
                 </v-flex>
-                <v-flex xs6>
+
+                <v-flex xs6 class="mx-4">
                   <v-select
                     autocomplete
                     label="Subcategoría"
@@ -159,10 +161,11 @@
                 </v-flex>
               </v-layout>
 
+              <br>
               <span class="subheading">Items</span>
 
               <v-layout row class="mt-4">
-                <v-flex xs5>
+                <v-flex xs5 class="mx-4">
                   <typeahead
                     label="Descripción"
                     v-model="nuevo_item.descripcion"
@@ -171,7 +174,8 @@
                   >
                   </typeahead>
                 </v-flex>
-                <v-flex xs5>
+
+                <v-flex xs5 class="mx-4">
                   <typeahead
                     label="Valor"
                     v-model="nuevo_item.valor"
@@ -179,12 +183,13 @@
                   >
                   </typeahead>
                 </v-flex>
-                <v-flex xs2>
+
+                <v-flex xs2 class="mx-4">
                   <v-btn light @click="addItem">Agregar</v-btn>
                 </v-flex>
               </v-layout>
 
-              <v-layout row class="mx-4">
+              <v-layout row class="ma-4">
                   <v-data-table
                       :headers="headers.items"
                       :items="items_extra"

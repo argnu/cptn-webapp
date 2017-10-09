@@ -7,6 +7,7 @@
             <v-spacer></v-spacer>
           </v-toolbar>
 
+          <v-container>
             <v-expansion-panel expand>
               <v-expansion-panel-content v-model="expand.filtros">
                 <div slot="header">Filtros de Búsqueda</div>

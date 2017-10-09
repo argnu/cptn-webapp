@@ -8,12 +8,15 @@
       @keyup.down="down"
       @keyup.up="up"
       @keyup.enter="enter"
-      @focusout="show_items = false"
+      @focusout="focusout"
       @keyup.tab="show_items = false"
+      :tabindex="tabindex"
+      :error="error"
+      :rules="rules"
     >
     </v-text-field>
 
-    <v-list v-if="items_filter.length && show_items" style="position:absolute;z-index:6">
+    <v-list v-if="items_filter.length && show_items" style="position:absolute;z-index:6;margin-top:-20px">
       <v-list-tile :class="{ 'grey lighten-2': i==i_active }"
         v-for="(item, i) of items_filter" key="item.value" @click="setText(item)"
         @mouseover="i_active = i"
@@ -29,7 +32,7 @@
 <script>
 export default {
   name: 'typeahead',
-  props: ['label', 'items'],
+  props: ['label', 'items', 'tabindex', 'option', 'error', 'rules'],
 
   data () {
     return {
@@ -64,7 +67,7 @@ export default {
     update: function() {
       if (this.text.length > 0) this.show_items = true;
       else this.show_items = false;
-      this.$emit('input', this.text);
+      if (!this.option) this.$emit('input', this.text);
     },
 
     down: function() {
@@ -81,6 +84,17 @@ export default {
       this.setText(this.items_filter[this.i_active]);
       this.i_active = 0;
       this.$emit('change');
+    },
+
+    focusout: function() {
+      if (this.option) {
+        if (!this.items.find(i => i.text == this.text)) {
+          this.text = '';
+          this.$emit('input', this.text);
+          this.$emit('change');
+        }
+      }
+      this.show_items = false;
     }
   },
 
