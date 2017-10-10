@@ -179,7 +179,7 @@
                             <typeahead
                               option="true"
                               tabindex="15"
-                              :items="select_items.paises"
+                              :items="paises"
                               label="País"
                               @change="changePais('real')"
                               v-model="solicitud.entidad.domicilioReal.pais"
@@ -188,7 +188,7 @@
                             <typeahead
                               option="true"
                               tabindex="17"
-                              :items="select_items.departamentos.real"
+                              :items="departamentos.real"
                               label="Departamento"
                               @change="changeDepartamento('real')"
                               v-model="solicitud.entidad.domicilioReal.departamento"
@@ -209,7 +209,7 @@
                             <typeahead
                               option="true"
                               tabindex="16"
-                              :items="select_items.provincias.real"
+                              :items="provincias.real"
                               label="Provincia"
                               @change="changeProvincia('real')"
                               v-model="solicitud.entidad.domicilioReal.provincia"
@@ -218,7 +218,7 @@
                             <typeahead
                               option="true"
                               tabindex="18"
-                              :items="select_items.localidades.real"
+                              :items="localidades.real"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioReal.localidad"
                               :rules="validator.domicilioReal.localidad"
@@ -246,7 +246,7 @@
                             <typeahead
                               option="true"
                               tabindex="21"
-                              :items="select_items.paises"
+                              :items="paises"
                               label="País"
                               @change="changePais('legal')"
                               v-model="solicitud.entidad.domicilioLegal.pais"
@@ -255,7 +255,7 @@
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="select_items.departamentos.legal"
+                              :items="departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
                               v-model="solicitud.entidad.domicilioLegal.departamento"
@@ -276,7 +276,7 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="select_items.provincias.legal"
+                              :items="provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
                               v-model="solicitud.entidad.domicilioLegal.provincia"
@@ -285,7 +285,7 @@
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="select_items.localidades.legal"
+                              :items="localidades.legal"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioLegal.localidad"
                               :rules="validator.domicilioLegal.localidad"
@@ -833,13 +833,13 @@ import { Solicitud, Contacto, Formacion,
          Beneficiario, Subsidiario } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
-// import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import FiltersMixin from '@/components/mixins/FiltersMixin';
 
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [FiltersMixin],
+  mixins: [FiltersMixin, ValidatorMixin],
   data () {
     return {
       deAcuerdo: false,
@@ -895,18 +895,8 @@ export default {
         ],
 
         delegacion: [
-          {
-            text: 'Neuquén',
-            value: 1
-          },
-          {
-            text: 'Cipo',
-            value: 2
-          },
-          {
-            text: 'Leo',
-            value: 3
-          }
+          'Neuquén',
+          'Cipo'
         ],
 
         sexo: [],
@@ -1023,7 +1013,7 @@ export default {
       axios.get('http://localhost:3400/api/opciones?sort=valor')
     ])
     .then(r => {
-      this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.paises = r[0].data;
       this.select_items.sexo = utils.getItemsSelect(r[1].data.sexo, 'valor', 'id')
       this.select_items.estadoCivil = utils.getItemsSelect(r[1].data.estadocivil, 'valor', 'id');
       this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
@@ -1033,13 +1023,38 @@ export default {
     .catch(e => console.error(e));
   },
 
+  computed: {
+    paises: function() {
+      return this.select_items.paises ? this.select_items.paises.map(i => i.nombre)  : [];
+    },
+    provincias: function() {
+      return {
+        real: this.select_items.provincias.real ? this.select_items.provincias.real.map(i => i.nombre)  : [],
+        legal: this.select_items.provincias.legal ? this.select_items.provincias.legal.map(i => i.nombre)  : []
+      }
+    },
+    departamentos: function() {
+      return {
+        real: this.select_items.departamentos.real ? this.select_items.departamentos.real.map(i => i.nombre)  : [],
+        legal: this.select_items.departamentos.legal ? this.select_items.departamentos.legal.map(i => i.nombre)  : []
+      }
+    },
+    localidades: function() {
+      return {
+        real: this.select_items.localidades.real ? this.select_items.localidades.real.map(i => i.nombre)  : [],
+        legal: this.select_items.localidades.legal ? this.select_items.localidades.legal.map(i => i.nombre)  : []
+      }
+    }
+  },
+
   methods: {
     changePais: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
       let pais = this.solicitud.entidad[domicilio].pais;
-      if (pais) {
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${pais}`)
-             .then(r => this.select_items.provincias[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
+      if (pais.length) {
+        let idPais = this.select_items.paises.find(p => p.nombre == pais).id;
+        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
+             .then(r => this.select_items.provincias[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
       else this.select_items.provincias[tipoDomicilio] = [];
@@ -1047,10 +1062,11 @@ export default {
 
     changeProvincia: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.entidad[domicilio].pais;
-      if (provincia) {
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${provincia}`)
-             .then(r => this.select_items.departamentos[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
+      let provincia = this.solicitud.entidad[domicilio].provincia;
+      if (provincia.length) {
+        let idProv = this.select_items.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
+        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
+             .then(r => this.select_items.departamentos[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
       else this.select_items.departamentos[tipoDomicilio] = [];
@@ -1058,10 +1074,11 @@ export default {
 
     changeDepartamento: function(tipoDomicilio) {
       let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.entidad[domicilio].pais;
-      if (departamento) {
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${departamento}`)
-             .then(r => this.select_items.localidades[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
+      let departamento = this.solicitud.entidad[domicilio].departamento;
+      if (departamento.length) {
+        let idDepto = this.select_items.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
+        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
+             .then(r => this.select_items.localidades[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
       else this.select_items.localidades[tipoDomicilio] = [];
@@ -1159,20 +1176,6 @@ export default {
           && utils.validObject(domicilioL, this.validator.domicilioLegal);
       }
       else return true;
-    },
-
-    validForm: function() {
-      for (let i = 1; i < 10; i++) {
-        if (!this.validStep(i)) return false;
-      }
-      return true;
-    },
-
-    validControl: function(rules, value) {
-      for(let rule of rules) {
-        if (rule(value) !== true) return false;
-      }
-      return true;
     },
   },
 
