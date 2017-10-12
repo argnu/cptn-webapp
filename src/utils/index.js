@@ -1,4 +1,4 @@
-export function formatFecha(date_string) {
+export function formatFecha(date_string) { 
   if (date_string.indexOf('T') == -1) date_string += 'T15:16:23.729Z';
   let date = new Date(date_string);
   let dia = date.getDate();

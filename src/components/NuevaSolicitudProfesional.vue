@@ -46,7 +46,7 @@
                           <v-flex xs6 class="ma-4">
                             <typeahead
                               tabindex="2"
-                              :items="select_items.delegacion"
+                              :items="delegaciones"
                               v-model="solicitud.delegacion"
                               label="Delegación"
                               option="true"
@@ -162,7 +162,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 1" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -307,7 +307,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -380,7 +380,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="31">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 3" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -427,18 +427,17 @@
                                 && submitFormacion"
                             >
                             </input-fecha>
-                            <v-select
+                            <typeahead
                               tabindex="35"
-                              :items="select_items.instituciones"
+                              option="true"
+                              :items="instituciones"
                               label="Institución"
-                              single-line
-                              bottom
                               v-model="nueva_formacion.institucion"
                               :rules="submitFormacion ? validator.formacion.institucion : []"
                               :error="!validControl(validator.formacion.institucion, nueva_formacion.institucion)
                                 && submitFormacion"
                             >
-                            </v-select>
+                            </typeahead>
                             </v-text-field>
                           </v-flex>
                         </v-layout>
@@ -476,7 +475,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 4" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -522,7 +521,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 5" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -652,7 +651,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -736,7 +735,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -786,7 +785,7 @@
                         Guardar Solicitud
                         <v-icon dark right>check_circle</v-icon>
                       </v-btn>
-                      <v-btn flat @click.native="step = 7" class="right">Volver</v-btn>
+                      <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                   </v-stepper-content>
               </v-stepper>
 
@@ -835,89 +834,23 @@ import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import FiltersMixin from '@/components/mixins/FiltersMixin';
+import SolicitudMixin from '@/components/mixins/SolicitudMixin';
 
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [FiltersMixin, ValidatorMixin],
+  mixins: [FiltersMixin, ValidatorMixin, SolicitudMixin],
   data () {
     return {
       deAcuerdo: false,
       cajaPrevisional: '',
 
-      validation: {
-          solicitud: {
-            fecha: [],
-            delegacion: []
-          },
-          profesional: {
-            nombre: [],
-            apellido: [],
-            dni: [],
-            fechaNacimiento: []
-          },
-          domicilioLegal: {
-            calle: [],
-            numero: [],
-            localidad: [],
-          },
-          domicilioReal: {
-            calle: [],
-            numero: [],
-            localidad: [],
-          },
-          contacto: {
-            tipo: [],
-            valor: []
-          },
-          formacion: {
-            tipo: [],
-            institucion: [],
-            fecha: [],
-            titulo: []
-          }
-      },
-
-      step: 1,
-
-      snackbar: {
-        msg: '',
-        show: false,
-        context: ''
-      },
-
       select_items: {
-        instituciones: [
-            {
-              text: 'Universidad Nacional del Comahue',
-              value: 1
-            }
-        ],
-
-        delegacion: [
-          'Neuquén',
-          'Cipo'
-        ],
-
+        instituciones: [],
         sexo: [],
         estadoCivil: [],
-        tipoContacto: [],
         tipoFormacion: [],
-        relacionLaboral: [],
-        condafip: [],
-        paises: [],
-        provincias: {
-          real: [],
-          legal: []
-        },
-        departamentos: {
-          real: [],
-          legal: []
-        },
-        localidades: {
-          real: [],
-          legal: []
-        }
+        relacionLaboral: []
       },
 
       solicitud: new Solicitud('profesional'),
@@ -970,21 +903,9 @@ export default {
       ],
 
       validator: {
-        solicitud: {
-          fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
-        },
         profesional: {
           nombre: [ rules.required ], apellido: [ rules.required ], sexo: [ rules.required ], estadoCivil: [ rules.required ],
           dni: [ rules.required, rules.number ], fechaNacimiento: [ rules.required, rules.fecha ], condafip: [ rules.required ]
-        },
-        domicilioReal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioLegal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        contacto: {
-          tipo: [ rules.required ], valor: [ rules.required ]
         },
         formacion: {
           tipo: [ rules.required ], institucion: [ rules.required ],
@@ -1010,7 +931,9 @@ export default {
   created: function() {
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones?sort=valor')
+      axios.get('http://localhost:3400/api/opciones?sort=valor'),
+      axios.get('http://localhost:3400/api/delegaciones'),
+      axios.get('http://localhost:3400/api/instituciones')
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -1019,71 +942,20 @@ export default {
       this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
       this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
       this.select_items.tipoFormacion = utils.getItemsSelect(r[1].data.formacion, 'valor', 'id');
+      this.select_items.delegaciones = r[2].data;
+      this.select_items.instituciones = r[3].data;
     })
     .catch(e => console.error(e));
   },
 
   computed: {
-    paises: function() {
-      return this.select_items.paises ? this.select_items.paises.map(i => i.nombre)  : [];
-    },
-    provincias: function() {
-      return {
-        real: this.select_items.provincias.real ? this.select_items.provincias.real.map(i => i.nombre)  : [],
-        legal: this.select_items.provincias.legal ? this.select_items.provincias.legal.map(i => i.nombre)  : []
-      }
-    },
-    departamentos: function() {
-      return {
-        real: this.select_items.departamentos.real ? this.select_items.departamentos.real.map(i => i.nombre)  : [],
-        legal: this.select_items.departamentos.legal ? this.select_items.departamentos.legal.map(i => i.nombre)  : []
-      }
-    },
-    localidades: function() {
-      return {
-        real: this.select_items.localidades.real ? this.select_items.localidades.real.map(i => i.nombre)  : [],
-        legal: this.select_items.localidades.legal ? this.select_items.localidades.legal.map(i => i.nombre)  : []
-      }
+    instituciones: function() {
+      return this.select_items.instituciones ? this.select_items.instituciones.map(i => i.nombre) : [];
     }
   },
 
+
   methods: {
-    changePais: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let pais = this.solicitud.entidad[domicilio].pais;
-      if (pais.length) {
-        let idPais = this.select_items.paises.find(p => p.nombre == pais).id;
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
-             .then(r => this.select_items.provincias[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.provincias[tipoDomicilio] = [];
-    },
-
-    changeProvincia: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.entidad[domicilio].provincia;
-      if (provincia.length) {
-        let idProv = this.select_items.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
-             .then(r => this.select_items.departamentos[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.departamentos[tipoDomicilio] = [];
-    },
-
-    changeDepartamento: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.entidad[domicilio].departamento;
-      if (departamento.length) {
-        let idDepto = this.select_items.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
-             .then(r => this.select_items.localidades[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.localidades[tipoDomicilio] = [];
-    },
-
     getInstitucion: function(id) {
         return this.select_items.instituciones.find(i => id == i.value ).text;
     },
@@ -1150,17 +1022,6 @@ export default {
              this.steps.forEach(s => s.touched = false);
            })
            .catch(e => this.submitError());
-    },
-
-    submitError: function() {
-      this.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.snackbar.context = 'error';
-      this.snackbar.show = true;
-    },
-
-    nextStep: function() {
-       this.steps[+this.step - 1].touched = true;
-       if (this.validStep(this.step)) this.step = +this.step + 1;
     },
 
     validStep: function(i) {

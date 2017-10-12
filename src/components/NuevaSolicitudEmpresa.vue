@@ -45,10 +45,10 @@
                           <v-flex xs6 class="ma-4">
                             <typeahead
                               tabindex="2"
-                              :items="select_items.delegacion"
+                              option="true"
+                              :items="delegaciones"
                               v-model="solicitud.delegacion"
                               label="Delegación"
-                              option="true"
                               :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
                               :rules="validator.solicitud.delegacion"
                             >
@@ -454,43 +454,17 @@ import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import FiltersMixin from '@/components/mixins/FiltersMixin';
+import SolicitudMixin from '@/components/mixins/SolicitudMixin';
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [ValidatorMixin, FiltersMixin],
+  mixins: [ValidatorMixin, FiltersMixin, SolicitudMixin],
   data () {
     return {
-      step: 1,
-
-      snackbar: {
-        msg: '',
-        show: false,
-        context: ''
-      },
-
       select_items: {
-        delegacion: [
-          'Neuquén',
-          'Cipo'
-        ],
-
-        tipoContacto: [],
         tipoEmpresa: [],
         tipoSociedad: [],
-        tipoIncumbencia: [],
-        paises: [],
-        provincias: {
-          real: [],
-          legal: []
-        },
-        departamentos: {
-          real: [],
-          legal: []
-        },
-        localidades: {
-          real: [],
-          legal: []
-        }
+        tipoIncumbencia: []
       },
 
       solicitud: new Solicitud('empresa'),
@@ -509,21 +483,9 @@ export default {
       },
 
       validator: {
-        solicitud: {
-          fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
-        },
         empresa: {
           nombre: [ rules.required ], cuit: [ rules.required, rules.number ],
           tipoEmpresa: [ rules.required ], tipoSociedad: [ rules.required ], condafip: [ rules.required ]
-        },
-        domicilioReal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioLegal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        contacto: {
-          tipo: [ rules.required ], valor: [ rules.required ]
         },
         incumbencia: [ rules.required ]
       },
@@ -544,7 +506,8 @@ export default {
   created: function() {
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones?sort=valor')
+      axios.get('http://localhost:3400/api/opciones?sort=valor'),
+      axios.get('http://localhost:3400/api/delegaciones'),
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -553,32 +516,9 @@ export default {
       this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
       this.select_items.tipoIncumbencia = utils.getItemsSelect(r[1].data.incumbencia, 'valor', 'id');
       this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
+      this.select_items.delegaciones = r[2].data;
     })
     .catch(e => console.error(e));
-  },
-
-  computed: {
-    paises: function() {
-      return this.select_items.paises ? this.select_items.paises.map(i => i.nombre)  : [];
-    },
-    provincias: function() {
-      return {
-        real: this.select_items.provincias.real ? this.select_items.provincias.real.map(i => i.nombre)  : [],
-        legal: this.select_items.provincias.legal ? this.select_items.provincias.legal.map(i => i.nombre)  : []
-      }
-    },
-    departamentos: function() {
-      return {
-        real: this.select_items.departamentos.real ? this.select_items.departamentos.real.map(i => i.nombre)  : [],
-        legal: this.select_items.departamentos.legal ? this.select_items.departamentos.legal.map(i => i.nombre)  : []
-      }
-    },
-    localidades: function() {
-      return {
-        real: this.select_items.localidades.real ? this.select_items.localidades.real.map(i => i.nombre)  : [],
-        legal: this.select_items.localidades.legal ? this.select_items.localidades.legal.map(i => i.nombre)  : []
-      }
-    }
   },
 
   methods: {
@@ -599,42 +539,6 @@ export default {
     getTipoIncumbencia: function(id) {
       let incumbencia = this.select_items.tipoIncumbencia.find(o => o.value == id);
       return incumbencia ? incumbencia.text : '';
-    },
-
-    changePais: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let pais = this.solicitud.entidad[domicilio].pais;
-      if (pais.length) {
-        let idPais = this.select_items.paises.find(p => p.nombre == pais).id;
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
-             .then(r => this.select_items.provincias[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.provincias[tipoDomicilio] = [];
-    },
-
-    changeProvincia: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.entidad[domicilio].provincia;
-      if (provincia.length) {
-        let idProv = this.select_items.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
-             .then(r => this.select_items.departamentos[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.departamentos[tipoDomicilio] = [];
-    },
-
-    changeDepartamento: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.entidad[domicilio].departamento;
-      if (departamento.length) {
-        let idDepto = this.select_items.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
-             .then(r => this.select_items.localidades[tipoDomicilio] = r.data)
-             .catch(e => console.error(e));
-      }
-      else this.select_items.localidades[tipoDomicilio] = [];
     },
 
     addContacto: function() {
@@ -674,17 +578,6 @@ export default {
            .catch(e => this.submitError());
     },
 
-    submitError: function() {
-      this.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.snackbar.context = 'error';
-      this.snackbar.show = true;
-    },
-
-    nextStep: function() {
-       this.steps[+this.step - 1].touched = true;
-       if (this.validStep(this.step)) this.step = +this.step + 1;
-    },
-
     validStep: function(i) {
       if (i == 1) return utils.validObject(this.solicitud, this.validator.solicitud);
       else if (i == 2) {
@@ -698,17 +591,6 @@ export default {
           && utils.validObject(domicilioL, this.validator.domicilioLegal);
       }
       else return true;
-    },
-
-    validForm: function() {
-      for (let i = 1; i < 6; i++) {
-        if (!this.validStep(i)) return false;
-      }
-      return true;
-    },
-
-    prevStep: function() {
-      this.step = this.step - 1;
     }
   },
 
