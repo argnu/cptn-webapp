@@ -9,17 +9,22 @@
           <v-card-text class="grey lighten-4">
             <v-container>
               <v-layout row>
-                <v-flex xs6>
+                <v-flex xs6 class="ma-4">
                   <input-fecha
                     v-model="matricula.fechaResolucion"
                     label="Fecha de Resolución"
+                    :error="submitValidacion && !validControl(validator.matricula.fechaResolucion, matricula.fechaResolucion)"
+                    :rules="validator.matricula.fechaResolucion"
                   >
                   </input-fecha>
                 </v-flex>
-                <v-flex xs6>
+
+                <v-flex xs6 class="ma-4">
                   <v-text-field
                      v-model="matricula.numeroActa"
                      label="N° Acta"
+                     :error="submitValidacion && !validControl(validator.matricula.numeroActa, matricula.numeroActa)"
+                     :rules="validator.matricula.numeroActa"
                   >
                   </v-text-field>
                 </v-flex>
@@ -166,13 +171,16 @@
 
 <script>
 import * as axios from 'axios';
-import * as utils from '@/utils';
 import * as _ from 'lodash';
+import * as utils from '@/utils';
+import rules from '@/rules';
 import InputFecha from '@/components/base/InputFecha';
 import { Matricula } from '@/model';
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 
 export default {
   name: 'lista-solicitud',
+  mixins: [ValidatorMixin],
   data () {
     return {
       matricula: new Matricula(),
@@ -273,7 +281,7 @@ export default {
 
       filtros: {
         estado: 'todas',
-        tipoEntidad: 'profesional',
+        tipoEntidad: '',
         profesional: {
           dni: '',
           apellido: ''
@@ -283,7 +291,16 @@ export default {
         }
       },
 
-      debouncedUpdate: null
+      debouncedUpdate: null,
+
+      validator: {
+        matricula: {
+          numeroActa: [rules.required, rules.number],
+          fechaResolucion: [rules.required, rules.fecha]
+        }
+      },
+
+      submitValidacion: false,
     }
   },
 
@@ -353,13 +370,17 @@ export default {
     },
 
     validarMatricula: function() {
-      axios.post('http://localhost:3400/api/matriculas', this.matricula)
-           .then(r => {
-             this.updateSolicitudes();
-             this.matricula = new Matricula();
-             this.show_validar = false;
-           })
-           .catch(e => console.error(e));
+      this.submitValidacion = true;
+      if (utils.validObject(this.matricula, this.validator.matricula)) {
+        axios.post('http://localhost:3400/api/matriculas', this.matricula)
+             .then(r => {
+               this.updateSolicitudes();
+               this.matricula = new Matricula();
+               this.show_validar = false;
+               this.submitValidacion = false;
+             })
+             .catch(e => console.error(e));
+      }
     }
   },
 

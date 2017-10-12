@@ -8,7 +8,6 @@
       @keyup.down="down"
       @keyup.up="up"
       @keyup.enter="enter"
-      @keydown.tab="tab"
       @focusout="focusout"
       :tabindex="tabindex"
       :error="error"
@@ -85,19 +84,25 @@ export default {
       this.i_active = 0;
       this.$emit('change');
     },
-
-    tab: function() {
-      if (this.option) {
-        if (!this.items.find(i => i == this.value)) {
-          this.$emit('input', '');
-        }
-      }
-      this.$emit('change');
-      this.show_items = false;
-    },
+    //
+    // tab: function() {
+    //   if (this.option) {
+    //     if (!this.items.find(i => i == this.value)) {
+    //       this.$emit('input', '');
+    //     }
+    //   }
+    //   this.$emit('change');
+    //   this.show_items = false;
+    // },
 
     focusout: function() {
       setTimeout(x => {
+        if (this.option) {
+          if (!this.items.find(i => i == this.value)) {
+            this.$emit('input', '');
+          }
+        }
+        this.$emit('change');
         this.show_items = false;
       }, 100);
     }

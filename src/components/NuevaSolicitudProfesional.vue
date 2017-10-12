@@ -957,7 +957,7 @@ export default {
 
   methods: {
     getInstitucion: function(id) {
-        return this.select_items.instituciones.find(i => id == i.value ).text;
+        return this.select_items.instituciones.find(i => id == i.id ).nombre;
     },
 
     getTipoContacto: function(id) {
@@ -984,6 +984,7 @@ export default {
     addFormacion: function() {
       this.submitFormacion = true;
       if ( utils.validObject(this.nueva_formacion, this.validator.formacion) ) {
+        this.nueva_formacion.institucion = this.select_items.instituciones.find(i => i.nombre == this.nueva_formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         this.nueva_formacion = new Formacion();
         this.submitFormacion = false;
@@ -1008,9 +1009,23 @@ export default {
       }
     },
 
+    prepareSubmit: function() {
+      let solicitud = utils.clone(this.solicitud);
+      solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
+      solicitud.entidad.domicilioReal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioReal.pais).id;
+      solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
+      solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
+      solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
+      solicitud.entidad.domicilioLegal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioLegal.pais).id;
+      solicitud.entidad.domicilioLegal.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.provincia).id;
+      solicitud.entidad.domicilioLegal.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.departamento).id;
+      solicitud.entidad.domicilioLegal.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.localidad).id;
+      return solicitud;
+    },
+
     submit: function() {
-      console.log(JSON.stringify(this.solicitud));
-      axios.post('http://localhost:3400/api/solicitudes', this.solicitud)
+      console.log(JSON.stringify(this.prepareSubmit()));
+      axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
            .then(r => {
              if (r.status != 201) {
                this.submitError();
@@ -1019,6 +1034,8 @@ export default {
              this.snackbar.context = 'success';
              this.snackbar.show = true;
              this.solicitud = new Solicitud('profesional');
+             this.steps.forEach(s => s.touched = false);
+             this.step = 1;
              this.steps.forEach(s => s.touched = false);
            })
            .catch(e => this.submitError());
