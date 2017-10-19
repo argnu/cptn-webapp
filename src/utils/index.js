@@ -38,3 +38,7 @@ export function validObject(original, rules) {
   }
   return true;
 }
+
+export function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}

@@ -46,7 +46,7 @@
                           <v-flex xs6 class="ma-4">
                             <typeahead
                               tabindex="2"
-                              :items="select_items.delegacion"
+                              :items="delegaciones"
                               v-model="solicitud.delegacion"
                               label="Delegación"
                               option="true"
@@ -162,7 +162,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 1" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -179,7 +179,7 @@
                             <typeahead
                               option="true"
                               tabindex="15"
-                              :items="select_items.paises"
+                              :items="paises"
                               label="País"
                               @change="changePais('real')"
                               v-model="solicitud.entidad.domicilioReal.pais"
@@ -188,7 +188,7 @@
                             <typeahead
                               option="true"
                               tabindex="17"
-                              :items="select_items.departamentos.real"
+                              :items="departamentos.real"
                               label="Departamento"
                               @change="changeDepartamento('real')"
                               v-model="solicitud.entidad.domicilioReal.departamento"
@@ -209,7 +209,7 @@
                             <typeahead
                               option="true"
                               tabindex="16"
-                              :items="select_items.provincias.real"
+                              :items="provincias.real"
                               label="Provincia"
                               @change="changeProvincia('real')"
                               v-model="solicitud.entidad.domicilioReal.provincia"
@@ -218,7 +218,7 @@
                             <typeahead
                               option="true"
                               tabindex="18"
-                              :items="select_items.localidades.real"
+                              :items="localidades.real"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioReal.localidad"
                               :rules="validator.domicilioReal.localidad"
@@ -246,7 +246,7 @@
                             <typeahead
                               option="true"
                               tabindex="21"
-                              :items="select_items.paises"
+                              :items="paises"
                               label="País"
                               @change="changePais('legal')"
                               v-model="solicitud.entidad.domicilioLegal.pais"
@@ -255,7 +255,7 @@
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="select_items.departamentos.legal"
+                              :items="departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
                               v-model="solicitud.entidad.domicilioLegal.departamento"
@@ -276,7 +276,7 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="select_items.provincias.legal"
+                              :items="provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
                               v-model="solicitud.entidad.domicilioLegal.provincia"
@@ -285,7 +285,7 @@
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="select_items.localidades.legal"
+                              :items="localidades.legal"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioLegal.localidad"
                               :rules="validator.domicilioLegal.localidad"
@@ -307,7 +307,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -380,7 +380,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="31">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 3" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -427,18 +427,17 @@
                                 && submitFormacion"
                             >
                             </input-fecha>
-                            <v-select
+                            <typeahead
                               tabindex="35"
-                              :items="select_items.instituciones"
+                              option="true"
+                              :items="instituciones"
                               label="Institución"
-                              single-line
-                              bottom
                               v-model="nueva_formacion.institucion"
                               :rules="submitFormacion ? validator.formacion.institucion : []"
                               :error="!validControl(validator.formacion.institucion, nueva_formacion.institucion)
                                 && submitFormacion"
                             >
-                            </v-select>
+                            </typeahead>
                             </v-text-field>
                           </v-flex>
                         </v-layout>
@@ -476,7 +475,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn primary @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
-                  <v-btn flat @click.native="step = 4" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -522,7 +521,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 5" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -652,7 +651,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -736,7 +735,7 @@
                        </v-card-text>
                      </v-card>
                      <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
-                     <v-btn flat @click.native="step = 6" class="right">Volver</v-btn>
+                     <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
 
@@ -786,7 +785,7 @@
                         Guardar Solicitud
                         <v-icon dark right>check_circle</v-icon>
                       </v-btn>
-                      <v-btn flat @click.native="step = 7" class="right">Volver</v-btn>
+                      <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                   </v-stepper-content>
               </v-stepper>
 
@@ -833,101 +832,25 @@ import { Solicitud, Contacto, Formacion,
          Beneficiario, Subsidiario } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
-// import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import FiltersMixin from '@/components/mixins/FiltersMixin';
+import SolicitudMixin from '@/components/mixins/SolicitudMixin';
 
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [FiltersMixin],
+  mixins: [FiltersMixin, ValidatorMixin, SolicitudMixin],
   data () {
     return {
       deAcuerdo: false,
       cajaPrevisional: '',
 
-      validation: {
-          solicitud: {
-            fecha: [],
-            delegacion: []
-          },
-          profesional: {
-            nombre: [],
-            apellido: [],
-            dni: [],
-            fechaNacimiento: []
-          },
-          domicilioLegal: {
-            calle: [],
-            numero: [],
-            localidad: [],
-          },
-          domicilioReal: {
-            calle: [],
-            numero: [],
-            localidad: [],
-          },
-          contacto: {
-            tipo: [],
-            valor: []
-          },
-          formacion: {
-            tipo: [],
-            institucion: [],
-            fecha: [],
-            titulo: []
-          }
-      },
-
-      step: 1,
-
-      snackbar: {
-        msg: '',
-        show: false,
-        context: ''
-      },
-
       select_items: {
-        instituciones: [
-            {
-              text: 'Universidad Nacional del Comahue',
-              value: 1
-            }
-        ],
-
-        delegacion: [
-          {
-            text: 'Neuquén',
-            value: 1
-          },
-          {
-            text: 'Cipo',
-            value: 2
-          },
-          {
-            text: 'Leo',
-            value: 3
-          }
-        ],
-
+        instituciones: [],
         sexo: [],
         estadoCivil: [],
-        tipoContacto: [],
         tipoFormacion: [],
-        relacionLaboral: [],
-        condafip: [],
-        paises: [],
-        provincias: {
-          real: [],
-          legal: []
-        },
-        departamentos: {
-          real: [],
-          legal: []
-        },
-        localidades: {
-          real: [],
-          legal: []
-        }
+        relacionLaboral: []
       },
 
       solicitud: new Solicitud('profesional'),
@@ -980,21 +903,9 @@ export default {
       ],
 
       validator: {
-        solicitud: {
-          fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
-        },
         profesional: {
           nombre: [ rules.required ], apellido: [ rules.required ], sexo: [ rules.required ], estadoCivil: [ rules.required ],
           dni: [ rules.required, rules.number ], fechaNacimiento: [ rules.required, rules.fecha ], condafip: [ rules.required ]
-        },
-        domicilioReal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioLegal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        contacto: {
-          tipo: [ rules.required ], valor: [ rules.required ]
         },
         formacion: {
           tipo: [ rules.required ], institucion: [ rules.required ],
@@ -1020,55 +931,33 @@ export default {
   created: function() {
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones?sort=valor')
+      axios.get('http://localhost:3400/api/opciones?sort=valor'),
+      axios.get('http://localhost:3400/api/delegaciones'),
+      axios.get('http://localhost:3400/api/instituciones')
     ])
     .then(r => {
-      this.select_items.paises = utils.getItemsSelect(r[0].data, 'nombre', 'id')
+      this.select_items.paises = r[0].data;
       this.select_items.sexo = utils.getItemsSelect(r[1].data.sexo, 'valor', 'id')
       this.select_items.estadoCivil = utils.getItemsSelect(r[1].data.estadocivil, 'valor', 'id');
       this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
       this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
       this.select_items.tipoFormacion = utils.getItemsSelect(r[1].data.formacion, 'valor', 'id');
+      this.select_items.delegaciones = r[2].data;
+      this.select_items.instituciones = r[3].data;
     })
     .catch(e => console.error(e));
   },
 
+  computed: {
+    instituciones: function() {
+      return this.select_items.instituciones ? this.select_items.instituciones.map(i => i.nombre) : [];
+    }
+  },
+
+
   methods: {
-    changePais: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let pais = this.solicitud.entidad[domicilio].pais;
-      if (pais) {
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${pais}`)
-             .then(r => this.select_items.provincias[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
-             .catch(e => console.error(e));
-      }
-      else this.select_items.provincias[tipoDomicilio] = [];
-    },
-
-    changeProvincia: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let provincia = this.solicitud.entidad[domicilio].pais;
-      if (provincia) {
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${provincia}`)
-             .then(r => this.select_items.departamentos[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
-             .catch(e => console.error(e));
-      }
-      else this.select_items.departamentos[tipoDomicilio] = [];
-    },
-
-    changeDepartamento: function(tipoDomicilio) {
-      let domicilio = tipoDomicilio == 'real' ? 'domicilioReal' : 'domicilioLegal';
-      let departamento = this.solicitud.entidad[domicilio].pais;
-      if (departamento) {
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${departamento}`)
-             .then(r => this.select_items.localidades[tipoDomicilio] = utils.getItemsSelect(r.data, 'nombre', 'id'))
-             .catch(e => console.error(e));
-      }
-      else this.select_items.localidades[tipoDomicilio] = [];
-    },
-
     getInstitucion: function(id) {
-        return this.select_items.instituciones.find(i => id == i.value ).text;
+        return this.select_items.instituciones.find(i => id == i.id ).nombre;
     },
 
     getTipoContacto: function(id) {
@@ -1095,6 +984,7 @@ export default {
     addFormacion: function() {
       this.submitFormacion = true;
       if ( utils.validObject(this.nueva_formacion, this.validator.formacion) ) {
+        this.nueva_formacion.institucion = this.select_items.instituciones.find(i => i.nombre == this.nueva_formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         this.nueva_formacion = new Formacion();
         this.submitFormacion = false;
@@ -1119,9 +1009,23 @@ export default {
       }
     },
 
+    prepareSubmit: function() {
+      let solicitud = utils.clone(this.solicitud);
+      solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
+      solicitud.entidad.domicilioReal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioReal.pais).id;
+      solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
+      solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
+      solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
+      solicitud.entidad.domicilioLegal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioLegal.pais).id;
+      solicitud.entidad.domicilioLegal.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.provincia).id;
+      solicitud.entidad.domicilioLegal.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.departamento).id;
+      solicitud.entidad.domicilioLegal.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.localidad).id;
+      return solicitud;
+    },
+
     submit: function() {
-      console.log(JSON.stringify(this.solicitud));
-      axios.post('http://localhost:3400/api/solicitudes', this.solicitud)
+      console.log(JSON.stringify(this.prepareSubmit()));
+      axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
            .then(r => {
              if (r.status != 201) {
                this.submitError();
@@ -1131,19 +1035,10 @@ export default {
              this.snackbar.show = true;
              this.solicitud = new Solicitud('profesional');
              this.steps.forEach(s => s.touched = false);
+             this.step = 1;
+             this.steps.forEach(s => s.touched = false);
            })
            .catch(e => this.submitError());
-    },
-
-    submitError: function() {
-      this.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.snackbar.context = 'error';
-      this.snackbar.show = true;
-    },
-
-    nextStep: function() {
-       this.steps[+this.step - 1].touched = true;
-       if (this.validStep(this.step)) this.step = +this.step + 1;
     },
 
     validStep: function(i) {
@@ -1159,20 +1054,6 @@ export default {
           && utils.validObject(domicilioL, this.validator.domicilioLegal);
       }
       else return true;
-    },
-
-    validForm: function() {
-      for (let i = 1; i < 10; i++) {
-        if (!this.validStep(i)) return false;
-      }
-      return true;
-    },
-
-    validControl: function(rules, value) {
-      for(let rule of rules) {
-        if (rule(value) !== true) return false;
-      }
-      return true;
     },
   },
 

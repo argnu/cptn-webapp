@@ -1,28 +1,29 @@
 <template>
   <div>
     <v-text-field
+      ref="input"
       :label="label"
-      v-model="text"
       class="pb-0"
-      @input="update"
+      @input="update($event)"
       @keyup.down="down"
       @keyup.up="up"
       @keyup.enter="enter"
       @focusout="focusout"
-      @keyup.tab="show_items = false"
       :tabindex="tabindex"
       :error="error"
       :rules="rules"
+      :value="value"
     >
     </v-text-field>
 
     <v-list v-if="items_filter.length && show_items" style="position:absolute;z-index:6;margin-top:-20px">
       <v-list-tile :class="{ 'grey lighten-2': i==i_active }"
-        v-for="(item, i) of items_filter" key="item.value" @click="setText(item)"
+        v-for="(item, i) of items_filter" key="item"
+        @click="setText(item)"
         @mouseover="i_active = i"
       >
         <v-list-tile-content>
-            <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+            <v-list-tile-title>{{ item }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
@@ -32,7 +33,7 @@
 <script>
 export default {
   name: 'typeahead',
-  props: ['label', 'items', 'tabindex', 'option', 'error', 'rules'],
+  props: ['value', 'label', 'items', 'tabindex', 'option', 'error', 'rules'],
 
   data () {
     return {
@@ -47,9 +48,9 @@ export default {
 
   computed: {
     items_filter: function() {
-      if (this.items) {
+      if (this.items && this.value) {
         return this.items.filter(item =>
-          item.text.toLowerCase().includes(this.text.toLowerCase())
+          item.toLowerCase().includes(this.value.toLowerCase())
         );
       }
       else return [];
@@ -58,16 +59,14 @@ export default {
 
   methods: {
     setText: function(item) {
-      this.text = item.text;
-      this.$emit('input', item.value);
+      this.$emit('input', item);
       this.show_items = false;
       this.$emit('change');
     },
 
-    update: function() {
-      if (this.text.length > 0) this.show_items = true;
-      else this.show_items = false;
-      if (!this.option) this.$emit('input', this.text);
+    update: function(e) {
+      this.show_items = e.length > 0;
+      this.$emit('input', e);
     },
 
     down: function() {
@@ -85,17 +84,29 @@ export default {
       this.i_active = 0;
       this.$emit('change');
     },
+    //
+    // tab: function() {
+    //   if (this.option) {
+    //     if (!this.items.find(i => i == this.value)) {
+    //       this.$emit('input', '');
+    //     }
+    //   }
+    //   this.$emit('change');
+    //   this.show_items = false;
+    // },
 
     focusout: function() {
-      if (this.option) {
-        if (!this.items.find(i => i.text == this.text)) {
-          this.text = '';
-          this.$emit('input', this.text);
-          this.$emit('change');
+      setTimeout(x => {
+        if (this.option) {
+          if (!this.items.find(i => i == this.value)) {
+            this.$emit('input', '');
+          }
         }
-      }
-      this.show_items = false;
+        this.$emit('change');
+        this.show_items = false;
+      }, 100);
     }
+
   },
 
 }

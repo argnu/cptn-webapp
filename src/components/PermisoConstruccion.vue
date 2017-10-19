@@ -45,36 +45,36 @@
                   <v-container fluid>
                     <span class="title">Datos del Comitente</span>
                     <v-layout class="mt-5">
-                      <v-flex xs6>
-                        <v-radio label="Persona" value="persona" v-model="permiso.tipoComitente"></v-radio>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-radio label="Empresa" value="empresa" v-model="permiso.tipoComitente"></v-radio>
+                      <v-flex xs12>
+                        <v-radio-group v-model="permiso.tipoComitente" row>
+                          <v-radio label="Persona" value="persona" ></v-radio>
+                          <v-radio label="Empresa" value="empresa"></v-radio>
+                        </v-radio-group>
                       </v-flex>
                     </v-layout>
                     <v-layout v-show="permiso.tipoComitente == 'persona'">
                       <v-flex xs6 class="mr-5">
-                        <v-text-field label="Nombre">
+                        <v-text-field label="Nombre" tabindex="1">
                         </v-text-field>
-                        <v-text-field label="Apellido">
+                        <v-text-field label="Apellido" tabindex="2">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6 class="mr-5">
-                        <v-text-field label="DNI">
+                        <v-text-field label="DNI" tabindex="2">
                         </v-text-field>
-                        <v-text-field label="Teléfono">
+                        <v-text-field label="Teléfono" tabindex="6">
                         </v-text-field>
                       </v-flex>
                     </v-layout>
                     <v-layout v-show="permiso.tipoComitente == 'empresa'">
                       <v-flex xs6 class="mr-5">
-                        <v-text-field label="Nombre">
+                        <v-text-field label="Nombre" tabindex="7">
                         </v-text-field>
-                        <v-text-field label="Teléfono">
+                        <v-text-field label="Teléfono" tabindex="8">
                         </v-text-field>
                       </v-flex>
                       <v-flex xs6 class="mr-5">
-                        <v-text-field label="CUIT">
+                        <v-text-field label="CUIT" tabindex="9">
                         </v-text-field>
                       </v-flex>
                     </v-layout>
@@ -87,34 +87,53 @@
                     <span class="title">Ubicación</span>
                     <v-layout row class="mt-3">
                       <v-flex xs6>
-                        <v-select
-                          autocomplete
+                        <typeahead
+                          tabindex="10"
+                          option="true"
+                          :items="paises"
                           label="País"
+                          @change="changePais()"
+                          v-model="permiso.pais"
                         >
-                        </v-select>
-                        <v-select
-                          autocomplete
+                        </typeahead>
+                        <typeahead
+                          tabindex="12"
+                          option="true"
+                          :items="departamentos"
                           label="Departamento"
+                          @change="changeDepartamento()"
+                          v-model="permiso.departamento"
                         >
+                        </typeahead>
                         </v-select>
                         <v-text-field
+                          tabindex="14"
                           label="Calle"
+                          v-model="permiso.calle"
                         >
                         </v-text-field>
                       </v-flex>
 
                       <v-flex xs6 class="ml-4">
-                        <v-select
-                          autocomplete
+                        <typeahead
+                          tabindex="11"
+                          option="true"
+                          :items="provincias"
                           label="Provincia"
+                          @change="changeProvincia()"
+                          v-model="permiso.provincia"
                         >
-                        </v-select>
-                        <v-select
-                          autocomplete
+                        </typeahead>
+                        <typeahead
+                          tabindex="13"
+                          option="true"
+                          :items="localidades"
                           label="Localidad"
+                          v-model="permiso.localidad"
                         >
-                        </v-select>
+                        </typeahead>
                         <v-text-field
+                          tabindex="15"
                           label="Nro"
                         >
                         </v-text-field>
@@ -122,7 +141,7 @@
                     </v-layout>
 
                     <v-layout row>
-                      <v-text-field label="Nomenclatura"></v-text-field>
+                      <v-text-field label="Nomenclatura" tabindex="16"></v-text-field>
                     </v-layout>
                   </v-container fluid>
               </v-flex>
@@ -145,19 +164,21 @@
             <v-container class="mx-4">
               <v-layout row>
                 <v-flex xs6 class="mx-4">
-                  <v-select
-                    autocomplete
+                  <typeahead
+                    tabindex="17"
+                    option="true"
                     label="Categoría"
                   >
-                  </v-select>
+                  </typeahead>
                 </v-flex>
 
                 <v-flex xs6 class="mx-4">
-                  <v-select
-                    autocomplete
+                  <typeahead
+                    tabindex="18"
+                    option="true"
                     label="Subcategoría"
                   >
-                  </v-select>
+                  </typeahead>
                 </v-flex>
               </v-layout>
 
@@ -167,9 +188,10 @@
               <v-layout row class="mt-4">
                 <v-flex xs5 class="mx-4">
                   <typeahead
+                    tabindex="19"
                     label="Descripción"
                     v-model="nuevo_item.descripcion"
-                    :items="items_tarea"
+                    :items="items_tarea_select"
                     @change="changeNuevoItem"
                   >
                   </typeahead>
@@ -177,6 +199,7 @@
 
                 <v-flex xs5 class="mx-4">
                   <typeahead
+                    tabindex="20"
                     label="Valor"
                     v-model="nuevo_item.valor"
                     :items="nuevo_item.values"
@@ -185,7 +208,7 @@
                 </v-flex>
 
                 <v-flex xs2 class="mx-4">
-                  <v-btn light @click="addItem">Agregar</v-btn>
+                  <v-btn light @click="addItem" tabindex="21">Agregar</v-btn>
                 </v-flex>
               </v-layout>
 
@@ -223,7 +246,7 @@
 
     <v-layout row>
       <v-flex xs12>
-        <v-btn class="primary white--text right" @click.native="">
+        <v-btn class="primary white--text right" @click.native="" tabindex="23">
           Guardar
           <v-icon dark right></v-icon>
         </v-btn>
@@ -245,7 +268,7 @@ class Item {
 
   isValid() {
     return (this.descripcion.toString().length)
-      && this.valor.length;
+      && this.valor.toString().length;
   }
 }
 
@@ -257,7 +280,12 @@ export default {
       matricula: {},
 
       permiso: {
-        tipoComitente: 'persona'
+        tipoComitente: 'persona',
+        pais: '',
+        provincia: '',
+        departamento: '',
+        localidad: '',
+        calle: ''
       },
 
       headers: {
@@ -267,22 +295,23 @@ export default {
           ]
       },
 
+      select_items: {
+        paises: [],
+        provincias: [],
+        departamentos: [],
+        localidades: [],
+      },
+
       items_tarea: [
           {
             text: 'Cantidad de m2',
             value: 1,
-            values: [
-              {text:'230', value: 230},
-              {text:'534', value: 534},
-            ]
+            values: [ "230", "534" ]
           },
           {
             text: 'Tipo de Construcción',
             value: 2,
-            values: [
-              {text:'Choza', value: 'Choza'},
-              {text:'Casa de barro', value: 'Casa de barro'},
-            ]
+            values: [ 'Choza', 'Casa de barro' ]
           }
       ],
 
@@ -293,9 +322,37 @@ export default {
   },
 
   created: function() {
-    axios.get(`http://localhost:3400/api/matriculas/${this.$route.params.id}`)
-         .then(r => this.matricula = r.data)
-         .catch(e => console.error(e));
+    Promise.all([
+      axios.get('http://localhost:3400/api/paises'),
+      // axios.get(`http://localhost:3400/api/matriculas/${this.$route.params.id}`)
+    ])
+    .then(r => {
+      this.select_items.paises = r[0].data;
+      // this.matricula = r[1].data
+    })
+    .catch(e => console.error(e));
+  },
+
+  computed: {
+    items_tarea_select: function() {
+      return this.items_tarea.length ? this.items_tarea.map(i => i.text) : [];
+    },
+
+    paises: function() {
+      return this.select_items.paises.length ? this.select_items.paises.map(p => p.nombre) : [];
+    },
+
+    provincias: function() {
+      return this.select_items.provincias ? this.select_items.provincias.map(i => i.nombre)  : [];
+    },
+
+    departamentos: function() {
+      return this.select_items.departamentos ? this.select_items.departamentos.map(i => i.nombre)  : [];
+    },
+
+    localidades: function() {
+      return this.select_items.localidades ? this.select_items.localidades.map(i => i.nombre)  : [];
+    }
   },
 
   methods: {
@@ -315,11 +372,42 @@ export default {
     },
 
     changeNuevoItem: function() {
-      if (Number.isInteger(this.nuevo_item.descripcion)) {
-        let item = this.items_tarea.find(i => i.value == this.nuevo_item.descripcion);
+      this.nuevo_item.values = [];
+      if (this.nuevo_item.descripcion.length) {
+        let item = this.items_tarea.find(i => i.text == this.nuevo_item.descripcion);
         this.nuevo_item.values = item.values;
       }
-    }
+    },
+
+    changePais: function(tipoDomicilio) {
+      if (this.permiso.pais.length) {
+        let idPais = this.select_items.paises.find(p => p.nombre == this.permiso.pais).id;
+        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
+             .then(r => this.select_items.provincias = r.data)
+             .catch(e => console.error(e));
+      }
+      else this.select_items.provincias = [];
+    },
+
+    changeProvincia: function(tipoDomicilio) {
+      if (this.permiso.provincia.length) {
+        let idProv = this.select_items.provincias.find(p => p.nombre == this.permisoprovincia).id;
+        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
+             .then(r => this.select_items.departamentos = r.data)
+             .catch(e => console.error(e));
+      }
+      else this.select_items.departamentos = [];
+    },
+
+    changeDepartamento: function(tipoDomicilio) {
+      if (this.permiso.departamento.length) {
+        let idDepto = this.select_items.departamentos.find(p => p.nombre == this.permiso.departamento).id;
+        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
+             .then(r => this.select_items.localidades = r.data)
+             .catch(e => console.error(e));
+      }
+      else this.select_items.localidades = [];
+    },
   },
 
   components: {

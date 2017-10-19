@@ -1,7 +1,7 @@
 <template>
   <v-layout row>
-    <v-text-field :label="label" v-model="date_formatted" @input="update"
-      append-icon="event" :append-icon-cb="() => show_dialog = true"
+    <v-text-field :label="label" :value="value" @input="update($event)"
+      append-icon="event" :append-icon-cb="cbIcon"
       :tabindex="tabindex"
       @change="updatePicker" :rules="rules" :error="error">
     </v-text-field>
@@ -32,25 +32,20 @@ export default {
   watch: {
     datepicker: function(new_date) {
       if (new_date) {
+        if (new_date instanceof Date) new_date = new_date.toISOString();
         let formatted = utils.formatFecha(new_date);
-        this.date_formatted = formatted;
-        this.$emit('input', this.date_formatted);
+        this.$emit('input', formatted);
       }
-    },
-
-    value: function(new_val) {
-      this.date_formatted = new_val;
-      this.updatePicker();
     }
   },
 
   methods: {
-    update: function() {
-      this.$emit('input', this.date_formatted);
+    update: function(e) {
+      this.$emit('input', e);
     },
 
     updatePicker: function() {
-      let [dia, mes, anio] = this.date_formatted.split('/');
+      let [dia, mes, anio] = this.value.split('/');
       if (dia && mes && anio) {
         let date = new Date(`${anio}-${mes}-${dia}T00:00:00`);
         if (isNaN( date.getTime())) {
@@ -59,6 +54,11 @@ export default {
         }
         this.datepicker = date;
       }
+    },
+
+    cbIcon: function() {
+      this.updatePicker();
+      this.show_dialog = true;
     }
   },
 
