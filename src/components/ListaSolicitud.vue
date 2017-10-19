@@ -136,15 +136,6 @@
                 </th>
               </template>
               <template slot="items" scope="props">
-                <td>
-                  <v-btn icon
-                    class="green--text"
-                    @click="selectSolicitud(props.item.id)"
-                    :disabled="props.item.estado == 'aprobada'"
-                  >
-                    <v-icon dark>check_circle</v-icon>
-                  </v-btn>
-                </td>
                 <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
                 <template v-if="filtros.tipoEntidad == 'profesional'">
@@ -156,6 +147,18 @@
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.cuit }}</td>
                 </template>
+                <td>
+                  <v-menu>
+                    <v-btn icon slot="activator">
+                      <v-icon>settings</v-icon>
+                    </v-btn>
+                    <v-list>
+                      <v-list-tile @click="selectSolicitud(props.item.id)">
+                        <v-list-tile-title>Aprobar</v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
+                </td>
               </template>
             </v-data-table>
           </v-container>
@@ -221,10 +224,6 @@ export default {
       columnas: {
         empresa: [
             {
-              text: 'Validar',
-              value: 'validar'
-            },
-            {
               text: 'Fecha',
               value: 'fecha'
             },
@@ -239,13 +238,13 @@ export default {
             {
               text: 'CUIT',
               value: 'cuit'
-            }
+            },
+            {
+              text: 'Acciones',
+              value: 'Acciones'
+            },
         ],
         profesional: [
-            {
-              text: 'Validar',
-              value: 'validar'
-            },
             {
               text: 'Fecha',
               value: 'fecha'
@@ -265,7 +264,11 @@ export default {
             {
               text: 'DNI',
               value: 'dni'
-            }
+            },
+            {
+              text: 'Acciones',
+              value: 'Acciones'
+            },
         ]
       },
 
@@ -273,7 +276,7 @@ export default {
 
       filtros: {
         estado: 'todas',
-        tipoEntidad: 'profesional',
+        tipoEntidad: '',
         profesional: {
           dni: '',
           apellido: ''

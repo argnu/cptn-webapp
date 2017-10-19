@@ -47,7 +47,7 @@ export class Profesional {
     this.cuit = '';
     this.sexo = '';
     this.estadoCivil = '';
-    this.lugarNacimiento = '';
+    this.localidadNacimiento = '';
     this.fechaNacimiento = '';
     this.nacionalidad = '';
     this.observaciones = '';

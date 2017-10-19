@@ -147,7 +147,7 @@
                           </v-select>
                           <v-text-field
                             label="Lugar Nacimiento"
-                            v-model="solicitud.entidad.lugarNacimiento"
+                            v-model="solicitud.entidad.localidadNacimiento"
                             tabindex="10"
                           >
                           </v-text-field>
@@ -557,7 +557,7 @@
                              <v-text-field
                                 label="Nombre"
                                 v-show="solicitud.entidad.poseeCajaPrevisional == 'true'"
-                                v-model="solicitud.entidad.cajaPrevisional"
+                                v-model="solicitud.entidad.nombreCajaPrevisional"
                               >
                              </v-text-field>
                            </v-flex>
@@ -814,7 +814,7 @@
                 <div><b>Sexo: </b> {{ solicitud.entidad.sexo }} </div>
                 <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil }} </div>
                 <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
-                <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
+                <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.localidadNacimiento }} </div>
                 <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
                 <div><b>Observaciones: </b> {{solicitud.entidad.observaciones }} </div>
               </v-card-text>

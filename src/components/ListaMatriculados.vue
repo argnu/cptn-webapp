@@ -153,7 +153,7 @@ export default {
       },
 
       filtros: {
-        tipoEntidad: 'profesional',
+        tipoEntidad: '',
         profesional: {
           dni: '',
           apellido: ''
@@ -259,7 +259,7 @@ export default {
     updateMatriculas: function() {
       this.loading = true;
       this.matriculas = [];
-      let url = `http://localhost:3400/api/matriculas?filtros.tipoEntidad=${this.filtros.tipoEntidad}`;
+      let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}`;
       if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
       if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
       if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;

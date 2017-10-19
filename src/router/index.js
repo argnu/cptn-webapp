@@ -3,8 +3,10 @@ import Router from 'vue-router'
 import NuevaSolicitudProfesional from '@/components/NuevaSolicitudProfesional'
 import NuevaSolicitudEmpresa from '@/components/NuevaSolicitudEmpresa'
 import ListaSolicitud from '@/components/ListaSolicitud'
+import Matriculas from '@/components/Matriculas'
 import ListaMatriculados from '@/components/ListaMatriculados'
-import PermisoConstruccion from '@/components/PermisoConstruccion';
+import MatriculaProfesional from '@/components/MatriculaProfesional'
+import PermisoConstruccion from '@/components/PermisoConstruccion'
 
 Vue.use(Router)
 
@@ -26,14 +28,25 @@ export default new Router({
       component: NuevaSolicitudEmpresa
     },
     {
-      path: '/matriculas/lista',
-      name: 'ListaMatriculados',
-      component: ListaMatriculados
-    },
-    {
-      path: '/matriculas/:id/permiso',
-      name: 'PermisoConstruccion',
-      component: PermisoConstruccion
+      path: '/matriculas',
+      component: Matriculas,
+      children: [
+        {
+          path: 'lista',
+          name: 'ListaMatriculados',
+          component: ListaMatriculados,
+        },
+        {
+          path: 'profesional/:id',
+          component: MatriculaProfesional,
+          props: true
+        },
+        {
+          path: ':id/permiso',
+          name: 'PermisoConstruccion',
+          component: PermisoConstruccion
+        },
+      ]
     },
   ]
 })
