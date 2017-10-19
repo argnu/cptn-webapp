@@ -453,12 +453,11 @@ import { Solicitud, Contacto, Empresa } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
-import FiltersMixin from '@/components/mixins/FiltersMixin';
 import SolicitudMixin from '@/components/mixins/SolicitudMixin';
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [ValidatorMixin, FiltersMixin, SolicitudMixin],
+  mixins: [ValidatorMixin, SolicitudMixin],
   data () {
     return {
       select_items: {

@@ -104,6 +104,9 @@
                       <v-icon>settings</v-icon>
                     </v-btn>
                     <v-list>
+                      <v-list-tile @click="verDetalle(props.item.id)">
+                        <v-list-tile-title>Ver Detalle</v-list-tile-title>
+                      </v-list-tile>
                       <v-list-tile @click="irPermiso(props.item.id)">
                         <v-list-tile-title>Legajo Técnico</v-list-tile-title>
                       </v-list-tile>
@@ -276,7 +279,11 @@ export default {
 
     irPermiso: function(id) {
       this.$router.push(`/matriculas/${id}/permiso`);
-    }
+    },
+
+    verDetalle: function(id) {
+      this.$router.push(`/matriculas/profesional/${id}`);
+    },
 
   },
 

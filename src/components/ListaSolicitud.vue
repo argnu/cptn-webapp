@@ -158,7 +158,10 @@
                       <v-icon>settings</v-icon>
                     </v-btn>
                     <v-list>
-                      <v-list-tile @click="selectSolicitud(props.item.id)">
+                      <v-list-tile
+                        v-show="props.item.estado != 'aprobada'" 
+                        @click="selectSolicitud(props.item.id)"
+                      >
                         <v-list-tile-title>Aprobar</v-list-tile-title>
                       </v-list-tile>
                     </v-list>
