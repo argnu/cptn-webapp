@@ -1,11 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import NuevaSolicitudProfesional from '@/components/NuevaSolicitudProfesional'
-import NuevaSolicitudEmpresa from '@/components/NuevaSolicitudEmpresa'
-import ListaSolicitud from '@/components/ListaSolicitud'
-import Matriculas from '@/components/Matriculas'
-import ListaMatriculados from '@/components/ListaMatriculados'
-import MatriculaProfesional from '@/components/MatriculaProfesional'
+import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
+import { Matriculas, ListaMatriculados, MatriculaProfesional} from '@/components/matriculas'
 import PermisoConstruccion from '@/components/PermisoConstruccion'
 
 Vue.use(Router)

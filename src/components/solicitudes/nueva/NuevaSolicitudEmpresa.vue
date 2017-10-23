@@ -453,11 +453,11 @@ import { Solicitud, Contacto, Empresa } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
-import SolicitudMixin from '@/components/mixins/SolicitudMixin';
+import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [ValidatorMixin, SolicitudMixin],
+  mixins: [ValidatorMixin, NuevaSolicitud],
   data () {
     return {
       select_items: {
@@ -556,10 +556,6 @@ export default {
          this.nueva_incumbencia = '';
          this.submitIncumbencia = false;
        }
-    },
-
-    removeElem: function(tipo, index) {
-      this.solicitud.entidad[tipo].splice(index, 1);
     },
 
     prepareSubmit: function() {

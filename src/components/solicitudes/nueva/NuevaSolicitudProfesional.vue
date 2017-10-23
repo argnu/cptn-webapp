@@ -488,31 +488,30 @@
                        <v-card-text>
                          <v-layout row>
                            <v-flex xs6 class="ma-4">
-                             <v-radio-group v-model="solicitud.entidad.relacionLaboral">
-                               <v-radio
-                                  class="mb-4"
-                                  label="Relación de Dependencia"
-                                  value="1"
-                                >
-                               </v-radio>
-                               <v-radio
-                                  label="Autónomo"
-                                  value="2"
-                                >
-                               </v-radio>
-                             </v-radio-group>
+                             <v-checkbox
+                                label="Relación de Dependencia"
+                                class="mb-4"
+                                v-model="solicitud.entidad.relacionDependencia"
+                              >
+                             </v-checkbox>
+                             <v-checkbox
+                                label="Autonómo"
+                                class="mb-4"
+                                v-model="solicitud.entidad.independiente"
+                              >
+                             </v-checkbox>
                            </v-flex>
 
                            <v-flex xs6 class="ma-4">
                              <v-text-field
                                 label="Empresa"
-                                v-if="solicitud.entidad.relacionLaboral == 1"
+                                :disabled="!solicitud.entidad.relacionDependencia"
                                 v-model="solicitud.entidad.empresa"
                               >
                              </v-text-field>
                              <v-text-field
                                 label="Servicios Prestados"
-                                v-if="solicitud.entidad.relacionLaboral == 2"
+                                :disabled="!solicitud.entidad.independiente"
                                 v-model="solicitud.entidad.serviciosPrestados"
                               >
                              </v-text-field>
@@ -833,12 +832,12 @@ import { Solicitud, Contacto, Formacion,
 import InputFecha from '@/components/base/InputFecha';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
-import SolicitudMixin from '@/components/mixins/SolicitudMixin';
+import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [ValidatorMixin, SolicitudMixin],
+  mixins: [ValidatorMixin, NuevaSolicitud],
   data () {
     return {
       deAcuerdo: false,
@@ -974,10 +973,6 @@ export default {
          this.nuevo_contacto = new Contacto();
          this.submitContacto = false;
        }
-    },
-
-    removeElem: function(tipo, index) {
-      this.solicitud.entidad[tipo].splice(index, 1);
     },
 
     addFormacion: function() {

@@ -117,6 +117,10 @@ export default {
       else this.select_items.localidades[tipoDomicilio] = [];
     },
 
+    removeElem: function(tipo, index) {
+      this.solicitud.entidad[tipo].splice(index, 1);
+    },    
+
     nextStep: function() {
        this.steps[+this.step - 1].touched = true;
        if (this.validStep(this.step)) this.step = +this.step + 1;
