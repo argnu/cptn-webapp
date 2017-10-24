@@ -72,7 +72,7 @@
           <v-container>
             <v-data-table
                 :headers="columnas[filtros.tipoEntidad]"
-                :items="matriculas_filter"
+                :items="matriculas"
                 class="elevation-1"
                 no-data-text="No se encontraron matriculados"
                 no-results-text="No se encontraron matriculados"
@@ -224,19 +224,19 @@ export default {
 
   filters: {
     formatFecha: function(str) {
-      return utils.formatFecha(str);
+      return str ? utils.formatFecha(str) : '';
     },
 
     upperFirst: function(str) {
-      return utils.upperFirst(str);
+      return str ? utils.upperFirst(str) : '';
     }
   },
 
   computed: {
-    matriculas_filter: function() {
-      let ini = (this.pagination.page - 1) * this.pagination. rowsPerPage;
-      return this.matriculas.slice(ini, ini + this.pagination. rowsPerPage);
-    }
+    // matriculas_filter: function() {
+    //   let ini = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+    //   return this.matriculas.slice(ini, ini + this.pagination.rowsPerPage);
+    // }
   },
 
     watch: {
@@ -249,6 +249,7 @@ export default {
 
       pagination: {
         handler () {
+          this.updateMatriculas();
         },
         deep: true
       }
@@ -260,21 +261,29 @@ export default {
     },
 
     updateMatriculas: function() {
-      this.loading = true;
-      this.matriculas = [];
-      let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}`;
-      if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
-      if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
-      if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
-      if (this.filtros.empresa.nombre) url+=`&nombreEmpresa=${this.filtros.empresa.nombre}`;
+      if (this.filtros.tipoEntidad.length) {
+        this.loading = true;
+        this.matriculas = [];
+        let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+        let limit = this.pagination.rowsPerPage;
 
-      axios.get(url)
-           .then(r => {
-             this.matriculas = r.data;
-             this.totalItems = this.matriculas.length;
-             this.loading = false;
-           })
-           .catch(e => console.error(e));
+        let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
+        // let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=500`;
+
+        if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
+        if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
+        if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
+        if (this.filtros.empresa.nombre) url+=`&nombreEmpresa=${this.filtros.empresa.nombre}`;
+
+        axios.get(url)
+             .then(r => {
+               console.log(r.data.totalQuery, r.data.total);
+               this.matriculas = r.data.matriculas;
+               this.totalItems = r.data.totalQuery;
+               this.loading = false;
+             })
+             .catch(e => console.error(e));
+      }
     },
 
     irPermiso: function(id) {

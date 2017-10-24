@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-container>
+  <v-container v-if="matricula.entidad">
     <v-layout row wrap>
       <v-toolbar class="indigo" dark>
         <v-toolbar-title class="white--text">Datos de Matrícula</v-toolbar-title>
@@ -57,8 +57,11 @@
                     <div class="mb-3">
                       Fecha Nacimiento: {{ matricula.entidad.fechaNacimiento | formatFecha }}
                     </div>
+                    <div class="mb-3">
+                      Relacion Dependencia: {{ matricula.entidad.relacionDependencia | boolean }}
+                    </div>
                     <div>
-                      Relacion Laboral: {{ matricula.entidad.relacionLaboral }}
+                      Autónomo: {{ matricula.entidad.independiente | boolean }}
                     </div>
                   </v-flex>
 
@@ -75,10 +78,10 @@
                     <div class="mb-3">
                       Observaciones: {{ matricula.entidad.observaciones }}
                     </div>
-                    <div v-if="getTipoRelacionalLaboral() == 'dependencia'">
+                    <div class="mb-3">
                       Empresa: {{ matricula.entidad.empresa }}
                     </div>
-                    <div v-if="getTipoRelacionalLaboral() == 'autonomo'">
+                    <div>
                       Servicios Prestados: {{ matricula.entidad.serviciosPrestados }}
                     </div>
                   </v-flex>
@@ -101,13 +104,13 @@
                       <b>Domicilio Real</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioReal.localidad }}
+                      Localidad: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioReal.calle }}
+                      Calle: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.calle : ''}}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioReal.numero }}
+                      N°: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.numero : ''}}
                     </div>
                   </v-flex>
 
@@ -116,13 +119,13 @@
                       <b>Domicilio Legal</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioLegal.localidad }}
+                      Localidad: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioLegal.calle }}
+                      Calle: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioLegal.numero }}
+                      N°: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.numero : ''}}
                     </div>
                   </v-flex>
                 </v-layout>
@@ -139,10 +142,10 @@
             <div slot="header">Contactos</div>
             <v-card>
               <v-card-text class="blue-grey lighten-4">
-                <v-data-table :headers="['Tipo', 'Valor']" :items="matricula.entidad.contactos" hide-actions class="elevation-1 mt-4" no-data-text="No hay contactos">
+                <v-data-table :headers="headers.contactos" :items="matricula.entidad.contactos" hide-actions class="elevation-1 mt-4" no-data-text="No hay contactos">
                   <template slot="headers" scope="props">
                           <th v-for="header of props.headers" style="padding: 20px">
-                            {{ header }}
+                            {{ header.text }}
                           </th>
                           <th></th>
                         </template>
@@ -163,10 +166,10 @@
             <div slot="header">Formaciones</div>
             <v-card>
               <v-card-text class="blue-grey lighten-4">
-                <v-data-table :headers="['Tipo', 'Título', 'Institución', 'Fecha']" :items="matricula.entidad.formaciones" hide-actions class="elevation-1 mt-4" no-data-text="No hay formaciones">
+                <v-data-table :headers="headers.formaciones" :items="matricula.entidad.formaciones" hide-actions class="elevation-1 mt-4" no-data-text="No hay formaciones">
                   <template slot="headers" scope="props">
                   <th v-for="header of props.headers" style="padding: 20px">
-                    {{ header }}
+                    {{ header.text }}
                   </th>
                   <th></th>
                 </template>
@@ -200,13 +203,13 @@
                   Beneficiarios
                 </div> -->
                 <v-data-table
-                  :headers="['Nombre', 'Apellido', 'DNI', 'Fecha de Nacimiento', 'Vínculo', 'Invalidez']"
+                  :headers="headers.beneficiarios"
                   :items="matricula.entidad.beneficiarios"
                   hide-actions class="elevation-1 mt-4" no-data-text="No hay beneficiarios"
                 >
                   <template slot="headers" scope="props">
                   <th v-for="header of props.headers" style="padding: 20px">
-                    {{ header }}
+                    {{ header.text }}
                   </th>
                   <th></th>
                 </template>
@@ -232,13 +235,13 @@
             <v-card>
               <v-card-text class="blue-grey lighten-4">
                 <v-data-table
-                  :headers="['Nombre', 'Apellido', 'DNI', 'Porcentaje']"
+                  :headers="headers.subsidiarios"
                   :items="matricula.entidad.subsidiarios"
                   hide-actions class="elevation-1 mt-4" no-data-text="No hay subsidiarios"
                 >
                   <template slot="headers" scope="props">
                   <th v-for="header of props.headers" style="padding: 20px">
-                    {{ header }}
+                    {{ header.text }}
                   </th>
                   <th></th>
                 </template>
@@ -275,12 +278,90 @@ export default {
       expand: {
         basicos: true
       },
+
+      headers: {
+        contactos: [
+            {
+              text: 'Tipo',
+              value: 'tipo'
+            },
+            {
+              text: 'Valor',
+              value: 'valor'
+            }
+        ],
+
+        formaciones: [
+            {
+              text: 'Tipo',
+              value: 'tipo'
+            },
+            {
+              text: 'Título',
+              value: 'titulo'
+            },
+            {
+              text: 'Institución',
+              value: 'institucion'
+            },
+            {
+              text: 'Fecha',
+              value: 'fecha'
+            }
+        ],
+
+        beneficiarios: [
+          {
+            text: 'Nombre',
+            value: 'nombre'
+          },
+          {
+            text: 'Apellido',
+            value: 'apellido'
+          },
+          {
+            text: 'DNI',
+            value: 'dni'
+          },
+          {
+            text: 'Fecha de Nacimiento',
+            value: 'fechaNacimiento'
+          },
+          {
+            text: 'Vínculo',
+            value: 'vinculo'
+          },
+          {
+            text: 'Invalidez',
+            value: 'invalidez'
+          }
+        ],
+
+        subsidiarios: [
+          {
+            text: 'Nombre',
+            value: 'nombre'
+          },
+          {
+            text: 'Apellido',
+            value: 'apellido'
+          },
+          {
+            text: 'DNI',
+            value: 'dni'
+          },
+          {
+            text: 'Porcentaje',
+            value: 'porcentaje'
+          }
+        ]
+      }
     }
   },
 
   filters: {
     formatFecha: function(str) {
-      return utils.formatFecha(str);
+      return str ? utils.formatFecha(str) : '';
     },
 
     upperFirst: function(str) {
@@ -293,6 +374,7 @@ export default {
   },
 
   created: function() {
+    console.log(`http://localhost:3400/api/matriculas/${this.id}`);
     axios.get(`http://localhost:3400/api/matriculas/${this.id}`)
       .then(r => {
         console.log(r.data);
@@ -304,10 +386,7 @@ export default {
   },
 
   methods: {
-    getTipoRelacionalLaboral: function() {
-      if (this.matricula.entidad.relacionLaboral.includes('Dependencia')) return 'dependencia';
-      else return 'autonomo';
-    },
+
   },
 
 }
