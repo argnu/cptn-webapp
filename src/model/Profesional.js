@@ -30,7 +30,6 @@ export class Contacto {
 
 export class Formacion {
   constructor() {
-    this.tipo = '';
     this.titulo = '';
     this.fecha = '';
     this.institucion = '';

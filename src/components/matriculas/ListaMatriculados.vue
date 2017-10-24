@@ -25,7 +25,14 @@
                     </v-flex>
 
                     <v-flex xs3 class="ma-4">
-                      <br>
+                      Estado
+                      <v-select
+                        :items="estados"
+                        label="Estado"
+                        single-line bottom
+                        v-model="filtros.estado"
+                      >
+                      </v-select>
                       <div v-show="filtros.tipoEntidad == 'profesional'">
                         <v-text-field
                            v-model="filtros.profesional.dni"
@@ -46,6 +53,12 @@
 
                     <v-flex xs3 class="ma-4">
                       <br>
+                      <v-text-field
+                         v-model="filtros.numero"
+                         label="N° Matrícula"
+                         @input="updateList"
+                      >
+                      </v-text-field>
                       <div v-show="filtros.tipoEntidad == 'profesional'">
                         <v-text-field
                            v-model="filtros.profesional.apellido"
@@ -87,7 +100,7 @@
                 <th></th>
               </template>
               <template slot="items" scope="props">
-                <td>{{ props.item.fechaResolucion | formatFecha }}</td>
+                <td>{{ props.item.numeroMatricula }}</td>
                 <td>{{ props.item.estado | upperFirst }}</td>
                 <template v-if="filtros.tipoEntidad == 'profesional'">
                   <td>{{ props.item.entidad.nombre }}</td>
@@ -148,7 +161,9 @@ export default {
             text: 'Empresas',
             value: 'empresa'
           }
-        ]
+        ],
+
+        estados: []
       },
 
       expand: {
@@ -156,7 +171,9 @@ export default {
       },
 
       filtros: {
-        tipoEntidad: '',
+        tipoEntidad: 'profesional',
+        estado: '',
+        numero: '',
         profesional: {
           dni: '',
           apellido: ''
@@ -169,8 +186,8 @@ export default {
       columnas: {
         empresa: [
             {
-              text: 'Fecha',
-              value: 'fecha'
+              text: 'N° Matrícula',
+              value: 'numeroMatricula'
             },
             {
               text: 'Estado',
@@ -191,8 +208,8 @@ export default {
         ],
         profesional: [
             {
-              text: 'Fecha',
-              value: 'fecha'
+              text: 'N° Matrícula',
+              value: 'numeroMatricula'
             },
             {
               text: 'Estado',
@@ -218,10 +235,6 @@ export default {
     }
   },
 
-  created: function() {
-    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
-  },
-
   filters: {
     formatFecha: function(str) {
       return str ? utils.formatFecha(str) : '';
@@ -232,28 +245,35 @@ export default {
     }
   },
 
-  computed: {
-    // matriculas_filter: function() {
-    //   let ini = (this.pagination.page - 1) * this.pagination.rowsPerPage;
-    //   return this.matriculas.slice(ini, ini + this.pagination.rowsPerPage);
-    // }
+  watch: {
+    filtros: {
+      handler () {
+        this.updateMatriculas();
+      },
+      deep: true
+    },
+
+    pagination: {
+      handler () {
+        this.updateMatriculas();
+      },
+      deep: true
+    }
   },
 
-    watch: {
-      filtros: {
-        handler () {
-          this.updateMatriculas();
-        },
-        deep: true
-      },
-
-      pagination: {
-        handler () {
-          this.updateMatriculas();
-        },
-        deep: true
+  computed: {
+      estados: function() {
+        return this.select_items.estados ? this.select_items.estados.map(e => e.valor) : [];
       }
-    },
+  },
+
+  created: function() {
+    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    axios.get('http://localhost:3400/api/opciones')
+    .then(r => {
+      this.select_items.estados = r.data.estadoMatricula;
+    })
+  },
 
   methods: {
     updateList: function() {
@@ -268,8 +288,12 @@ export default {
         let limit = this.pagination.rowsPerPage;
 
         let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
-        // let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=500`;
 
+        if (this.filtros.estado) {
+          let estado = this.select_items.estados.find(e => e.valor == this.filtros.estado);
+          url += `&estado=${estado.id}`
+        }
+        if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
         if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
         if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;

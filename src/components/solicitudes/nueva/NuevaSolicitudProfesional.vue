@@ -400,21 +400,20 @@
                               label="Tipo de Formación"
                               single-line
                               bottom
-                              v-model="nueva_formacion.tipo"
-                              :rules="submitFormacion ? validator.formacion.tipo : []"
-                              :error="!validControl(validator.formacion.tipo, nueva_formacion.tipo)
-                                && submitFormacion"
+                              v-model="tipoFormacion"
                             >
                             </v-select>
-                            <v-text-field
+                            <typeahead
                               tabindex="34"
+                              option="true"
+                              :items="titulos"
                               label="Título"
                               v-model="nueva_formacion.titulo"
                               :rules="submitFormacion ? validator.formacion.titulo : []"
                               :error="!validControl(validator.formacion.titulo, nueva_formacion.titulo)
                                 && submitFormacion"
                             >
-                            </v-text-field>
+                            </typeahead>
                           </v-flex>
 
                           <v-flex xs6 class="ma-4">
@@ -460,7 +459,6 @@
                             <th></th>
                           </template>
                           <template slot="items" scope="props">
-                            <td>{{ getTipoFormacion(props.item.tipo) }}</td>
                             <td>{{ props.item.titulo }}</td>
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
@@ -848,7 +846,7 @@ export default {
         sexo: [],
         estadoCivil: [],
         tipoFormacion: [],
-        relacionLaboral: []
+        titulos: []
       },
 
       solicitud: new Solicitud('profesional'),
@@ -865,7 +863,6 @@ export default {
         ],
 
         formacion: [
-          { text: 'Tipo', value: 'tipo' },
           { text: 'Título', value: 'titulo' },
           { text: 'Fecha', value: 'fecha' },
           { text: 'Institución', value: 'institucion' }
@@ -906,7 +903,7 @@ export default {
           dni: [ rules.required, rules.number ], fechaNacimiento: [ rules.required, rules.fecha ], condafip: [ rules.required ]
         },
         formacion: {
-          tipo: [ rules.required ], institucion: [ rules.required ],
+          institucion: [ rules.required ],
           titulo: [ rules.required ], fecha: [ rules.required, rules.fecha ]
         },
         beneficiario: {
@@ -922,7 +919,18 @@ export default {
       submitContacto: false,
       submitFormacion: false,
       submitBeneficiario: false,
-      submitSubsidiario: false
+      submitSubsidiario: false,
+
+      tipoFormacion: ''
+    }
+  },
+
+  watch: {
+    tipoFormacion: function(new_val) {
+      axios.get(`http://localhost:3400/api/titulos?tipo=${new_val}`)
+      .then(r => {
+        this.select_items.titulos = r.data;
+      });
     }
   },
 
@@ -949,6 +957,10 @@ export default {
   computed: {
     instituciones: function() {
       return this.select_items.instituciones ? this.select_items.instituciones.map(i => i.nombre) : [];
+    },
+
+    titulos: function() {
+      return this.select_items.titulos ? this.select_items.titulos.map(i => i.nombre) : [];
     }
   },
 
@@ -960,10 +972,6 @@ export default {
 
     getTipoContacto: function(id) {
         return this.select_items.tipoContacto.find(i => id == i.value ).text;
-    },
-
-    getTipoFormacion: function(id) {
-        return this.select_items.tipoFormacion.find(i => id == i.value ).text;
     },
 
     addContacto: function() {
