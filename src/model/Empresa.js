@@ -6,8 +6,8 @@ export class Empresa {
     this.nombre = '';
     this.cuit = '';
     this.condafip = '';
-    this.fechaInicio = null;
-    this.fechaConstitucion = null;
+    this.fechaInicio = '';
+    this.fechaConstitucion = '';
     this.tipoEmpresa = '';
     this.tipoSociedad = '';
     this.domicilioReal = new Domicilio();

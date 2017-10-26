@@ -10,7 +10,7 @@ export default {
       snackbar: {
         msg: '',
         show: false,
-        context: ''
+        color: ''
       },
 
       select_items: {
@@ -132,7 +132,7 @@ export default {
 
     submitError: function() {
       this.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.snackbar.context = 'error';
+      this.snackbar.color = 'error';
       this.snackbar.show = true;
     },
   }

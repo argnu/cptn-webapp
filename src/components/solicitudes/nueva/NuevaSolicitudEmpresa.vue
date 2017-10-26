@@ -4,8 +4,8 @@
         :timeout="6000"
         :bottom="true"
         :right="true"
-        :success="snackbar.context === 'success'"
-        :error="snackbar.context === 'error'"
+        :color=snackbar.color
+        
         v-model="snackbar.show"
       >
         {{ snackbar.msg }}
@@ -580,7 +580,7 @@ export default {
                this.submitError();
              }
              this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-             this.snackbar.context = 'success';
+             this.snackbar.color = 'success';
              this.snackbar.show = true;
              this.solicitud = new Solicitud('empresa');
              this.step = 1;

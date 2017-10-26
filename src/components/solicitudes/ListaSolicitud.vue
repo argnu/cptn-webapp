@@ -39,6 +39,9 @@
               </v-layout>
             </v-container>
           </v-card-text>
+          <v-card-actions>
+              <v-btn color="primary" flat @click.stop="show_validar = false">Cerrar</v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
 
@@ -159,7 +162,7 @@
                     </v-btn>
                     <v-list>
                       <v-list-tile
-                        v-show="props.item.estado != 'aprobada'" 
+                        v-show="props.item.estado != 'aprobada'"
                         @click="selectSolicitud(props.item.id)"
                       >
                         <v-list-tile-title>Aprobar</v-list-tile-title>
@@ -287,7 +290,7 @@ export default {
 
       filtros: {
         estado: 'todas',
-        tipoEntidad: '',
+        tipoEntidad: 'profesional',
         profesional: {
           dni: '',
           apellido: ''
@@ -341,6 +344,7 @@ export default {
 
     pagination: {
       handler () {
+        this.updateSolicitudes();
       },
       deep: true
     }
@@ -352,22 +356,24 @@ export default {
     },
 
     updateSolicitudes: function() {
-      this.loading = true;
-      this.solicitudes = [];
-      let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
-      if (this.filtros.estado && this.filtros.estado != 'todas') url+=`&estado=${this.filtros.estado}`;
-      if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
-      if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
-      if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
-      if (this.filtros.empresa.nombre) url+=`&nombreEmpresa=${this.filtros.empresa.nombre}`;
+      if (this.filtros.tipoEntidad.length) {
+        this.loading = true;
+        this.solicitudes = [];
+        let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
+        if (this.filtros.estado && this.filtros.estado != 'todas') url+=`&estado=${this.filtros.estado}`;
+        if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
+        if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
+        if (this.filtros.empresa.cuit) url+=`&cuit=${this.filtros.empresa.cuit}`;
+        if (this.filtros.empresa.nombre) url+=`&nombreEmpresa=${this.filtros.empresa.nombre}`;
 
-      axios.get(url)
-           .then(r => {
-             this.solicitudes = r.data;
-             this.totalItems = this.solicitudes.length;
-             this.loading = false;
-           })
-           .catch(e => console.error(e));
+        axios.get(url)
+             .then(r => {
+               this.solicitudes = r.data;
+               this.totalItems = this.solicitudes.length;
+               this.loading = false;
+             })
+             .catch(e => console.error(e));
+      }
     },
 
     selectSolicitud: function(id) {

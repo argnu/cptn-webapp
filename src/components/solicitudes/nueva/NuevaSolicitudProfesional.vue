@@ -4,8 +4,7 @@
         :timeout="6000"
         :bottom="true"
         :right="true"
-        :success="snackbar.context === 'success'"
-        :error="snackbar.context === 'error'"
+        :color=snackbar.color
         v-model="snackbar.show"
       >
         {{ snackbar.msg }}
@@ -609,7 +608,7 @@
                            </v-flex>
                          </v-layout>
 
-                         <v-layout row wrap class="mb-4">
+                         <v-layout row wrap class="mb-4" v-show="solicitud.entidad.poseeCajaPrevisional == 'false'">
                            <v-flex xs12>
                              <v-btn class="right" light @click="addBeneficiario">
                                Agregar
@@ -987,6 +986,7 @@ export default {
       this.submitFormacion = true;
       if ( utils.validObject(this.nueva_formacion, this.validator.formacion) ) {
         this.nueva_formacion.institucion = this.select_items.instituciones.find(i => i.nombre == this.nueva_formacion.institucion).id;
+        this.nueva_formacion.titulo = this.select_items.titulos.find(i => i.nombre == this.nueva_formacion.titulo).id;
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         this.nueva_formacion = new Formacion();
         this.submitFormacion = false;
@@ -1033,7 +1033,7 @@ export default {
                this.submitError();
              }
              this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-             this.snackbar.context = 'success';
+             this.snackbar.color = 'success';
              this.snackbar.show = true;
              this.solicitud = new Solicitud('profesional');
              this.steps.forEach(s => s.touched = false);
