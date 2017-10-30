@@ -11,7 +11,8 @@ export class Empresa {
     this.tipoEmpresa = '';
     this.tipoSociedad = '';
     this.domicilioReal = new Domicilio();
-    this.domicilioLegal = new Domicilio();
+    this.domicilioProfesional = new Domicilio();
+    this.domicilioConstituido = new Domicilio();
     this.contactos = [];
     this.incumbencias = [];
   }

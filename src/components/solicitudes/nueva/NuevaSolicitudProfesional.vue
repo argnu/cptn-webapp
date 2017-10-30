@@ -239,7 +239,7 @@
 
                         <br>
 
-                        <span class="title ml-4">Domicilio Legal</span>
+                        <span class="title ml-4">Domicilio Profesional</span>
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <typeahead
@@ -248,7 +248,7 @@
                               :items="paises"
                               label="País"
                               @change="changePais('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.pais"
+                              v-model="solicitud.entidad.domicilioProfesional.pais"
                             >
                             </typeahead>
                             <typeahead
@@ -257,15 +257,15 @@
                               :items="departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.departamento"
+                              v-model="solicitud.entidad.domicilioProfesional.departamento"
                             >
                             </typeahead>
                             <v-text-field
                               tabindex="25"
                               label="Calle"
-                              v-model="solicitud.entidad.domicilioLegal.calle"
-                              :rules="validator.domicilioLegal.calle"
-                              :error="!validControl(validator.domicilioLegal.calle, solicitud.entidad.domicilioLegal.calle)
+                              v-model="solicitud.entidad.domicilioProfesional.calle"
+                              :rules="validator.domicilioProfesional.calle"
+                              :error="!validControl(validator.domicilioProfesional.calle, solicitud.entidad.domicilioProfesional.calle)
                                 && steps[2].touched"
                             >
                             </v-text-field>
@@ -278,7 +278,7 @@
                               :items="provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.provincia"
+                              v-model="solicitud.entidad.domicilioProfesional.provincia"
                             >
                             </typeahead>
                             <typeahead
@@ -286,18 +286,84 @@
                               tabindex="24"
                               :items="localidades.legal"
                               label="Localidad"
-                              v-model="solicitud.entidad.domicilioLegal.localidad"
-                              :rules="validator.domicilioLegal.localidad"
-                              :error="!validControl(validator.domicilioLegal.localidad, solicitud.entidad.domicilioLegal.localidad)
+                              v-model="solicitud.entidad.domicilioProfesional.localidad"
+                              :rules="validator.domicilioProfesional.localidad"
+                              :error="!validControl(validator.domicilioProfesional.localidad, solicitud.entidad.domicilioProfesional.localidad)
                                 && steps[2].touched"
                             >
                             </typeahead>
                             <v-text-field
                               tabindex="26"
                               label="Nro"
-                              v-model="solicitud.entidad.domicilioLegal.numero"
-                              :rules="validator.domicilioLegal.numero"
-                              :error="!validControl(validator.domicilioLegal.numero, solicitud.entidad.domicilioLegal.numero)
+                              v-model="solicitud.entidad.domicilioProfesional.numero"
+                              :rules="validator.domicilioProfesional.numero"
+                              :error="!validControl(validator.domicilioProfesional.numero, solicitud.entidad.domicilioProfesional.numero)
+                                && steps[2].touched"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                        </v-layout>
+                        <br>
+
+                        <span class="title ml-4">Domicilio Constituido</span>
+                        <v-layout row>
+                          <v-flex xs6 class="ma-4">
+                            <typeahead
+                              option="true"
+                              tabindex="21"
+                              :items="paises"
+                              label="País"
+                              @change="changePais('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.pais"
+                            >
+                            </typeahead>
+                            <typeahead
+                              option="true"
+                              tabindex="23"
+                              :items="departamentos.legal"
+                              label="Departamento"
+                              @change="changeDepartamento('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.departamento"
+                            >
+                            </typeahead>
+                            <v-text-field
+                              tabindex="25"
+                              label="Calle"
+                              v-model="solicitud.entidad.domicilioConstituido.calle"
+                              :rules="validator.domicilioConstituido.calle"
+                              :error="!validControl(validator.domicilioConstituido.calle, solicitud.entidad.domicilioConstituido.calle)
+                                && steps[2].touched"
+                            >
+                            </v-text-field>
+                          </v-flex>
+
+                          <v-flex xs6 class="ma-4">
+                            <typeahead
+                              option="true"
+                              tabindex="22"
+                              :items="provincias.legal"
+                              label="Provincia"
+                              @change="changeProvincia('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.provincia"
+                            >
+                            </typeahead>
+                            <typeahead
+                              option="true"
+                              tabindex="24"
+                              :items="localidades.legal"
+                              label="Localidad"
+                              v-model="solicitud.entidad.domicilioConstituido.localidad"
+                              :rules="validator.domicilioConstituido.localidad"
+                              :error="!validControl(validator.domicilioConstituido.localidad, solicitud.entidad.domicilioConstituido.localidad)
+                                && steps[2].touched"
+                            >
+                            </typeahead>
+                            <v-text-field
+                              tabindex="26"
+                              label="Nro"
+                              v-model="solicitud.entidad.domicilioConstituido.numero"
+                              :rules="validator.domicilioConstituido.numero"
+                              :error="!validControl(validator.domicilioConstituido.numero, solicitud.entidad.domicilioConstituido.numero)
                                 && steps[2].touched"
                             >
                             </v-text-field>
@@ -530,35 +596,25 @@
                    <v-card class="grey lighten-4 elevation-4 mb-2">
                        <v-card-text>
                          <v-layout row>
-                           <v-flex xs12>
-                             <v-radio-group
+                           <v-flex xs3 class="ma-4">
+                             <v-checkbox
+                                label="Ya poseo Caja Previsional"
                                 v-model="solicitud.entidad.poseeCajaPrevisional"
-                             >
-                               <v-radio
-                                  label="Ya poseo Caja Previsional"
-                                  value="true"
-                                >
-                               </v-radio>
-                               <v-radio
-                                  class="mt-4"
-                                  label="Solicitar Alta"
-                                  value="false"
-                                >
-                               </v-radio>
+                              >
+                             </v-checkbox>
                              </v-radio-group>
                            </v-flex>
-
-                           <v-flex xs10>
+                           <v-flex xs6>
                              <v-text-field
                                 label="Nombre"
-                                v-show="solicitud.entidad.poseeCajaPrevisional == 'true'"
+                                :disabled="!solicitud.entidad.poseeCajaPrevisional"
                                 v-model="solicitud.entidad.nombreCajaPrevisional"
                               >
                              </v-text-field>
                            </v-flex>
                          </v-layout>
 
-                         <v-layout row v-show="solicitud.entidad.poseeCajaPrevisional == 'false'">
+                         <v-layout row>
                            <v-flex xs6 class="ma-4">
                              <v-text-field
                                 label="DNI"
@@ -608,7 +664,7 @@
                            </v-flex>
                          </v-layout>
 
-                         <v-layout row wrap class="mb-4" v-show="solicitud.entidad.poseeCajaPrevisional == 'false'">
+                         <v-layout row wrap class="mb-4">
                            <v-flex xs12>
                              <v-btn class="right" light @click="addBeneficiario">
                                Agregar
@@ -616,7 +672,7 @@
                            </v-flex>
                          </v-layout>
 
-                         <div v-show="solicitud.entidad.poseeCajaPrevisional == 'false'">
+                         <div>
                            <v-data-table
                                :headers="headers.beneficiarios"
                                :items="solicitud.entidad.beneficiarios"
@@ -1018,10 +1074,14 @@ export default {
       solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
       solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
       solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
-      solicitud.entidad.domicilioLegal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioLegal.pais).id;
-      solicitud.entidad.domicilioLegal.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.provincia).id;
-      solicitud.entidad.domicilioLegal.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.departamento).id;
-      solicitud.entidad.domicilioLegal.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.localidad).id;
+      solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
+      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
+      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
+      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
+      solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
+      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
+      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
+      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
       return solicitud;
     },
 
@@ -1051,9 +1111,11 @@ export default {
       }
       else if (i == 3) {
         let domicilioR = this.solicitud.entidad.domicilioReal;
-        let domicilioL = this.solicitud.entidad.domicilioReal;
+        let domicilioP = this.solicitud.entidad.domicilioProfesional;
+        let domicilioC = this.solicitud.entidad.domicilioConstituido;
         return utils.validObject(domicilioR, this.validator.domicilioReal)
-          && utils.validObject(domicilioL, this.validator.domicilioLegal);
+          && utils.validObject(domicilioP, this.validator.domicilioProfesional)
+          && utils.validObject(domicilioC, this.validator.domicilioConstituido);
       }
       else return true;
     },

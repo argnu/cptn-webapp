@@ -5,7 +5,7 @@
         :bottom="true"
         :right="true"
         :color=snackbar.color
-        
+
         v-model="snackbar.show"
       >
         {{ snackbar.msg }}
@@ -211,7 +211,7 @@
 
                         <br>
 
-                        <span class="title ml-4">Domicilio Legal</span>
+                        <span class="title ml-4">Domicilio Profesional</span>
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <typeahead
@@ -220,7 +220,7 @@
                               :items="paises"
                               label="País"
                               @change="changePais('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.pais"
+                              v-model="solicitud.entidad.domicilioProfesional.pais"
                             >
                             </typeahead>
                             <typeahead
@@ -229,15 +229,15 @@
                               :items="departamentos.legal"
                               label="Departamento"
                               @change="changeDepartamento('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.departamento"
+                              v-model="solicitud.entidad.domicilioProfesional.departamento"
                             >
                             </typeahead>
                             <v-text-field
                               tabindex="25"
                               label="Calle"
-                              v-model="solicitud.entidad.domicilioLegal.calle"
-                              :rules="validator.domicilioLegal.calle"
-                              :error="!validControl(validator.domicilioLegal.calle, solicitud.entidad.domicilioLegal.calle)
+                              v-model="solicitud.entidad.domicilioProfesional.calle"
+                              :rules="validator.domicilioProfesional.calle"
+                              :error="!validControl(validator.domicilioProfesional.calle, solicitud.entidad.domicilioProfesional.calle)
                                 && steps[2].touched"
                             >
                             </v-text-field>
@@ -250,7 +250,7 @@
                               :items="provincias.legal"
                               label="Provincia"
                               @change="changeProvincia('legal')"
-                              v-model="solicitud.entidad.domicilioLegal.provincia"
+                              v-model="solicitud.entidad.domicilioProfesional.provincia"
                             >
                             </typeahead>
                             <typeahead
@@ -258,25 +258,91 @@
                               tabindex="24"
                               :items="localidades.legal"
                               label="Localidad"
-                              v-model="solicitud.entidad.domicilioLegal.localidad"
-                              :rules="validator.domicilioLegal.localidad"
-                              :error="!validControl(validator.domicilioLegal.localidad, solicitud.entidad.domicilioLegal.localidad)
+                              v-model="solicitud.entidad.domicilioProfesional.localidad"
+                              :rules="validator.domicilioProfesional.localidad"
+                              :error="!validControl(validator.domicilioProfesional.localidad, solicitud.entidad.domicilioProfesional.localidad)
                                 && steps[2].touched"
                             >
                             </typeahead>
                             <v-text-field
                               tabindex="26"
                               label="Nro"
-                              v-model="solicitud.entidad.domicilioLegal.numero"
-                              :rules="validator.domicilioLegal.numero"
-                              :error="!validControl(validator.domicilioLegal.numero, solicitud.entidad.domicilioLegal.numero)
+                              v-model="solicitud.entidad.domicilioProfesional.numero"
+                              :rules="validator.domicilioProfesional.numero"
+                              :error="!validControl(validator.domicilioProfesional.numero, solicitud.entidad.domicilioProfesional.numero)
+                                && steps[2].touched"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                        </v-layout>
+                        <br>
+
+                        <span class="title ml-4">Domicilio Constituido</span>
+                        <v-layout row>
+                          <v-flex xs6 class="ma-4">
+                            <typeahead
+                              option="true"
+                              tabindex="21"
+                              :items="paises"
+                              label="País"
+                              @change="changePais('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.pais"
+                            >
+                            </typeahead>
+                            <typeahead
+                              option="true"
+                              tabindex="23"
+                              :items="departamentos.legal"
+                              label="Departamento"
+                              @change="changeDepartamento('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.departamento"
+                            >
+                            </typeahead>
+                            <v-text-field
+                              tabindex="25"
+                              label="Calle"
+                              v-model="solicitud.entidad.domicilioConstituido.calle"
+                              :rules="validator.domicilioConstituido.calle"
+                              :error="!validControl(validator.domicilioConstituido.calle, solicitud.entidad.domicilioConstituido.calle)
+                                && steps[2].touched"
+                            >
+                            </v-text-field>
+                          </v-flex>
+
+                          <v-flex xs6 class="ma-4">
+                            <typeahead
+                              option="true"
+                              tabindex="22"
+                              :items="provincias.legal"
+                              label="Provincia"
+                              @change="changeProvincia('legal')"
+                              v-model="solicitud.entidad.domicilioConstituido.provincia"
+                            >
+                            </typeahead>
+                            <typeahead
+                              option="true"
+                              tabindex="24"
+                              :items="localidades.legal"
+                              label="Localidad"
+                              v-model="solicitud.entidad.domicilioConstituido.localidad"
+                              :rules="validator.domicilioConstituido.localidad"
+                              :error="!validControl(validator.domicilioConstituido.localidad, solicitud.entidad.domicilioConstituido.localidad)
+                                && steps[2].touched"
+                            >
+                            </typeahead>
+                            <v-text-field
+                              tabindex="26"
+                              label="Nro"
+                              v-model="solicitud.entidad.domicilioConstituido.numero"
+                              :rules="validator.domicilioConstituido.numero"
+                              :error="!validControl(validator.domicilioConstituido.numero, solicitud.entidad.domicilioConstituido.numero)
                                 && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
                     </v-card-text>
-                  </v-card>
+                  </v-card
                   <v-btn primary @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
@@ -413,6 +479,90 @@
                 </v-stepper-content>
 
 
+                <!-- PASO 6: REPRESENTANTE -->
+                <v-stepper-step step="6" edit-icon="check" editable :complete="validStep(6) && step > 6" :rules="[() => step <= 6 || validStep(6)]">
+                  Representante Técnico
+                </v-stepper-step>
+                <v-stepper-content step="6">
+                  <v-card class="grey lighten-4 elevation-4 mb-2">
+                    <v-card-text>
+                      <v-container>
+                        Buscar:
+                        <v-layout row wrap>
+                          <v-flex xs3  class="mx-4">
+                            <v-text-field
+                              label="N°"
+                              @input="updateList"
+                              v-model="filtros.numero"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                          <v-flex xs3>
+                            <v-text-field
+                              label="Apellido"
+                              @input="updateList"
+                              v-model="filtros.apellido"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                          <v-flex xs3  class="mx-4">
+                            <v-text-field
+                              label="DNI"
+                              @input="updateList"
+                              v-model="filtros.dni"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                        </v-layout>
+
+                        <v-layout row>
+                          <v-flex xs12 class="ma-4">
+                            <v-data-table
+                                :headers="headers.matriculados"
+                                :items="matriculados"
+                                class="elevation-1"
+                                no-data-text="No se encontraron matriculados"
+                                no-results-text="No se encontraron matriculados"
+                                v-bind:pagination.sync="pagination"
+                                :total-items="totalItems"
+                                :loading="loading"
+                                >
+                              <template slot="headers" scope="props">
+                                <th v-for="header of props.headers" style="padding: 20px">
+                                  {{ headertext }}
+                                </th>
+                              </template>
+                              <template slot="items" scope="props">
+                                <tr @click="selectMatricula(props.item)">
+                                  <td>{{ props.item.numeroMatricula }}</td>
+                                  <td>{{ props.item.entidad.nombre }}</td>
+                                  <td>{{ props.item.entidad.apellido }}</td>
+                                  <td>{{ props.item.entidad.dni }}</td>
+                                </tr>
+                              </template>
+                            </v-data-table>
+                          </v-flex>
+                        </v-layout>
+
+                        <v-layout row wrap>
+                          <v-flex xs12 class="mx-4">
+                            Matrícula Seleccionada: {{ matricula_selected.numero }}
+                          </v-flex>
+                        </v-layout>
+
+
+                      </v-container>
+                    </v-card-text>
+                  </v-card>
+                  <!-- <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn> -->
+                  <v-btn class="primary white--text right" @click.native="submit" :disabled="!validForm()">
+                    Guardar Solicitud
+                    <v-icon dark right>check_circle</v-icon>
+                  </v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
+                </v-stepper-content>
+
+
               </v-stepper>
           </v-container>
 
@@ -477,7 +627,13 @@ export default {
           { text: 'Valor', value: 'valor' },
         ],
         incumbencias: [
-          { text: 'Nombre', value: 'valor' },
+          { text: 'Nombre', value: 'nombre' },
+        ],
+        matriculados: [
+          { text: 'N°', value: 'numero' },
+          { text: 'Nombre', value: 'nombre' },
+          { text: 'Apellido', value: 'nombre' },
+          { text: 'DNI', value: 'dni' }
         ]
       },
 
@@ -499,14 +655,45 @@ export default {
 
       submitContacto: false,
       submitIncumbencia: false,
+
+      matriculados: [],
+      debouncedUpdate: null,
+      totalItems: 0,
+      loading: false,
+      pagination: {
+         rowsPerPage: 5,
+      },
+      filtros: {
+        numero: '',
+        dni: '',
+        apellido: ''
+      },
+      matricula_selected: {}
+    }
+  },
+
+  watch: {
+    filtros: {
+      handler () {
+        this.updateMatriculas();
+      },
+      deep: true
+    },
+
+    pagination: {
+      handler () {
+        this.updateMatriculas();
+      },
+      deep: true
     }
   },
 
   created: function() {
+    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     Promise.all([
       axios.get('http://localhost:3400/api/paises'),
       axios.get('http://localhost:3400/api/opciones?sort=valor'),
-      axios.get('http://localhost:3400/api/delegaciones'),
+      axios.get('http://localhost:3400/api/delegaciones')
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -565,10 +752,14 @@ export default {
       solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
       solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
       solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
-      solicitud.entidad.domicilioLegal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioLegal.pais).id;
-      solicitud.entidad.domicilioLegal.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.provincia).id;
-      solicitud.entidad.domicilioLegal.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.departamento).id;
-      solicitud.entidad.domicilioLegal.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioLegal.localidad).id;
+      solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
+      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
+      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
+      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
+      solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
+      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
+      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
+      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
       return solicitud;
     },
 
@@ -597,11 +788,42 @@ export default {
       }
       else if (i == 3) {
         let domicilioR = this.solicitud.entidad.domicilioReal;
-        let domicilioL = this.solicitud.entidad.domicilioReal;
+        let domicilioP = this.solicitud.entidad.domicilioProfesional;
+        let domicilioC = this.solicitud.entidad.domicilioConstituido;
         return utils.validObject(domicilioR, this.validator.domicilioReal)
-          && utils.validObject(domicilioL, this.validator.domicilioLegal);
+          && utils.validObject(domicilioP, this.validator.domicilioProfesional)
+          && utils.validObject(domicilioC, this.validator.domicilioConstituido);
       }
       else return true;
+    },
+
+    updateMatriculas: function() {
+      this.loading = true;
+      this.matriculas = [];
+      let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+      let limit = this.pagination.rowsPerPage;
+
+      let url = `http://localhost:3400/api/matriculas?tipoEntidad=profesional&estado=1&limit=${limit}&offset=${offset}`;
+
+      if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
+      if (this.filtros.dni) url+=`&dni=${this.filtros.profesional.dni}`;
+      if (this.filtros.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
+
+      axios.get(url)
+           .then(r => {
+             this.matriculados = r.data.resultados;
+             this.totalItems = r.data.totalQuery;
+             this.loading = false;
+           })
+           .catch(e => console.error(e));
+    },
+
+    updateList: function() {
+      this.debouncedUpdate();
+    },
+
+    selectMatricula: function(matricula) {
+      this.matricula_selected = matricula;
     }
   },
 

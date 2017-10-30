@@ -301,8 +301,7 @@ export default {
 
         axios.get(url)
              .then(r => {
-               console.log(r.data.totalQuery, r.data.total);
-               this.matriculas = r.data.matriculas;
+               this.matriculas = r.data.resultados;
                this.totalItems = r.data.totalQuery;
                this.loading = false;
              })

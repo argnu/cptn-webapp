@@ -51,7 +51,8 @@ export class Profesional {
     this.nacionalidad = '';
     this.observaciones = '';
     this.domicilioReal = new Domicilio();
-    this.domicilioLegal = new Domicilio();
+    this.domicilioProfesional = new Domicilio();
+    this.domicilioConstituido = new Domicilio();
     this.contactos = [];
     this.formaciones = [];
     this.relacionDependencia = false;
