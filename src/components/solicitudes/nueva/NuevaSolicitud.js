@@ -59,6 +59,16 @@ export default {
     }
   },
 
+  filters: {
+    formatFecha: function(str) {
+      return utils.formatFecha(str);
+    },
+
+    boolean: function(str) {
+      return str ? 'Sí' : 'No';
+    }
+  },
+
   computed: {
     paises: function() {
       return this.select_items.paises ? this.select_items.paises.map(i => i.nombre)  : [];

@@ -57,7 +57,7 @@
                         </v-layout>
                       </v-card-text>
                     </v-card>
-                    <v-btn primary @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
+                    <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -160,7 +160,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -247,16 +247,16 @@
                               tabindex="21"
                               :items="paises"
                               label="País"
-                              @change="changePais('legal')"
+                              @change="changePais('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.pais"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="departamentos.legal"
+                              :items="departamentos.profesional"
                               label="Departamento"
-                              @change="changeDepartamento('legal')"
+                              @change="changeDepartamento('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.departamento"
                             >
                             </typeahead>
@@ -275,16 +275,16 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="provincias.legal"
+                              :items="provincias.profesional"
                               label="Provincia"
-                              @change="changeProvincia('legal')"
+                              @change="changeProvincia('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.provincia"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="localidades.legal"
+                              :items="localidades.profesional"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioProfesional.localidad"
                               :rules="validator.domicilioProfesional.localidad"
@@ -313,16 +313,16 @@
                               tabindex="21"
                               :items="paises"
                               label="País"
-                              @change="changePais('legal')"
+                              @change="changePais('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.pais"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="departamentos.legal"
+                              :items="departamentos.constituido"
                               label="Departamento"
-                              @change="changeDepartamento('legal')"
+                              @change="changeDepartamento('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.departamento"
                             >
                             </typeahead>
@@ -341,16 +341,16 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="provincias.legal"
+                              :items="provincias.constituido"
                               label="Provincia"
-                              @change="changeProvincia('legal')"
+                              @change="changeProvincia('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.provincia"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="localidades.legal"
+                              :items="localidades.constituido"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioConstituido.localidad"
                               :rules="validator.domicilioConstituido.localidad"
@@ -371,7 +371,7 @@
                         </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -444,7 +444,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right" tabindex="31">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="31">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -537,7 +537,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -582,7 +582,7 @@
                          </v-layout>
                        </v-card-text>
                      </v-card>
-                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                      <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
@@ -702,7 +702,7 @@
                          </div>
                        </v-card-text>
                      </v-card>
-                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                      <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
@@ -786,7 +786,7 @@
 
                        </v-card-text>
                      </v-card>
-                     <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                     <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                      <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                  </v-stepper-content>
 
@@ -833,7 +833,7 @@
 
                         </v-card-text>
                       </v-card>
-                      <v-btn class="primary white--text right" @click.native="submit" :disabled="!validForm()">
+                      <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!validForm()">
                         Guardar Solicitud
                         <v-icon dark right>check_circle</v-icon>
                       </v-btn>
@@ -1075,18 +1075,17 @@ export default {
       solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
       solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
       solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
-      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
-      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
-      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
+      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
+      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
+      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
       solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
-      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
-      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
-      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
+      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
+      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
+      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
       return solicitud;
     },
 
     submit: function() {
-      console.log(JSON.stringify(this.prepareSubmit()));
       axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
            .then(r => {
              if (r.status != 201) {

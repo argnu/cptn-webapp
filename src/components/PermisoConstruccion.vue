@@ -246,7 +246,7 @@
 
     <v-layout row>
       <v-flex xs12>
-        <v-btn class="primary white--text right" @click.native="" tabindex="23">
+        <v-btn class="blue darken-1 white--text right" @click.native="" tabindex="23">
           Guardar
           <v-icon dark right></v-icon>
         </v-btn>

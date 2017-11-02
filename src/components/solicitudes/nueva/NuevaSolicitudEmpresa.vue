@@ -57,7 +57,7 @@
                         </v-layout>
                       </v-card-text>
                     </v-card>
-                    <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                    <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -132,7 +132,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -219,16 +219,16 @@
                               tabindex="21"
                               :items="paises"
                               label="País"
-                              @change="changePais('legal')"
+                              @change="changePais('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.pais"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="departamentos.legal"
+                              :items="departamentos.profesional"
                               label="Departamento"
-                              @change="changeDepartamento('legal')"
+                              @change="changeDepartamento('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.departamento"
                             >
                             </typeahead>
@@ -247,16 +247,16 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="provincias.legal"
+                              :items="provincias.profesional"
                               label="Provincia"
-                              @change="changeProvincia('legal')"
+                              @change="changeProvincia('profesional')"
                               v-model="solicitud.entidad.domicilioProfesional.provincia"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="localidades.legal"
+                              :items="localidades.profesional"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioProfesional.localidad"
                               :rules="validator.domicilioProfesional.localidad"
@@ -285,16 +285,16 @@
                               tabindex="21"
                               :items="paises"
                               label="País"
-                              @change="changePais('legal')"
+                              @change="changePais('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.pais"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="23"
-                              :items="departamentos.legal"
+                              :items="departamentos.constituido"
                               label="Departamento"
-                              @change="changeDepartamento('legal')"
+                              @change="changeDepartamento('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.departamento"
                             >
                             </typeahead>
@@ -313,16 +313,16 @@
                             <typeahead
                               option="true"
                               tabindex="22"
-                              :items="provincias.legal"
+                              :items="provincias.constituido"
                               label="Provincia"
-                              @change="changeProvincia('legal')"
+                              @change="changeProvincia('constituido')"
                               v-model="solicitud.entidad.domicilioConstituido.provincia"
                             >
                             </typeahead>
                             <typeahead
                               option="true"
                               tabindex="24"
-                              :items="localidades.legal"
+                              :items="localidades.constituido"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioConstituido.localidad"
                               :rules="validator.domicilioConstituido.localidad"
@@ -342,8 +342,8 @@
                           </v-flex>
                         </v-layout>
                     </v-card-text>
-                  </v-card
-                  <v-btn primary @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
+                  </v-card>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -412,7 +412,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -470,11 +470,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <!-- <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn> -->
-                  <v-btn class="primary white--text right" @click.native="submit" :disabled="!validForm()">
-                    Guardar Solicitud
-                    <v-icon dark right>check_circle</v-icon>
-                  </v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -529,15 +525,21 @@
                                 >
                               <template slot="headers" scope="props">
                                 <th v-for="header of props.headers" style="padding: 20px">
-                                  {{ headertext }}
+                                  {{ header.text }}
                                 </th>
+                                <th></th>
                               </template>
                               <template slot="items" scope="props">
-                                <tr @click="selectMatricula(props.item)">
+                                <tr>
                                   <td>{{ props.item.numeroMatricula }}</td>
                                   <td>{{ props.item.entidad.nombre }}</td>
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
+                                  <td>
+                                    <v-btn flat icon color="green" @click="addRepresentante(props.item)">
+                                      <v-icon>note_add</v-icon>
+                                    </v-btn>
+                                  </td>
                                 </tr>
                               </template>
                             </v-data-table>
@@ -546,7 +548,38 @@
 
                         <v-layout row wrap>
                           <v-flex xs12 class="mx-4">
-                            Matrícula Seleccionada: {{ matricula_selected.numero }}
+                            Matrículas Seleccionadas
+
+                            <v-data-table
+                                :headers="headers.matriculados"
+                                :items="solicitud.entidad.representantes"
+                                class="elevation-1"
+                                v-bind:pagination.sync="pagination"
+                                :total-items="totalItems"
+                                :loading="loading"
+                                no-data-text="No se agregaron representates"
+                                no-results-text="No se agregaron representates"
+                                >
+                              <template slot="headers" scope="props">
+                                <th v-for="header of props.headers" style="padding: 20px">
+                                  {{ header.text }}
+                                </th>
+                                <th></th>
+                              </template>
+                              <template slot="items" scope="props">
+                                <tr>
+                                  <td>{{ props.item.numeroMatricula }}</td>
+                                  <td>{{ props.item.entidad.nombre }}</td>
+                                  <td>{{ props.item.entidad.apellido }}</td>
+                                  <td>{{ props.item.entidad.dni }}</td>
+                                  <td>
+                                    <v-btn flat icon color="grey" @click="borrarRepresentante(props.item.id)">
+                                      <v-icon>delete</v-icon>
+                                    </v-btn>
+                                  </td>
+                                </tr>
+                              </template>
+                            </v-data-table>
                           </v-flex>
                         </v-layout>
 
@@ -554,8 +587,8 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <!-- <v-btn primary @click.native="nextStep" class="right">Continuar</v-btn> -->
-                  <v-btn class="primary white--text right" @click.native="submit" :disabled="!validForm()">
+                  <!-- <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn> -->
+                  <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!validForm()">
                     Guardar Solicitud
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>
@@ -753,31 +786,32 @@ export default {
       solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
       solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
       solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
-      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
-      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
-      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
+      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
+      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
+      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
       solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
-      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
-      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
-      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.legal.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
+      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
+      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
+      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
+      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.id);
       return solicitud;
     },
 
     submit: function() {
       console.log(JSON.stringify(this.prepareSubmit()));
-      axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
-           .then(r => {
-             if (r.status != 201) {
-               this.submitError();
-             }
-             this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-             this.snackbar.color = 'success';
-             this.snackbar.show = true;
-             this.solicitud = new Solicitud('empresa');
-             this.step = 1;
-             this.steps.forEach(s => s.touched = false);
-           })
-           .catch(e => this.submitError());
+      // axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
+      //      .then(r => {
+      //        if (r.status != 201) {
+      //          this.submitError();
+      //        }
+      //        this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+      //        this.snackbar.color = 'success';
+      //        this.snackbar.show = true;
+      //        this.solicitud = new Solicitud('empresa');
+      //        this.step = 1;
+      //        this.steps.forEach(s => s.touched = false);
+      //      })
+      //      .catch(e => this.submitError());
     },
 
     validStep: function(i) {
@@ -803,11 +837,12 @@ export default {
       let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
       let limit = this.pagination.rowsPerPage;
 
-      let url = `http://localhost:3400/api/matriculas?tipoEntidad=profesional&estado=1&limit=${limit}&offset=${offset}`;
+      // El estado '13' es 'Habilitado'
+      let url = `http://localhost:3400/api/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
       if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
-      if (this.filtros.dni) url+=`&dni=${this.filtros.profesional.dni}`;
-      if (this.filtros.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
+      if (this.filtros.dni) url+=`&dni=${this.filtros.dni}`;
+      if (this.filtros.apellido) url+=`&apellido=${this.filtros.apellido}`;
 
       axios.get(url)
            .then(r => {
@@ -822,8 +857,13 @@ export default {
       this.debouncedUpdate();
     },
 
-    selectMatricula: function(matricula) {
-      this.matricula_selected = matricula;
+    addRepresentante: function(matricula) {
+      this.solicitud.entidad.representantes.push(matricula);
+    },
+
+    borrarRepresentante: function(id) {
+      this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
+                                                  .filter(r => r.id != id);
     }
   },
 

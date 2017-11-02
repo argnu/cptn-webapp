@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-      <v-dialog v-model="show_validar" persistent width="50%">
+      <v-dialog v-model="show_validar" persistent max-width="50%">
         <v-card>
           <v-card-title>
             <span class="headline">Aprobar Matrícula</span>
@@ -40,7 +40,7 @@
             </v-container>
           </v-card-text>
           <v-card-actions>
-              <v-btn color="primary" flat @click.stop="show_validar = false">Cerrar</v-btn>
+              <v-btn color="blue darken-1" flat @click.stop="show_validar = false">Cerrar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -76,7 +76,6 @@
                         :items="select_items.estado"
                         label="Estado de Solicitud"
                         single-line bottom
-                        autocomplete
                         v-model="filtros.estado">
                       </v-select>
                     </v-flex>

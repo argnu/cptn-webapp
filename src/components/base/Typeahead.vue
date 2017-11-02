@@ -16,8 +16,12 @@
     >
     </v-text-field>
 
-    <v-list v-if="items_filter.length && show_items" style="position:absolute;z-index:6;margin-top:-20px">
-      <v-list-tile :class="{ 'grey lighten-2': i==i_active }"
+    <v-list
+      ref="lista"
+      v-if="items_filter.length && show_items"
+      style="position:absolute;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
+    >
+      <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
         v-for="(item, i) of items_filter" key="item"
         @click="setText(item)"
         @mouseover="i_active = i"
@@ -41,9 +45,6 @@ export default {
       text: '',
       i_active: 0
     }
-  },
-
-  created: function() {
   },
 
   computed: {
@@ -70,13 +71,27 @@ export default {
     },
 
     down: function() {
-      if (this.i_active + 1 === this.items_filter.length) this.i_active = 0;
-      else this.i_active = this.i_active + 1;
+      if (this.i_active + 1 === this.items_filter.length) {
+        this.$refs.lista.$el.scrollTop = 0;
+        this.i_active = 0;
+      }
+      else {
+        this.i_active = this.i_active + 1;
+        if (this.i_active > 3) {
+          this.$refs.lista.$el.scrollTop = this.$refs.lista.$el.scrollTop + this.$refs.lista.$children[0].$el.scrollHeight;
+        }
+      }
     },
 
     up: function() {
-      if (!this.i_active) this.i_active = this.items_filter.length - 1;
-      else this.i_active = this.i_active - 1;
+      if (!this.i_active) {
+        this.i_active = this.items_filter.length - 1;
+        this.$refs.lista.$el.scrollTop = this.$refs.lista.$children[0].$el.scrollHeight * this.$refs.lista.$children.length;
+      }
+      else {
+        this.i_active = this.i_active - 1;
+        this.$refs.lista.$el.scrollTop = this.$refs.lista.$el.scrollTop - this.$refs.lista.$children[0].$el.scrollHeight;
+      }
     },
 
     enter: function() {

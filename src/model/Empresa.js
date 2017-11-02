@@ -15,5 +15,6 @@ export class Empresa {
     this.domicilioConstituido = new Domicilio();
     this.contactos = [];
     this.incumbencias = [];
+    this.representantes = [];
   }
 }

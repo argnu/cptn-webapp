@@ -40,7 +40,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar dark class="primary">
+    <v-toolbar dark class="blue darken-1">
       <v-toolbar-side-icon @click="drawer.show = !drawer.show"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
       <v-spacer></v-spacer>
