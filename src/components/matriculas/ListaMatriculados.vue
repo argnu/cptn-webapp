@@ -114,11 +114,14 @@
                 <td>
                   <v-menu>
                     <v-btn icon slot="activator">
-                      <v-icon>settings</v-icon>
+                      <v-icon>more_vert</v-icon>
                     </v-btn>
                     <v-list>
                       <v-list-tile @click="verDetalle(props.item.id)">
                         <v-list-tile-title>Ver Detalle</v-list-tile-title>
+                      </v-list-tile>
+                      <v-list-tile @click="verCuenta(props.item.id)">
+                        <v-list-tile-title>Resumen de Cuenta</v-list-tile-title>
                       </v-list-tile>
                       <v-list-tile @click="irPermiso(props.item.id)">
                         <v-list-tile-title>Legajo Técnico</v-list-tile-title>
@@ -315,6 +318,10 @@ export default {
 
     verDetalle: function(id) {
       this.$router.push(`/matriculas/profesional/${id}`);
+    },
+
+    verCuenta: function(id) {
+      this.$router.push(`/matriculas/${id}/resumen`);
     },
 
   },

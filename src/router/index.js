@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
-import { Matriculas, ListaMatriculados, MatriculaProfesional} from '@/components/matriculas'
+import { Matriculas, ListaMatriculados, MatriculaProfesional, ResumenCuenta } from '@/components/matriculas'
 import PermisoConstruccion from '@/components/PermisoConstruccion'
 
 Vue.use(Router)
@@ -41,6 +41,12 @@ export default new Router({
           path: ':id/permiso',
           name: 'PermisoConstruccion',
           component: PermisoConstruccion
+        },
+        {
+          path: ':id/resumen',
+          name: 'ResumenCuenta',
+          component: ResumenCuenta,
+          props: true
         },
       ]
     },
