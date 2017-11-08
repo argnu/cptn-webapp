@@ -1,6 +1,7 @@
 <template>
   <v-container>
-      <dialog-detalle :boleta="boleta_selected" :show="show_detalle"></dialog-detalle>
+      <dialog-detalle :boleta="boleta_selected" ref="show_detalle">
+      </dialog-detalle>
 
       <datos-basicos></datos-basicos>
       <br>
@@ -12,6 +13,17 @@
         </v-flex>
       </v-layout>
 
+      <v-layout row wrap>
+        <v-flex xs1 class="mt-5 mx-5">
+          <b>Filtrar:</b>
+        </v-flex>
+        <v-flex xs4 class="ma-4">
+          <input-fecha label="Fecha Desde" v-model="filtros.fecha_desde"></input-fecha>
+        </v-flex>
+        <v-flex xs4 class="ma-4">
+          <input-fecha label="Fecha Hasta" v-model="filtros.fecha_hasta"></input-fecha>
+        </v-flex>
+      </v-layout>
 
       <v-layout row wrap>
         <v-flex xs12>
@@ -88,8 +100,10 @@
 <script>
 import * as axios from 'axios';
 import * as utils from '@/utils';
+import rules from '@/rules';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
 import DialogDetalle from '@/components/matriculas/DialogDetalle';
+import InputFecha from '@/components/base/InputFecha';
 
 const headers = [
   { text: 'Fecha' },
@@ -107,7 +121,11 @@ export default {
       resumen: [],
       boletas: [],
       show_detalle: false,
-      boleta_selected: null
+      boleta_selected: null,
+      filtros: {
+        fecha_desde: '',
+        fecha_hasta: ''
+      },
     }
   },
 
@@ -138,22 +156,46 @@ export default {
     }
   },
 
+  watch: {
+    filtros: {
+      handler () {
+        if ( (rules.fecha(this.filtros.fecha_desde) === true
+                || !this.filtros.fecha_desde.length)
+          && ( rules.fecha(this.filtros.fecha_hasta) === true
+            || !this.filtros.fecha_hasta.length)
+          )
+          this.updateBoletas();
+      },
+      deep: true
+    }
+  },
+
   created: function() {
-    axios.get(`http://localhost:3400/api/boletas?matricula=${this.id}`)
-         .then(r => this.resumen = r.data)
-         .catch(e => console.error(e));
+    this.updateBoletas();
   },
 
   methods: {
+    updateBoletas: function() {
+      let url = `http://localhost:3400/api/boletas?matricula=${this.id}`;
+      if (rules.fecha(this.filtros.fecha_desde)) url += `&fecha_desde=${this.filtros.fecha_desde}`;
+      if (rules.fecha(this.filtros.fecha_hasta)) url += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+
+      axios.get(url)
+           .then(r => this.resumen = r.data)
+           .catch(e => console.error(e));
+    },
+
     verDetalle: function(boleta) {
       this.boleta_selected = boleta;
-      this.show_detalle = true;
-    }
+      this.$refs.show_detalle.mostrar();
+    },
+
   },
 
   components: {
     DatosBasicos,
-    DialogDetalle
+    DialogDetalle,
+    InputFecha
   }
 
 }

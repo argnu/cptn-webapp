@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" persistent max-width="600" scrollable>
-    <v-card>
+    <v-card v-if="boleta">
       <v-card-title class="headline">Detalle de Boleta</v-card-title>
       <v-card-text class="grey lighten-5">
         <v-layout row wrap>
@@ -58,9 +58,10 @@ const headers = [
 
 export default {
   name: 'DialogDetalle',
-  props: ['boleta', 'show'],
+  props: ['boleta'],
   data () {
     return {
+      show: false
     }
   },
 
@@ -80,6 +81,9 @@ export default {
   },
 
   methods: {
+    mostrar: function() {
+      this.show = true;
+    }
   },
 
 }
