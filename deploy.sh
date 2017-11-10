@@ -11,8 +11,8 @@ while [ "$1" != "" ]; do
 done
 
 if [ "$DIR_APP" != "" ]; then
-    #git checkout develop;
-    #npm install;
+    git checkout develop;
+    npm install;
     echo "Construyendo empaquetado de aplicación \n";
     npm run build;
 
@@ -22,7 +22,7 @@ if [ "$DIR_APP" != "" ]; then
       echo "Reemplazando URL de la API por $URL_API";
       find dist/static/js -type f -exec sed -i 's,localhost:3400,'"$URL_API"',g' {} \;
     fi
-    
+
     echo "Deploy en /var/www/html/$DIR_APP";
     cp -r dist/. /var/www/html/$DIR_APP/.;
 else
