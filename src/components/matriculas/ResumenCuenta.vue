@@ -41,9 +41,10 @@
               <tr>
                 <td>{{ props.item.fecha | formatFecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | formatFecha }}</td>
-                <td>{{ props.item.tipo_comprobante.descripcion }}</td>
-                <td>{{ props.item.total }}</td>
-                <td></td>
+                <td v-if="props.item.tipo == 'boleta'">{{ props.item.tipo_comprobante.descripcion }}</td>
+                <td v-if="props.item.tipo == 'comprobante'">Recibo</td>
+                <td>{{ props.item.tipo == 'boleta' ? props.item.total : '' }}</td>
+                <td>{{ props.item.tipo == 'comprobante' ? props.item.importe_cancelado : '' }}</td>
                 <td>
                   <v-btn icon @click="verDetalle(props.item)">
                     <v-icon>launch</v-icon>
@@ -78,7 +79,7 @@
 
       <v-layout row wrap>
         <v-flex xs2>
-          <v-btn dark class="blue darken-1">
+          <v-btn dark class="blue darken-1" @click="irCobrar">
             Cobrar
           </v-btn>
         </v-flex>
@@ -100,6 +101,7 @@
 <script>
 import * as axios from 'axios';
 import * as utils from '@/utils';
+import moment from 'moment';
 import rules from '@/rules';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
 import DialogDetalle from '@/components/matriculas/DialogDetalle';
@@ -113,6 +115,10 @@ const headers = [
   { text: 'Haber' }
 ]
 
+const orderByFecha = function(a, b) {
+  return moment(a.fecha_vencimiento).diff(b.fecha_vencimiento, 'days')
+}
+
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
@@ -123,8 +129,8 @@ export default {
       show_detalle: false,
       boleta_selected: null,
       filtros: {
-        fecha_desde: '',
-        fecha_hasta: ''
+        fecha_desde: moment().startOf('year').format("DD/MM/YYYY"),
+        fecha_hasta: moment().endOf('year').format("DD/MM/YYYY")
       },
     }
   },
@@ -136,12 +142,14 @@ export default {
 
     totales_debe: function() {
       return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + act.total, 0)
+        this.resumen.reduce((prev, act) => prev + (act.tipo == 'boleta' ? act.total : 0), 0)
         : 0;
     },
 
     totales_haber: function() {
-      return 0;
+      return this.resumen.length ?
+        this.resumen.reduce((prev, act) => prev + (act.tipo == 'comprobante' ? act.importe_cancelado : 0), 0)
+        : 0;
     },
 
     saldo_deudor: function() {
@@ -176,19 +184,44 @@ export default {
 
   methods: {
     updateBoletas: function() {
-      let url = `http://localhost:3400/api/boletas?matricula=${this.id}`;
-      if (rules.fecha(this.filtros.fecha_desde)) url += `&fecha_desde=${this.filtros.fecha_desde}`;
-      if (rules.fecha(this.filtros.fecha_hasta)) url += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+      let url_boletas = `http://localhost:3400/api/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
+      let url_comprobantes = `http://localhost:3400/api/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
 
-      axios.get(url)
-           .then(r => this.resumen = r.data)
-           .catch(e => console.error(e));
+      if (rules.fecha(this.filtros.fecha_desde)) {
+        url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+      }
+
+      if (rules.fecha(this.filtros.fecha_hasta)) {
+        url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+      }
+
+      Promise.all([
+        axios.get(url_boletas),
+        axios.get(url_comprobantes)
+      ])
+     .then(([boletas, comprobantes]) => {
+       let resumen = boletas.data.map(b => {
+         b.tipo = 'boleta';
+         return b;
+       }).concat(comprobantes.data.map(c => {
+         c.tipo = 'comprobante';
+         return c;
+       }));
+       this.resumen = resumen.sort(orderByFecha);
+     })
+     .catch(e => console.error(e));
     },
 
     verDetalle: function(boleta) {
       this.boleta_selected = boleta;
       this.$refs.show_detalle.mostrar();
     },
+
+    irCobrar: function() {
+      this.$router.push(`/matriculas/${this.id}/deudas`);
+    }
 
   },
 
