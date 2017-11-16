@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import Typeahead from '@/components/base/Typeahead'
 import InputFecha from '@/components/base/InputFecha'
 
@@ -184,8 +184,8 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('http://localhost:3400/api/opciones'),
-      axios.get('http://localhost:3400/api/bancos')
+      axios.get('/opciones'),
+      axios.get('/bancos')
     ])
     .then(r => {
       this.tipos_pago = r[0].data.formaPago;

@@ -138,8 +138,8 @@
 </template>
 
 <script>
-import * as axios from 'axios';
 import * as utils from '@/utils';
+import axios from '@/axios';
 import * as _ from 'lodash';
 import InputFecha from '@/components/base/InputFecha';
 import { Matricula } from '@/model';
@@ -272,10 +272,11 @@ export default {
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
-    axios.get('http://localhost:3400/api/opciones')
+    axios.get('/opciones')
     .then(r => {
       this.select_items.estados = r.data.estadoMatricula;
     })
+    .catch(e => console.error(e));
   },
 
   methods: {
@@ -290,7 +291,7 @@ export default {
         let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
         let limit = this.pagination.rowsPerPage;
 
-        let url = `http://localhost:3400/api/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
+        let url = `/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) {
           let estado = this.select_items.estados.find(e => e.valor == this.filtros.estado);

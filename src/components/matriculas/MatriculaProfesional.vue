@@ -265,7 +265,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 
 export default {
@@ -374,8 +374,8 @@ export default {
   },
 
   created: function() {
-    console.log(`http://localhost:3400/api/matriculas/${this.id}`);
-    axios.get(`http://localhost:3400/api/matriculas/${this.id}`)
+    console.log(`/matriculas/${this.id}`);
+    axios.get(`/matriculas/${this.id}`)
       .then(r => {
         console.log(r.data);
         this.matricula = r.data;

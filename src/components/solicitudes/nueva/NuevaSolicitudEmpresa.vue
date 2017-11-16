@@ -629,7 +629,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
 import { Solicitud, Contacto, Empresa } from '@/model';
@@ -724,9 +724,9 @@ export default {
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     Promise.all([
-      axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones?sort=valor'),
-      axios.get('http://localhost:3400/api/delegaciones')
+      axios.get('/paises'),
+      axios.get('/opciones?sort=valor'),
+      axios.get('/delegaciones')
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -799,7 +799,7 @@ export default {
 
     submit: function() {
       console.log(JSON.stringify(this.prepareSubmit()));
-      // axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
+      // axios.post('/solicitudes', this.prepareSubmit())
       //      .then(r => {
       //        if (r.status != 201) {
       //          this.submitError();
@@ -838,7 +838,7 @@ export default {
       let limit = this.pagination.rowsPerPage;
 
       // El estado '13' es 'Habilitado'
-      let url = `http://localhost:3400/api/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
+      let url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
       if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
       if (this.filtros.dni) url+=`&dni=${this.filtros.dni}`;

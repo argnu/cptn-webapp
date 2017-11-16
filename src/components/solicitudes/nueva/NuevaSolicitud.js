@@ -1,4 +1,4 @@
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
 
@@ -109,7 +109,7 @@ export default {
       let pais = this.solicitud.entidad[domicilio].pais;
       if (pais && pais.length) {
         let idPais = this.select_items.paises.find(p => p.nombre == pais).id;
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
+        axios.get(`/provincias?pais_id=${idPais}`)
              .then(r => this.select_items.provincias[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
@@ -121,7 +121,7 @@ export default {
       let provincia = this.solicitud.entidad[domicilio].provincia;
       if (provincia && provincia.length) {
         let idProv = this.select_items.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
+        axios.get(`/departamentos?provincia_id=${idProv}`)
              .then(r => this.select_items.departamentos[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
@@ -133,7 +133,7 @@ export default {
       let departamento = this.solicitud.entidad[domicilio].departamento;
       if (departamento && departamento.length) {
         let idDepto = this.select_items.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
+        axios.get(`/localidades?departamento_id=${idDepto}`)
              .then(r => this.select_items.localidades[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }

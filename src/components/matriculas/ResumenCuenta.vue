@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 import moment from 'moment';
 import rules from '@/rules';
@@ -184,8 +184,8 @@ export default {
 
   methods: {
     updateBoletas: function() {
-      let url_boletas = `http://localhost:3400/api/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
-      let url_comprobantes = `http://localhost:3400/api/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
+      let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
+      let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
 
       if (rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
