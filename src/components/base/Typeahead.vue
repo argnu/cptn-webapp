@@ -99,16 +99,6 @@ export default {
       this.i_active = 0;
       this.$emit('change');
     },
-    //
-    // tab: function() {
-    //   if (this.option) {
-    //     if (!this.items.find(i => i == this.value)) {
-    //       this.$emit('input', '');
-    //     }
-    //   }
-    //   this.$emit('change');
-    //   this.show_items = false;
-    // },
 
     focusout: function() {
       setTimeout(x => {
