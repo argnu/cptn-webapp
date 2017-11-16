@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from '@/components/Login';
 import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
 import { Matriculas, ListaMatriculados,
   MatriculaProfesional, ResumenCuenta,
