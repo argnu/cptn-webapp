@@ -877,7 +877,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
 import { Solicitud, Contacto, Formacion,
@@ -982,7 +982,7 @@ export default {
 
   watch: {
     tipoFormacion: function(new_val) {
-      axios.get(`http://localhost:3400/api/titulos?tipo=${new_val}`)
+      axios.get(`/titulos?tipo=${new_val}`)
       .then(r => {
         this.select_items.titulos = r.data;
       });
@@ -991,10 +991,10 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('http://localhost:3400/api/paises'),
-      axios.get('http://localhost:3400/api/opciones?sort=valor'),
-      axios.get('http://localhost:3400/api/delegaciones'),
-      axios.get('http://localhost:3400/api/instituciones')
+      axios.get('/paises'),
+      axios.get('/opciones?sort=valor'),
+      axios.get('/delegaciones'),
+      axios.get('/instituciones')
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -1086,7 +1086,7 @@ export default {
     },
 
     submit: function() {
-      axios.post('http://localhost:3400/api/solicitudes', this.prepareSubmit())
+      axios.post('/solicitudes', this.prepareSubmit())
            .then(r => {
              if (r.status != 201) {
                this.submitError();

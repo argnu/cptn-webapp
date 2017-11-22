@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 
 export default {
   name: 'DatosBasicos',
@@ -43,7 +43,7 @@ export default {
   },
 
   created: function() {
-    axios.get(`http://localhost:3400/api/matriculas/${this.$route.params.id}`)
+    axios.get(`/matriculas/${this.$route.params.id}`)
          .then(r => {
            this.matricula = r.data;
          })

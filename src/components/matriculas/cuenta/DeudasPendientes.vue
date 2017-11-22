@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as utils from '@/utils';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
 
@@ -123,7 +123,7 @@ export default {
   },
 
   created: function() {
-    let url_boletas = `http://localhost:3400/api/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
+    let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
     axios.get(url_boletas)
     .then(r => {
       this.boletas = r.data.map(b => {

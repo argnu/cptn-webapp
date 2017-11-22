@@ -37,6 +37,17 @@
             <v-list-tile-title>Listar</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-divider></v-divider>
+        <br>
+        <v-list-tile @click="logout">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Salir</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 
@@ -70,6 +81,7 @@
 
 <script>
 import Typeahead from '@/components/base/Typeahead';
+import * as Cookies from 'js-cookie';
 
 const menu_usuario = [
   { title: 'Perfil' },
@@ -102,7 +114,13 @@ export default {
     goto: function(route) {
       this.$router.push({path: route});
       this.drawer.show = false;
+    },
+
+    logout: function() {
+      Cookies.remove('CPTNUser');
+      this.$router.push({ path: '/login' });
     }
+
   },
 
   components: {

@@ -256,7 +256,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import Typeahead from '@/components/base/Typeahead';
 
 class Item {
@@ -323,8 +323,8 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('http://localhost:3400/api/paises'),
-      // axios.get(`http://localhost:3400/api/matriculas/${this.$route.params.id}`)
+      axios.get('/paises'),
+      // axios.get(`/matriculas/${this.$route.params.id}`)
     ])
     .then(r => {
       this.select_items.paises = r[0].data;
@@ -382,7 +382,7 @@ export default {
     changePais: function(tipoDomicilio) {
       if (this.permiso.pais.length) {
         let idPais = this.select_items.paises.find(p => p.nombre == this.permiso.pais).id;
-        axios.get(`http://localhost:3400/api/provincias?pais_id=${idPais}`)
+        axios.get(`/provincias?pais_id=${idPais}`)
              .then(r => this.select_items.provincias = r.data)
              .catch(e => console.error(e));
       }
@@ -392,7 +392,7 @@ export default {
     changeProvincia: function(tipoDomicilio) {
       if (this.permiso.provincia.length) {
         let idProv = this.select_items.provincias.find(p => p.nombre == this.permisoprovincia).id;
-        axios.get(`http://localhost:3400/api/departamentos?provincia_id=${idProv}`)
+        axios.get(`/departamentos?provincia_id=${idProv}`)
              .then(r => this.select_items.departamentos = r.data)
              .catch(e => console.error(e));
       }
@@ -402,7 +402,7 @@ export default {
     changeDepartamento: function(tipoDomicilio) {
       if (this.permiso.departamento.length) {
         let idDepto = this.select_items.departamentos.find(p => p.nombre == this.permiso.departamento).id;
-        axios.get(`http://localhost:3400/api/localidades?departamento_id=${idDepto}`)
+        axios.get(`/localidades?departamento_id=${idDepto}`)
              .then(r => this.select_items.localidades = r.data)
              .catch(e => console.error(e));
       }

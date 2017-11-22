@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import * as axios from 'axios';
+import axios from '@/axios';
 import * as _ from 'lodash';
 import * as utils from '@/utils';
 import rules from '@/rules';
@@ -358,7 +358,7 @@ export default {
       if (this.filtros.tipoEntidad.length) {
         this.loading = true;
         this.solicitudes = [];
-        let url = `http://localhost:3400/api/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
+        let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
         if (this.filtros.estado && this.filtros.estado != 'todas') url+=`&estado=${this.filtros.estado}`;
         if (this.filtros.profesional.dni) url+=`&dni=${this.filtros.profesional.dni}`;
         if (this.filtros.profesional.apellido) url+=`&apellido=${this.filtros.profesional.apellido}`;
@@ -383,7 +383,7 @@ export default {
     validarMatricula: function() {
       this.submitValidacion = true;
       if (utils.validObject(this.matricula, this.validator.matricula)) {
-        axios.post('http://localhost:3400/api/matriculas', this.matricula)
+        axios.post('/matriculas', this.matricula)
              .then(r => {
                this.updateSolicitudes();
                this.matricula = new Matricula();
