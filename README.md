@@ -19,4 +19,4 @@ Tiene los siguientes parámetros:
 
 * **$URL**: url de la API REST.
 
-Ej. `sh deploy.sh webapp -u "cptn.com.ar/api"`
+Ej. `sh deploy.sh webapp -u "cptn.com.ar"`
