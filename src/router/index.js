@@ -11,6 +11,7 @@ import Cobranza from '@/components/cobranzas/Cobranza'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/pago',

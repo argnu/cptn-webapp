@@ -44,9 +44,20 @@
       <v-toolbar-side-icon @click="drawer.show = !drawer.show"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>search</v-icon>
-      </v-btn>
+      <v-menu
+        class="mr-4"
+        :offset-y="true"
+        transition="slide-y-transition"
+      >
+        <v-btn icon slot="activator" dark>
+          <v-icon x-large>account_circle</v-icon>
+        </v-btn>
+        <v-list>
+          <v-list-tile v-for="item in menu_usuario" :key="item.title" @click="">
+            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
     </v-toolbar>
 
     <router-view></router-view>
@@ -60,6 +71,12 @@
 <script>
 import Typeahead from '@/components/base/Typeahead';
 
+const menu_usuario = [
+  { title: 'Perfil' },
+  { title: 'Configuración' },
+  { title: 'Salir' }
+]
+
 export default {
   name: 'app',
   data() {
@@ -72,6 +89,12 @@ export default {
           { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
         ],
       }
+    }
+  },
+
+  computed: {
+    menu_usuario: function() {
+      return menu_usuario;
     }
   },
 

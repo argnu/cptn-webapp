@@ -1,0 +1,121 @@
+<template>
+  <v-container v-if="comprobante">
+    <v-layout row wrap>
+      <v-flex xs6>
+        Número: {{ comprobante.numero }}<br>
+      </v-flex>
+
+      <v-flex xs6>
+        Fecha: {{ comprobante.fecha | formatFecha }} <br>
+        <!-- Tipo de Comprobante: {{ comprobante.tipo_comprobante.abreviatura }}<br> -->
+      </v-flex>
+    </v-layout>
+
+    <br>
+
+    <v-data-table
+        :headers="headers"
+        :items="comprobante.items"
+        class="elevation-1"
+        no-data-text="No hay items"
+        hide-actions
+        >
+      <template slot="headers" scope="props">
+        <th v-for="header of props.headers" style="padding: 20px">
+          {{ header.text }}
+        </th>
+      </template>
+      <template slot="items" scope="props">
+        <td>{{ props.item.item }}</td>
+        <td>{{ props.item.descripcion }}</td>
+        <td>{{ props.item.importe }}</td>
+      </template>
+    </v-data-table>
+
+    <br>
+    <v-data-table
+        :headers="headers_pagos"
+        :items="comprobante.pagos"
+        class="elevation-1"
+        no-data-text="No hay pagos"
+        hide-actions
+    >
+      <template slot="headers" scope="props">
+        <th v-for="header of props.headers" style="padding: 20px">
+          {{ header.text }}
+        </th>
+      </template>
+      <template slot="items" scope="props">
+        <td>{{ getFormaPago(props.item.forma_pago) }}</td>
+        <td>{{ props.item.fecha_pago | formatFecha }}</td>
+        <td>{{ props.item.importe }}</td>
+      </template>
+    </v-data-table>
+  </v-container>
+</template>
+
+<script>
+import * as axios from 'axios'
+import * as utils from '@/utils';
+
+const headers = [
+  { text: 'N°', value: 'item' },
+  { text: 'Descripción', value: 'descripcion' },
+  { text: 'Importe', value: 'importe' }
+];
+
+const headers_pagos = [
+  { text: 'Forma de Pago', value: 'forma_pago' },
+  { text: 'Fecha', value: 'fecha' },
+  { text: 'Importe', value: 'importe' }
+];
+
+let formas_pago = [];
+
+export default {
+  name: 'DetalleComprobante',
+  props: ['comprobante'],
+
+  data () {
+    return {
+      formas_pago: []
+    }
+  },
+
+  filters: {
+    formatFecha: function(str) {
+      return str ? utils.formatFecha(str) : '';
+    },
+  },
+
+  computed: {
+    headers: function() {
+      return headers;
+    },
+
+    headers_pagos: function() {
+      return headers_pagos;
+    }
+  },
+
+  created: function() {
+    axios.get('http://localhost:3400/api/opciones')
+    .then(r => {
+      this.formas_pago = r.data.formaPago;
+    })
+    .catch(e => console.error(e));
+  },
+
+  methods: {
+    getFormaPago: function(id) {
+      return id ?
+        this.formas_pago.find(f => f.id == id).nombre
+      : '';
+    }
+  },
+
+}
+</script>
+
+<style>
+</style>

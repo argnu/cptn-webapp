@@ -1,6 +1,6 @@
 <template>
   <v-container>
-      <dialog-detalle :boleta="boleta_selected" ref="show_detalle">
+      <dialog-detalle :item="item_selected" ref="show_detalle">
       </dialog-detalle>
 
       <datos-basicos></datos-basicos>
@@ -31,7 +31,9 @@
               :headers="headers_resumen"
               :items="resumen"
               class="elevation-1"
-              no-data-text="">
+              no-data-text="No hay datos"
+              no-results-text="No hay datos"
+              >
             <template slot="headers" scope="props">
               <th v-for="header of props.headers" style="padding: 20px">
                 {{ header.text }}
@@ -104,7 +106,7 @@ import * as utils from '@/utils';
 import moment from 'moment';
 import rules from '@/rules';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
-import DialogDetalle from '@/components/matriculas/DialogDetalle';
+import DialogDetalle from '@/components/matriculas/cuenta/detalles/DialogDetalle';
 import InputFecha from '@/components/base/InputFecha';
 
 const headers = [
@@ -127,7 +129,7 @@ export default {
       resumen: [],
       boletas: [],
       show_detalle: false,
-      boleta_selected: null,
+      item_selected: null,
       filtros: {
         fecha_desde: moment().startOf('year').format("DD/MM/YYYY"),
         fecha_hasta: moment().endOf('year').format("DD/MM/YYYY")
@@ -214,8 +216,8 @@ export default {
      .catch(e => console.error(e));
     },
 
-    verDetalle: function(boleta) {
-      this.boleta_selected = boleta;
+    verDetalle: function(item) {
+      this.item_selected = item;
       this.$refs.show_detalle.mostrar();
     },
 
