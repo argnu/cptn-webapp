@@ -1,8 +1,7 @@
 <template>
   <v-container>
+    <br><br>
     <v-toolbar dark class="primary">
-      <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title class="white--text">Autenticación</v-toolbar-title>
     </v-toolbar>
 
     <v-card class="">
@@ -39,7 +38,8 @@
 
               <br>
               <v-btn dark class="blue" style="width:100%" type="submit">
-                Enviar
+                <v-icon right dark>fingerprint</v-icon>
+                <span class="ml-3">Iniciar Sesión</span>
               </v-btn>
 
             </v-flex>

@@ -1,74 +1,21 @@
 <template>
   <v-app>
 
-    <v-navigation-drawer temporary light v-model="drawer.show">
-      <v-toolbar flat class="transparent">
-        <v-list class="pa-0">
-          <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img src="http://www.coordinadora.com/wp-content/uploads/sidebar_usuario-corporativo.png" />
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title>Usuario Conectado</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-toolbar>
+    <template v-if="isLogged">
+      <menu-lateral ref="menu_lateral"></menu-lateral>
+    </template>
 
-      <v-list class="pt-0" dense>
-        <v-divider></v-divider>
-        <v-subheader v-text="'Solicitudes'"></v-subheader>
-        <v-list-tile v-for="item in drawer.items" :key="item.title" @click="goto(item.route)">
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-divider></v-divider>
-        <v-subheader v-text="'Matriculados'"></v-subheader>
-        <v-list-tile @click="goto('/matriculas/lista')">
-          <v-list-tile-action>
-            <v-icon>view_list</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Listar</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-divider></v-divider>
-        <br>
-        <v-list-tile @click="logout">
-          <v-list-tile-action>
-            <v-icon>exit_to_app</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Salir</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
 
     <v-toolbar dark class="blue darken-1">
-      <v-toolbar-side-icon @click="drawer.show = !drawer.show"></v-toolbar-side-icon>
-      <v-toolbar-title class="white--text">Matriculaciones CPTN</v-toolbar-title>
+      <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isLogged">
+      </v-toolbar-side-icon>
+      <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
       <v-spacer></v-spacer>
-      <v-menu
-        class="mr-4"
-        :offset-y="true"
-        transition="slide-y-transition"
-      >
-        <v-btn icon slot="activator" dark>
-          <v-icon x-large>account_circle</v-icon>
-        </v-btn>
-        <v-list>
-          <v-list-tile v-for="item in menu_usuario" :key="item.title" @click="">
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
+
+      <template v-if="isLogged">
+        <user-menu></user-menu>
+      </template>
+
     </v-toolbar>
 
     <router-view></router-view>
@@ -80,55 +27,44 @@
 </template>
 
 <script>
-import Typeahead from '@/components/base/Typeahead';
-import * as Cookies from 'js-cookie';
-
-const menu_usuario = [
-  { title: 'Perfil' },
-  { title: 'Configuración' },
-  { title: 'Salir' }
-]
+import * as Cookies from 'js-cookie'
+import UserMenu from '@/components/UserMenu'
+import MenuLateral from '@/components/MenuLateral'
 
 export default {
   name: 'app',
   data() {
     return {
-      drawer: {
-        show: false,
-        items: [
-          { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
-          { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
-          { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
-        ],
-      }
+      user: null,
     }
   },
 
+  updated: function() {
+    this.user = Cookies.get('CPTNUser');
+  },
+
+  created: function() {
+    this.user = Cookies.get('CPTNUser');
+  },
+
   computed: {
-    menu_usuario: function() {
-      return menu_usuario;
+    isLogged: function() {
+      return !!this.user;
     }
   },
 
   methods: {
-    goto: function(route) {
-      this.$router.push({path: route});
-      this.drawer.show = false;
-    },
-
-    logout: function() {
-      Cookies.remove('CPTNUser');
-      this.$router.push({ path: '/login' });
+    toggleMenuLateral: function() {
+      this.$refs.menu_lateral.toggle();
     }
-
   },
 
   components: {
-    Typeahead
+    UserMenu,
+    MenuLateral
   }
 }
 </script>
 
 <style>
-@import '../node_modules/vuetify/dist/vuetify.min.css'
 </style>
