@@ -14,7 +14,10 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green darken-1" flat @click.native="show = false">Cerrar</v-btn>
+        <v-btn color="blue darken-1" flat @click.native="show = false">
+          <v-icon>close</v-icon>
+          Cerrar
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

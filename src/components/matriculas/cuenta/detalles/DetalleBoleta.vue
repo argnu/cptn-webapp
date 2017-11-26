@@ -3,14 +3,14 @@
     <v-layout row wrap>
       <v-flex xs6>
         Número: {{ boleta.numero }}<br>
-        Fecha: {{ boleta.fecha | formatFecha }} <br>
+        Fecha: {{ boleta.fecha | fecha }} <br>
         Estado: {{ boleta.estado.valor }} <br>
-        Fecha de Vencimiento: {{ boleta.fecha_vencimiento | formatFecha }}<br>
+        Fecha de Vencimiento: {{ boleta.fecha_vencimiento | fecha }}<br>
       </v-flex>
 
       <v-flex xs6>
         Tipo de Comprobante: {{ boleta.tipo_comprobante.abreviatura }}<br>
-        Fecha de Pago: {{ boleta.fecha_pago | formatFecha }}<br>
+        Fecha de Pago: {{ boleta.fecha_pago | fecha }}<br>
         <!-- Tipo de Pago: {{ boleta.tipo_pago }}<br> -->
       </v-flex>
     </v-layout>
@@ -53,12 +53,6 @@ export default {
 
   data () {
     return {
-    }
-  },
-
-  filters: {
-    formatFecha: function(str) {
-      return str ? utils.formatFecha(str) : '';
     }
   },
 

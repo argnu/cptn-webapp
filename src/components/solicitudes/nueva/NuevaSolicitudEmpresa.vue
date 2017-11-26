@@ -16,7 +16,7 @@
       <v-layout row wrap>
         <v-flex xs8>
           <form v-on:submit.prevent="submit">
-          <v-toolbar class="indigo" dark>
+          <v-toolbar class="blue darken-3">
             <v-toolbar-title class="white--text">Solicitud de Matriculación de Empresas</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -482,10 +482,9 @@
                 <v-stepper-content step="6">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
-                      <v-container>
-                        Buscar:
+                        <span class="ml-3"><b>Buscar:</b></span>
                         <v-layout row wrap>
-                          <v-flex xs3  class="mx-4">
+                          <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="N°"
                               @input="updateList"
@@ -501,7 +500,7 @@
                             >
                             </v-text-field>
                           </v-flex>
-                          <v-flex xs3  class="mx-4">
+                          <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
                               @input="updateList"
@@ -512,7 +511,7 @@
                         </v-layout>
 
                         <v-layout row>
-                          <v-flex xs12 class="ma-4">
+                          <v-flex xs12 class="ma-3">
                             <v-data-table
                                 :headers="headers.matriculados"
                                 :items="matriculados"
@@ -546,10 +545,11 @@
                           </v-flex>
                         </v-layout>
 
-                        <v-layout row wrap>
-                          <v-flex xs12 class="mx-4">
-                            Matrículas Seleccionadas
+                        <br>
+                        <span class="ml-3"><b>Representantes:</b></span>
 
+                        <v-layout row wrap>
+                          <v-flex xs12 class="mx-3">
                             <v-data-table
                                 :headers="headers.matriculados"
                                 :items="solicitud.entidad.representantes"
@@ -584,7 +584,6 @@
                         </v-layout>
 
 
-                      </v-container>
                     </v-card-text>
                   </v-card>
                   <!-- <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn> -->
@@ -599,15 +598,15 @@
               </v-stepper>
           </v-container>
 
-          <v-btn class="red white--text">Cancelar
+          <!-- <v-btn class="red white--text">Cancelar
           <v-icon dark right>block</v-icon>
-          </v-btn>
+          </v-btn> -->
 
           </form>
         </v-flex>
 
         <div class="stuck">
-          <v-toolbar class="indigo" dark>
+          <v-toolbar class="blue darken-3">
             <v-toolbar-title class="white--text">Datos de la Empresa</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -798,20 +797,19 @@ export default {
     },
 
     submit: function() {
-      console.log(JSON.stringify(this.prepareSubmit()));
-      // axios.post('/solicitudes', this.prepareSubmit())
-      //      .then(r => {
-      //        if (r.status != 201) {
-      //          this.submitError();
-      //        }
-      //        this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-      //        this.snackbar.color = 'success';
-      //        this.snackbar.show = true;
-      //        this.solicitud = new Solicitud('empresa');
-      //        this.step = 1;
-      //        this.steps.forEach(s => s.touched = false);
-      //      })
-      //      .catch(e => this.submitError());
+      axios.post('/solicitudes', this.prepareSubmit())
+           .then(r => {
+             if (r.status != 201) {
+               this.submitError();
+             }
+             this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+             this.snackbar.color = 'success';
+             this.snackbar.show = true;
+             this.solicitud = new Solicitud('empresa');
+             this.step = 1;
+             this.steps.forEach(s => s.touched = false);
+           })
+           .catch(e => this.submitError());
     },
 
     validStep: function(i) {

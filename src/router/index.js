@@ -5,10 +5,9 @@ import * as Cookies from 'js-cookie';
 import Login from '@/components/Login';
 import MainContainer from '@/components/MainContainer';
 import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
-import { Matriculas, ListaMatriculados,
+import { MainMatriculas, ListaMatriculados, Matricula,
   MatriculaProfesional, ResumenCuenta,
   DeudasPendientes } from '@/components/matriculas'
-import PermisoConstruccion from '@/components/PermisoConstruccion'
 import Cobranza from '@/components/cobranzas/Cobranza'
 
 
@@ -59,7 +58,7 @@ export default new Router({
         },
         {
           path: '/matriculas',
-          component: Matriculas,
+          component: MainMatriculas,
           children: [
             {
               path: 'lista',
@@ -67,15 +66,15 @@ export default new Router({
               component: ListaMatriculados,
             },
             {
-              path: 'profesional/:id',
-              component: MatriculaProfesional,
+              path: ':id',
+              component: Matricula,
               props: true
             },
-            {
-              path: ':id/permiso',
-              name: 'PermisoConstruccion',
-              component: PermisoConstruccion
-            },
+            // {
+            //   path: ':id/permiso',
+            //   name: 'PermisoConstruccion',
+            //   component: PermisoConstruccion
+            // },
             {
               path: ':id/resumen',
               name: 'ResumenCuenta',

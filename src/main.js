@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import * as utils from '@/utils'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
@@ -16,3 +17,15 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+
+Vue.filter('fecha', function(str) {
+    return str ? utils.formatFecha(str) : '';
+});
+
+Vue.filter('upperFirst', function(str) {
+    return str ? utils.upperFirst(str) : '';
+});
+
+Vue.filter('boolean', function(str) {
+  return str ? 'Sí' : 'No';
+});

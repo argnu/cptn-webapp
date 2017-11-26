@@ -1,12 +1,9 @@
 <template>
-  <v-container>
     <v-layout row wrap v-if="matricula && matricula.entidad">
+      <v-toolbar class="blue darken-3">
+        <v-toolbar-title class="white--text">Datos del Matriculado</v-toolbar-title>
+      </v-toolbar>
       <v-flex xs12>
-        <v-toolbar class="indigo" dark>
-          <v-toolbar-title class="white--text">Datos del Matriculado</v-toolbar-title>
-        </v-toolbar>
-
-        <v-container fluid>
           <v-card class="grey lighten-4">
             <v-card-text>
               <v-layout row wrap>
@@ -25,30 +22,18 @@
               </v-layout>
             </v-card-text>
           </v-card>
-        </v-container>
       </v-flex>
     </v-layout>
-  </v-container>
 </template>
 
 <script>
-import axios from '@/axios';
-
 export default {
   name: 'DatosBasicos',
+  props: ['matricula'],
+
   data () {
     return {
-      matricula: {}
     }
-  },
-
-  created: function() {
-    axios.get(`/matriculas/${this.$route.params.id}`)
-         .then(r => {
-           this.matricula = r.data;
-         })
-         .catch(e => console.error(e));
-
   },
 
   methods: {

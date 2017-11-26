@@ -1,13 +1,15 @@
-import Matriculas from '@/components/matriculas/Matriculas'
-import MatriculaProfesional from '@/components/matriculas/MatriculaProfesional'
-import ListaMatriculados from '@/components/matriculas/ListaMatriculados'
-import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
-import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
+import MainMatriculas from './MainMatriculas'
+import ListaMatriculados from './ListaMatriculados'
+import Matricula from './Matricula'
+import DatosBasicos from './DatosBasicos'
+import ResumenCuenta from './cuenta/ResumenCuenta'
+import DeudasPendientes from './cuenta/DeudasPendientes'
 
 export {
-  Matriculas,
-  MatriculaProfesional,
+  MainMatriculas,
   ListaMatriculados,
+  Matricula,
+  DatosBasicos,
   ResumenCuenta,
   DeudasPendientes
 }

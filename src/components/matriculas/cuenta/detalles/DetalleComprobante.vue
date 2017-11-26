@@ -6,7 +6,7 @@
       </v-flex>
 
       <v-flex xs6>
-        Fecha: {{ comprobante.fecha | formatFecha }} <br>
+        Fecha: {{ comprobante.fecha | fecha }} <br>
         <!-- Tipo de Comprobante: {{ comprobante.tipo_comprobante.abreviatura }}<br> -->
       </v-flex>
     </v-layout>
@@ -47,7 +47,7 @@
       </template>
       <template slot="items" scope="props">
         <td>{{ getFormaPago(props.item.forma_pago) }}</td>
-        <td>{{ props.item.fecha_pago | formatFecha }}</td>
+        <td>{{ props.item.fecha_pago | fecha }}</td>
         <td>{{ props.item.importe }}</td>
       </template>
     </v-data-table>
@@ -80,12 +80,6 @@ export default {
     return {
       formas_pago: []
     }
-  },
-
-  filters: {
-    formatFecha: function(str) {
-      return str ? utils.formatFecha(str) : '';
-    },
   },
 
   computed: {

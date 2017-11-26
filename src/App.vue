@@ -20,7 +20,7 @@
 
     <router-view></router-view>
 
-    <v-footer class="indigo">
+    <v-footer class="blue darken-4">
       <span class="white--text"></span>
     </v-footer>
   </v-app>

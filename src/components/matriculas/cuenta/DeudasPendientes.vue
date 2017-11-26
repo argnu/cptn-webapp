@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <datos-basicos></datos-basicos>
+
     <br>
 
     <v-layout row wrap>
@@ -17,9 +17,9 @@
           </template>
           <template slot="items" scope="props">
             <tr>
-              <td>{{ props.item.fecha | formatFecha }}</td>
+              <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.tipo_comprobante.descripcion }}</td>
-              <td>{{ props.item.fecha_vencimiento | formatFecha }}</td>
+              <td>{{ props.item.fecha_vencimiento | fecha }}</td>
               <td>{{ props.item.total }}</td>
               <td>{{ props.item.interes }}</td>
               <td></td>
@@ -95,12 +95,6 @@ export default {
   data () {
     return {
       boletas: []
-    }
-  },
-
-  filters: {
-    formatFecha: function(str) {
-      return str ? utils.formatFecha(str) : '';
     }
   },
 

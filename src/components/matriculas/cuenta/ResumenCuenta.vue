@@ -1,18 +1,9 @@
 <template>
-  <v-container>
+    <v-card>
       <dialog-detalle :item="item_selected" ref="show_detalle">
       </dialog-detalle>
 
-      <datos-basicos></datos-basicos>
       <br>
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-toolbar class="indigo" dark>
-            <v-toolbar-title class="white--text">Resumen de Cuenta</v-toolbar-title>
-          </v-toolbar>
-        </v-flex>
-      </v-layout>
-
       <v-layout row wrap>
         <v-flex xs1 class="mt-5 mx-5">
           <b>Filtrar:</b>
@@ -41,8 +32,8 @@
             </template>
             <template slot="items" scope="props">
               <tr>
-                <td>{{ props.item.fecha | formatFecha }}</td>
-                <td>{{ props.item.fecha_vencimiento | formatFecha }}</td>
+                <td>{{ props.item.fecha | fecha }}</td>
+                <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td v-if="props.item.tipo == 'boleta'">{{ props.item.tipo_comprobante.descripcion }}</td>
                 <td v-if="props.item.tipo == 'comprobante'">Recibo</td>
                 <td>{{ props.item.tipo == 'boleta' ? props.item.total : '' }}</td>
@@ -80,24 +71,20 @@
       <br>
 
       <v-layout row wrap>
-        <v-flex xs2>
-          <v-btn dark class="blue darken-1" @click="irCobrar">
+        <v-flex xs12>
+          <v-btn dark class="right blue" @click="irCobrar">
             Cobrar
           </v-btn>
-        </v-flex>
-        <v-flex xs2>
-          <v-btn dark class="blue darken-1">
+          <v-btn dark class="right blue" @click="irCobrar">
             Condonar
           </v-btn>
-        </v-flex>
-        <v-flex xs2>
-          <v-btn dark class="blue darken-1">
+          <v-btn dark class="right blue" @click="irCobrar">
             Plan de Pago
           </v-btn>
         </v-flex>
       </v-layout>
-
-    </v-container>
+      <br>
+    </v-card>
 </template>
 
 <script>
@@ -158,12 +145,6 @@ export default {
       return this.totales_debe - this.totales_haber;
     },
 
-  },
-
-  filters: {
-    formatFecha: function(str) {
-      return str ? utils.formatFecha(str) : '';
-    }
   },
 
   watch: {
