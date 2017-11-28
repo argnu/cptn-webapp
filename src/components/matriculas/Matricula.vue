@@ -34,6 +34,7 @@
         </v-tabs-content>
 
         <v-tabs-content id="tab-legajo">
+          <listado-legajos :id="matricula.id"></listado-legajos>
         </v-tabs-content>
       </v-tabs-items>
     </v-tabs>
@@ -45,6 +46,7 @@ import axios from '@/axios';
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import MatriculaDetalle from '@/components/matriculas/MatriculaDetalle'
+import ListadoLegajos from '@/components/matriculas/ListadoLegajos'
 
 export default {
   name: 'Matricula',
@@ -70,7 +72,8 @@ export default {
   components: {
     DatosBasicos,
     ResumenCuenta,
-    MatriculaDetalle
+    MatriculaDetalle,
+    ListadoLegajos
   }
 
 }

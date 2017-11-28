@@ -427,15 +427,14 @@
                       <v-container>
                         <v-layout row>
                           <v-flex xs8 class="ma-4">
-                            <v-select
-                              :items="select_items.tipoIncumbencia"
-                              label="Incumbencias"
-                              single-line
-                              bottom
+                            <typeahead
+                              option="true"
+                              :items="incumbencias"
                               v-model="nueva_incumbencia"
+                              label="Incumbencias"
                               :rules="submitIncumbencia ? validator.incumbencia : []"
                             >
-                          </v-select>
+                            </typeahead>
                           </v-flex>
 
                           <v-flex xs4 class="ma-4">
@@ -457,7 +456,7 @@
                               <th></th>
                             </template>
                             <template slot="items" scope="props">
-                              <td>{{ getTipoIncumbencia(props.item) }}</td>
+                              <td>{{ props.item }}</td>
                               <td style="width:30px">
                                 <v-btn icon @click="removeElem('incumbencias', props.index)">
                                   <v-icon>delete</v-icon>
@@ -720,6 +719,12 @@ export default {
     }
   },
 
+  computed: {
+    incumbencias: function() {
+      return this.select_items.tipoIncumbencia ? this.select_items.tipoIncumbencia.map(i => i.valor) : [];
+    }
+  },
+
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     Promise.all([
@@ -732,7 +737,7 @@ export default {
       this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
       this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.empresa, 'valor', 'id');
       this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
-      this.select_items.tipoIncumbencia = utils.getItemsSelect(r[1].data.incumbencia, 'valor', 'id');
+      this.select_items.tipoIncumbencia = r[1].data.incumbencia;
       this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
       this.select_items.delegaciones = r[2].data;
     })
@@ -793,6 +798,10 @@ export default {
       solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
       solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
       solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.id);
+      solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
+      solicitud.entidad.incumbencias = solicitud.entidad.incumbencias.map(r =>
+        this.select_items.tipoIncumbencia.find(i => i.nombre == r).id
+      );
       return solicitud;
     },
 
