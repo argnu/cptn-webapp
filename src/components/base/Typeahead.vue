@@ -22,12 +22,12 @@
       style="position:absolute;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
     >
       <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
-        v-for="(item, i) of items_filter" key="item"
+        v-for="(item, i) of items_filter" key="item.value"
         @click="setText(item)"
         @mouseover="i_active = i"
       >
         <v-list-tile-content>
-            <v-list-tile-title>{{ item }}</v-list-tile-title>
+            <v-list-tile-title>{{ item.text }}</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
     </v-list>
@@ -51,7 +51,7 @@ export default {
     items_filter: function() {
       if (this.items && this.value) {
         return this.items.filter(item =>
-          item.toLowerCase().includes(this.value.toLowerCase())
+          item.text.toLowerCase().includes(this.value.toLowerCase())
         );
       }
       else return [];

@@ -2,6 +2,10 @@ import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
 
+const Header = (text, value) => ({
+    text, value
+})
+
 function getTipoDomicilio(str) {
   return `domicilio${str[0].toUpperCase() + str.substring(1, str.length)}`;
 }
@@ -17,26 +21,23 @@ export default {
         color: ''
       },
 
-      select_items: {
-        delegaciones: [],
-        tipoContacto: [],
-        condafip: [],
-        paises: [],
-        provincias: {
-          real: [],
-          profesional: [],
-          constituido: []
-        },
-        departamentos: {
-          real: [],
-          profesional: [],
-          constituido: []
-        },
-        localidades: {
-          real: [],
-          profesional: [],
-          constituido: []
-        }
+      delegaciones: [],
+      opciones: {},
+      paises: [],
+      provincias: {
+        real: [],
+        profesional: [],
+        constituido: []
+      },
+      departamentos: {
+        real: [],
+        profesional: [],
+        constituido: []
+      },
+      localidades: {
+        real: [],
+        profesional: [],
+        constituido: []
       },
 
       validator: {
@@ -60,37 +61,31 @@ export default {
   },
 
   computed: {
-    paises: function() {
-      return this.select_items.paises ? this.select_items.paises.map(i => i.nombre)  : [];
-    },
-
-    provincias: function() {
+    select_options: function() {
       return {
-        real: this.select_items.provincias.real ? this.select_items.provincias.real.map(i => i.nombre)  : [],
-        profesional: this.select_items.provincias.profesional ? this.select_items.provincias.profesional.map(i => i.nombre)  : [],
-        constituido: this.select_items.provincias.constituido ? this.select_items.provincias.constituido.map(i => i.nombre)  : []
-      }
-    },
+        paises: this.paises ? this.paises.map(i => Header(i.nombre, i.id))  : [],
 
-    departamentos: function() {
-      return {
-        real: this.select_items.departamentos.real ? this.select_items.departamentos.real.map(i => i.nombre)  : [],
-        profesional: this.select_items.departamentos.profesional ? this.select_items.departamentos.profesional.map(i => i.nombre)  : [],
-        constituido: this.select_items.departamentos.constituido ? this.select_items.departamentos.constituido.map(i => i.nombre)  : []
-      }
-    },
+        provincias: {
+            real: this.provincias.real ? this.provincias.real.map(i => Header(i.nombre, i.id))  : [],
+            profesional: this.provincias.profesional ? this.provincias.profesional.map(i => Header(i.nombre, i.id))  : [],
+            constituido: this.provincias.constituido ? this.provincias.constituido.map(i => Header(i.nombre, i.id))  : []
+        },
 
-    localidades: function() {
-      return {
-        real: this.select_items.localidades.real ? this.select_items.localidades.real.map(i => i.nombre)  : [],
-        profesional: this.select_items.localidades.profesional ? this.select_items.localidades.profesional.map(i => i.nombre)  : [],
-        constituido: this.select_items.localidades.constituido ? this.select_items.localidades.constituido.map(i => i.nombre)  : []
-      }
-    },
+        departamentos: {
+            real: this.departamentos.real ? this.departamentos.real.map(i => Header(i.nombre, i.id))  : [],
+            profesional: this.departamentos.profesional ? this.departamentos.profesional.map(i => Header(i.nombre, i.id))  : [],
+            constituido: this.departamentos.constituido ? this.departamentos.constituido.map(i => Header(i.nombre, i.id))  : []
+        },
 
-    delegaciones: function() {
-      return this.select_items.delegaciones ? this.select_items.delegaciones.map(i => i.nombre) : [];
-    },
+        localidades: {
+            real: this.localidades.real ? this.localidades.real.map(i => Header(i.nombre, i.id))  : [],
+            profesional: this.localidades.profesional ? this.localidades.profesional.map(i => Header(i.nombre, i.id))  : [],
+            constituido: this.localidades.constituido ? this.localidades.constituido.map(i => Header(i.nombre, i.id))  : []
+        },
+
+        delegaciones: this.delegaciones ? this.delegaciones.map(i => Header(i.nombre, i.id)) : [],
+      }
+    }
   },
 
   methods: {
@@ -98,36 +93,36 @@ export default {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let pais = this.solicitud.entidad[domicilio].pais;
       if (pais && pais.length) {
-        let idPais = this.select_items.paises.find(p => p.nombre == pais).id;
+        let idPais = this.paises.find(p => p.nombre == pais).id;
         axios.get(`/provincias?pais_id=${idPais}`)
-             .then(r => this.select_items.provincias[tipoDomicilio] = r.data)
+             .then(r => this.provincias[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
-      else this.select_items.provincias[tipoDomicilio] = [];
+      else this.provincias[tipoDomicilio] = [];
     },
 
     changeProvincia: function(tipoDomicilio) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let provincia = this.solicitud.entidad[domicilio].provincia;
       if (provincia && provincia.length) {
-        let idProv = this.select_items.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
+        let idProv = this.provincias[tipoDomicilio].find(p => p.nombre == provincia).id;
         axios.get(`/departamentos?provincia_id=${idProv}`)
-             .then(r => this.select_items.departamentos[tipoDomicilio] = r.data)
+             .then(r => this.departamentos[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
-      else this.select_items.departamentos[tipoDomicilio] = [];
+      else this.departamentos[tipoDomicilio] = [];
     },
 
     changeDepartamento: function(tipoDomicilio) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let departamento = this.solicitud.entidad[domicilio].departamento;
       if (departamento && departamento.length) {
-        let idDepto = this.select_items.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
+        let idDepto = this.departamentos[tipoDomicilio].find(p => p.nombre == departamento).id;
         axios.get(`/localidades?departamento_id=${idDepto}`)
-             .then(r => this.select_items.localidades[tipoDomicilio] = r.data)
+             .then(r => this.localidades[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
       }
-      else this.select_items.localidades[tipoDomicilio] = [];
+      else this.localidades[tipoDomicilio] = [];
     },
 
     removeElem: function(tipo, index) {

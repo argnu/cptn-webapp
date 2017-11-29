@@ -12,7 +12,6 @@
         <v-btn flat class="white--text" @click.native="snackbar.show = false">Cerrar</v-btn>
       </v-snackbar>
 
-
       <v-layout row wrap>
         <v-flex xs8>
           <form v-on:submit.prevent="submit">
@@ -46,7 +45,7 @@
                             <typeahead
                               tabindex="2"
                               option="true"
-                              :items="delegaciones"
+                              :items="select_options.delegaciones"
                               v-model="solicitud.delegacion"
                               label="Delegación"
                               :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
@@ -80,7 +79,7 @@
                           </v-text-field>
 
                           <v-select
-                            :items="select_items.tipoEmpresa"
+                            :items="select_opciones.tipoEmpresa"
                             v-model="solicitud.entidad.tipoEmpresa"
                             label="Tipo de Empresa" single-line bottom tabindex="5"
                             :rules="validator.empresa.tipoEmpresa"
@@ -95,7 +94,7 @@
                           </input-fecha>
 
                           <v-select
-                            :items="select_items.condafip"
+                            :items="select_opciones.condafip"
                             v-model="solicitud.entidad.condafip"
                             label="Condición AFIP" single-line bottom tabindex="5"
                             :rules="validator.empresa.condafip"
@@ -121,7 +120,7 @@
                           </input-fecha>
 
                           <v-select
-                            :items="select_items.tipoSociedad"
+                            :items="select_opciones.tipoSociedad"
                             v-model="solicitud.entidad.tipoSociedad"
                             label="Tipo de Sociedad" single-line bottom tabindex="5"
                             :rules="validator.empresa.tipoSociedad"
@@ -359,7 +358,7 @@
                         <v-layout row>
                           <v-flex xs5 class="ma-4">
                             <v-select
-                              :items="select_items.tipoContacto"
+                              :items="select_opciones.tipoContacto"
                               label="Tipo de Contacto"
                               single-line
                               bottom
@@ -427,14 +426,14 @@
                       <v-container>
                         <v-layout row>
                           <v-flex xs8 class="ma-4">
-                            <typeahead
+                            <!-- <typeahead
                               option="true"
                               :items="incumbencias"
                               v-model="nueva_incumbencia"
                               label="Incumbencias"
                               :rules="submitIncumbencia ? validator.incumbencia : []"
                             >
-                            </typeahead>
+                            </typeahead> -->
                           </v-flex>
 
                           <v-flex xs4 class="ma-4">
@@ -636,37 +635,34 @@ import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 
+const Header = (text, value) => ({
+    text, value
+})
+
+const headers = {
+  contactos: [
+    Header('Tipo', 'tipo'),
+    Header('Valor', 'valor'),
+  ],
+  incumbencias: [
+    Header('Nombre', 'nombre'),
+  ],
+  matriculados: [
+    Header('N°', 'numero'),
+    Header('Nombre', 'nombre'),
+    Header('Apellido', 'nombre'),
+    Header('DNI', 'dni')
+  ]
+}
+
 export default {
   name: 'nueva-solicitud-empresa',
   mixins: [ValidatorMixin, NuevaSolicitud],
   data () {
     return {
-      select_items: {
-        tipoEmpresa: [],
-        tipoSociedad: [],
-        tipoIncumbencia: []
-      },
-
       solicitud: new Solicitud('empresa'),
-
       nuevo_contacto: new Contacto(),
       nueva_incumbencia: '',
-
-      headers: {
-        contactos: [
-          { text: 'Tipo', value: 'tipo' },
-          { text: 'Valor', value: 'valor' },
-        ],
-        incumbencias: [
-          { text: 'Nombre', value: 'nombre' },
-        ],
-        matriculados: [
-          { text: 'N°', value: 'numero' },
-          { text: 'Nombre', value: 'nombre' },
-          { text: 'Apellido', value: 'nombre' },
-          { text: 'DNI', value: 'dni' }
-        ]
-      },
 
       validator: {
         empresa: {
@@ -720,9 +716,21 @@ export default {
   },
 
   computed: {
-    incumbencias: function() {
-      return this.select_items.tipoIncumbencia ? this.select_items.tipoIncumbencia.map(i => i.valor) : [];
-    }
+    headers: function() {
+      return headers;
+    },
+
+    select_opciones: function() {
+      return {
+        incumbencias: this.opciones.incumbencia ? this.opciones.incumbencia.map(i => Header(i.valor, i.id)) : [],
+        tipoContacto: this.opciones.contacto ? this.opciones.contacto.map(i => Header(i.valor, i.id)) : [],
+        tipoSociedad: this.opciones.sociedad ? this.opciones.sociedad.map(i => Header(i.valor, i.id)) : [],
+        condafip: this.opciones.condafip ? this.opciones.condafip.map(i => Header(i.valor, i.id)) : [],
+        tipoEmpresa: this.opciones.empresa ? this.opciones.empresa.map(i => Header(i.valor, i.id)) : [],
+      }
+    },
+
+
   },
 
   created: function() {
@@ -733,35 +741,37 @@ export default {
       axios.get('/delegaciones')
     ])
     .then(r => {
-      this.select_items.paises = r[0].data;
-      this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
-      this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.empresa, 'valor', 'id');
-      this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
-      this.select_items.tipoIncumbencia = r[1].data.incumbencia;
-      this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
-      this.select_items.delegaciones = r[2].data;
+      // this.select_items.tipoContacto = utils.getItemsSelect(r[1].data.contacto, 'valor', 'id');
+      // this.select_items.tipoEmpresa = utils.getItemsSelect(r[1].data.empresa, 'valor', 'id');
+      // this.select_items.tipoSociedad = utils.getItemsSelect(r[1].data.sociedad, 'valor', 'id');
+      // this.select_items.tipoIncumbencia = r[1].data.incumbencia;
+      // this.select_items.condafip = utils.getItemsSelect(r[1].data.condicionafip, 'valor', 'id');
+      this.paises = r[0].data
+      this.opciones = r[1].data;
+      this.delegaciones = r[2].data;
     })
     .catch(e => console.error(e));
   },
 
   methods: {
     getTipoContacto: function(id) {
-      return this.select_items.tipoContacto.find(o => o.value == id).text;
+      return this.select_opciones.contacto.find(o => o.value == id).text;
     },
 
     getTipoEmpresa: function(id) {
-      let empresa = this.select_items.tipoEmpresa.find(o => o.value == id);
-      return empresa ? empresa.text : '';
+      let empresa = this.select_opciones.tipoEmpresa.find(o => o.id == id);
+      return empresa ? empresa.valor : '';
     },
 
     getTipoSociedad: function(id) {
-      let sociedad = this.select_items.tipoSociedad.find(o => o.value == id);
+      let sociedad = this.select_opciones.tipoSociedad.find(o => o.value == id);
       return sociedad ? sociedad.text : '';
     },
 
     getTipoIncumbencia: function(id) {
-      let incumbencia = this.select_items.tipoIncumbencia.find(o => o.value == id);
-      return incumbencia ? incumbencia.text : '';
+      return id
+      // let incumbencia = this.select_opciones.incumbencia.find(o => o.value == id);
+      // return incumbencia ? incumbencia.text : '';
     },
 
     addContacto: function() {
@@ -784,24 +794,24 @@ export default {
 
     prepareSubmit: function() {
       let solicitud = utils.clone(this.solicitud);
-      solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
-      solicitud.entidad.domicilioReal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioReal.pais).id;
-      solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
-      solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
-      solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
-      solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
-      solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
-      solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
-      solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
-      solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
-      solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
-      solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
-      solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
-      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.id);
-      solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
-      solicitud.entidad.incumbencias = solicitud.entidad.incumbencias.map(r =>
-        this.select_items.tipoIncumbencia.find(i => i.nombre == r).id
-      );
+      // solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
+      // solicitud.entidad.domicilioReal.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioReal.pais).id;
+      // solicitud.entidad.domicilioReal.provincia = this.select_items.provincias.real.find(i => i.nombre == solicitud.entidad.domicilioReal.provincia).id;
+      // solicitud.entidad.domicilioReal.departamento = this.select_items.departamentos.real.find(i => i.nombre == solicitud.entidad.domicilioReal.departamento).id;
+      // solicitud.entidad.domicilioReal.localidad = this.select_items.localidades.real.find(i => i.nombre == solicitud.entidad.domicilioReal.localidad).id;
+      // solicitud.entidad.domicilioProfesional.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioProfesional.pais).id;
+      // solicitud.entidad.domicilioProfesional.provincia = this.select_items.provincias.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.provincia).id;
+      // solicitud.entidad.domicilioProfesional.departamento = this.select_items.departamentos.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.departamento).id;
+      // solicitud.entidad.domicilioProfesional.localidad = this.select_items.localidades.profesional.find(i => i.nombre == solicitud.entidad.domicilioProfesional.localidad).id;
+      // solicitud.entidad.domicilioConstituido.pais = this.select_items.paises.find(i => i.nombre == solicitud.entidad.domicilioConstituido.pais).id;
+      // solicitud.entidad.domicilioConstituido.provincia = this.select_items.provincias.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.provincia).id;
+      // solicitud.entidad.domicilioConstituido.departamento = this.select_items.departamentos.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.departamento).id;
+      // solicitud.entidad.domicilioConstituido.localidad = this.select_items.localidades.constituido.find(i => i.nombre == solicitud.entidad.domicilioConstituido.localidad).id;
+      // solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.id);
+      // solicitud.delegacion = this.select_items.delegaciones.find(i => i.nombre == solicitud.delegacion).id;
+      // solicitud.entidad.incumbencias = solicitud.entidad.incumbencias.map(r =>
+      //   this.select_items.tipoIncumbencia.find(i => i.nombre == r).id
+      // );
       return solicitud;
     },
 
