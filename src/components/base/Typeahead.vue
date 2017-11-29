@@ -19,7 +19,7 @@
     <v-list
       ref="lista"
       v-if="items_filter.length && show_items"
-      style="position:absolute;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
+      style="position:fixed;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
     >
       <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
         v-for="(item, i) of items_filter" key="item"
