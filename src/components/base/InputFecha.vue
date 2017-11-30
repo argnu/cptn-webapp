@@ -7,9 +7,8 @@
     </v-text-field>
     <v-dialog
       v-model="show_dialog"
-      lazy
-      full-width>
-      <v-date-picker  autosave v-model="datepicker">
+      >
+      <v-date-picker  autosave v-model="datepicker" style="margin:0 auto">
       </v-date-picker>
     </v-dialog>
   </v-layout>

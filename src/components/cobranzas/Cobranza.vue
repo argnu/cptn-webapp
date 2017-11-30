@@ -16,13 +16,15 @@
 
         <v-layout row wrap class="mt-4">
           <v-flex xs4 class="mx-4">
-            <typeahead
-              option="true"
+            <v-select
+              autocomplete single-line bottom
+              item-text="valor"
+              item-value="id"
               label="Forma de Pago"
-              :items="tipos_pago_select"
+              :items="tipos_pago"
               v-model="nueva_forma_pago.tipo"
             >
-            </typeahead>
+            </v-select>
           </v-flex>
 
           <v-flex xs3 class="mx-4">
@@ -63,13 +65,15 @@
                 </v-flex>
 
                 <v-flex xs5 class="mx-3">
-                  <typeahead
-                    option="true"
+                  <v-select
+                    autocomplete single-line bottom
+                    item-text="nombre"
+                    item-value="id"
                     label="Banco"
                     v-model="nueva_forma_pago.cheque.banco"
-                    :items="bancos_select"
+                    :items="bancos"
                   >
-                  </typeahead>
+                </v-select>
                   <v-text-field
                     label="Titular Cuenta"
                     v-model="nueva_forma_pago.cheque.titular"
@@ -123,7 +127,7 @@
 
 <script>
 import axios from '@/axios';
-import Typeahead from '@/components/base/Typeahead'
+import * as Model from '@/model';
 import InputFecha from '@/components/base/InputFecha'
 
 
@@ -142,9 +146,9 @@ const FormaPago = () => ({
 })
 
 const header_pagos = [
-  { text: 'Forma de Pago', value:'forma' },
-  { text: 'Fecha', value:'fecha' },
-  { text: 'Importe', value:'importe' }
+  Model.Header('Forma de Pago', 'forma'),
+  Model.Header('Fecha', 'fecha'),
+  Model.Header('Importe', 'importe')
 ]
 
 const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
@@ -165,20 +169,8 @@ export default {
       return header_pagos;
     },
 
-    bancos_select: function() {
-      return this.bancos.map(b => b.nombre.trim());
-    },
-
-    tipos_pago_select: function() {
-      return this.tipos_pago.map(p => formatPago(p));
-    },
-
     esCheque: function() {
-      if (this.nueva_forma_pago.tipo.length) {
-        let tipo = this.tipos_pago.find(p => this.nueva_forma_pago.tipo == formatPago(p))
-        return tipo && tipo.pago == 4;
-      }
-      else return false;
+      return this.nueva_forma_pago.tipo && this.nueva_forma_pago.tipo.pago == 4;
     }
   },
 
@@ -189,7 +181,7 @@ export default {
     ])
     .then(r => {
       this.tipos_pago = r[0].data.formaPago;
-      this.bancos = r[1].data;
+      this.bancos = r[1].data.map(b => b.nombre.trim());
     })
     .catch(e => console.error(e));
   },
@@ -204,11 +196,6 @@ export default {
       console.log(this.items_pago);
     }
   },
-
-  components: {
-    Typeahead,
-    InputFecha,
-  }
 
 }
 </script>

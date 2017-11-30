@@ -4,7 +4,7 @@
       ref="input"
       :label="label"
       class="pb-0"
-      @input="update($event)"
+      @input="update"
       @keyup.down="down"
       @keyup.up="up"
       @keyup.enter="enter"
@@ -12,25 +12,27 @@
       :tabindex="tabindex"
       :error="error"
       :rules="rules"
-      :value="value"
+      :value="input_val"
     >
     </v-text-field>
 
-    <v-list
-      ref="lista"
-      v-if="items_filter.length && show_items"
-      style="position:absolute;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
-    >
-      <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
-        v-for="(item, i) of items_filter" key="item.value"
-        @click="setText(item)"
-        @mouseover="i_active = i"
+    <div class="menu__content">
+      <v-list
+        ref="lista"
+        v-if="items_filter.length && show_items"
       >
-        <v-list-tile-content>
-            <v-list-tile-title>{{ item.text }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
+        <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
+          v-for="(item, i) of items_filter" key="item.value"
+          @click="setText(item)"
+          @mouseover="i_active = i"
+        >
+          <v-list-tile-content>
+              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>    
+    </div>
+
   </div>
 </template>
 
@@ -48,26 +50,35 @@ export default {
   },
 
   computed: {
+    margintop: function() {
+      return 10
+    },
+
     items_filter: function() {
-      if (this.items && this.value) {
+      if (this.items && this.value && this.show_items) {
         return this.items.filter(item =>
           item.text.toLowerCase().includes(this.value.toLowerCase())
         );
       }
       else return [];
+    },
+
+    input_val: function() {
+      let item = this.items ? this.items.find(i => i.value == this.value) : null;
+      return item ? item.text : this.value;
     }
   },
 
   methods: {
     setText: function(item) {
-      this.$emit('input', item);
       this.show_items = false;
+      this.$emit('input', item.value);
       this.$emit('change');
     },
 
     update: function(e) {
       this.show_items = e.length > 0;
-      this.$emit('input', e);
+      if (!this.options) this.$emit('input', e);
     },
 
     down: function() {
@@ -97,13 +108,12 @@ export default {
     enter: function() {
       this.setText(this.items_filter[this.i_active]);
       this.i_active = 0;
-      this.$emit('change');
     },
 
     focusout: function() {
       setTimeout(x => {
         if (this.option) {
-          if (!this.items.find(i => i == this.value)) {
+          if (!this.items.find(i => i.value == this.value)) {
             this.$emit('input', '');
           }
         }

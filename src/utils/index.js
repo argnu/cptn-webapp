@@ -16,15 +16,6 @@ export function changeGenero(srt) {
   return str.substring(0, str.length - 1) + 'a';
 }
 
-export function getItemsSelect(data, textKey, valueKey) {
-  return data.map(e => {
-    return {
-      text: e[textKey],
-      value: e[valueKey]
-    }
-  });
-}
-
 export function validRules(value, rules) {
   for (let rule of rules) {
     if (! (rule(value) === true)) return false;

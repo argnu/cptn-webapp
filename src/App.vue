@@ -1,11 +1,6 @@
 <template>
   <v-app>
 
-    <template v-if="isLogged">
-      <menu-lateral ref="menu_lateral"></menu-lateral>
-    </template>
-
-
     <v-toolbar dark class="blue darken-1">
       <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isLogged">
       </v-toolbar-side-icon>
@@ -23,6 +18,10 @@
     <v-footer class="blue darken-4">
       <span class="white--text"></span>
     </v-footer>
+
+    <template v-if="isLogged">
+      <menu-lateral ref="menu_lateral"></menu-lateral>
+    </template>    
   </v-app>
 </template>
 
