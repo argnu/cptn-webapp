@@ -8,22 +8,27 @@
 
     <v-tabs fixed icons v-model="tab_selected">
       <v-tabs-bar>
-        <v-tabs-slider color="white"></v-tabs-slider>
+        <v-tabs-slider color="black"></v-tabs-slider>
         <v-tabs-item href="#tab-detalle">
-          <v-icon  :class="{ 'white--text': tab_selected == 'tab-detalle' }">account_box</v-icon>
-          <span :class="{ 'white--text': tab_selected == 'tab-detalle' }">Detalle</span>
+          <v-icon  :class="{ 'black--text': tab_selected == 'tab-detalle' }">account_box</v-icon>
+          <span :class="{ 'black--text': tab_selected == 'tab-detalle' }">Detalle</span>
         </v-tabs-item>
         <v-tabs-item href="#tab-cuenta">
-          <v-icon :class="{ 'white--text': tab_selected == 'tab-cuenta' }">
+          <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">
             account_balance
           </v-icon>
-          <span :class="{ 'white--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
+          <span :class="{ 'black--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
+        </v-tabs-item>
+        <v-tabs-item href="#tab-pendientes">
+          <v-icon  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">attach_money</v-icon>
+          <span  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">Deudas Pendientes</span>
         </v-tabs-item>
         <v-tabs-item href="#tab-legajo">
-          <v-icon  :class="{ 'white--text': tab_selected == 'tab-legajo' }">work</v-icon>
-          <span  :class="{ 'white--text': tab_selected == 'tab-legajo' }">Legajo Técnico</span>
+          <v-icon  :class="{ 'black--text': tab_selected == 'tab-legajo' }">work</v-icon>
+          <span  :class="{ 'black--text': tab_selected == 'tab-legajo' }">Legajo Técnico</span>
         </v-tabs-item>
       </v-tabs-bar>
+
       <v-tabs-items>
         <v-tabs-content id="tab-detalle">
           <matricula-detalle :matricula="matricula"></matricula-detalle>
@@ -33,9 +38,13 @@
           <resumen-cuenta :id="matricula.id"></resumen-cuenta>
         </v-tabs-content>
 
+        <v-tabs-content id="tab-pendientes">
+          <deudas-pendientes :id="matricula.id"></deudas-pendientes>
+        </v-tabs-content>
+
         <v-tabs-content id="tab-legajo">
           <listado-legajos :id="matricula.id"></listado-legajos>
-        </v-tabs-content>
+        </v-tabs-content>        
       </v-tabs-items>
     </v-tabs>
   </v-container>
@@ -45,6 +54,7 @@
 import axios from '@/axios';
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
+import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import MatriculaDetalle from '@/components/matriculas/MatriculaDetalle'
 import ListadoLegajos from '@/components/matriculas/ListadoLegajos'
 
@@ -73,7 +83,8 @@ export default {
     DatosBasicos,
     ResumenCuenta,
     MatriculaDetalle,
-    ListadoLegajos
+    ListadoLegajos,
+    DeudasPendientes
   }
 
 }

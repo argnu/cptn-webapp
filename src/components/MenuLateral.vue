@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer temporary light v-model="show_drawer">
+  <v-navigation-drawer light temporary absolute v-model="show_drawer">
     <v-toolbar flat class="transparent">
       <v-list class="pa-0">
         <v-list-tile avatar>

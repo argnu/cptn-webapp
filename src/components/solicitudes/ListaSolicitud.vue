@@ -38,8 +38,11 @@
 
 
   <v-toolbar class="blue darken-3">
-    <v-toolbar-title class="white--text">Listado de Solicitudes</v-toolbar-title>
+    <v-toolbar-title class="white--text">Solicitudes de Matrículas</v-toolbar-title>
     <v-spacer></v-spacer>
+    <v-btn icon>
+      <v-icon>plus</v-icon>
+    </v-btn>
   </v-toolbar>
 
   <br>

@@ -33,6 +33,7 @@ export class Formacion {
     this.titulo = '';
     this.fecha = '';
     this.institucion = '';
+    this.tipo = '';
   }
 }
 
