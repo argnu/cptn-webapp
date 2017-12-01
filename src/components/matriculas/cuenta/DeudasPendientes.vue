@@ -78,7 +78,6 @@
 <script>
 import axios from '@/axios';
 import * as utils from '@/utils';
-import DatosBasicos from '@/components/matriculas/DatosBasicos';
 
 const headers = [
   { text: 'Fecha' },
@@ -133,7 +132,6 @@ export default {
   },
 
   components: {
-    DatosBasicos
   }
 
 }

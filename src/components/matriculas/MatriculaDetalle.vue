@@ -93,7 +93,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-layout row wrap>
-                  <v-flex xs5 class="ml-5">
+                  <v-flex xs3 class="ml-5">
                     <div class="mb-4">
                       <b>Domicilio Real</b>
                     </div>
@@ -108,18 +108,33 @@
                     </div>
                   </v-flex>
 
-                  <v-flex xs5 class="ml-5">
+                  <v-flex xs3 class="ml-5">
                     <div class="mb-4">
-                      <b>Domicilio Legal</b>
+                      <b>Domicilio Profesional</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.localidad : ''}}
+                      Localidad: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.calle : '' }}
+                      Calle: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.numero : ''}}
+                      N°: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.numero : ''}}
+                    </div>
+                  </v-flex>
+
+                  <v-flex xs3 class="ml-5">
+                    <div class="mb-4">
+                      <b>Domicilio Constituido</b>
+                    </div>
+                    <div class="mb-4">
+                      Localidad: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.localidad : ''}}
+                    </div>
+                    <div class="mb-4">
+                      Calle: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.calle : '' }}
+                    </div>
+                    <div class="mb-4">
+                      N°: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.numero : ''}}
                     </div>
                   </v-flex>
                 </v-layout>

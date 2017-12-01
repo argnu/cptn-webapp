@@ -1,11 +1,5 @@
 <template>
 <v-container>
-  <v-snackbar :timeout="6000" :bottom="true" :right="true" :color=snackbar.color v-model="snackbar.show">
-    {{ snackbar.msg }}
-    <v-btn flat class="white--text" @click.native="snackbar.show = false">Cerrar</v-btn>
-  </v-snackbar>
-
-
   <v-layout row wrap>
     <v-flex xs8>
       <form v-on:submit.prevent="submit">
@@ -224,8 +218,11 @@
                       >
                       </v-select>
 
-                      <v-text-field tabindex="25" label="Calle" v-model="solicitud.entidad.domicilioProfesional.calle" :rules="validator.domicilioProfesional.calle" :error="!validControl(validator.domicilioProfesional.calle, solicitud.entidad.domicilioProfesional.calle)
-                                && steps[2].touched">
+                      <v-text-field
+                        tabindex="25"
+                        label="Calle"
+                        v-model="solicitud.entidad.domicilioProfesional.calle"
+                      >
                       </v-text-field>
                     </v-flex>
 
@@ -250,13 +247,14 @@
                         :items="localidades.profesional"
                         label="Localidad"
                         v-model="solicitud.entidad.domicilioProfesional.localidad"
-                        :rules="validator.domicilioProfesional.localidad" :error="!validControl(validator.domicilioProfesional.localidad, solicitud.entidad.domicilioProfesional.localidad)
-                                && steps[2].touched"
                       >
                       </v-select>
 
-                      <v-text-field tabindex="26" label="Nro" v-model="solicitud.entidad.domicilioProfesional.numero" :rules="validator.domicilioProfesional.numero" :error="!validControl(validator.domicilioProfesional.numero, solicitud.entidad.domicilioProfesional.numero)
-                                && steps[2].touched">
+                      <v-text-field
+                        tabindex="26"
+                        label="Nro"
+                        v-model="solicitud.entidad.domicilioProfesional.numero"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
@@ -269,7 +267,7 @@
                         autocomplete single-line bottom
                         item-text="nombre"
                         item-value="id"
-                        tabindex="21"
+                        tabindex="27"
                         :items="paises"
                         label="País"
                         @input="changePais('constituido')"
@@ -281,7 +279,7 @@
                         autocomplete single-line bottom
                         item-text="nombre"
                         item-value="id"
-                        tabindex="23"
+                        tabindex="29"
                         :items="departamentos.constituido"
                         label="Departamento"
                         @input="changeDepartamento('constituido')"
@@ -289,8 +287,11 @@
                       >
                       </v-select>
 
-                      <v-text-field tabindex="25" label="Calle" v-model="solicitud.entidad.domicilioConstituido.calle" :rules="validator.domicilioConstituido.calle" :error="!validControl(validator.domicilioConstituido.calle, solicitud.entidad.domicilioConstituido.calle)
-                                && steps[2].touched">
+                      <v-text-field
+                        tabindex="31"
+                        label="Calle"
+                        v-model="solicitud.entidad.domicilioConstituido.calle"
+                      >
                       </v-text-field>
                     </v-flex>
 
@@ -299,7 +300,7 @@
                         autocomplete single-line bottom
                         item-text="nombre"
                         item-value="id"
-                        tabindex="22"
+                        tabindex="28"
                         :items="provincias.constituido"
                         label="Provincia"
                         @input="changeProvincia('constituido')"
@@ -311,24 +312,24 @@
                         autocomplete single-line bottom
                         item-text="nombre"
                         item-value="id"
-                        tabindex="24"
+                        tabindex="30"
                         :items="localidades.constituido"
                         label="Localidad"
                         v-model="solicitud.entidad.domicilioConstituido.localidad"
-                        :rules="validator.domicilioConstituido.localidad"
-                        :error="!validControl(validator.domicilioConstituido.localidad, solicitud.entidad.domicilioConstituido.localidad)
-                                && steps[2].touched"
                       >
                       </v-select>
 
-                      <v-text-field tabindex="26" label="Nro" v-model="solicitud.entidad.domicilioConstituido.numero" :rules="validator.domicilioConstituido.numero" :error="!validControl(validator.domicilioConstituido.numero, solicitud.entidad.domicilioConstituido.numero)
-                                && steps[2].touched">
+                      <v-text-field
+                        tabindex="32"
+                        label="Nro"
+                        v-model="solicitud.entidad.domicilioConstituido.numero"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="27">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="33">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -344,7 +345,6 @@
                     <v-layout row>
                       <v-flex xs6 class="mx-4">
                         <v-select
-                          tabindex="28"
                           single-line bottom
                           :items="opciones.contacto"
                           item-text="valor"
@@ -360,14 +360,14 @@
 
                       <v-flex xs6 class="mx-4">
                         <v-text-field label="Valor" v-model="nuevo_contacto.valor" :rules="submitContacto ? validator.contacto.valor : []" :error="!validControl(validator.contacto.valor, nuevo_contacto.valor)
-                                && submitContacto" tabindex="29">
+                                && submitContacto">
                         </v-text-field>
                       </v-flex>
                     </v-layout>
 
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-btn class="right" light @click="addContacto" tabindex="30">Agregar</v-btn>
+                        <v-btn class="right" light @click="addContacto">Agregar</v-btn>
                       </v-flex>
                     </v-layout>
 
@@ -391,7 +391,7 @@
                   </v-container>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="31">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -407,7 +407,6 @@
                     <v-layout row>
                       <v-flex xs6 class="ma-4">
                         <v-select
-                          tabindex="32"
                           :items="opciones.formacion"
                           item-text="valor"
                           item-value="id"
@@ -417,7 +416,7 @@
                         >
                         </v-select>
 
-                        <v-select tabindex="34"
+                        <v-select
                           autocomplete single-line bottom
                           item-text="nombre"
                           item-value="id"
@@ -432,10 +431,10 @@
                       </v-flex>
 
                       <v-flex xs6 class="ma-4">
-                        <input-fecha tabindex="33" v-model="nueva_formacion.fecha" label="Fecha" :rules="submitFormacion ? validator.formacion.fecha : []" :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha)
+                        <input-fecha  v-model="nueva_formacion.fecha" label="Fecha" :rules="submitFormacion ? validator.formacion.fecha : []" :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha)
                                 && submitFormacion">
                         </input-fecha>
-                        <v-select tabindex="35"
+                        <v-select
                           :items="instituciones"
                           item-text="nombre"
                           item-value="id"
@@ -449,7 +448,7 @@
                       </v-flex>
                     </v-layout>
 
-                    <v-btn light @click="addFormacion" style="float:right" tabindex="36">Agregar</v-btn>
+                    <v-btn light @click="addFormacion" style="float:right">Agregar</v-btn>
                     <br style="clear:both">
 
 
@@ -474,7 +473,7 @@
                   </v-container>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -488,22 +487,30 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-checkbox label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
+                      <v-checkbox
+                        tabindex="33"
+                        label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
                       </v-checkbox>
-                      <v-checkbox label="Autonómo" class="mb-4" v-model="solicitud.entidad.independiente">
+                      <v-checkbox
+                        tabindex="35"
+                        label="Autonómo" class="mb-4" v-model="solicitud.entidad.independiente">
                       </v-checkbox>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Empresa" :disabled="!solicitud.entidad.relacionDependencia" v-model="solicitud.entidad.empresa">
+                      <v-text-field
+                        tabindex="34"
+                        label="Empresa" :disabled="!solicitud.entidad.relacionDependencia" v-model="solicitud.entidad.empresa">
                       </v-text-field>
-                      <v-text-field label="Servicios Prestados" :disabled="!solicitud.entidad.independiente" v-model="solicitud.entidad.serviciosPrestados">
+                      <v-text-field
+                        tabindex="36"
+                        label="Servicios Prestados" :disabled="!solicitud.entidad.independiente" v-model="solicitud.entidad.serviciosPrestados">
                       </v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -720,9 +727,10 @@
 </template>
 
 <script>
-import axios from '@/axios';
-import * as utils from '@/utils';
-import rules from '@/rules';
+import axios from '@/axios'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import Store from '@/Store'
 import {
   Solicitud,
   Contacto,
@@ -770,6 +778,7 @@ export default {
   mixins: [ValidatorMixin, NuevaSolicitud],
   data() {
     return {
+      global_state: Store.state,
       instituciones: [],
       titulos: [],
       deAcuerdo: false,
@@ -914,13 +923,10 @@ export default {
           if (r.status != 201) {
             this.submitError();
           }
-          this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-          this.snackbar.color = 'success';
-          this.snackbar.show = true;
-          this.solicitud = new Solicitud('profesional');
-          this.steps.forEach(s => s.touched = false);
-          this.step = 1;
-          this.steps.forEach(s => s.touched = false);
+          this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$router.push('/solicitudes/lista');
         })
         .catch(e => this.submitError());
     },

@@ -1,17 +1,5 @@
 <template>
   <v-container>
-      <v-snackbar
-        :timeout="6000"
-        :bottom="true"
-        :right="true"
-        :color=snackbar.color
-
-        v-model="snackbar.show"
-      >
-        {{ snackbar.msg }}
-        <v-btn flat class="white--text" @click.native="snackbar.show = false">Cerrar</v-btn>
-      </v-snackbar>
-
       <v-layout row wrap>
         <v-flex xs8>
           <form v-on:submit.prevent="submit">
@@ -33,6 +21,7 @@
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <input-fecha
+                              tabindex="1"
                               v-model="solicitud.fecha"
                               label="Fecha de Solicitud"
                               :rules="validator.solicitud.fecha"
@@ -58,7 +47,7 @@
                         </v-layout>
                       </v-card-text>
                     </v-card>
-                    <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                    <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -72,37 +61,40 @@
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
                           <v-text-field
+                            tabindex="4"
                             label="Nombre"
                             v-model="solicitud.entidad.nombre"
-                            tabindex="1"
                             :rules="validator.empresa.nombre"
                             :error="!validControl(validator.empresa.nombre, solicitud.entidad.nombre) && steps[1].touched"
                           >
                           </v-text-field>
 
                           <v-select
+                            tabindex="5"
                             item-text="valor"
                             item-value="id"
                             :items="opciones.empresa"
                             v-model="solicitud.entidad.tipoEmpresa"
-                            label="Tipo de Empresa" single-line bottom tabindex="5"
+                            label="Tipo de Empresa" single-line bottom
                             :rules="validator.empresa.tipoEmpresa"
                             :error="!validControl(validator.empresa.tipoEmpresa, solicitud.entidad.tipoEmpresa) && steps[1].touched"
                           >
                           </v-select>
 
                           <input-fecha
+                              tabindex="6"
                               v-model="solicitud.entidad.fechaConstitucion"
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
 
                           <v-select
+                            tabindex="7"
                             item-text="valor"
                             item-value="id"
                             :items="opciones.condicionafip"
                             v-model="solicitud.entidad.condafip"
-                            label="Condición AFIP" single-line bottom tabindex="5"
+                            label="Condición AFIP" single-line bottom
                             :rules="validator.empresa.condafip"
                             :error="!validControl(validator.empresa.condafip, solicitud.entidad.confafip) && steps[1].touched"
                           >
@@ -111,26 +103,28 @@
 
                         <v-flex xs6 class="ma-4">
                           <v-text-field
+                            tabindex="8"
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
-                            tabindex="1"
                             :rules="validator.empresa.cuit"
                             :error="!validControl(validator.empresa.cuit, solicitud.entidad.cuit) && steps[1].touched"
                           >
                           </v-text-field>
 
                           <input-fecha
+                              tabindex="9"
                               v-model="solicitud.entidad.fechaInicio"
                               label="Fecha de Inicio de Actividades"
                           >
                           </input-fecha>
 
                           <v-select
+                            tabindex="10"
                             item-text="valor"
                             item-value="id"
                             :items="opciones.sociedad"
                             v-model="solicitud.entidad.tipoSociedad"
-                            label="Tipo de Sociedad" single-line bottom tabindex="5"
+                            label="Tipo de Sociedad" single-line bottom
                             :rules="validator.empresa.tipoSociedad"
                             :error="!validControl(validator.empresa.tipoSociedad, solicitud.entidad.tipoSociedad) && steps[1].touched"
                           >
@@ -139,7 +133,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
                   <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -155,7 +149,7 @@
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="15"
+                              tabindex="12"
                               :items="paises"
                               label="País"
                               v-model="solicitud.entidad.domicilioReal.pais"
@@ -167,7 +161,7 @@
                             </v-select>
 
                             <v-select
-                              tabindex="17"
+                              tabindex="14"
                               :items="departamentos.real"
                               label="Departamento"
                               @input="changeDepartamento('real')"
@@ -179,7 +173,7 @@
                             </v-select>
 
                             <v-text-field
-                              tabindex="19"
+                              tabindex="16"
                               label="Calle"
                               v-model="solicitud.entidad.domicilioReal.calle"
                               :rules="validator.domicilioReal.calle"
@@ -191,7 +185,7 @@
 
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="16"
+                              tabindex="13"
                               :items="provincias.real"
                               label="Provincia"
                               @input="changeProvincia('real')"
@@ -203,7 +197,7 @@
                             </v-select>
 
                             <v-select
-                              tabindex="18"
+                              tabindex="15"
                               :items="localidades.real"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioReal.localidad"
@@ -217,7 +211,7 @@
                             </v-select>
 
                             <v-text-field
-                              tabindex="20"
+                              tabindex="17"
                               label="Nro"
                               v-model="solicitud.entidad.domicilioReal.numero"
                               :rules="validator.domicilioReal.numero"
@@ -237,7 +231,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="21"
+                              tabindex="18"
                               :items="paises"
                               label="País"
                               @input="changePais('profesional')"
@@ -249,7 +243,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="23"
+                              tabindex="20"
                               :items="departamentos.profesional"
                               label="Departamento"
                               @input="changeDepartamento('profesional')"
@@ -257,12 +251,9 @@
                             >
                             </v-select>
                             <v-text-field
-                              tabindex="25"
+                              tabindex="22"
                               label="Calle"
                               v-model="solicitud.entidad.domicilioProfesional.calle"
-                              :rules="validator.domicilioProfesional.calle"
-                              :error="!validControl(validator.domicilioProfesional.calle, solicitud.entidad.domicilioProfesional.calle)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
@@ -272,7 +263,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="22"
+                              tabindex="19"
                               :items="provincias.profesional"
                               label="Provincia"
                               @input="changeProvincia('profesional')"
@@ -284,22 +275,16 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="24"
+                              tabindex="21"
                               :items="localidades.profesional"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioProfesional.localidad"
-                              :rules="validator.domicilioProfesional.localidad"
-                              :error="!validControl(validator.domicilioProfesional.localidad, solicitud.entidad.domicilioProfesional.localidad)
-                                && steps[2].touched"
                             >
                             </v-select>
                             <v-text-field
-                              tabindex="26"
+                              tabindex="23"
                               label="Nro"
                               v-model="solicitud.entidad.domicilioProfesional.numero"
-                              :rules="validator.domicilioProfesional.numero"
-                              :error="!validControl(validator.domicilioProfesional.numero, solicitud.entidad.domicilioProfesional.numero)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
@@ -313,7 +298,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="21"
+                              tabindex="24"
                               :items="paises"
                               label="País"
                               @input="changePais('constituido')"
@@ -325,7 +310,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="23"
+                              tabindex="26"
                               :items="departamentos.constituido"
                               label="Departamento"
                               @input="changeDepartamento('constituido')"
@@ -333,12 +318,9 @@
                             >
                             </v-select>
                             <v-text-field
-                              tabindex="25"
+                              tabindex="28"
                               label="Calle"
                               v-model="solicitud.entidad.domicilioConstituido.calle"
-                              :rules="validator.domicilioConstituido.calle"
-                              :error="!validControl(validator.domicilioConstituido.calle, solicitud.entidad.domicilioConstituido.calle)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
@@ -348,7 +330,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="22"
+                              tabindex="25"
                               :items="provincias.constituido"
                               label="Provincia"
                               @input="changeProvincia('constituido')"
@@ -360,29 +342,23 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              tabindex="24"
+                              tabindex="27"
                               :items="localidades.constituido"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioConstituido.localidad"
-                              :rules="validator.domicilioConstituido.localidad"
-                              :error="!validControl(validator.domicilioConstituido.localidad, solicitud.entidad.domicilioConstituido.localidad)
-                                && steps[2].touched"
                             >
                             </v-select>
                             <v-text-field
-                              tabindex="26"
+                              tabindex="29"
                               label="Nro"
                               v-model="solicitud.entidad.domicilioConstituido.numero"
-                              :rules="validator.domicilioConstituido.numero"
-                              :error="!validControl(validator.domicilioConstituido.numero, solicitud.entidad.domicilioConstituido.numero)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -668,13 +644,14 @@
 </template>
 
 <script>
-import axios from '@/axios';
-import * as utils from '@/utils';
-import rules from '@/rules';
-import * as Model from '@/model';
-import InputFecha from '@/components/base/InputFecha';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
-import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
+import axios from '@/axios'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import Store from '@/Store'
+import * as Model from '@/model'
+import InputFecha from '@/components/base/InputFecha'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 
 const headers = {
   contactos: [
@@ -697,6 +674,7 @@ export default {
   mixins: [ValidatorMixin, NuevaSolicitud],
   data () {
     return {
+      global_state: Store.state,
       solicitud: new Model.Solicitud('empresa'),
       nuevo_contacto: new Model.Solicitud(),
       nueva_incumbencia: '',
@@ -769,7 +747,6 @@ export default {
     .then(r => {
       this.paises = r[0].data;
       this.opciones = r[1].data;
-      // this.delegaciones = r[2].data.map(d => Header(d.nombre, d.id));
       this.delegaciones = r[2].data;
     })
     .catch(e => console.error(e));
@@ -793,7 +770,7 @@ export default {
     },
 
     addContacto: function() {
-       this.submitContacto = true;
+      this.submitContacto = true;
        if ( utils.validObject(this.nuevo_contacto, this.validator.contacto) ) {
          this.solicitud.entidad.contactos.push(this.nuevo_contacto);
          this.nuevo_contacto = new Model.Solicitud();
@@ -817,18 +794,16 @@ export default {
     },
 
     submit: function() {
-
       axios.post('/solicitudes', this.prepareSubmit())
            .then(r => {
              if (r.status != 201) {
                this.submitError();
              }
-             this.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-             this.snackbar.color = 'success';
-             this.snackbar.show = true;
-             this.solicitud = new Model.Solicitud('empresa');
-             this.step = 1;
-             this.steps.forEach(s => s.touched = false);
+             this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+             this.global_state.snackbar.color = 'success';
+             this.global_state.snackbar.show = true;
+             this.$router.push('/solicitudes/lista')
+
            })
            .catch(e => this.submitError());
     },
@@ -840,12 +815,7 @@ export default {
         return utils.validObject(empresa, this.validator.empresa);
       }
       else if (i == 3) {
-        let domicilioR = this.solicitud.entidad.domicilioReal;
-        let domicilioP = this.solicitud.entidad.domicilioProfesional;
-        let domicilioC = this.solicitud.entidad.domicilioConstituido;
-        return utils.validObject(domicilioR, this.validator.domicilioReal)
-          && utils.validObject(domicilioP, this.validator.domicilioProfesional)
-          && utils.validObject(domicilioC, this.validator.domicilioConstituido);
+        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilioReal)
       }
       else return true;
     },

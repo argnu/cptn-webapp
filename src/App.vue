@@ -1,5 +1,15 @@
 <template>
   <v-app>
+    <v-snackbar
+      :timeout="6000"
+      bottom
+      right
+      :color="global_state.snackbar.color"
+      v-model="global_state.snackbar.show"
+    >
+      {{ global_state.snackbar.msg }}
+      <v-btn flat class="white--text" @click.native="global_state.snackbar.show = false">Cerrar</v-btn>
+    </v-snackbar>
 
     <v-toolbar dark class="blue darken-1">
       <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isLogged">
@@ -21,7 +31,7 @@
 
     <template v-if="isLogged">
       <menu-lateral ref="menu_lateral"></menu-lateral>
-    </template>    
+    </template>
   </v-app>
 </template>
 
@@ -29,12 +39,14 @@
 import * as Cookies from 'js-cookie'
 import UserMenu from '@/components/UserMenu'
 import MenuLateral from '@/components/MenuLateral'
+import Store from '@/Store'
 
 export default {
   name: 'app',
   data() {
     return {
       user: null,
+      global_state: Store.state
     }
   },
 

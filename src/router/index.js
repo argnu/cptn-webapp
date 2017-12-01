@@ -76,12 +76,6 @@ export default new Router({
             //   component: PermisoConstruccion
             // },
             {
-              path: ':id/resumen',
-              name: 'ResumenCuenta',
-              component: ResumenCuenta,
-              props: true
-            },
-            {
               path: ':id/deudas',
               name: 'DeudasPendientes',
               component: DeudasPendientes,
