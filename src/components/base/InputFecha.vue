@@ -1,9 +1,17 @@
 <template>
   <v-layout row>
-    <v-text-field :label="label" :value="value" @input="update($event)"
-      append-icon="event" :append-icon-cb="cbIcon"
+    <v-text-field
+      :label="label"
+      :value="formatted"
+      append-icon="event"
+      :append-icon-cb="cbIcon"
       :tabindex="tabindex"
-      @change="updatePicker" :rules="rules" :error="error">
+      :rules="rules"
+      :error="error"
+      :disabled="disabled"
+      @change="updatePicker"
+      @input="update($event)"
+    >
     </v-text-field>
     <v-dialog
       v-model="show_dialog"
@@ -15,11 +23,11 @@
 </template>
 
 <script>
-import * as utils from '@/utils';
+import * as moment from 'moment'
 
 export default {
   name: 'input-fecha',
-  props: ['value', 'label', 'rules', 'error', 'tabindex'],
+  props: ['value', 'label', 'rules', 'error', 'tabindex', 'disabled'],
   data () {
     return {
       datepicker: null,
@@ -30,11 +38,15 @@ export default {
 
   watch: {
     datepicker: function(new_date) {
-      if (new_date) {
-        if (new_date instanceof Date) new_date = new_date.toISOString();
-        let formatted = utils.formatFecha(new_date);
-        this.$emit('input', formatted);
-      }
+      let fecha = moment(new_date);
+      if (fecha.isValid()) this.$emit('input', fecha.format('DD/MM/YYYY'));
+    }
+  },
+
+  computed: {
+    formatted: function() {
+      let fecha = moment(this.value);
+      return fecha.isValid() ? fecha.format('DD/MM/YYYY') : '';
     }
   },
 

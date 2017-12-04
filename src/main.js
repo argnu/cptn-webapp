@@ -6,6 +6,7 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import * as utils from '@/utils'
+import * as moment from 'moment'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
@@ -18,14 +19,17 @@ new Vue({
   components: { App }
 })
 
-Vue.filter('fecha', function(str) {
-    return str ? utils.formatFecha(str) : '';
-});
+const tipos_legajos = ['Permiso de Construcción', 'Orden de Trabajo', 'Legajo Técnico'];
 
-Vue.filter('upperFirst', function(str) {
-    return str ? utils.upperFirst(str) : '';
+Vue.filter('tipo_legajo', function(i) {
+    return i ? tipos_legajos[i-1] : '';
 });
 
 Vue.filter('boolean', function(str) {
   return str ? 'Sí' : 'No';
+});
+
+Vue.filter('fecha', function(str) {
+  
+  return str ? moment(str).format('DD/MM/YYYY') : '';
 });

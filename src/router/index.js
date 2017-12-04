@@ -9,6 +9,7 @@ import { MainMatriculas, ListaMatriculados, Matricula,
   MatriculaProfesional, ResumenCuenta,
   DeudasPendientes } from '@/components/matriculas'
 import Cobranza from '@/components/cobranzas/Cobranza'
+import Legajo from '@/components/matriculas/Legajo'
 
 
 Vue.use(Router)
@@ -66,22 +67,29 @@ export default new Router({
               component: ListaMatriculados,
             },
             {
-              path: ':id',
+              path: ':id_matricula',
               component: Matricula,
               props: true
             },
-            // {
-            //   path: ':id/permiso',
-            //   name: 'PermisoConstruccion',
-            //   component: PermisoConstruccion
-            // },
             {
               path: ':id/deudas',
               name: 'DeudasPendientes',
               component: DeudasPendientes,
               props: true
             },
+            {
+              path: ':id_matricula/nuevo-legajo',
+              name: 'NuevoLegajo',
+              component: Legajo,
+              props: true
+            },
           ]
+        },
+        {
+          path: '/legajos/:id_legajo',
+          name: 'Legajo',
+          component: Legajo,
+          props: true
         },
       ]
     },

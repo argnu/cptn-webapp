@@ -40,9 +40,6 @@
   <v-toolbar class="blue darken-3">
     <v-toolbar-title class="white--text">Solicitudes de Matrículas</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn icon>
-      <v-icon>plus</v-icon>
-    </v-btn>
   </v-toolbar>
 
   <br>
@@ -133,7 +130,7 @@
             </template>
       <td>
         <v-menu>
-          <v-btn icon slot="activator">
+          <v-btn fab dark small color="blue" slot="activator">
             <v-icon>more_vert</v-icon>
           </v-btn>
           <v-list>

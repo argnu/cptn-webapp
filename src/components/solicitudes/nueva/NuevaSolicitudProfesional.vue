@@ -382,7 +382,7 @@
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
-                              <v-btn icon @click="removeElem('contactos', props.index)">
+                              <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -464,7 +464,7 @@
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
-                              <v-btn icon @click="removeFormacion('formaciones', props.index)">
+                              <v-btn fab dark small color="blue" @click="removeFormacion('formaciones', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -583,7 +583,7 @@
                                <td>{{ props.item.vinculo }}</td>
                                <td>{{ props.item.invalidez | boolean }}</td>
                                <td style="width:30px">
-                                 <v-btn icon @click="removeElem('beneficiarios', props.index)">
+                                 <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
                                    <v-icon>delete</v-icon>
                                  </v-btn>
                                </td>
@@ -642,7 +642,7 @@
                              <td>{{ props.item.nombre }}</td>
                              <td>{{ props.item.porcentaje }}</td>
                              <td style="width:30px">
-                               <v-btn icon @click="removeElem('subsidiarios', props.index)">
+                               <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
                                  <v-icon>delete</v-icon>
                                </v-btn>
                              </td>
@@ -692,10 +692,6 @@
           </v-stepper>
 
         </v-container>
-
-        <!-- <v-btn class="red white--text">Cancelar
-          <v-icon dark right>block</v-icon>
-        </v-btn> -->
 
       </form>
     </v-flex>

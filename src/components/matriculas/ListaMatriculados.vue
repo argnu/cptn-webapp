@@ -73,7 +73,7 @@
       </template>
       <template slot="items" scope="props">
         <td>
-          <v-btn icon slot="activator" @click="verMatricula(props.item.id)">
+          <v-btn fab small dark color="blue" slot="activator" @click="verMatricula(props.item.id)">
             <v-icon>assignment_ind</v-icon>
           </v-btn>
         </td>

@@ -39,7 +39,7 @@
                 <td>{{ props.item.tipo == 'boleta' ? props.item.total : '' }}</td>
                 <td>{{ props.item.tipo == 'comprobante' ? props.item.importe_cancelado : '' }}</td>
                 <td>
-                  <v-btn icon @click="verDetalle(props.item)">
+                  <v-btn fab dark small color="blue" @click="verDetalle(props.item)">
                     <v-icon>launch</v-icon>
                   </v-btn>
                 </td>

@@ -1,22 +1,37 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-data-table
-          :headers="headers"
-          :items="legajos"
-          class="elevation-1"
-          no-data-text="">
-        <template slot="headers" scope="props">
-          <th v-for="header of props.headers" class="pa-3 text-xs-left">
-            <b>{{ header.text }}</b>
-          </th>
-        </template>
-        <template slot="items" scope="props">
-          <td>{{ props.item.fecha_solicitud | fecha }}</td>
-          <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.solicitud }}</td>
-          <!-- <td>{{ props.item.estado }}</td> -->
-        </template>
-      </v-data-table>
+      <v-card class="mt-5">
+        <v-card-text>
+          <v-btn
+            absolute dark fab top right
+            color="green"
+            @click="nuevoLegajo"
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+          <v-data-table
+              :headers="headers"
+              :items="legajos"
+              no-data-text="">
+            <template slot="headers" scope="props">
+              <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                <b>{{ header.text }}</b>
+              </th>
+              <th></th>
+            </template>
+            <template slot="items" scope="props">
+              <td>{{ props.item.fecha_solicitud | fecha }}</td>
+              <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.solicitud }}</td>
+              <td>
+                <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
+                  <v-icon>launch</v-icon>
+                </v-btn>
+              </td>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
     </v-flex>
   </v-layout>
 </template>
@@ -34,7 +49,6 @@ const headers = [
   // Header('Estado', 'estado')
 ]
 
-const tipos_legajos = ['Permiso de Construcción', 'Orden de Trabajo', 'Legajo Técnico'];
 
 export default {
   name: 'ListadoLegajos',
@@ -43,12 +57,6 @@ export default {
   data () {
     return {
       legajos: []
-    }
-  },
-
-  filters: {
-    tipo_legajo: function(num) {
-      return num ? tipos_legajos[num-1] : '';
     }
   },
 
@@ -67,6 +75,13 @@ export default {
   },
 
   methods: {
+    verDetalle: function(id) {
+      this.$router.push({ path: `/legajos/${id}` });
+    },
+
+    nuevoLegajo: function() {
+      this.$router.push({ path: `/matriculas/${this.id}/nuevo-legajo` });
+    }
   },
 
 }

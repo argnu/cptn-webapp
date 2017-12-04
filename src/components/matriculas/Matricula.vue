@@ -44,7 +44,7 @@
 
         <v-tabs-content id="tab-legajo">
           <listado-legajos :id="matricula.id"></listado-legajos>
-        </v-tabs-content>        
+        </v-tabs-content>
       </v-tabs-items>
     </v-tabs>
   </v-container>
@@ -60,6 +60,8 @@ import ListadoLegajos from '@/components/matriculas/ListadoLegajos'
 
 export default {
   name: 'Matricula',
+  props: ['id_matricula'],
+
   data () {
     return {
       matricula: null,
@@ -68,7 +70,7 @@ export default {
   },
 
   created: function() {
-    axios.get(`/matriculas/${this.$route.params.id}`)
+    axios.get(`/matriculas/${this.id_matricula}`)
          .then(r => {
            this.matricula = r.data;
          })

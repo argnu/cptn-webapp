@@ -63,6 +63,7 @@
                           <v-text-field
                             tabindex="4"
                             label="Nombre"
+                            disabled
                             v-model="solicitud.entidad.nombre"
                             :rules="validator.empresa.nombre"
                             :error="!validControl(validator.empresa.nombre, solicitud.entidad.nombre) && steps[1].touched"
@@ -419,7 +420,7 @@
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
-                              <v-btn icon @click="removeElem('contactos', props.index)">
+                              <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -476,7 +477,7 @@
                             <template slot="items" scope="props">
                               <td>{{ getTipoIncumbencia(props.item) }}</td>
                               <td style="width:30px">
-                                <v-btn icon @click="removeElem('incumbencias', props.index)">
+                                <v-btn fab dark small color="blue" @click="removeElem('incumbencias', props.index)">
                                   <v-icon>delete</v-icon>
                                 </v-btn>
                               </td>
@@ -552,7 +553,7 @@
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
                                   <td>
-                                    <v-btn flat icon color="green" @click="addRepresentante(props.item)">
+                                    <v-btn fab dark small color="blue" @click="addRepresentante(props.item)">
                                       <v-icon>note_add</v-icon>
                                     </v-btn>
                                   </td>
@@ -590,7 +591,7 @@
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
                                   <td>
-                                    <v-btn flat icon color="grey" @click="borrarRepresentante(props.item.id)">
+                                    <v-btn fab dark small color="blue" @click="borrarRepresentante(props.item.id)">
                                       <v-icon>delete</v-icon>
                                     </v-btn>
                                   </td>
@@ -613,10 +614,6 @@
 
               </v-stepper>
           </v-container>
-
-          <!-- <v-btn class="red white--text">Cancelar
-          <v-icon dark right>block</v-icon>
-          </v-btn> -->
 
           </form>
         </v-flex>

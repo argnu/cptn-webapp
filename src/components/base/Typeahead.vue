@@ -8,31 +8,26 @@
       @keyup.down="down"
       @keyup.up="up"
       @keyup.enter="enter"
-      @focusout="focusout"
       :tabindex="tabindex"
       :error="error"
       :rules="rules"
       :value="input_val"
+      :disabled="disabled"
     >
     </v-text-field>
 
     <v-list
       ref="lista"
       v-if="items_filter.length && show_items"
-      style="position:fixed;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
+      style="position:absolute;z-index:6;margin-top:-20px;max-height:200px;overflow:scroll"
     >
-      <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
-        v-for="(item, i) of items_filter" key="item"
-        @click="setText(item)"
-        @mouseover="i_active = i"
-      >
         <v-list-tile :class="{ 'grey lighten-2': i == i_active }"
-          v-for="(item, i) of items_filter" key="item.value"
+          v-for="(item, i) of items_filter" key="i"
           @click="setText(item)"
           @mouseover="i_active = i"
         >
           <v-list-tile-content>
-              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+              <v-list-tile-title>{{ item[item_text] }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -44,7 +39,9 @@
 <script>
 export default {
   name: 'typeahead',
-  props: ['value', 'label', 'items', 'tabindex', 'option', 'error', 'rules'],
+  props: ['value', 'label', 'items', 'tabindex', 'option',
+    'error', 'rules', 'disabled', 'item_text', 'item_value'
+  ],
 
   data () {
     return {
@@ -55,29 +52,25 @@ export default {
   },
 
   computed: {
-    margintop: function() {
-      return 10
-    },
-
     items_filter: function() {
       if (this.items && this.value && this.show_items) {
         return this.items.filter(item =>
-          item.text.toLowerCase().includes(this.value.toLowerCase())
+          item[this.item_text].toLowerCase().includes(this.value.toLowerCase())
         );
       }
       else return [];
     },
 
     input_val: function() {
-      let item = this.items ? this.items.find(i => i.value == this.value) : null;
-      return item ? item.text : this.value;
+      let item = this.items ? this.items.find(i => i[this.item_value] == this.value) : null;
+      return item ? item[this.item_text] : this.value;
     }
   },
 
   methods: {
     setText: function(item) {
       this.show_items = false;
-      this.$emit('input', item.value);
+      this.$emit('input', item[this.item_value]);
       this.$emit('change');
     },
 
