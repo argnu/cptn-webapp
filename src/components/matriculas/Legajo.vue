@@ -24,11 +24,11 @@
                 </v-select>
               </v-flex>
 
-              <v-flex xs3 class="ml-5">
+              <v-flex xs3 class="ml-5" v-if="legajo.id > 0">
                   <v-text-field
                     label="N° Solicitud"
                     v-model="legajo.solicitud"
-                    :disabled="legajo.id > 0"
+                    disabled
                   >
                   </v-text-field>
               </v-flex>
@@ -38,6 +38,7 @@
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
                   :disabled="legajo.id > 0"
+                  :rules="validator.fecha"
                 >
                 </input-fecha>
               </v-flex>
@@ -133,6 +134,7 @@
                     label="Nomenclatura"
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
+                    :rules="validator.nomenclatura"
                   >
                   </v-text-field>
               </v-flex>
@@ -275,7 +277,7 @@
                     :headers="headers_items"
                     :items="legajo.items"
                     class="elevation-4"
-                    no-data-text=""
+                    no-data-text="No hay items"
                 >
                   <template slot="headers" scope="props">
                     <th v-for="header of props.headers" class="pa-3 text-xs-left">
@@ -285,13 +287,13 @@
                   <template slot="items" scope="props">
                     <tr>
                       <template v-if="!legajo.id">
-                        <td>{{ props.item.descripcion.length ? props.item.descripcion : props.item.id  }}</td>
+                        <td>{{ props.item.descripcion }}</td>
                         <td>{{ props.item.valor }}</td>
                       </template>
                       <template v-if="legajo.id > 0">
                         <td>{{ props.item.item.descripcion }}</td>
                         <td>{{ props.item.valor }}</td>
-                      </template>                      
+                      </template>
                     </tr>
                   </template>
                 </v-data-table>
@@ -481,21 +483,26 @@
           </v-card>
         </v-flex>
       </v-layout>
-
-
     </template>
 
-
+    <v-btn class="green darken-1 white--text right" @click.native="submit" :disabled="!valid_form">
+      Guardar Solicitud
+      <v-icon dark right>check_circle</v-icon>
+    </v-btn>
+    <br>
 
   </v-container>
 </template>
 
 <script>
 import axios from '@/axios'
+import rules from '@/rules'
 import { Header, Domicilio } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import Typeahead from '@/components/base/Typeahead'
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import Store from '@/Store'
 
 const tipos = [
   Header('Permiso de Construcción', 1),
@@ -551,9 +558,11 @@ const Legajo = (matricula) => ({
 export default {
   name: 'Legajo',
   props: ['id_legajo', 'id_matricula'],
+  mixins: [ValidatorMixin],
 
   data () {
     return {
+      global_state: Store.state,
       legajo: Legajo(),
       matricula: null,
       categorias: [],
@@ -564,7 +573,11 @@ export default {
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: Item()
+      nuevo_item: Item(),
+      validator: {
+        fecha: [ rules.required, rules.fecha ],
+        nomenclatura: [ rules.required ]
+      },
     }
   },
 
@@ -580,6 +593,11 @@ export default {
     subcategorias: function() {
       let categoria = this.categorias.find(c => c.id == this.categoria_selected);
       return categoria ? categoria.subcategorias : [];
+    },
+
+    valid_form: function() {
+      return this.validControl(this.validator.fecha, this.legajo.fecha_solicitud)
+        && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura);
     }
   },
 
@@ -646,8 +664,24 @@ export default {
       if (typeof this.nuevo_item.id == 'number') {
         this.nuevo_item.descripcion = this.items_predeterminados.find(i => i.id == this.nuevo_item.id).descripcion;
       }
+      else this.nuevo_item.descripcion = this.nuevo_item.id;
       this.legajo.items.push(this.nuevo_item);
       this.nuevo_item = Item();
+    },
+
+    submit: function() {
+      axios.post(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
+           .then(r => {
+             if (r.status != 201) {
+               this.submitError();
+             }
+             this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
+             this.global_state.snackbar.color = 'success';
+             this.global_state.snackbar.show = true;
+             this.$router.pop();
+
+           })
+           .catch(e => this.submitError());
     },
   },
 
