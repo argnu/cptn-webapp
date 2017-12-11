@@ -63,7 +63,6 @@
                           <v-text-field
                             tabindex="4"
                             label="Nombre"
-                            disabled
                             v-model="solicitud.entidad.nombre"
                             :rules="validator.empresa.nombre"
                             :error="!validControl(validator.empresa.nombre, solicitud.entidad.nombre) && steps[1].touched"
@@ -412,7 +411,7 @@
                             no-data-text="No hay contactos">
                           <template slot="headers" scope="props">
                             <th v-for="header of props.headers" class="pa-3">
-                              {{ header.text }}
+                              <b>{{ header.text }}</b>
                             </th>
                             <th></th>
                           </template>
@@ -469,8 +468,8 @@
                               class="elevation-1"
                               no-data-text="No hay incumbencias">
                             <template slot="headers" scope="props">
-                              <th v-for="header of props.headers" style="padding: 20px">
-                                {{ header.text }}
+                              <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                <b>{{ header.text }}</b>
                               </th>
                               <th></th>
                             </template>
@@ -531,6 +530,7 @@
                         <v-layout row>
                           <v-flex xs12 class="ma-3">
                             <v-data-table
+                                :rows-per-page-items="[5, 10, 25]"
                                 :headers="headers.matriculados"
                                 :items="matriculados"
                                 class="elevation-1"
@@ -541,8 +541,8 @@
                                 :loading="loading"
                                 >
                               <template slot="headers" scope="props">
-                                <th v-for="header of props.headers" style="padding: 20px">
-                                  {{ header.text }}
+                                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                  <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
                               </template>
@@ -569,6 +569,7 @@
                         <v-layout row wrap>
                           <v-flex xs12 class="mx-3">
                             <v-data-table
+                                :rows-per-page-items="[5, 10, 25]"
                                 :headers="headers.matriculados"
                                 :items="solicitud.entidad.representantes"
                                 class="elevation-1"
@@ -579,8 +580,8 @@
                                 no-results-text="No se agregaron representates"
                                 >
                               <template slot="headers" scope="props">
-                                <th v-for="header of props.headers" style="padding: 20px">
-                                  {{ header.text }}
+                                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                  <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
                               </template>

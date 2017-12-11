@@ -23,3 +23,9 @@ export function validObject(original, rules) {
 export function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
+
+export function round(numero, decimales) {
+  if (!numero) return 0;
+  let factor = Math.pow(10, decimales);
+  return Math.round(numero * factor) / factor;
+}

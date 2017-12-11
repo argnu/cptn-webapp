@@ -53,10 +53,23 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Nombre" v-model="solicitud.entidad.nombre" tabindex="3" :rules="validator.profesional.nombre" :error="!validControl(validator.profesional.nombre, solicitud.entidad.nombre) && steps[1].touched">
+                      <v-text-field
+                        label="Nombre"
+                        v-model="solicitud.entidad.nombre"
+                        tabindex="3"
+                        :rules="validator.profesional.nombre"
+                        :error="!validControl(validator.profesional.nombre, solicitud.entidad.nombre) && steps[1].touched"
+                      >
                       </v-text-field>
-                      <v-text-field label="DNI" v-model="solicitud.entidad.dni" :rules="validator.profesional.dni" :error="!validControl(validator.profesional.dni, solicitud.entidad.dni) && steps[1].touched" tabindex="5">
+
+                      <v-text-field
+                        label="DNI"
+                        v-model="solicitud.entidad.dni"
+                        :rules="validator.profesional.dni"
+                        :error="!validControl(validator.profesional.dni, solicitud.entidad.dni) && steps[1].touched" tabindex="5"
+                      >
                       </v-text-field>
+
                       <v-select
                         tabindex="7"
                         :items="opciones.sexo"
@@ -69,10 +82,23 @@
                         :error="!validControl(validator.profesional.sexo, solicitud.entidad.sexo) && steps[1].touched"
                       >
                       </v-select>
-                      <input-fecha v-model="solicitud.entidad.fechaNacimiento" label="Fecha de Nacimiento" tabindex="9" :rules="validator.profesional.fechaNacimiento" :error="!validControl(validator.profesional.fechaNacimiento, solicitud.entidad.fechaNacimiento) && steps[1].touched">
+
+                      <input-fecha
+                        v-model="solicitud.entidad.fechaNacimiento"
+                        label="Fecha de Nacimiento"
+                        tabindex="9"
+                        :rules="validator.profesional.fechaNacimiento"
+                        :error="!validControl(validator.profesional.fechaNacimiento, solicitud.entidad.fechaNacimiento) && steps[1].touched"
+                      >
                       </input-fecha>
-                      <v-text-field label="Nacionalidad" v-model="solicitud.entidad.nacionalidad" tabindex="11">
+
+                      <v-text-field
+                        label="Nacionalidad"
+                        v-model="solicitud.entidad.nacionalidad"
+                        tabindex="11"
+                      >
                       </v-text-field>
+
                       <v-select
                         single-line bottom
                         :items="opciones.condicionafip"
@@ -88,10 +114,22 @@
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Apellido" v-model="solicitud.entidad.apellido" :rules="validator.profesional.apellido" :error="!validControl(validator.profesional.apellido, solicitud.entidad.apellido) && steps[1].touched" tabindex="4">
+                      <v-text-field
+                        label="Apellido"
+                        v-model="solicitud.entidad.apellido"
+                        :rules="validator.profesional.apellido"
+                        :error="!validControl(validator.profesional.apellido, solicitud.entidad.apellido) && steps[1].touched"
+                        tabindex="4"
+                      >
                       </v-text-field>
-                      <v-text-field label="CUIT" v-model="solicitud.entidad.cuit" tabindex="6">
+
+                      <v-text-field
+                        label="CUIT"
+                        v-model="solicitud.entidad.cuit"
+                        tabindex="6"
+                      >
                       </v-text-field>
+
                       <v-select
                         tabindex="8"
                         :items="opciones.estadocivil"
@@ -104,6 +142,7 @@
                         :error="!validControl(validator.profesional.estadoCivil, solicitud.entidad.estadoCivil) && steps[1].touched"
                       >
                       </v-select>
+
                       <v-text-field label="Lugar Nacimiento" v-model="solicitud.entidad.localidadNacimiento" tabindex="10">
                       </v-text-field>
                       <v-text-field label="Observaciones" v-model="solicitud.entidad.observaciones" tabindex="12">
@@ -371,9 +410,15 @@
                       </v-flex>
                     </v-layout>
 
-                    <v-data-table :headers="headers.contacto" :items="solicitud.entidad.contactos" hide-actions class="elevation-1 mt-4" no-data-text="No hay contactos">
+                    <v-data-table
+                      :headers="headers.contacto"
+                      :items="solicitud.entidad.contactos"
+                      hide-actions
+                      class="elevation-1 mt-4"
+                      no-data-text="No hay contactos"
+                    >
                       <template slot="headers" scope="props">
-                            <th v-for="header of props.headers" style="padding: 20px">
+                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
                               {{ header }}
                             </th>
                             <th></th>
@@ -452,10 +497,17 @@
                     <br style="clear:both">
 
 
-                    <v-data-table :headers="headers.formacion" :items="solicitud.entidad.formaciones" hide-actions class="elevation-1" no-data-text="No hay formaciones" style="margin-top:30px">
+                    <v-data-table
+                      :headers="headers.formacion"
+                      :items="solicitud.entidad.formaciones"
+                      hide-actions
+                      class="elevation-1"
+                      no-data-text="No hay formaciones"
+                      style="margin-top:30px"
+                    >
                       <template slot="headers" scope="props">
-                            <th v-for="header of props.headers" style="padding: 20px">
-                              {{ header.text }}
+                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                              <b>{{ header.text }}</b>
                             </th>
                             <th></th>
                           </template>
@@ -568,10 +620,16 @@
                   </v-layout>
 
                   <div>
-                    <v-data-table :headers="headers.beneficiarios" :items="solicitud.entidad.beneficiarios" hide-actions class="elevation-1" no-data-text="No hay beneficiarios">
+                    <v-data-table
+                      :headers="headers.beneficiarios"
+                      :items="solicitud.entidad.beneficiarios"
+                      hide-actions
+                      class="elevation-1"
+                      no-data-text="No hay beneficiarios"
+                    >
                       <template slot="headers" scope="props">
-                               <th v-for="header of props.headers" style="padding: 20px">
-                                 {{ header.text }}
+                               <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                 <b>{{ header.text }}</b>
                                </th>
                                <th></th>
                              </template>
@@ -619,8 +677,15 @@
                       <v-text-field label="Nombre" v-model="nuevo_subsidiario.nombre" :rules="submitSubsidiario ? validator.subsidiario.nombre : []" :error="!validControl(validator.subsidiario.nombre, nuevo_subsidiario.nombre)
                                   && submitSubsidiario">
                       </v-text-field>
-                      <v-text-field label="Porcentaje" v-model="nuevo_subsidiario.porcentaje" :rules="submitSubsidiario ? validator.subsidiario.porcentaje : []" :error="!validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)
-                                  && submitSubsidiario">
+
+                      <v-text-field
+                        type="number"
+                        label="Porcentaje"
+                        v-model="nuevo_subsidiario.porcentaje"
+                        :rules="submitSubsidiario ? validator.subsidiario.porcentaje : []"
+                        :error="!validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)
+                                  && submitSubsidiario"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
@@ -629,10 +694,16 @@
                     Agregar
                   </v-btn>
 
-                  <v-data-table :headers="headers.subsidiarios" :items="solicitud.entidad.subsidiarios" hide-actions class="elevation-1" no-data-text="No hay subsidiarios">
+                  <v-data-table
+                    :headers="headers.subsidiarios"
+                    :items="solicitud.entidad.subsidiarios"
+                    hide-actions
+                    class="elevation-1"
+                    no-data-text="No hay subsidiarios"
+                  >
                     <template slot="headers" scope="props">
-                             <th v-for="header of props.headers" style="padding: 20px">
-                               {{ header.text }}
+                             <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                               <b>{{ header.text }}</b>
                              </th>
                              <th></th>
                            </template>
@@ -821,7 +892,7 @@ export default {
           dni: [rules.required],
           nombre: [rules.required],
           apellido: [rules.required],
-          porcentaje: [rules.required, rules.number],
+          porcentaje: [rules.required],
         }
       },
 

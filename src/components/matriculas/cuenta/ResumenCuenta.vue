@@ -24,10 +24,11 @@
               class="elevation-1"
               no-data-text="No hay datos"
               no-results-text="No hay datos"
-              >
+              :rows-per-page-items="[5, 10, 25]"
+          >
             <template slot="headers" scope="props">
-              <th v-for="header of props.headers" style="padding: 20px">
-                {{ header.text }}
+              <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                <b>{{ header.text }}</b>
               </th>
             </template>
             <template slot="items" scope="props">
@@ -67,23 +68,6 @@
           </v-data-table>
         </v-flex>
       </v-layout>
-
-      <br>
-
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-btn dark class="right blue" @click="irCobrar">
-            Cobrar
-          </v-btn>
-          <v-btn dark class="right blue" @click="irCobrar">
-            Condonar
-          </v-btn>
-          <v-btn dark class="right blue" @click="irCobrar">
-            Plan de Pago
-          </v-btn>
-        </v-flex>
-      </v-layout>
-      <br>
     </v-card>
 </template>
 
@@ -201,10 +185,6 @@ export default {
       this.item_selected = item;
       this.$refs.show_detalle.mostrar();
     },
-
-    irCobrar: function() {
-      this.$router.push(`/matriculas/${this.id}/deudas`);
-    }
 
   },
 

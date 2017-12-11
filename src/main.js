@@ -30,6 +30,15 @@ Vue.filter('boolean', function(str) {
 });
 
 Vue.filter('fecha', function(str) {
-  
   return str ? moment(str).format('DD/MM/YYYY') : '';
+});
+
+Vue.filter('round', function(number) {
+  return number ? utils.round(number, 2) : 0;
+});
+
+Vue.filter('upperFirst', function(str) {
+  if (!str.length) return str;
+  let [first, ...resto] = str;
+  return first.toUpperCase() + resto.join('');
 });

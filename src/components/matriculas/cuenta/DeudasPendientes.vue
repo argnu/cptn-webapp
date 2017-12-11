@@ -4,15 +4,17 @@
     <br>
 
     <v-layout row wrap>
-      <v-flex xs12>
+      <v-flex xs8>
         <v-data-table
             :headers="headers_resumen"
             :items="boletas"
             class="elevation-1"
-            no-data-text="">
+            :rows-per-page-items="[5, 10, 25]"
+            no-data-text="No hay deudas pendientes"
+        >
           <template slot="headers" scope="props">
-            <th v-for="header of props.headers" style="padding: 20px">
-              {{ header.text }}
+            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+              <b>{{ header.text }}</b>
             </th>
           </template>
           <template slot="items" scope="props">
@@ -20,8 +22,8 @@
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.tipo_comprobante.descripcion }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>{{ props.item.total }}</td>
-              <td>{{ props.item.interes }}</td>
+              <td>${{ props.item.total }}</td>
+              <td>${{ props.item.interes | round }}</td>
               <td></td>
               <td>
                 <v-checkbox
@@ -33,51 +35,83 @@
           </template>
         </v-data-table>
       </v-flex>
-    </v-layout>
 
-    <br>
-    <v-layout row wrap>
-      <v-flex xs2>
-        <v-subheader>Intereses:</v-subheader>
-      </v-flex>
       <v-flex xs4>
+        <input-fecha
+          class="ml-5"
+          label="Fecha de Pago"
+          v-model="fecha_pago"
+          @input="updateIntereses"
+        >
+        </input-fecha>
+
         <v-text-field
-          :value="intereses"
+          class="mx-5"
+          label="Subtotal"
+          :value="subtotal"
+          prefix="$"
           readonly
         >
         </v-text-field>
-      </v-flex>
-    </v-layout>
 
-    <v-layout row wrap>
-      <v-flex xs2>
-        <v-subheader>Importe Total:</v-subheader>
-      </v-flex>
-      <v-flex xs4>
         <v-text-field
+          class="mx-5"
+          label="Intereses"
+          :value="intereses_total"
+          prefix="$"
+          readonly
+        >
+        </v-text-field>
+
+        <v-text-field
+          class="mx-5"
+          label="Importe Total"
           :value="importe_total"
+          prefix="$"
           readonly
         >
         </v-text-field>
-      </v-flex>
-    </v-layout>
 
-    <br>
-    <v-layout row wrap>
-      <v-flex xs10>
-      </v-flex>
-      <v-flex xs2>
-        <v-btn dark class="blue darken-1">
+        <v-btn
+          dark
+          class="blue darken-1 mx-5"
+          style="width:100%"
+          @click="expand_pago = true"
+        >
           Pagar
         </v-btn>
+
       </v-flex>
     </v-layout>
+
+    <br>
+
+    <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay=false>
+      <v-card>
+        <v-toolbar dark class="blue">
+          <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="expand_pago = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <cobranza
+          @cancelar="expand_pago = false"
+        >
+        </cobranza>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
 <script>
-import axios from '@/axios';
-import * as utils from '@/utils';
+import axios from '@/axios'
+import * as moment from 'moment'
+import * as utils from '@/utils'
+import { calculoIntereses } from '@/utils/cobranza'
+import InputFecha from '@/components/base/InputFecha'
+import Cobranza from '@/components/cobranzas/Cobranza'
 
 const headers = [
   { text: 'Fecha' },
@@ -91,9 +125,16 @@ export default {
   name: 'DeudasPendientes',
   props: ['id'],
 
+  components: {
+    InputFecha,
+    Cobranza
+  },
+
   data () {
     return {
-      boletas: []
+      boletas: [],
+      fecha_pago: moment().format('DD/MM/YYYY'),
+      expand_pago: false
     }
   },
 
@@ -102,16 +143,20 @@ export default {
       return headers;
     },
 
-    importe_total: function() {
+    subtotal: function() {
       return this.boletas.length ?
-        this.boletas.reduce((prev, act) => prev + act.total, 0)
+        utils.round(this.boletas.reduce((prev, act) => prev + ( act.checked ? act.total : 0 ), 0), 2)
         : 0;
     },
 
-    intereses: function() {
+    intereses_total: function() {
       return this.boletas.length ?
-        this.boletas.reduce((prev, act) => prev + act.interes, 0)
+        utils.round(this.boletas.reduce((prev, act) => prev + ( act.checked ? act.interes : 0 ), 0), 2)
         : 0;
+    },
+
+    importe_total: function() {
+      return this.subtotal + this.intereses_total;
     }
   },
 
@@ -121,7 +166,7 @@ export default {
     .then(r => {
       this.boletas = r.data.map(b => {
         b.checked = false;
-        b.interes = 0;
+        b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'));
         return b;
       })
     })
@@ -129,10 +174,10 @@ export default {
   },
 
   methods: {
+    updateIntereses: function() {
+      this.boletas.forEach(b => b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY')));
+    }
   },
-
-  components: {
-  }
 
 }
 </script>

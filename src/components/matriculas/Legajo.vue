@@ -278,6 +278,7 @@
                     :items="legajo.items"
                     class="elevation-4"
                     no-data-text="No hay items"
+                    hide-actions
                 >
                   <template slot="headers" scope="props">
                     <th v-for="header of props.headers" class="pa-3 text-xs-left">

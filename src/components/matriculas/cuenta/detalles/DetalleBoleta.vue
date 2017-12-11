@@ -25,8 +25,8 @@
         hide-actions
         >
       <template slot="headers" scope="props">
-        <th v-for="header of props.headers" style="padding: 20px">
-          {{ header.text }}
+        <th v-for="header of props.headers" class="pa-3 text-xs-left">
+          <b>{{ header.text }}</b>
         </th>
       </template>
       <template slot="items" scope="props">

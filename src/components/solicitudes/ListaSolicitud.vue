@@ -104,6 +104,7 @@
       :pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
+      :rows-per-page-items="[5, 10, 25]"
     >
       <template slot="headers" scope="props">
         <tr class="blue lighten-4 text-xs-left">

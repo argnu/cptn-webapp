@@ -16,7 +16,7 @@
     <v-dialog
       v-model="show_dialog"
       >
-      <v-date-picker  autosave v-model="datepicker" style="margin:0 auto">
+      <v-date-picker autosave v-model="datepicker" style="margin:0 auto">
       </v-date-picker>
     </v-dialog>
   </v-layout>
@@ -45,7 +45,7 @@ export default {
 
   computed: {
     formatted: function() {
-      let fecha = moment(this.value);
+      let fecha = moment(this.value, 'DD/MM/YYYY', true);
       return fecha.isValid() ? fecha.format('DD/MM/YYYY') : '';
     }
   },
@@ -56,15 +56,8 @@ export default {
     },
 
     updatePicker: function() {
-      let [dia, mes, anio] = this.value.split('/');
-      if (dia && mes && anio) {
-        let date = new Date(`${anio}-${mes}-${dia}T00:00:00`);
-        if (isNaN( date.getTime())) {
-          this.datepicker = null;
-          return;
-        }
-        this.datepicker = date;
-      }
+      let fecha = moment(this.value, 'DD/MM/YYYY', true);
+      if (fecha.isValid()) this.datepicker = fecha.toISOString();
     },
 
     cbIcon: function() {

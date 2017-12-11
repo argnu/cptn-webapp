@@ -62,6 +62,7 @@
       v-bind:pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
+      :rows-per-page-items="[5, 10, 25]"
     >
       <template slot="headers" scope="props">
         <tr class="blue lighten-4 text-xs-left">
@@ -266,6 +267,7 @@ export default {
         if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
 
+        console.log(url);
         axios.get(url)
           .then(r => {
             this.matriculas = r.data.resultados;

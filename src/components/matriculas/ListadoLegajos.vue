@@ -13,7 +13,9 @@
           <v-data-table
               :headers="headers"
               :items="legajos"
-              no-data-text="">
+              no-data-text=""
+              :rows-per-page-items="[5, 10, 25]"
+          >
             <template slot="headers" scope="props">
               <th v-for="header of props.headers" class="pa-3 text-xs-left">
                 <b>{{ header.text }}</b>

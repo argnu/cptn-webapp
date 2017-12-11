@@ -180,7 +180,13 @@
             <div slot="header"><b>Formaciones</b></div>
             <v-card class="white">
               <v-card-text >
-                <v-data-table :headers="headers.Formaciones" :items="matricula.entidad.formaciones" hide-actions class="elevation-1 mt-4" no-data-text="No hay formaciones">
+                <v-data-table
+                  :headers="headers.Formaciones"
+                  :items="matricula.entidad.formaciones"
+                  hide-actions
+                  class="elevation-1 mt-4"
+                  no-data-text="No hay formaciones"
+                >
                   <template slot="headers" scope="props">
                   <th v-for="header of props.headers" class="pa-3">
                     <b>{{ header.text }}</b>
@@ -215,7 +221,8 @@
                 <v-data-table
                   :headers="headers.Beneficiarios"
                   :items="matricula.entidad.beneficiarios"
-                  hide-actions class="elevation-1 mt-4"
+                  hide-actions
+                  class="elevation-1 mt-4"
                   no-data-text="No hay beneficiarios"
                 >
                   <template slot="headers" scope="props">
@@ -247,7 +254,8 @@
                 <v-data-table
                   :headers="headers.Subsidiarios"
                   :items="matricula.entidad.subsidiarios"
-                  hide-actions class="elevation-1 mt-4"
+                  hide-actions
+                  class="elevation-1 mt-4"
                   no-data-text="No hay subsidiarios"
                 >
                   <template slot="headers" scope="props">

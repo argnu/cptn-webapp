@@ -38,11 +38,6 @@ export default new Router({
 
       children: [
         {
-          path: '/pago',
-          name: 'Cobranza',
-          component: Cobranza
-        },
-        {
           path: '/solicitudes/profesionales/nueva',
           name: 'NuevaSolicitudProfesional',
           component: NuevaSolicitudProfesional
