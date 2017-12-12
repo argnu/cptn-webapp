@@ -1,3 +1,5 @@
+import { validRules } from '@/utils';
+
 export default {
 
   methods: {
@@ -9,10 +11,7 @@ export default {
     },
 
     validControl: function(rules, value) {
-      for(let rule of rules) {
-        if (rule(value) !== true) return false;
-      }
-      return true;
+      return validRules(value, rules);
     },
   }
 }

@@ -417,13 +417,13 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
-                      <template slot="headers" scope="props">
+                      <template slot="headers" slot-scope="props">
                             <th v-for="header of props.headers" class="pa-3 text-xs-left">
                               {{ header }}
                             </th>
                             <th></th>
                           </template>
-                      <template slot="items" scope="props">
+                      <template slot="items" slot-scope="props">
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
@@ -505,13 +505,13 @@
                       no-data-text="No hay formaciones"
                       style="margin-top:30px"
                     >
-                      <template slot="headers" scope="props">
+                      <template slot="headers" slot-scope="props">
                             <th v-for="header of props.headers" class="pa-3 text-xs-left">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
                           </template>
-                      <template slot="items" scope="props">
+                      <template slot="items" slot-scope="props">
                             <td>{{ props.item.titulo }}</td>
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
@@ -627,13 +627,13 @@
                       class="elevation-1"
                       no-data-text="No hay beneficiarios"
                     >
-                      <template slot="headers" scope="props">
+                      <template slot="headers" slot-scope="props">
                                <th v-for="header of props.headers" class="pa-3 text-xs-left">
                                  <b>{{ header.text }}</b>
                                </th>
                                <th></th>
                              </template>
-                      <template slot="items" scope="props">
+                      <template slot="items" slot-scope="props">
                                <td>{{ props.item.dni }}</td>
                                <td>{{ props.item.apellido }}</td>
                                <td>{{ props.item.nombre }}</td>
@@ -701,13 +701,13 @@
                     class="elevation-1"
                     no-data-text="No hay subsidiarios"
                   >
-                    <template slot="headers" scope="props">
+                    <template slot="headers" slot-scope="props">
                              <th v-for="header of props.headers" class="pa-3 text-xs-left">
                                <b>{{ header.text }}</b>
                              </th>
                              <th></th>
                            </template>
-                    <template slot="items" scope="props">
+                    <template slot="items" slot-scope="props">
                              <td>{{ props.item.dni }}</td>
                              <td>{{ props.item.apellido }}</td>
                              <td>{{ props.item.nombre }}</td>
@@ -797,7 +797,6 @@
 import axios from '@/axios'
 import * as utils from '@/utils'
 import rules from '@/rules'
-import Store from '@/Store'
 import {
   Solicitud,
   Contacto,
@@ -845,7 +844,6 @@ export default {
   mixins: [ValidatorMixin, NuevaSolicitud],
   data() {
     return {
-      global_state: Store.state,
       instituciones: [],
       titulos: [],
       deAcuerdo: false,

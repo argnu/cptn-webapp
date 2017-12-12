@@ -26,12 +26,12 @@
               no-results-text="No hay datos"
               :rows-per-page-items="[5, 10, 25]"
           >
-            <template slot="headers" scope="props">
+            <template slot="headers" slot-scope="props">
               <th v-for="header of props.headers" class="pa-3 text-xs-left">
                 <b>{{ header.text }}</b>
               </th>
             </template>
-            <template slot="items" scope="props">
+            <template slot="items" slot-scope="props">
               <tr>
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
@@ -60,7 +60,7 @@
               hide-actions
               hide-headers
           >
-            <template slot="items" scope="props">
+            <template slot="items" slot-scope="props">
               <td>{{props.item.t}}</td>
               <td>{{props.item.d}}</td>
               <td>{{props.item.h}}</td>

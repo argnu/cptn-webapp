@@ -8,10 +8,10 @@
       <v-card-text>
         <v-layout row wrap>
           <v-flex xs3 class="ml-4">
-            <h3 class="blue--text">Fecha: </h3>
+            <h3 class="blue--text">Fecha: {{ fecha }} </h3>
           </v-flex>
           <v-flex xs3 class="ml-4">
-            <h3 class="blue--text">Importe Total: $</h3>
+            <h3 class="blue--text">Importe Total: ${{ importe }}</h3>
           </v-flex>
         </v-layout>
 
@@ -28,6 +28,8 @@
                   label="Forma de Pago"
                   :items="tipos_pago"
                   v-model="nueva_forma_pago.tipo"
+                  :rules="submit_forma_pago ? validator.tipo : []"
+                  :error="!validControl(validator.tipo, nueva_forma_pago.tipo) && submit_forma_pago"
                 >
                 </v-select>
               </v-flex>
@@ -38,6 +40,8 @@
                   label="Importe"
                   v-model="nueva_forma_pago.importe"
                   prefix="$"
+                  :rules="submit_forma_pago ? validator.importe : []"
+                  :error="!validControl(validator.importe, nueva_forma_pago.importe) && submit_forma_pago"
                 >
                 </v-text-field>
               </v-flex>
@@ -50,11 +54,15 @@
                   <v-text-field
                     label="N° Cheque"
                     v-model="nueva_forma_pago.cheque.numero"
+                    :rules="submit_forma_pago ? validator.cheque.numero : []"
+                    :error="!validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero) && submit_forma_pago"
                   >
                   </v-text-field>
                   <input-fecha
                     label="Fecha Vto"
                     v-model="nueva_forma_pago.cheque.fecha_vencimiento"
+                    :rules="submit_forma_pago ? validator.cheque.fecha_vencimiento : []"
+                    :error="!validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento) && submit_forma_pago"
                   >
                 </input-fecha>
                 </v-flex>
@@ -67,11 +75,15 @@
                     label="Banco"
                     v-model="nueva_forma_pago.cheque.banco"
                     :items="bancos"
+                    :rules="submit_forma_pago ? validator.cheque.banco : []"
+                    :error="!validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco) && submit_forma_pago"
                   >
                 </v-select>
                   <v-text-field
                     label="Titular Cuenta"
                     v-model="nueva_forma_pago.cheque.titular"
+                    :rules="submit_forma_pago ? validator.cheque.titular : []"
+                    :error="!validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular) && submit_forma_pago"
                   >
                   </v-text-field>
                 </v-flex>
@@ -96,13 +108,13 @@
                 no-data-text="No hay pagos"
                 hide-actions
               >
-              <template slot="headers" scope="props">
+              <template slot="headers" slot-scope="props">
                 <th v-for="header of props.headers" class="pa-3 text-xs-left">
                   <b>{{ header.text }}</b>
                 </th>
                 <th></th>
               </template>
-              <template slot="items" scope="props">
+              <template slot="items" slot-scope="props">
                 <tr>
                   <td>{{ getTipoPago(props.item.tipo) }}</td>
                   <td>${{ props.item.importe }}</td>
@@ -128,10 +140,16 @@
 
         <v-layout row wrap>
           <v-flex xs12 class="ma-4">
-            <v-btn dark class="green right" @click="pagar">
+            <v-btn
+              :dark="form_valid"
+              class="green right"
+              :disabled="!form_valid"
+              @click="pagar"
+            >
               Aceptar
               <v-icon dark right>check_circle</v-icon>
             </v-btn>
+
             <v-btn dark class="red right" @click="$emit('cancelar')">
               Cancelar
               <v-icon dark right>block</v-icon>
@@ -144,9 +162,12 @@
 </template>
 
 <script>
-import axios from '@/axios';
-import * as Model from '@/model';
+import axios from '@/axios'
+import * as Model from '@/model'
+import * as utils from '@/utils'
+import rules from '@/rules'
 import InputFecha from '@/components/base/InputFecha'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
 const Cheque = () => ({
@@ -158,7 +179,6 @@ const Cheque = () => ({
 
 const FormaPago = () => ({
     tipo: '',
-    fecha: '',
     importe: '',
     cheque: Cheque()
 })
@@ -174,6 +194,18 @@ const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
   name: 'Cobranza',
+  props: {
+    fecha: {
+      type: String,
+    },
+
+    importe: {
+      type: Number
+    }
+  },
+
+  mixins: [ValidatorMixin],
+
   components: {
     InputFecha
   },
@@ -183,7 +215,18 @@ export default {
       tipos_pago: [],
       bancos: [],
       items_pago: [],
-      nueva_forma_pago: FormaPago()
+      nueva_forma_pago: FormaPago(),
+      submit_forma_pago: false,
+      validator: {
+        tipo: [rules.required],
+        importe: [rules.required],
+        cheque: {
+          numero: [rules.required],
+          banco: [rules.required],
+          titular: [rules.required],
+          fecha_vencimiento:[rules.required]
+        }
+      }
     }
   },
 
@@ -201,6 +244,10 @@ export default {
     total: function() {
       if (!this.items_pago.length) return 0;
       return this.items_pago.reduce((prev, act) => prev + +act.importe, 0)
+    },
+
+    form_valid: function() {
+      return this.total == this.importe;
     }
   },
 
@@ -218,12 +265,17 @@ export default {
 
   methods: {
     addItemPago: function() {
+      this.submit_forma_pago = true;
+      if (this.esCheque && !utils.validObject(this.nueva_forma_pago, this.validator)) return;
+      if (!this.esCheuque && !this.nueva_forma_pago.importe.length) return;
+
       this.items_pago.push(this.nueva_forma_pago);
+      this.submit_forma_pago = false;
       this.nueva_forma_pago = FormaPago();
     },
 
     pagar: function() {
-      console.log(this.items_pago);
+      this.$emit('aceptar', this.items_pago);
     },
 
     getTipoPago: function(id) {

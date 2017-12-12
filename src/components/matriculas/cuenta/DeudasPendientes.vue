@@ -12,12 +12,12 @@
             :rows-per-page-items="[5, 10, 25]"
             no-data-text="No hay deudas pendientes"
         >
-          <template slot="headers" scope="props">
+          <template slot="headers" slot-scope="props">
             <th v-for="header of props.headers" class="pa-3 text-xs-left">
               <b>{{ header.text }}</b>
             </th>
           </template>
-          <template slot="items" scope="props">
+          <template slot="items" slot-scope="props">
             <tr>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.tipo_comprobante.descripcion }}</td>
@@ -96,7 +96,10 @@
           </v-btn>
         </v-toolbar>
         <cobranza
+          :fecha="fecha_pago"
+          :importe="importe_total"
           @cancelar="expand_pago = false"
+          @aceptar="pagar"
         >
         </cobranza>
       </v-card>
@@ -176,6 +179,11 @@ export default {
   methods: {
     updateIntereses: function() {
       this.boletas.forEach(b => b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY')));
+    },
+
+    pagar: function(items_pago) {
+      let boletas = this.boletas.filter(b => b.checked);
+      
     }
   },
 

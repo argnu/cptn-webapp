@@ -1,6 +1,7 @@
 import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
+import Store from '@/Store'
 
 const Header = (text, value) => ({
     text, value
@@ -13,6 +14,7 @@ function getTipoDomicilio(str) {
 export default {
   data () {
     return {
+      global_state: Store.state,
       step: 1,
 
       snackbar: {
@@ -108,9 +110,9 @@ export default {
     },
 
     submitError: function() {
-      this.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.snackbar.color = 'error';
-      this.snackbar.show = true;
+      this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
+      this.global_state.snackbar.color = 'error';
+      this.global_state.snackbar.show = true;
     },
   }
 }

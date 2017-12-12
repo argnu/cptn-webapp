@@ -106,7 +106,7 @@
       :loading="loading"
       :rows-per-page-items="[5, 10, 25]"
     >
-      <template slot="headers" scope="props">
+      <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
           <th><b>Fecha</b></th>
           <th><b>Estado</b></th>
@@ -117,7 +117,7 @@
           <th><b>Acciones</b></th>
         </tr>
       </template>
-      <template slot="items" scope="props">
+      <template slot="items" slot-scope="props">
             <td>{{ props.item.fecha | fecha }}</td>
             <td>{{ props.item.estado | upperFirst }}</td>
             <template v-if="filtros.tipoEntidad == 'profesional'">

@@ -158,12 +158,12 @@
                   class="elevation-1 mt-4"
                   no-data-text="No hay contactos"
                 >
-                  <template slot="headers" scope="props">
+                  <template slot="headers" slot-scope="props">
                           <th v-for="header of props.headers" class="pa-3">
                             <b>{{ header.text }}</b>
                           </th>
                         </template>
-                  <template slot="items" scope="props">
+                  <template slot="items" slot-scope="props">
                           <td>{{ props.item.tipo }}</td>
                           <td>{{ props.item.valor }}</td>
                         </template>
@@ -187,12 +187,12 @@
                   class="elevation-1 mt-4"
                   no-data-text="No hay formaciones"
                 >
-                  <template slot="headers" scope="props">
+                  <template slot="headers" slot-scope="props">
                   <th v-for="header of props.headers" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
-                  <template slot="items" scope="props">
+                  <template slot="items" slot-scope="props">
                   <td>{{ props.item.tipoFormacion }}</td>
                   <td>{{ props.item.titulo }}</td>
                   <td>{{ props.item.institucion }}</td>
@@ -225,12 +225,12 @@
                   class="elevation-1 mt-4"
                   no-data-text="No hay beneficiarios"
                 >
-                  <template slot="headers" scope="props">
+                  <template slot="headers" slot-scope="props">
                   <th v-for="header of props.headers" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
-                  <template slot="items" scope="props">
+                  <template slot="items" slot-scope="props">
                   <td>{{ props.item.nombre }}</td>
                   <td>{{ props.item.apellido }}</td>
                   <td>{{ props.item.dni }}</td>
@@ -258,12 +258,12 @@
                   class="elevation-1 mt-4"
                   no-data-text="No hay subsidiarios"
                 >
-                  <template slot="headers" scope="props">
+                  <template slot="headers" slot-scope="props">
                   <th v-for="header of props.headers" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
-                  <template slot="items" scope="props">
+                  <template slot="items" slot-scope="props">
                   <td>{{ props.item.nombre }}</td>
                   <td>{{ props.item.apellido }}</td>
                   <td>{{ props.item.dni }}</td>

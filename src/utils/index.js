@@ -15,6 +15,7 @@ export function validRules(value, rules) {
 
 export function validObject(original, rules) {
   for(let att in rules) {
+    if (typeof original[att] == 'object') return validObject(original[att], rules[att]);
     if (!validRules(original[att], rules[att])) return false;
   }
   return true;

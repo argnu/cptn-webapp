@@ -16,13 +16,13 @@
               no-data-text=""
               :rows-per-page-items="[5, 10, 25]"
           >
-            <template slot="headers" scope="props">
+            <template slot="headers" slot-scope="props">
               <th v-for="header of props.headers" class="pa-3 text-xs-left">
                 <b>{{ header.text }}</b>
               </th>
               <th></th>
             </template>
-            <template slot="items" scope="props">
+            <template slot="items" slot-scope="props">
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.solicitud }}</td>
               <td>

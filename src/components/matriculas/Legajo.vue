@@ -16,6 +16,7 @@
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
                 <v-select
+                  tabindex="1"
                   label="Tipo:"
                   :items="tipos_legajos"
                   v-model="legajo.tipo"
@@ -35,6 +36,7 @@
 
               <v-flex xs3 class="ml-5">
                 <input-fecha
+                  tabindex="2"
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
                   :disabled="legajo.id > 0"
@@ -62,6 +64,7 @@
                   <v-flex xs6>
                     <template v-if="!legajo.id">
                         <v-text-field
+                          tabindex="3"
                           label="Empresa:"
                           v-model="legajo.comitente.empresa"
                           :disabled="legajo.id > 0"
@@ -75,6 +78,7 @@
                   <v-flex xs5 class="ml-5">
                     <template>
                         <v-text-field
+                          tabindex="4"
                           label="Apellido"
                           v-model="legajo.comitente.apellido"
                           :disabled="legajo.id > 0"
@@ -85,6 +89,7 @@
 
                   <v-flex xs5 class="ml-5">
                       <v-text-field
+                        tabindex="5"
                         label="Nombre"
                         v-model="legajo.comitente.nombres"
                         :disabled="legajo.id > 0"
@@ -101,6 +106,7 @@
                 <v-flex xs5 class="ml-5">
                     <v-text-field
                       label="DNI"
+                        tabindex="6"
                       v-model="legajo.comitente.numero_documento"
                       :disabled="legajo.id > 0"
                     >
@@ -109,6 +115,7 @@
 
                 <v-flex xs5 class="ml-5">
                     <v-text-field
+                      tabindex="7"
                       label="Telefono"
                       v-model="legajo.comitente.telefono"
                       :disabled="legajo.id > 0"
@@ -131,6 +138,7 @@
             <v-layout row wrap>
               <v-flex xs12 class="mx-5">
                   <v-text-field
+                    tabindex="8"
                     label="Nomenclatura"
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
@@ -143,6 +151,7 @@
             <v-layout row>
               <v-flex xs6 class="ml-5">
                 <v-select
+                  tabindex="9"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -154,6 +163,7 @@
                 </v-select>
 
                 <v-select
+                  tabindex="11"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -165,6 +175,7 @@
                 </v-select>
 
                 <v-text-field
+                  tabindex="13"
                   label="Calle"
                   v-model="legajo.domicilio.calle"
                 >
@@ -173,6 +184,7 @@
 
               <v-flex xs6 class="mx-5">
                 <v-select
+                  tabindex="10"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -184,6 +196,7 @@
                 </v-select>
 
                 <v-select
+                  tabindex="12"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -194,6 +207,7 @@
                 </v-select>
 
                 <v-text-field
+                  tabindex="14"
                   label="N°"
                   v-model="legajo.domicilio.numero"
                 >
@@ -216,6 +230,7 @@
             <v-layout row wrap>
                 <v-flex xs3 class="ml-4">
                   <v-select
+                    tabindex="15"
                     label="Categoría"
                     :items="categorias"
                     item-text="descripcion"
@@ -228,6 +243,7 @@
 
                 <v-flex xs3 class="ml-4">
                   <v-select
+                    tabindex="16"
                     label="Subcategoría"
                     :items="subcategorias"
                     item-text="descripcion"
@@ -243,6 +259,7 @@
             <v-layout row wrap class="mt-3" v-if="!legajo.id">
               <v-flex xs4 class="ml-4">
                 <typeahead
+                  tabindex="17"
                   label="Item"
                   :items="items_predeterminados"
                   v-model="nuevo_item.id"
@@ -255,6 +272,7 @@
 
               <v-flex xs4 class="ml-4">
                 <typeahead
+                  tabindex="18"
                   label="Valor"
                   :items="items_valores_predeterminados"
                   v-model="nuevo_item.valor"
@@ -265,7 +283,11 @@
               </v-flex>
 
               <v-flex xs3 class="mx-3">
-                <v-btn light @click="addItem">
+                <v-btn
+                  tabindex="19"
+                  light
+                  @click="addItem"
+                >
                   Agregar
                 </v-btn>
               </v-flex>
@@ -280,12 +302,12 @@
                     no-data-text="No hay items"
                     hide-actions
                 >
-                  <template slot="headers" scope="props">
+                  <template slot="headers" slot-scope="props">
                     <th v-for="header of props.headers" class="pa-3 text-xs-left">
                       <b>{{ header.text }}</b>
                     </th>
                   </template>
-                  <template slot="items" scope="props">
+                  <template slot="items" slot-scope="props">
                     <tr>
                       <template v-if="!legajo.id">
                         <td>{{ props.item.descripcion }}</td>
@@ -304,6 +326,7 @@
             <v-layout row wrap>
               <v-flex xs12>
                 <v-text-field
+                  tabindex="20"
                   label="Información Adicional"
                   v-model="legajo.informacion_adicional"
                   textarea
@@ -326,11 +349,12 @@
         <v-card class="ma-2 elevation-4">
           <v-card-title>
             <span class="subheading blue--text text--darken-4"><b>Honorarios</b></span>
-          </v-card-title>>
+          </v-card-title>
           <v-card-text>
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
                 <input-fecha
+                  tabindex="21"
                   label="Plazo Cumplimiento"
                   :disabled="legajo.id > 0"
                   v-model="legajo.plazo_cumplimiento"
@@ -340,6 +364,7 @@
 
               <v-flex xs3 class="ml-5">
                 <v-text-field
+                  tabindex="22"
                   label="Honorarios Presupuestados"
                   type="number"
                   v-model="legajo.honorarios_presupuestados"
@@ -350,6 +375,7 @@
 
               <v-flex xs3 class="ml-5">
                 <v-text-field
+                  tabindex="23"
                   label="Forma de Pago"
                   v-model="legajo.forma_pago"
                   :disabled="legajo.id > 0"
@@ -374,6 +400,7 @@
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
                   <v-text-field
+                    tabindex="24"
                     label="Honorarios Reales"
                     type="number"
                     v-model="legajo.honorarios_reales"
@@ -382,6 +409,7 @@
                   </v-text-field>
 
                   <v-checkbox
+                    tabindex="27"
                     label="Tarea Pública"
                     v-model="legajo.tarea_publica"
                     :disabled="legajo.id > 0"
@@ -391,6 +419,7 @@
 
                 <v-flex xs3 class="ml-5">
                   <input-fecha
+                    tabindex="25"
                     label="Finalización Tarea"
                     :disabled="legajo.id > 0"
                     v-model="legajo.finalizacion_tarea"
@@ -398,6 +427,7 @@
                   </input-fecha>
 
                   <v-checkbox
+                    tabindex="28"
                     label="Relación de Dependencia"
                     v-model="legajo.dependencia"
                     :disabled="legajo.id > 0"
@@ -407,6 +437,7 @@
 
                 <v-flex xs3 class="ml-5">
                   <v-text-field
+                    tabindex="26"
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
                     type="number"
@@ -431,6 +462,7 @@
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
                   <v-text-field
+                    tabindex="29"
                     label="Aporte Neto"
                     type="number"
                     v-model="legajo.aporte_neto"
@@ -439,6 +471,7 @@
                   </v-text-field>
 
                   <v-text-field
+                    tabindex="32"
                     label="Cantidad de Planos"
                     type="number"
                     v-model="legajo.cantidad_planos"
@@ -449,6 +482,7 @@
 
                 <v-flex xs3 class="ml-5">
                   <v-text-field
+                    tabindex="30"
                     label="Aporte Bruto"
                     type="number"
                     v-model="legajo.aporte_bruto"
@@ -459,6 +493,7 @@
 
                 <v-flex xs3 class="ml-5">
                   <v-text-field
+                    tabindex="31"
                     label="Aporte Neto Bonificación"
                     type="number"
                     v-model="legajo.aporte_neto_bonificacion"
@@ -471,6 +506,7 @@
               <v-layout row wrap>
                 <v-flex xs12 class="mx-5">
                   <v-text-field
+                    tabindex="33"
                     label="Observaciones"
                     v-model="legajo.observaciones"
                     textarea
@@ -486,7 +522,12 @@
       </v-layout>
     </template>
 
-    <v-btn class="green darken-1 white--text right" @click.native="submit" :disabled="!valid_form">
+    <v-btn
+      class="green darken-1 white--text right"
+      @click.native="submit"
+      :disabled="!valid_form"
+      tabindex="34"
+    >
       Guardar Solicitud
       <v-icon dark right>check_circle</v-icon>
     </v-btn>
@@ -533,24 +574,24 @@ const Comitente = () => ({
 
 const Legajo = (matricula) => ({
   matricula,
-  aporte_bruto: '',
-  aporte_neto: '',
-  cantidad_planos: '',
+  aporte_bruto: null,
+  aporte_neto: null,
+  cantidad_planos: null,
   comitente: Comitente(),
   domicilio: new Domicilio(),
   delegacion: 1,    //DELEGACION NEUQUEN, CAMBIAR A LA DELEGACION DONDE SE LOGUEA
   dependencia: false,
-  fecha_solicitud: '',
-  finalizacion_tarea: '',
+  fecha_solicitud: null,
+  finalizacion_tarea: null,
   forma_pago: '',
-  honorarios_presupuestados: '',
-  honorarios_reales: '',
+  honorarios_presupuestados: null,
+  honorarios_reales: null,
   informacion_adicional: '',
   items: [],
   nomenclatura: '',
   observaciones: '',
-  plazo_cumplimiento: '',
-  porcentaje_cumplimiento: '',
+  plazo_cumplimiento: null,
+  porcentaje_cumplimiento: null,
   subcategoria: '',
   tarea_publica: false,
   tipo: ''
@@ -671,7 +712,8 @@ export default {
     },
 
     submit: function() {
-      axios.post(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
+      console.log(JSON.stringify(this.legajo));
+      axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              if (r.status != 201) {
                this.submitError();
@@ -684,6 +726,12 @@ export default {
            })
            .catch(e => this.submitError());
     },
+
+    submitError: function() {
+      this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
+      this.global_state.snackbar.color = 'error';
+      this.global_state.snackbar.show = true;
+    }
   },
 
   components: {

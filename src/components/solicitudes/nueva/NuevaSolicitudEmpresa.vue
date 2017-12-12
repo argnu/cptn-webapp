@@ -409,13 +409,13 @@
                             hide-actions
                             class="elevation-1"
                             no-data-text="No hay contactos">
-                          <template slot="headers" scope="props">
+                          <template slot="headers" slot-scope="props">
                             <th v-for="header of props.headers" class="pa-3">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
                           </template>
-                          <template slot="items" scope="props">
+                          <template slot="items" slot-scope="props">
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td style="width:30px">
@@ -467,13 +467,13 @@
                               hide-actions
                               class="elevation-1"
                               no-data-text="No hay incumbencias">
-                            <template slot="headers" scope="props">
+                            <template slot="headers" slot-scope="props">
                               <th v-for="header of props.headers" class="pa-3 text-xs-left">
                                 <b>{{ header.text }}</b>
                               </th>
                               <th></th>
                             </template>
-                            <template slot="items" scope="props">
+                            <template slot="items" slot-scope="props">
                               <td>{{ getTipoIncumbencia(props.item) }}</td>
                               <td style="width:30px">
                                 <v-btn fab dark small color="blue" @click="removeElem('incumbencias', props.index)">
@@ -540,13 +540,13 @@
                                 :total-items="totalItems"
                                 :loading="loading"
                                 >
-                              <template slot="headers" scope="props">
+                              <template slot="headers" slot-scope="props">
                                 <th v-for="header of props.headers" class="pa-3 text-xs-left">
                                   <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
                               </template>
-                              <template slot="items" scope="props">
+                              <template slot="items" slot-scope="props">
                                 <tr>
                                   <td>{{ props.item.numeroMatricula }}</td>
                                   <td>{{ props.item.entidad.nombre }}</td>
@@ -579,13 +579,13 @@
                                 no-data-text="No se agregaron representates"
                                 no-results-text="No se agregaron representates"
                                 >
-                              <template slot="headers" scope="props">
+                              <template slot="headers" slot-scope="props">
                                 <th v-for="header of props.headers" class="pa-3 text-xs-left">
                                   <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
                               </template>
-                              <template slot="items" scope="props">
+                              <template slot="items" slot-scope="props">
                                 <tr>
                                   <td>{{ props.item.numeroMatricula }}</td>
                                   <td>{{ props.item.entidad.nombre }}</td>
@@ -645,7 +645,6 @@
 import axios from '@/axios'
 import * as utils from '@/utils'
 import rules from '@/rules'
-import Store from '@/Store'
 import * as Model from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
@@ -672,7 +671,6 @@ export default {
   mixins: [ValidatorMixin, NuevaSolicitud],
   data () {
     return {
-      global_state: Store.state,
       solicitud: new Model.Solicitud('empresa'),
       nuevo_contacto: new Model.Solicitud(),
       nueva_incumbencia: '',

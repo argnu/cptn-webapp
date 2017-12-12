@@ -20,12 +20,12 @@
         no-data-text="No hay items"
         hide-actions
         >
-      <template slot="headers" scope="props">
+      <template slot="headers" slot-scope="props">
         <th v-for="header of props.headers" class="pa-3 text-xs-left">
           <b>{{ header.text }}</b>
         </th>
       </template>
-      <template slot="items" scope="props">
+      <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
         <td>{{ props.item.importe }}</td>
@@ -40,12 +40,12 @@
         no-data-text="No hay pagos"
         hide-actions
     >
-      <template slot="headers" scope="props">
+      <template slot="headers" slot-scope="props">
         <th v-for="header of props.headers" class="pa-3 text-xs-left">
           <b>{{ header.text }}</b>
         </th>
       </template>
-      <template slot="items" scope="props">
+      <template slot="items" slot-scope="props">
         <td>{{ getFormaPago(props.item.forma_pago) }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
         <td>{{ props.item.importe }}</td>
