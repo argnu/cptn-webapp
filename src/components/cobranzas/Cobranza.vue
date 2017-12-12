@@ -131,6 +131,11 @@
 
             <br>
 
+            <div class="mx-5">
+              <v-alert color="warning" icon="priority_high" :value="total > importe">
+                El importe abonado es superior al importe a pagar
+              </v-alert>
+            </div>
             <div class="right mr-5">
               <h4 class="blue--text"> Total: ${{ total }}</h4>
             </div>

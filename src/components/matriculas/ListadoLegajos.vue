@@ -24,7 +24,7 @@
             </template>
             <template slot="items" slot-scope="props">
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
-              <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.solicitud }}</td>
+              <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.numero_legajo }}</td>
               <td>
                 <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
                   <v-icon>launch</v-icon>

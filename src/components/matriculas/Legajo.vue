@@ -27,8 +27,8 @@
 
               <v-flex xs3 class="ml-5" v-if="legajo.id > 0">
                   <v-text-field
-                    label="N° Solicitud"
-                    v-model="legajo.solicitud"
+                    label="N° Legajo"
+                    v-model="legajo.numero_legajo"
                     disabled
                   >
                   </v-text-field>
@@ -159,6 +159,7 @@
                   label="País"
                   @input="changePais"
                   v-model="legajo.domicilio.pais"
+                  :disabled="legajo.id > 0"
                 >
                 </v-select>
 
@@ -171,6 +172,7 @@
                   label="Departamento"
                   @input="changeDepartamento"
                   v-model="legajo.domicilio.departamento"
+                  :disabled="legajo.id > 0"
                 >
                 </v-select>
 
@@ -178,6 +180,7 @@
                   tabindex="13"
                   label="Calle"
                   v-model="legajo.domicilio.calle"
+                  :disabled="legajo.id > 0"
                 >
                 </v-text-field>
               </v-flex>
@@ -192,6 +195,7 @@
                   label="Provincia"
                   @input="changeProvincia"
                   v-model="legajo.domicilio.provincia"
+                  :disabled="legajo.id > 0"
                 >
                 </v-select>
 
@@ -203,6 +207,7 @@
                   :items="localidades"
                   label="Localidad"
                   v-model="legajo.domicilio.localidad"
+                  :disabled="legajo.id > 0"
                 >
                 </v-select>
 
@@ -210,6 +215,7 @@
                   tabindex="14"
                   label="N°"
                   v-model="legajo.domicilio.numero"
+                  :disabled="legajo.id > 0"
                 >
                 </v-text-field>
               </v-flex>
@@ -528,7 +534,7 @@
       :disabled="!valid_form"
       tabindex="34"
     >
-      Guardar Solicitud
+      Guardar Legajo
       <v-icon dark right>check_circle</v-icon>
     </v-btn>
     <br>
@@ -656,6 +662,10 @@ export default {
               .then(r => {
                   this.legajo = r.data;
                   this.legajo.comitente.tipo = '';
+                  this.paises = [this.legajo.domicilio.pais];
+                  this.provincias = [this.legajo.domicilio.provincia];
+                  this.departamentos = [this.legajo.domicilio.departamento];
+                  this.localidades = [this.legajo.domicilio.localidad];
                   this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
                   return axios.get(`/matriculas/${this.legajo.matricula}`);
               })
