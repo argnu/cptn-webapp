@@ -257,6 +257,7 @@
                     v-model="legajo.subcategoria"
                     :disabled="legajo.id > 0"
                     @input="chgSubcategoria"
+                    :rules="validator.subcategoria"
                   >
                   </v-select>
                 </v-flex>
@@ -473,6 +474,7 @@
                     type="number"
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
+                    :rules="validator.aporte_neto"
                   >
                   </v-text-field>
 
@@ -600,7 +602,7 @@ const Legajo = (matricula) => ({
   porcentaje_cumplimiento: null,
   subcategoria: '',
   tarea_publica: false,
-  tipo: ''
+  tipo: 1
 })
 
 export default {
@@ -624,7 +626,9 @@ export default {
       nuevo_item: Item(),
       validator: {
         fecha: [ rules.required, rules.fecha ],
-        nomenclatura: [ rules.required ]
+        nomenclatura: [ rules.required ],
+        aporte_neto: [ rules.required ],
+        subcategoria: [ rules.required ]
       },
     }
   },
@@ -645,7 +649,9 @@ export default {
 
     valid_form: function() {
       return this.validControl(this.validator.fecha, this.legajo.fecha_solicitud)
-        && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura);
+        && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura)
+        && this.validControl(this.validator.subcategoria, this.legajo.subcategoria)
+        && (this.legajo.tipo !=3 || this.validControl(this.validator.aporte_neto, this.legajo.aporte_neto));
     }
   },
 
@@ -731,7 +737,7 @@ export default {
              this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
              this.global_state.snackbar.color = 'success';
              this.global_state.snackbar.show = true;
-             this.$router.pop();
+             this.$router.go(-1);
 
            })
            .catch(e => this.submitError());

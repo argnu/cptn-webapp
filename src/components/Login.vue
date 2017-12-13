@@ -12,6 +12,7 @@
             <v-flex xs6>
               <v-text-field
                 label="Nombre de Usuario"
+                prepend-icon="account_box"
                 v-model="usuario.id"
                 @input="submitted = false"
               >
@@ -21,6 +22,7 @@
                 label="Contraseña"
                 v-model="usuario.password"
                 type="password"
+                prepend-icon="vpn_key"
                 @input="submitted = false"
               >
               </v-text-field>

@@ -46,7 +46,10 @@ export default {
   computed: {
     formatted: function() {
       let fecha = moment(this.value, 'DD/MM/YYYY', true);
-      return fecha.isValid() ? fecha.format('DD/MM/YYYY') : '';
+      if (fecha.isValid()) return fecha.format('DD/MM/YYYY');
+      if (this.value && this.value.match(/^\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/))
+        return moment(this.value).format('DD/MM/YYYY');
+      return '';
     }
   },
 
