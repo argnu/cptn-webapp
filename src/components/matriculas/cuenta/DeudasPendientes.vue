@@ -4,7 +4,7 @@
     <br>
 
     <v-layout row wrap>
-      <v-flex xs8>
+      <v-flex xs9>
         <v-data-table
             :headers="headers_resumen"
             :items="boletas"
@@ -20,10 +20,17 @@
           <template slot="items" slot-scope="props">
             <tr>
               <td>{{ props.item.fecha | fecha }}</td>
-              <td>{{ props.item.tipo_comprobante.descripcion }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>${{ props.item.total }}</td>
-              <td>${{ props.item.interes | round }}</td>
+              <template v-if="props.item.tipo == 'boleta'">
+                <td>{{ props.item.tipo_comprobante.descripcion }}</td>
+                <td>${{ props.item.total }}</td>
+                <td>${{ props.item.interes | round }}</td>                
+              </template>
+              <template v-if="props.item.tipo == 'volante'">
+                <td>Volante de Pago</td>
+                <td>${{ props.item.importe_total | round }}</td>
+                <td>${{ props.item.interes_total | round }}</td>                
+              </template>
               <td></td>
               <td>
                 <v-checkbox
@@ -36,7 +43,7 @@
         </v-data-table>
       </v-flex>
 
-      <v-flex xs4>
+      <v-flex xs3>
         <input-fecha
           class="ml-5"
           label="Fecha de Pago"
@@ -72,14 +79,28 @@
         >
         </v-text-field>
 
-        <v-btn
-          dark
-          class="blue darken-1 mx-5"
-          style="width:100%"
-          @click="expand_pago = true"
-        >
-          Pagar
-        </v-btn>
+        <v-layout row>
+          <v-flex xs6 class="mx-4">
+            <v-btn
+              dark
+              class="blue darken-1"
+              style="width:100%"
+              @click="generarVolante"
+            >
+              Volante Pago
+            </v-btn>    
+          </v-flex>
+          <v-flex xs6 class="mx-1">
+            <v-btn
+              dark
+              class="blue darken-1"
+              style="width:100%"
+              @click="expand_pago = true"
+            >
+              Pagar
+            </v-btn>
+          </v-flex>
+        </v-layout>
 
       </v-flex>
     </v-layout>
@@ -115,11 +136,12 @@ import * as utils from '@/utils'
 import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
+import Store from '@/Store'
 
 const headers = [
   { text: 'Fecha' },
-  { text: 'Descripción' },
   { text: 'Fecha de Vencimiento' },
+  { text: 'Descripción' },
   { text: 'Importe' },
   { text: 'Intereses' }
 ]
@@ -135,9 +157,18 @@ export default {
 
   data () {
     return {
+      global_state: Store.state,
       boletas: [],
       fecha_pago: moment().format('DD/MM/YYYY'),
       expand_pago: false
+    }
+  },
+
+  filters: {
+    tipo_boleta: function(str) {
+      if (str == 'boleta') return 'Boleta';
+      if (str == 'volante') return 'Volante de Pago';
+      return '';
     }
   },
 
@@ -147,15 +178,21 @@ export default {
     },
 
     subtotal: function() {
-      return this.boletas.length ?
-        utils.round(this.boletas.reduce((prev, act) => prev + ( act.checked ? act.total : 0 ), 0), 2)
-        : 0;
+      if (!this.boletas.length) return 0;
+      let suma = this.boletas.reduce((prev, act) => {
+        let num = act.tipo == 'boleta' ? act.total : act.importe_total;
+        return prev + (act.checked ? num : 0); 
+      }, 0);
+      return utils.round(suma, 2);
     },
 
     intereses_total: function() {
-      return this.boletas.length ?
-        utils.round(this.boletas.reduce((prev, act) => prev + ( act.checked ? act.interes : 0 ), 0), 2)
-        : 0;
+      if (!this.boletas.length) return 0;
+      let suma = this.boletas.reduce((prev, act) => {
+        let num = act.tipo == 'boleta' ? act.interes : act.interes_total;
+        return prev + (act.checked ? num : 0); 
+      }, 0);
+      return utils.round(suma, 2);
     },
 
     importe_total: function() {
@@ -164,26 +201,86 @@ export default {
   },
 
   created: function() {
-    let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
-    axios.get(url_boletas)
-    .then(r => {
-      this.boletas = r.data.map(b => {
-        b.checked = false;
-        b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'));
-        return b;
-      })
-    })
-    .catch(e => console.error(e));
+    this.updateBoletas();
   },
 
   methods: {
+    updateBoletas: function() {
+      let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false`;
+      
+      Promise.all([
+        axios.get(url_boletas),
+        axios.get(url_volantes)
+      ])
+      .then(([boletas, volantes]) => {        
+        this.boletas = [];
+        boletas.data.forEach(b => {
+          b.tipo = 'boleta';
+          b.checked = false;
+          b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'));
+          this.boletas.push(b);
+        });
+        
+        volantes.data.forEach(v => {
+          v.tipo = 'volante';
+          v.checked = false;
+          this.boletas.push(v);
+        });
+      })
+      .catch(e => console.error(e));
+    },
+
     updateIntereses: function() {
-      this.boletas.forEach(b => b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY')));
+      this.boletas.forEach(b => {
+        if (b.tipo == 'boleta') {
+          b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'))
+        }
+      });
     },
 
     pagar: function(items_pago) {
       let boletas = this.boletas.filter(b => b.checked);
       
+    },
+
+    generarVolante: function() {
+      let boletas = this.boletas.filter(b => b.checked);
+
+      if (!boletas.length) {
+        this.global_state.snackbar.msg = 'Debe seleccionar al menos una boleta';
+        this.global_state.snackbar.color = 'error';
+        this.global_state.snackbar.show = true;        
+        return;
+      }
+
+      if (boletas.some(b => b.tipo == 'volante')) {
+        this.global_state.snackbar.msg = 'No puede haber volantes de pago seleccionar para generar un volante';
+        this.global_state.snackbar.color = 'error';
+        this.global_state.snackbar.show = true;        
+        return;
+      }
+
+      let volante = {
+        boletas,
+        matricula: this.id,
+        fecha: moment(),
+        fecha_vencimiento: moment().add(15, 'days'),
+        subtotal: this.subtotal,
+        interes_total: this.intereses_total,
+        importe_total: this.importe_total,
+        delegacion: 1
+      }
+      
+      axios.post('volantespago', volante)
+      .then(r => {
+        console.info(`Volante ${r.data.id} generado!`);
+        this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
+        this.global_state.snackbar.color = 'success';
+        this.global_state.snackbar.show = true;        
+        this.updateBoletas();
+      })
+      .catch(e => console.error(e));
     }
   },
 
