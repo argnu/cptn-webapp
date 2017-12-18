@@ -42,6 +42,7 @@
               </v-card>
               <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
             </v-stepper-content>
+            <!-- FIN PASO 1 -->
 
 
             <!-- PASO 2: DATOS DE PROFESIONAL -->
@@ -418,7 +419,7 @@
                       no-data-text="No hay contactos"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                            <th v-for="(header, i) of props.headers" class="pa-3 text-xs-left" :key="i">
                               {{ header }}
                             </th>
                             <th></th>
@@ -458,6 +459,7 @@
                           label="Tipo de Formación"
                           single-line bottom
                           v-model="nueva_formacion.tipo"
+                          @input="chgFormacion"
                         >
                         </v-select>
 
@@ -476,9 +478,14 @@
                       </v-flex>
 
                       <v-flex xs6 class="ma-4">
-                        <input-fecha  v-model="nueva_formacion.fecha" label="Fecha" :rules="submitFormacion ? validator.formacion.fecha : []" :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha)
-                                && submitFormacion">
+                        <input-fecha  
+                          v-model="nueva_formacion.fecha" 
+                          label="Fecha" 
+                          :rules="submitFormacion ? validator.formacion.fecha : []" 
+                          :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha) && submitFormacion"
+                        >
                         </input-fecha>
+
                         <v-select
                           :items="instituciones"
                           item-text="nombre"
@@ -779,8 +786,8 @@
             <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
             <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
             <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
-            <div><b>Sexo: </b> {{ solicitud.entidad.sexo }} </div>
-            <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil }} </div>
+            <div><b>Sexo: </b> {{ sexo_selected }} </div>
+            <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
             <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.localidadNacimiento }} </div>
             <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
@@ -902,21 +909,18 @@ export default {
   },
 
   computed: {
-    tipoFormacion: function() {
-      return this.nueva_formacion.tipo;
-    },
-
     headers: function() {
       return headers;
-    }
-  },
+    },
 
-  watch: {
-    tipoFormacion: function(new_val) {
-      axios.get(`/titulos?tipo=${new_val}`)
-        .then(r => {
-          this.titulos = r.data;
-        });
+    sexo_selected: function() {
+      if (!this.solicitud.entidad.sexo) return '';
+      return this.opciones.sexo.find(i => i.id == this.solicitud.entidad.sexo).valor;
+    },
+
+    estado_civil_selected: function() {
+      if (!this.solicitud.entidad.estadoCivil) return '';
+      return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
     }
   },
 
@@ -938,6 +942,13 @@ export default {
 
 
   methods: {
+    chgFormacion: function(new_val) {
+      axios.get(`/titulos?tipo=${new_val}`)
+        .then(r => {          
+          this.titulos = r.data;
+        });
+    },
+
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
     },
@@ -1002,14 +1013,9 @@ export default {
         let profesional = this.solicitud.entidad;
         return utils.validObject(profesional, this.validator.profesional);
       } else if (i == 3) {
-        let domicilioR = this.solicitud.entidad.domicilioReal;
-        let domicilioP = this.solicitud.entidad.domicilioProfesional;
-        let domicilioC = this.solicitud.entidad.domicilioConstituido;
-        return utils.validObject(domicilioR, this.validator.domicilioReal) &&
-          utils.validObject(domicilioP, this.validator.domicilioProfesional) &&
-          utils.validObject(domicilioC, this.validator.domicilioConstituido);
+        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilioReal)
       } else return true;
-    },
+    },    
   },
 
   components: {
