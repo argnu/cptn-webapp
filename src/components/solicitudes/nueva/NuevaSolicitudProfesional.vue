@@ -736,7 +736,7 @@
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <blockquote>
-                    Declaro bajo juramento que no he desarrollado actividades dentro del teerritorio de la Provinca de Neuquén, previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo
+                    Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provinca de Neuquén, previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo
                     Profesional de Técnicos de Neuquén. Nota: de comprobarse la falsedad de la presente Declaración Jurada el Consejo Profesional aplicará al profesional una sanción consistente en duplo de la matrículo anual vigente. Art 29, Ley 708
                   </blockquote>
 
@@ -808,6 +808,7 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
+import { impresionSolicitud } from '@/utils/PDFUtils'
 
 const headers = {
   contactos: [
@@ -983,11 +984,14 @@ export default {
     },
 
     submit: function() {
+      debugger;
       axios.post('/solicitudes', this.solicitud)
         .then(r => {
           if (r.status != 201) {
             this.submitError();
           }
+          let pdf = impresionSolicitud(this.solicitud);
+          pdf.save('Solcitud ' + this.solicitud.entidad.nombre + ' ' + this.solicitud.entidad.apellido + '.pdf');
           this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
           this.global_state.snackbar.color = 'success';
           this.global_state.snackbar.show = true;
