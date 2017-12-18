@@ -12,7 +12,7 @@
     </v-snackbar>
 
     <v-toolbar dark class="blue darken-1">
-      <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isLogged">
+      <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isDelegacionSelected">
       </v-toolbar-side-icon>
       <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
       <v-spacer></v-spacer>
@@ -45,22 +45,19 @@ export default {
   name: 'app',
   data() {
     return {
-      user: null,
       global_state: Store.state
     }
   },
 
-  updated: function() {
-    this.user = Cookies.get('CPTNUser');
-  },
-
-  created: function() {
-    this.user = Cookies.get('CPTNUser');
-  },
-
   computed: {
     isLogged: function() {
-      return !!this.user;
+      return !!this.global_state.user;
+    },
+
+    isDelegacionSelected: function() {
+      console.log(this.global_state.delegacion);
+      
+      return  !!this.global_state.delegacion;
     }
   },
 

@@ -28,7 +28,7 @@
               </template>
               <template v-if="props.item.tipo == 'volante'">
                 <td>Volante de Pago</td>
-                <td>${{ props.item.importe_total | round }}</td>
+                <td>${{ props.item.subtotal | round }}</td>
                 <td>${{ props.item.interes_total | round }}</td>                
               </template>
               <td></td>
@@ -180,7 +180,7 @@ export default {
     subtotal: function() {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
-        let num = act.tipo == 'boleta' ? act.total : act.importe_total;
+        let num = act.tipo == 'boleta' ? act.total : act.subtotal;
         return prev + (act.checked ? num : 0); 
       }, 0);
       return utils.round(suma, 2);
@@ -241,7 +241,28 @@ export default {
 
     pagar: function(items_pago) {
       let boletas = this.boletas.filter(b => b.checked);
+
+      let comprobante = {
+        boletas,
+        items_pago,
+        matricula: this.id,
+        fecha: moment(),
+        subtotal: this.subtotal,
+        interes_total: this.intereses_total,
+        importe_total: this.importe_total,
+        delegacion: this.global_state.delegacion
+      }
       
+      axios.post('comprobantes', comprobante)
+      .then(r => {
+        console.info(`Comprobante ${r.data.id} generado!`);
+        this.global_state.snackbar.msg = 'Comprobante generado exitosamente!';
+        this.global_state.snackbar.color = 'success';
+        this.global_state.snackbar.show = true;        
+        this.expand_pago = false;
+        this.updateBoletas();
+      })
+      .catch(e => console.error(e));      
     },
 
     generarVolante: function() {
@@ -269,7 +290,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: 1
+        delegacion: this.global_state.delegacion
       }
       
       axios.post('volantespago', volante)

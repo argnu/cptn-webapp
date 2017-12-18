@@ -27,9 +27,9 @@
                   item-value="id"
                   label="Forma de Pago"
                   :items="tipos_pago"
-                  v-model="nueva_forma_pago.tipo"
+                  v-model="nueva_forma_pago.forma_pago"
                   :rules="submit_forma_pago ? validator.tipo : []"
-                  :error="!validControl(validator.tipo, nueva_forma_pago.tipo) && submit_forma_pago"
+                  :error="!validControl(validator.forma_pago, nueva_forma_pago.forma_pago) && submit_forma_pago"
                 >
                 </v-select>
               </v-flex>
@@ -116,7 +116,7 @@
               </template>
               <template slot="items" slot-scope="props">
                 <tr>
-                  <td>{{ getTipoPago(props.item.tipo) }}</td>
+                  <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe }}</td>
                   <td>{{ props.item.cheque.numero }}</td>
                   <td>{{ props.item.cheque.banco }}</td>
@@ -176,14 +176,14 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
 const Cheque = () => ({
-  numero: '',
-  banco: '',
+  numero: null,
+  banco: null,
   titular: '',
-  fecha_vencimiento: ''
+  fecha_vencimiento: null
 })
 
 const FormaPago = () => ({
-    tipo: '',
+    forma_pago: '',
     importe: '',
     cheque: Cheque()
 })
@@ -223,7 +223,7 @@ export default {
       nueva_forma_pago: FormaPago(),
       submit_forma_pago: false,
       validator: {
-        tipo: [rules.required],
+        forma_pago: [rules.required],
         importe: [rules.required],
         cheque: {
           numero: [rules.required],
@@ -241,8 +241,8 @@ export default {
     },
 
     esCheque: function() {
-      if (!this.nueva_forma_pago.tipo) return false;
-      let forma_pago = this.tipos_pago.find(f => f.id == this.nueva_forma_pago.tipo);
+      if (!this.nueva_forma_pago.forma_pago) return false;
+      let forma_pago = this.tipos_pago.find(f => f.id == this.nueva_forma_pago.forma_pago);
       return forma_pago ? forma_pago.pago == 4 : false;
     },
 
@@ -280,7 +280,8 @@ export default {
     },
 
     pagar: function() {
-      this.$emit('aceptar', this.items_pago);
+      this.$emit('aceptar', utils.clone(this.items_pago));
+      this.items_pago = [];
     },
 
     getTipoPago: function(id) {

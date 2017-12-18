@@ -84,7 +84,7 @@ export default {
       axios.post('/usuarios/auth', this.usuario)
       .then(r => {
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);
-        this.$router.push({ path: '/' });
+        this.$router.push({ path: '/seleccionar-delegacion' });
       })
       .catch(e => {
         if (e.response.status == 500) this.submit_error = true;
