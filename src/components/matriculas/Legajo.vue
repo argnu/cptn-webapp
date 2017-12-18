@@ -587,7 +587,7 @@ const Legajo = (matricula) => ({
   cantidad_planos: null,
   comitente: Comitente(),
   domicilio: new Domicilio(),
-  delegacion: 1,    //DELEGACION NEUQUEN, CAMBIAR A LA DELEGACION DONDE SE LOGUEA
+  delegacion: this.global_state.delegacion,
   dependencia: false,
   fecha_solicitud: null,
   finalizacion_tarea: null,

@@ -250,7 +250,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: 1
+        delegacion: this.global_state.delegacion
       }
       
       axios.post('comprobantes', comprobante)
@@ -290,7 +290,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: 1
+        delegacion: this.global_state.delegacion
       }
       
       axios.post('volantespago', volante)

@@ -267,7 +267,6 @@ export default {
         if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
 
-        console.log(url);
         axios.get(url)
           .then(r => {
             this.matriculas = r.data.resultados;

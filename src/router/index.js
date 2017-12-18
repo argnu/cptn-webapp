@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import axios from '@/axios';
-import * as Cookies from 'js-cookie';
-import Login from '@/components/Login';
-import MainContainer from '@/components/MainContainer';
+import axios from '@/axios'
+import * as Cookies from 'js-cookie'
+import Store from '@/Store'
+import Login from '@/components/Login'
+import MainContainer from '@/components/MainContainer'
+import DelegacionSeleccion from '@/components/DelegacionSeleccion'
 import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
 import { MainMatriculas, ListaMatriculados, Matricula,
   MatriculaProfesional, ResumenCuenta,
@@ -31,12 +33,18 @@ export default new Router({
         if (!Cookies.get('CPTNUser')) next({ path: '/login' });
         else {
           let user = JSON.parse(Cookies.get('CPTNUser'));
-          axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;
+          Store.setUser(user);
+          axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;          
           next();
         }
       },
 
       children: [
+        {
+          path: '/seleccionar-delegacion',
+          name: 'DelegacionSeleccion',
+          component: DelegacionSeleccion
+        },
         {
           path: '/solicitudes/profesionales/nueva',
           name: 'NuevaSolicitudProfesional',

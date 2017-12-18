@@ -1,10 +1,11 @@
 import { Profesional } from '@/model/Profesional';
 import { Empresa } from '@/model/Empresa';
+import Store from '@/Store'
 
 export class Solicitud {
   constructor(tipo) {
     this.fecha = '';
-    this.delegacion = '';
+    this.delegacion = Store.state.delegacion;
     if (tipo == 'profesional')
       this.entidad = new Profesional();
     else if (tipo == 'empresa')
