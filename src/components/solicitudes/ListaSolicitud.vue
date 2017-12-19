@@ -321,6 +321,10 @@ export default {
           })
           .catch(e => console.error(e));
       }
+    },
+
+    editSolicitud: function(id) {
+      this.$router.push(`/solicitudes/profesionales/modificar/${id}`);
     }
   },
 

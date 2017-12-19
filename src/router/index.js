@@ -51,6 +51,12 @@ export default new Router({
           component: NuevaSolicitudProfesional
         },
         {
+          path: '/solicitudes/profesionales/modificar/:id',
+          name: 'ModificarSolicitudProfesional',
+          component: NuevaSolicitudProfesional,
+          props: true
+        },
+        {
           path: '/solicitudes/lista',
           name: 'ListaSolicitud',
           component: ListaSolicitud

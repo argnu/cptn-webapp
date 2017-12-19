@@ -23,6 +23,7 @@ export class Subsidiario {
 
 export class Contacto {
   constructor() {
+    this.id = null;
     this.tipo = '';
     this.valor = '';
   }
