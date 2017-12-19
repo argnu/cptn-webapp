@@ -55,9 +55,7 @@ export default {
     },
 
     isDelegacionSelected: function() {
-      console.log(this.global_state.delegacion);
-      
-      return  !!this.global_state.delegacion;
+      return !!this.global_state.delegacion;
     }
   },
 

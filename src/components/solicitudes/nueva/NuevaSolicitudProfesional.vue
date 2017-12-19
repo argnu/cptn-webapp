@@ -20,7 +20,12 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <input-fecha tabindex="1" v-model="solicitud.fecha" label="Fecha de Solicitud" :error="!validControl(validator.solicitud.fecha, solicitud.fecha) && steps[0].touched" :rules="validator.solicitud.fecha">
+                      <input-fecha 
+                        tabindex="1" 
+                        v-model="solicitud.fecha" 
+                        label="Fecha de Solicitud" 
+                        :rules="validator.solicitud.fecha"
+                      >
                       </input-fecha>
                     </v-flex>
 
@@ -33,7 +38,6 @@
                         :items="delegaciones"
                         v-model="solicitud.delegacion"
                         label="Delegación"
-                        :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
                         :rules="validator.solicitud.delegacion">
                       </v-select>
                     </v-flex>
@@ -59,7 +63,6 @@
                         v-model="solicitud.entidad.nombre"
                         tabindex="3"
                         :rules="validator.profesional.nombre"
-                        :error="!validControl(validator.profesional.nombre, solicitud.entidad.nombre) && steps[1].touched"
                       >
                       </v-text-field>
 
@@ -67,11 +70,12 @@
                         label="DNI"
                         v-model="solicitud.entidad.dni"
                         :rules="validator.profesional.dni"
-                        :error="!validControl(validator.profesional.dni, solicitud.entidad.dni) && steps[1].touched" tabindex="5"
+                        tabindex="5"
                       >
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         tabindex="7"
                         :items="opciones.sexo"
                         item-text="valor"
@@ -80,7 +84,6 @@
                         label="Sexo"
                         single-line bottom
                         :rules="validator.profesional.sexo"
-                        :error="!validControl(validator.profesional.sexo, solicitud.entidad.sexo) && steps[1].touched"
                       >
                       </v-select>
 
@@ -89,7 +92,6 @@
                         label="Fecha de Nacimiento"
                         tabindex="9"
                         :rules="validator.profesional.fechaNacimiento"
-                        :error="!validControl(validator.profesional.fechaNacimiento, solicitud.entidad.fechaNacimiento) && steps[1].touched"
                       >
                       </input-fecha>
 
@@ -101,6 +103,7 @@
                       </v-text-field>
 
                       <v-select
+                        autocomplete 
                         single-line bottom
                         :items="opciones.condicionafip"
                         item-text="valor"
@@ -109,7 +112,6 @@
                         label="Condición AFIP"
                         tabindex="13"
                         :rules="validator.profesional.condafip"
-                        :error="!validControl(validator.profesional.condafip, solicitud.entidad.condafip) && steps[1].touched"
                       >
                       </v-select>
                     </v-flex>
@@ -119,7 +121,6 @@
                         label="Apellido"
                         v-model="solicitud.entidad.apellido"
                         :rules="validator.profesional.apellido"
-                        :error="!validControl(validator.profesional.apellido, solicitud.entidad.apellido) && steps[1].touched"
                         tabindex="4"
                       >
                       </v-text-field>
@@ -132,6 +133,7 @@
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         tabindex="8"
                         :items="opciones.estadocivil"
                         item-text="valor"
@@ -140,7 +142,6 @@
                         label="Estado Civil"
                         single-line bottom
                         :rules="validator.profesional.estadoCivil"
-                        :error="!validControl(validator.profesional.estadoCivil, solicitud.entidad.estadoCivil) && steps[1].touched"
                       >
                       </v-select>
 
@@ -191,8 +192,8 @@
                       >
                       </v-select>
 
-                      <v-text-field tabindex="19" label="Calle" v-model="solicitud.entidad.domicilioReal.calle" :rules="validator.domicilioReal.calle" :error="!validControl(validator.domicilioReal.calle, solicitud.entidad.domicilioReal.calle)
-                                && steps[2].touched">
+                      <v-text-field tabindex="19" label="Calle" v-model="solicitud.entidad.domicilioReal.calle" :rules="validator.domicilioReal.calle"
+                      >
                       </v-text-field>
                     </v-flex>
 
@@ -218,13 +219,11 @@
                         label="Localidad"
                         v-model="solicitud.entidad.domicilioReal.localidad"
                         :rules="validator.domicilioReal.localidad"
-                        :error="!validControl(validator.domicilioReal.localidad, solicitud.entidad.domicilioReal.localidad)
-                                  && steps[2].touched"
                       >
                       </v-select>
 
-                      <v-text-field tabindex="20" label="Nro" v-model="solicitud.entidad.domicilioReal.numero" :rules="validator.domicilioReal.numero" :error="!validControl(validator.domicilioReal.numero, solicitud.entidad.domicilioReal.numero)
-                                && steps[2].touched">
+                      <v-text-field tabindex="20" label="Nro" v-model="solicitud.entidad.domicilioReal.numero" :rules="validator.domicilioReal.numero"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
@@ -392,15 +391,16 @@
                           label="Tipo de Contacto"
                           v-model="nuevo_contacto.tipo"
                           :rules="submitContacto ? validator.contacto.tipo : []"
-                          :error="!validControl(validator.contacto.tipo, nuevo_contacto.tipo)
-                                && submitContacto"
                         >
                         </v-select>
                       </v-flex>
 
                       <v-flex xs6 class="mx-4">
-                        <v-text-field label="Valor" v-model="nuevo_contacto.valor" :rules="submitContacto ? validator.contacto.valor : []" :error="!validControl(validator.contacto.valor, nuevo_contacto.valor)
-                                && submitContacto">
+                        <v-text-field 
+                          label="Valor" 
+                          v-model="nuevo_contacto.valor" 
+                          :rules="submitContacto ? validator.contacto.valor : []"
+                        >
                         </v-text-field>
                       </v-flex>
                     </v-layout>
@@ -471,8 +471,6 @@
                           label="Título"
                           v-model="nueva_formacion.titulo"
                           :rules="submitFormacion ? validator.formacion.titulo : []"
-                          :error="!validControl(validator.formacion.titulo, nueva_formacion.titulo)
-                                && submitFormacion"
                         >
                         </v-select>
                       </v-flex>
@@ -482,7 +480,6 @@
                           v-model="nueva_formacion.fecha" 
                           label="Fecha" 
                           :rules="submitFormacion ? validator.formacion.fecha : []" 
-                          :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha) && submitFormacion"
                         >
                         </input-fecha>
 
@@ -493,8 +490,6 @@
                           label="Institución"
                           v-model="nueva_formacion.institucion"
                           :rules="submitFormacion ? validator.formacion.institucion : []"
-                          :error="!validControl(validator.formacion.institucion, nueva_formacion.institucion)
-                                && submitFormacion"
                         >
                         </v-select>
                       </v-flex>
@@ -519,7 +514,7 @@
                             <th></th>
                           </template>
                       <template slot="items" slot-scope="props">
-                            <td>{{ props.item.titulo }}</td>
+                            <td>{{ getTitulo(props.item.titulo) }}</td>
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
@@ -596,22 +591,22 @@
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_beneficiario.dni" :rules="submitBeneficiario ? validator.beneficiario.dni : []" :error="!validControl(validator.beneficiario.dni, nuevo_beneficiario.dni)
-                                  && submitBeneficiario">
+                      <v-text-field label="DNI" v-model="nuevo_beneficiario.dni" :rules="submitBeneficiario ? validator.beneficiario.dni : []" 
+                      >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_beneficiario.apellido" :rules="submitBeneficiario ? validator.beneficiario.apellido : []" :error="!validControl(validator.beneficiario.apellido, nuevo_beneficiario.apellido)
-                                  && submitBeneficiario">
+                      <v-text-field label="Apellido" v-model="nuevo_beneficiario.apellido" :rules="submitBeneficiario ? validator.beneficiario.apellido : []"
+                      >
                       </v-text-field>
-                      <v-text-field label="Nombre" v-model="nuevo_beneficiario.nombre" :rules="submitBeneficiario ? validator.beneficiario.nombre : []" :error="!validControl(validator.beneficiario.nombre, nuevo_beneficiario.nombre)
-                                  && submitBeneficiario">
+                      <v-text-field label="Nombre" v-model="nuevo_beneficiario.nombre" :rules="submitBeneficiario ? validator.beneficiario.nombre : []"
+                      >
                       </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
-                      <v-text-field label="Vínculo" v-model="nuevo_beneficiario.vinculo" :rules="submitBeneficiario ? validator.beneficiario.vinculo : []" :error="!validControl(validator.beneficiario.vinculo, nuevo_beneficiario.vinculo)
-                                  && submitBeneficiario">
+                      <v-text-field label="Vínculo" v-model="nuevo_beneficiario.vinculo" :rules="submitBeneficiario ? validator.beneficiario.vinculo : []"
+                      >
                       </v-text-field>
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
                       </v-checkbox>
@@ -672,17 +667,17 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_subsidiario.dni" :rules="submitSubsidiario ? validator.subsidiario.dni : []" :error="!validControl(validator.subsidiario.dni, nuevo_subsidiario.dni)
-                                  && submitSubsidiario">
+                      <v-text-field label="DNI" v-model="nuevo_subsidiario.dni" :rules="submitSubsidiario ? validator.subsidiario.dni : []"
+                      >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_subsidiario.apellido" :rules="submitSubsidiario ? validator.subsidiario.apellido : []" :error="!validControl(validator.subsidiario.apellido, nuevo_subsidiario.apellido)
-                                  && submitSubsidiario">
+                      <v-text-field label="Apellido" v-model="nuevo_subsidiario.apellido" :rules="submitSubsidiario ? validator.subsidiario.apellido : []"
+                      >
                       </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Nombre" v-model="nuevo_subsidiario.nombre" :rules="submitSubsidiario ? validator.subsidiario.nombre : []" :error="!validControl(validator.subsidiario.nombre, nuevo_subsidiario.nombre)
-                                  && submitSubsidiario">
+                      <v-text-field label="Nombre" v-model="nuevo_subsidiario.nombre" :rules="submitSubsidiario ? validator.subsidiario.nombre : []"
+                      >
                       </v-text-field>
 
                       <v-text-field
@@ -690,8 +685,6 @@
                         label="Porcentaje"
                         v-model="nuevo_subsidiario.porcentaje"
                         :rules="submitSubsidiario ? validator.subsidiario.porcentaje : []"
-                        :error="!validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)
-                                  && submitSubsidiario"
                       >
                       </v-text-field>
                     </v-flex>
@@ -951,6 +944,10 @@ export default {
 
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
+    },
+
+    getTitulo: function(id) {
+      return this.titulos.find(i => id == i.id).nombre;
     },
 
     getTipoContacto: function(id) {
