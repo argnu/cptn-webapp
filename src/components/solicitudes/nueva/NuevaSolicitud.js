@@ -101,7 +101,6 @@ export default {
     },
 
     nextStep: function() {
-       this.steps[+this.step - 1].touched = true;
        if (this.validStep(this.step)) this.step = +this.step + 1;
     },
 
