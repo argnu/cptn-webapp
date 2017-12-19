@@ -25,7 +25,6 @@
                               v-model="solicitud.fecha"
                               label="Fecha de Solicitud"
                               :rules="validator.solicitud.fecha"
-                              :error="!validControl(validator.solicitud.fecha, solicitud.fecha) && steps[0].touched"
                             >
                             </input-fecha>
                           </v-flex>
@@ -39,7 +38,6 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
                               :rules="validator.solicitud.delegacion"
                             >
                             </v-select>
@@ -65,7 +63,6 @@
                             label="Nombre"
                             v-model="solicitud.entidad.nombre"
                             :rules="validator.empresa.nombre"
-                            :error="!validControl(validator.empresa.nombre, solicitud.entidad.nombre) && steps[1].touched"
                           >
                           </v-text-field>
 
@@ -77,7 +74,6 @@
                             v-model="solicitud.entidad.tipoEmpresa"
                             label="Tipo de Empresa" single-line bottom
                             :rules="validator.empresa.tipoEmpresa"
-                            :error="!validControl(validator.empresa.tipoEmpresa, solicitud.entidad.tipoEmpresa) && steps[1].touched"
                           >
                           </v-select>
 
@@ -96,7 +92,6 @@
                             v-model="solicitud.entidad.condafip"
                             label="Condición AFIP" single-line bottom
                             :rules="validator.empresa.condafip"
-                            :error="!validControl(validator.empresa.condafip, solicitud.entidad.confafip) && steps[1].touched"
                           >
                           </v-select>
                         </v-flex>
@@ -107,7 +102,6 @@
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
                             :rules="validator.empresa.cuit"
-                            :error="!validControl(validator.empresa.cuit, solicitud.entidad.cuit) && steps[1].touched"
                           >
                           </v-text-field>
 
@@ -126,7 +120,6 @@
                             v-model="solicitud.entidad.tipoSociedad"
                             label="Tipo de Sociedad" single-line bottom
                             :rules="validator.empresa.tipoSociedad"
-                            :error="!validControl(validator.empresa.tipoSociedad, solicitud.entidad.tipoSociedad) && steps[1].touched"
                           >
                           </v-select>
                         </v-flex>
@@ -134,7 +127,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
-                  <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -177,8 +170,6 @@
                               label="Calle"
                               v-model="solicitud.entidad.domicilioReal.calle"
                               :rules="validator.domicilioReal.calle"
-                              :error="!validControl(validator.domicilioReal.calle, solicitud.entidad.domicilioReal.calle)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
@@ -202,8 +193,6 @@
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioReal.localidad"
                               :rules="validator.domicilioReal.localidad"
-                              :error="!validControl(validator.domicilioReal.localidad, solicitud.entidad.domicilioReal.localidad)
-                                && steps[2].touched"
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
@@ -215,8 +204,6 @@
                               label="Nro"
                               v-model="solicitud.entidad.domicilioReal.numero"
                               :rules="validator.domicilioReal.numero"
-                              :error="!validControl(validator.domicilioReal.numero, solicitud.entidad.domicilioReal.numero)
-                                && steps[2].touched"
                             >
                             </v-text-field>
                           </v-flex>
@@ -381,9 +368,7 @@
                               single-line
                               bottom
                               v-model="nuevo_contacto.tipo"
-                              :rules="submitContacto ? validator.contacto.tipo : []"
-                              :error="!validControl(validator.contacto.tipo, nuevo_contacto.tipo)
-                                && submitContacto"
+                              :rules="validator.contacto.tipo"
                             >
                             </v-select>
                           </v-flex>
@@ -392,9 +377,7 @@
                             <v-text-field
                               label="Valor"
                               v-model="nuevo_contacto.valor"
-                              :rules="submitContacto ? validator.contacto.valor : []"
-                              :error="!validControl(validator.contacto.valor, nuevo_contacto.valor)
-                                && submitContacto"
+                              :rules="validator.contacto.valor"
                             >
                             </v-text-field>
                           </v-flex>
@@ -429,7 +412,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
-                  <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -450,7 +433,7 @@
                               :items="opciones.incumbencia"
                               v-model="nueva_incumbencia"
                               label="Incumbencias"
-                              :rules="submitIncumbencia ? validator.incumbencia : []"
+                              :rules="validator.incumbencia"
                             >
                             </v-select>
                           </v-flex>
@@ -683,17 +666,6 @@ export default {
         incumbencia: [ rules.required ]
       },
 
-      steps: [
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false }
-      ],
-
-      submitContacto: false,
-      submitIncumbencia: false,
-
       matriculados: [],
       debouncedUpdate: null,
       totalItems: 0,
@@ -766,20 +738,16 @@ export default {
     },
 
     addContacto: function() {
-      this.submitContacto = true;
        if ( utils.validObject(this.nuevo_contacto, this.validator.contacto) ) {
          this.solicitud.entidad.contactos.push(this.nuevo_contacto);
          this.nuevo_contacto = new Model.Solicitud();
-         this.submitContacto = false;
        }
     },
 
     addIncumbencia: function() {
-       this.submitIncumbencia = true;
        if ( this.validator.incumbencia[0](this.nueva_incumbencia) != 'Dato Obligatorio' ) {
          this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
          this.nueva_incumbencia = '';
-         this.submitIncumbencia = false;
        }
     },
 

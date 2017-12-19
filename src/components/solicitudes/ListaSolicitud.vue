@@ -10,12 +10,20 @@
         <v-container>
           <v-layout row>
             <v-flex xs6 class="ma-4">
-              <input-fecha v-model="matricula.fechaResolucion" label="Fecha de Resolución" :error="submitValidacion && !validControl(validator.matricula.fechaResolucion, matricula.fechaResolucion)" :rules="validator.matricula.fechaResolucion">
+              <input-fecha 
+                v-model="matricula.fechaResolucion" 
+                label="Fecha de Resolución" 
+                :rules="validator.matricula.fechaResolucion"
+              >
               </input-fecha>
             </v-flex>
 
             <v-flex xs6 class="ma-4">
-              <v-text-field v-model="matricula.numeroActa" label="N° Acta" :error="submitValidacion && !validControl(validator.matricula.numeroActa, matricula.numeroActa)" :rules="validator.matricula.numeroActa">
+              <v-text-field 
+                v-model="matricula.numeroActa" 
+                label="N° Acta" 
+                :rules="validator.matricula.numeroActa"
+              >
               </v-text-field>
             </v-flex>
           </v-layout>
@@ -141,6 +149,13 @@
                 <span class="ml-2">Aprobar</span>
               </v-list-tile-title>
             </v-list-tile>
+
+            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="editSolicitud(props.item.id)">
+              <v-list-tile-title>
+                <v-icon class="blue--text text--darken-2">edit</v-icon>
+                <span class="ml-2">Modificar</span>
+              </v-list-tile-title>
+            </v-list-tile>
           </v-list>
         </v-menu>
       </td>
@@ -151,13 +166,13 @@
 </template>
 
 <script>
-import axios from '@/axios';
-import * as _ from 'lodash';
-import * as utils from '@/utils';
-import rules from '@/rules';
-import InputFecha from '@/components/base/InputFecha';
-import { Matricula } from '@/model';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import axios from '@/axios'
+import * as _ from 'lodash'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import InputFecha from '@/components/base/InputFecha'
+import { Matricula } from '@/model'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 const select_items = {
   estado: [
@@ -306,6 +321,10 @@ export default {
           })
           .catch(e => console.error(e));
       }
+    },
+
+    editSolicitud: function(id) {
+      this.$router.push(`/solicitudes/profesionales/modificar/${id}`);
     }
   },
 

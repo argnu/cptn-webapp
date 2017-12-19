@@ -114,6 +114,7 @@
                         :rules="validator.profesional.condafip"
                       >
                       </v-select>
+
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
@@ -144,11 +145,23 @@
                         :rules="validator.profesional.estadoCivil"
                       >
                       </v-select>
-
+<!-- 
                       <v-text-field label="Lugar Nacimiento" v-model="solicitud.entidad.localidadNacimiento" tabindex="10">
-                      </v-text-field>
+                      </v-text-field> -->
                       <v-text-field label="Observaciones" v-model="solicitud.entidad.observaciones" tabindex="12">
                       </v-text-field>
+
+                      <v-select
+                        single-line bottom
+                        :items="opciones.condicionafip"
+                        item-text="valor"
+                        item-value="id"
+                        v-model="solicitud.entidad.condafip"
+                        label="Condición AFIP"
+                        tabindex="13"
+                        :rules="validator.profesional.condafip"
+                      >
+                      </v-select>                      
                     </v-flex>
                   </v-layout>
                 </v-card-text>
@@ -192,7 +205,11 @@
                       >
                       </v-select>
 
-                      <v-text-field tabindex="19" label="Calle" v-model="solicitud.entidad.domicilioReal.calle" :rules="validator.domicilioReal.calle"
+                      <v-text-field 
+                        tabindex="19" 
+                        label="Calle" 
+                        v-model="solicitud.entidad.domicilioReal.calle" 
+                        :rules="validator.domicilioReal.calle" 
                       >
                       </v-text-field>
                     </v-flex>
@@ -222,7 +239,12 @@
                       >
                       </v-select>
 
-                      <v-text-field tabindex="20" label="Nro" v-model="solicitud.entidad.domicilioReal.numero" :rules="validator.domicilioReal.numero"
+
+                      <v-text-field 
+                        tabindex="20" 
+                        label="Nro" 
+                        v-model="solicitud.entidad.domicilioReal.numero" 
+                        :rules="validator.domicilioReal.numero" 
                       >
                       </v-text-field>
                     </v-flex>
@@ -390,7 +412,7 @@
                           item-value="id"
                           label="Tipo de Contacto"
                           v-model="nuevo_contacto.tipo"
-                          :rules="submitContacto ? validator.contacto.tipo : []"
+                          :rules="validator.contacto.tipo"
                         >
                         </v-select>
                       </v-flex>
@@ -399,7 +421,7 @@
                         <v-text-field 
                           label="Valor" 
                           v-model="nuevo_contacto.valor" 
-                          :rules="submitContacto ? validator.contacto.valor : []"
+                          :rules="validator.contacto.valor" 
                         >
                         </v-text-field>
                       </v-flex>
@@ -412,15 +434,15 @@
                     </v-layout>
 
                     <v-data-table
-                      :headers="headers.contacto"
+                      :headers="headers.contactos"
                       :items="solicitud.entidad.contactos"
                       hide-actions
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="(header, i) of props.headers" class="pa-3 text-xs-left" :key="i">
-                              {{ header }}
+                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                              {{ header.text }}
                             </th>
                             <th></th>
                           </template>
@@ -459,7 +481,6 @@
                           label="Tipo de Formación"
                           single-line bottom
                           v-model="nueva_formacion.tipo"
-                          @input="chgFormacion"
                         >
                         </v-select>
 
@@ -467,10 +488,10 @@
                           autocomplete single-line bottom
                           item-text="nombre"
                           item-value="id"
-                          :items="titulos"
+                          :items="titulos_grado"
                           label="Título"
                           v-model="nueva_formacion.titulo"
-                          :rules="submitFormacion ? validator.formacion.titulo : []"
+                          :rules="validator.formacion.titulo"
                         >
                         </v-select>
                       </v-flex>
@@ -479,7 +500,7 @@
                         <input-fecha  
                           v-model="nueva_formacion.fecha" 
                           label="Fecha" 
-                          :rules="submitFormacion ? validator.formacion.fecha : []" 
+                          :rules="validator.formacion.fecha" 
                         >
                         </input-fecha>
 
@@ -489,7 +510,7 @@
                           item-value="id"
                           label="Institución"
                           v-model="nueva_formacion.institucion"
-                          :rules="submitFormacion ? validator.formacion.institucion : []"
+                          :rules="validator.formacion.institucion"
                         >
                         </v-select>
                       </v-flex>
@@ -591,13 +612,24 @@
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_beneficiario.dni" :rules="submitBeneficiario ? validator.beneficiario.dni : []" 
+                      <v-text-field 
+                        label="DNI" 
+                        v-model="nuevo_beneficiario.dni" 
+                        :rules="validator.beneficiario.dni"
                       >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_beneficiario.apellido" :rules="submitBeneficiario ? validator.beneficiario.apellido : []"
+
+                      <v-text-field 
+                        label="Apellido" 
+                        v-model="nuevo_beneficiario.apellido" 
+                        :rules="validator.beneficiario.apellido" 
                       >
                       </v-text-field>
-                      <v-text-field label="Nombre" v-model="nuevo_beneficiario.nombre" :rules="submitBeneficiario ? validator.beneficiario.nombre : []"
+
+                      <v-text-field 
+                        label="Nombre" 
+                        v-model="nuevo_beneficiario.nombre" 
+                        :rules="validator.beneficiario.nombre"
                       >
                       </v-text-field>
                     </v-flex>
@@ -605,7 +637,10 @@
                     <v-flex xs6 class="ma-4">
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
-                      <v-text-field label="Vínculo" v-model="nuevo_beneficiario.vinculo" :rules="submitBeneficiario ? validator.beneficiario.vinculo : []"
+                      <v-text-field 
+                        label="Vínculo" 
+                        v-model="nuevo_beneficiario.vinculo" 
+                        :rules="validator.beneficiario.vinculo"
                       >
                       </v-text-field>
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
@@ -667,16 +702,26 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_subsidiario.dni" :rules="submitSubsidiario ? validator.subsidiario.dni : []"
+                      <v-text-field 
+                        label="DNI" 
+                        v-model="nuevo_subsidiario.dni" 
+                        :rules="validator.subsidiario.dni"
                       >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_subsidiario.apellido" :rules="submitSubsidiario ? validator.subsidiario.apellido : []"
+
+                      <v-text-field 
+                        label="Apellido" 
+                        v-model="nuevo_subsidiario.apellido" 
+                        :rules="validator.subsidiario.apellido"
                       >
                       </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Nombre" v-model="nuevo_subsidiario.nombre" :rules="submitSubsidiario ? validator.subsidiario.nombre : []"
+                      <v-text-field 
+                        label="Nombre" 
+                        v-model="nuevo_subsidiario.nombre" 
+                        :rules="validator.subsidiario.nombre"
                       >
                       </v-text-field>
 
@@ -684,7 +729,7 @@
                         type="number"
                         label="Porcentaje"
                         v-model="nuevo_subsidiario.porcentaje"
-                        :rules="submitSubsidiario ? validator.subsidiario.porcentaje : []"
+                        :rules="validator.subsidiario.porcentaje"
                       >
                       </v-text-field>
                     </v-flex>
@@ -795,6 +840,7 @@
 
 <script>
 import axios from '@/axios'
+import moment from 'moment'
 import * as utils from '@/utils'
 import rules from '@/rules'
 import {
@@ -842,11 +888,13 @@ const headers = {
 export default {
   name: 'nueva-solicitud',
   mixins: [ValidatorMixin, NuevaSolicitud],
+  props: ['id'],
+
   data() {
     return {
       instituciones: [],
       titulos: [],
-      deAcuerdo: false,
+      deAcuerdo: true,
       cajaPrevisional: '',
       solicitud: new Solicitud('profesional'),
       nuevo_contacto: new Contacto(),
@@ -893,11 +941,7 @@ export default {
           porcentaje: [rules.required],
         }
       },
-
-      submitContacto: false,
-      submitFormacion: false,
-      submitBeneficiario: false,
-      submitSubsidiario: false,
+      
     }
   },
 
@@ -914,34 +958,127 @@ export default {
     estado_civil_selected: function() {
       if (!this.solicitud.entidad.estadoCivil) return '';
       return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
+    },
+
+    titulos_grado: function() {
+      const getTipo = () => {
+        if (this.nueva_formacion.tipo == 1) return 'Grado';
+        if (this.nueva_formacion.tipo == 2) return 'Posgrado';
+        else return null;
+      }
+
+      if (!this.nueva_formacion.tipo) return [];
+      return this.titulos.filter(t => t.tipo == getTipo());
     }
   },
 
-  created: function() {
+  created: function() {    
     Promise.all([
         axios.get('/paises'),
         axios.get('/opciones?sort=valor'),
         axios.get('/delegaciones'),
-        axios.get('/instituciones')
+        axios.get('/instituciones'),
+        axios.get('/titulos')
       ])
       .then(r => {
         this.paises = r[0].data;
         this.opciones = r[1].data;
         this.delegaciones = r[2].data;
         this.instituciones = r[3].data;
+        this.titulos = r[4].data;
+
+        if (this.id) { 
+          axios.get(`/solicitudes/${this.id}`)
+          .then(r => {
+              this.solicitud = new Solicitud(r.data.tipoEntidad);
+              this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
+              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+              
+              this.solicitud.entidad.nombre = r.data.entidad.nombre;
+              this.solicitud.entidad.apellido = r.data.entidad.apellido;
+              this.solicitud.entidad.dni = r.data.entidad.dni;
+              this.solicitud.entidad.cuit = r.data.entidad.cuit;
+              this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == r.data.entidad.sexo).id;
+              this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == r.data.entidad.estadoCivil).id;
+              this.solicitud.entidad.fechaNacimiento = moment(r.data.entidad.fechaNacimiento).format('DD/MM/YYYY');
+              this.solicitud.entidad.nacionalidad = r.data.entidad.nacionalidad;
+              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == r.data.entidad.condafip).id;
+              
+              this.solicitud.entidad.domicilioReal = r.data.entidad.domicilioReal.id;
+              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;
+              this.changePais('real', r.data.entidad.domicilioReal);
+              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
+              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
+
+              if (r.data.entidad.domicilioProfesional) {
+                this.solicitud.entidad.domicilioProfesional = r.data.entidad.domicilioProfesional.id;
+                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
+                this.changePais('profesional', r.data.entidad.domicilioProfesional);
+                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
+                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
+              }
+
+              if (r.data.entidad.domicilioConstituido) {
+                this.solicitud.entidad.domicilioConstituido = r.data.entidad.domicilioConstituido.id;
+                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
+                this.changePais('constituido', r.data.entidad.domicilioConstituido);
+                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
+                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
+              }
+
+              for(let contacto of r.data.entidad.contactos) {
+                let contacto_nuevo = contacto;
+                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+                this.solicitud.entidad.contactos.push(contacto_nuevo);
+              }
+
+              for(let formacion of r.data.entidad.formaciones) {
+                formacion_nueva.id = formacion.id;
+                formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
+                formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
+                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+                this.solicitud.entidad.formaciones.push(formacion_nueva);
+              }
+
+              this.solicitud.entidad.relacionDependencia = r.data.entidad.relacionDependencia;
+              this.solicitud.entidad.empresa = r.data.entidad.empresa;
+              this.solicitud.entidad.independiente = r.data.entidad.independiente;
+              this.solicitud.entidad.serviciosPrestados = r.data.entidad.serviciosPrestados;
+              this.solicitud.entidad.poseeCajaPrevisional = r.data.entidad.poseeCajaPrevisional;
+              this.solicitud.entidad.nombreCajaPrevisional = r.data.entidad.nombreCajaPrevisional;
+
+
+              for(let beneficiario of r.data.entidad.beneficiarios) {
+                beneficiario_nuevo.id = beneficiario.id;
+                beneficiario_nuevo.dni = beneficiario.dni;
+                beneficiario_nuevo.apellido = beneficiario.apellido;
+                beneficiario_nuevo.nombre = beneficiario.nombre;
+                beneficiario_nuevo.vinculo = beneficiario.vinculo;
+                beneficiario_nuevo.invalidez = beneficiario.invalidez;
+                beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
+                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+                this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
+              }              
+
+              for(let subsidiario of r.data.entidad.subsidiarios) {
+                subsidiario_nuevo.id = subsidiario.id;
+                subsidiario_nuevo.dni = subsidiario.dni;
+                subsidiario_nuevo.apellido = subsidiario.apellido;
+                subsidiario_nuevo.nombre = subsidiario.nombre;
+                subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
+                this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
+              }             
+
+              this.solicitud.exencionArt10 = r.data.exencionArt10;
+              this.solicitud.exencionArt6 = r.data.exencionArt6;           
+          });
+        }
       })
       .catch(e => console.error(e));
   },
 
 
   methods: {
-    chgFormacion: function(new_val) {
-      axios.get(`/titulos?tipo=${new_val}`)
-        .then(r => {          
-          this.titulos = r.data;
-        });
-    },
-
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
     },
@@ -955,53 +1092,60 @@ export default {
     },
 
     addContacto: function() {
-      this.submitContacto = true;
       if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         this.nuevo_contacto = new Contacto();
-        this.submitContacto = false;
       }
     },
 
     addFormacion: function() {
-      this.submitFormacion = true;
       if (utils.validObject(this.nueva_formacion, this.validator.formacion)) {
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         this.nueva_formacion = new Formacion();
-        this.submitFormacion = false;
       }
     },
 
     addBeneficiario: function() {
-      this.submitBeneficiario = true;
       if (utils.validObject(this.nuevo_beneficiario, this.validator.beneficiario)) {
         this.solicitud.entidad.beneficiarios.push(this.nuevo_beneficiario);
         this.nuevo_beneficiario = new Beneficiario();
-        this.submitBeneficiario = false;
       }
     },
 
     addSubsidiario: function() {
-      this.submitSubsidiario = true;
       if (utils.validObject(this.nuevo_subsidiario, this.validator.subsidiario)) {
         this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
         this.nuevo_subsidiario = new Beneficiario();
-        this.submitSubsidiario = false;
       }
     },
 
     submit: function() {
-      axios.post('/solicitudes', this.solicitud)
-        .then(r => {
-          if (r.status != 201) {
-            this.submitError();
-          }
-          this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
-          this.$router.push('/solicitudes/lista');
-        })
-        .catch(e => this.submitError());
+      if (!this.id) {
+        axios.post('/solicitudes', this.solicitud)
+          .then(r => {
+            if (r.status != 201) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());
+      }
+      else {
+        axios.put(`/solicitudes/${this.id}`, this.solicitud)
+          .then(r => {
+            if (r.status != 200) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());        
+      }
     },
 
     validStep: function(i) {
