@@ -141,6 +141,12 @@
                 <span class="ml-2">Aprobar</span>
               </v-list-tile-title>
             </v-list-tile>
+            <v-list-tile v-show="props.item.estado == 'pendiente'" @click="imprimirSolicitud(props.item.id)">
+              <v-list-tile-title>
+                <v-icon class="text--darken-2">print</v-icon>
+                <span class="ml-2">Imprimir</span>
+              </v-list-tile-title>
+            </v-list-tile>
           </v-list>
         </v-menu>
       </td>
@@ -158,6 +164,7 @@ import rules from '@/rules';
 import InputFecha from '@/components/base/InputFecha';
 import { Matricula } from '@/model';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import { impresionSolicitud } from '@/utils/PDFUtils'
 
 const select_items = {
   estado: [
@@ -264,6 +271,7 @@ export default {
   },
 
   methods: {
+
     updateList: function() {
       this.debouncedUpdate();
     },
@@ -292,6 +300,16 @@ export default {
     selectSolicitud: function(id) {
       this.show_validar = true;
       this.matricula.solicitud = id;
+    },
+
+    imprimirSolicitud: function(id) {
+      axios.get(`/solicitudes/${id}`)
+          .then(s => {
+            let solicitud = s.data;
+            let pdf = impresionSolicitud(solicitud);
+            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+          })
+          .catch(e => console.error(e));
     },
 
     validarMatricula: function() {

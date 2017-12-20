@@ -66,7 +66,7 @@ export default {
     changePais: function(tipoDomicilio) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let id_pais = this.solicitud.entidad[domicilio].pais;
-      if (id_pais.toString().length) {
+      if (id_pais) {
         axios.get(`/provincias?pais_id=${id_pais}`)
              .then(r => this.provincias[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
@@ -77,7 +77,7 @@ export default {
     changeProvincia: function(tipoDomicilio) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let provincia = this.solicitud.entidad[domicilio].provincia;
-      if (provincia.toString().length) {
+      if (provincia) {
         axios.get(`/departamentos?provincia_id=${provincia}`)
              .then(r => this.departamentos[tipoDomicilio] = r.data)
              .catch(e => console.error(e));
@@ -88,7 +88,7 @@ export default {
     changeDepartamento: function(tipoDomicilio) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
       let departamento = this.solicitud.entidad[domicilio].departamento;
-      if (departamento.toString().length) {
+      if (departamento) {
         axios.get(`/localidades?departamento_id=${departamento}`)
              .then(r => this.localidades[tipoDomicilio] = r.data)
              .catch(e => console.error(e));

@@ -78,6 +78,7 @@
                         item-value="id"
                         v-model="solicitud.entidad.sexo"
                         label="Sexo"
+                        autocomplete
                         single-line bottom
                         :rules="validator.profesional.sexo"
                         :error="!validControl(validator.profesional.sexo, solicitud.entidad.sexo) && steps[1].touched"
@@ -765,6 +766,10 @@
                 Guardar Solicitud
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
+              <v-btn class="blue darken-1 white--text right" @click.native="imprimir">
+                Imprimir
+                <v-icon dark right>check_circle</v-icon>
+              </v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
           </v-stepper>
@@ -815,7 +820,6 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
-import { impresionSolicitud } from '@/utils/PDFUtils'
 
 const headers = {
   contactos: [
@@ -995,20 +999,21 @@ export default {
     },
 
     submit: function() {
-      debugger;
       axios.post('/solicitudes', this.solicitud)
         .then(r => {
+          console.log(this.solicitud);
           if (r.status != 201) {
             this.submitError();
           }
-          let pdf = impresionSolicitud(this.solicitud);
-          pdf.save('Solcitud ' + this.solicitud.entidad.nombre + ' ' + this.solicitud.entidad.apellido + '.pdf');
           this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
           this.global_state.snackbar.color = 'success';
           this.global_state.snackbar.show = true;
           this.$router.push('/solicitudes/lista');
         })
         .catch(e => this.submitError());
+    },
+    imprimir:function(){
+      window.print();
     },
 
     validStep: function(i) {

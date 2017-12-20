@@ -6,7 +6,7 @@ import Store from '@/Store'
 import Login from '@/components/Login'
 import MainContainer from '@/components/MainContainer'
 import DelegacionSeleccion from '@/components/DelegacionSeleccion'
-import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud } from '@/components/solicitudes'
+import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud, ImprimirSolicitud} from '@/components/solicitudes'
 import { MainMatriculas, ListaMatriculados, Matricula,
   MatriculaProfesional, ResumenCuenta,
   DeudasPendientes } from '@/components/matriculas'
@@ -59,6 +59,12 @@ export default new Router({
           path: '/solicitudes/empresas/nueva',
           name: 'NuevaSolicitudEmpresa',
           component: NuevaSolicitudEmpresa
+        },
+        {
+          path: '/solicitudes/profesionales/:id/imprimir',
+          name: 'ImprimirSolicitud',
+          component: ImprimirSolicitud,
+          props: true
         },
         {
           path: '/matriculas',
