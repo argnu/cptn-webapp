@@ -4,7 +4,7 @@ export default {
 
   methods: {
     validForm: function() {
-      for (let i = 1; i < this.steps.length; i++) {
+      for (let i = 1; i < this.submitted.steps.length; i++) {
         if (!this.validStep(i)) return false;
       }
       return true;
