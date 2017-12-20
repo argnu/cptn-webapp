@@ -67,6 +67,12 @@ export default new Router({
           component: NuevaSolicitudEmpresa
         },
         {
+          path: '/solicitudes/empresas/modificar/:id',
+          name: 'ModificarSolicitudEmpresa',
+          component: NuevaSolicitudEmpresa,
+          props: true
+        },        
+        {
           path: '/matriculas',
           component: MainMatriculas,
           children: [

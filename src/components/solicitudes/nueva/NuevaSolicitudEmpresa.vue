@@ -67,6 +67,7 @@
                           </v-text-field>
 
                           <v-select
+                            autocomplete
                             tabindex="5"
                             item-text="valor"
                             item-value="id"
@@ -85,6 +86,7 @@
                           </input-fecha>
 
                           <v-select
+                            autocomplete
                             tabindex="7"
                             item-text="valor"
                             item-value="id"
@@ -113,6 +115,7 @@
                           </input-fecha>
 
                           <v-select
+                            autocomplete
                             tabindex="10"
                             item-text="valor"
                             item-value="id"
@@ -626,6 +629,7 @@
 
 <script>
 import axios from '@/axios'
+import * as moment from 'moment'
 import * as utils from '@/utils'
 import rules from '@/rules'
 import * as Model from '@/model'
@@ -652,8 +656,11 @@ const headers = {
 export default {
   name: 'nueva-solicitud-empresa',
   mixins: [ValidatorMixin, NuevaSolicitud],
+  props: ['id'],
+
   data () {
     return {
+      num_steps: 6,
       solicitud: new Model.Solicitud('empresa'),
       nuevo_contacto: new Model.Solicitud(),
       nueva_incumbencia: '',
@@ -707,6 +714,7 @@ export default {
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    
     Promise.all([
       axios.get('/paises'),
       axios.get('/opciones?sort=valor'),
@@ -716,6 +724,65 @@ export default {
       this.paises = r[0].data;
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
+      
+      if (this.id) { 
+        axios.get(`/solicitudes/${this.id}`)
+        .then(r => {          
+              this.solicitud = new Model.Solicitud('empresa');
+              this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
+              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+              
+              this.solicitud.entidad.nombre = r.data.entidad.nombre;          
+              this.solicitud.entidad.cuit = r.data.entidad.cuit;
+              this.solicitud.entidad.fechaInicio = moment(r.data.entidad.fechaInicio).format('DD/MM/YYYY');
+              this.solicitud.entidad.fechaConstitucion = moment(r.data.entidad.fechaConstitucion).format('DD/MM/YYYY');
+              this.solicitud.entidad.tipoEmpresa = this.opciones.empresa.find(i => i.valor == r.data.entidad.tipoEmpresa).id;
+              this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
+              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
+
+              this.solicitud.entidad.domicilioReal.id = r.data.entidad.domicilioReal.id;
+              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;              
+              this.changePais('real', r.data.entidad.domicilioReal);
+              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
+              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
+
+              if (r.data.entidad.domicilioProfesional) {
+                this.solicitud.entidad.domicilioProfesional.id = r.data.entidad.domicilioProfesional.id;
+                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
+                this.changePais('profesional', r.data.entidad.domicilioProfesional);
+                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
+                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
+              }
+
+              if (r.data.entidad.domicilioConstituido) {
+                this.solicitud.entidad.domicilioConstituido.id = r.data.entidad.domicilioConstituido.id;
+                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
+                this.changePais('constituido', r.data.entidad.domicilioConstituido);
+                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
+                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
+              }
+
+              for(let contacto of r.data.entidad.contactos) {
+                let contacto_nuevo = contacto;
+                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+                this.solicitud.entidad.contactos.push(contacto_nuevo);
+              }
+
+              for(let incumbencia of r.data.entidad.incumbencias) {
+                let inc_nueva = this.opciones.incumbencia.find(i => i.valor == incumbencias).id;
+                this.solicitud.entidad.incumbencias.push(inc_nueva);
+              }
+
+              let proms_rep = r.data.entidad.representantes.map(r => 
+                axios.get(`/matriculas/${r.idMatricula}`)
+              )
+              
+              Promise.all(proms_rep)
+              .then(matriculas => {
+                this.solicitud.entidad.representantes = matriculas.map(r => r.data);
+              });
+        })
+      }
     })
     .catch(e => console.error(e));
   },

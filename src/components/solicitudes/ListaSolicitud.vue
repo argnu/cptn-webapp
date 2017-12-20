@@ -324,7 +324,8 @@ export default {
     },
 
     editSolicitud: function(id) {
-      this.$router.push(`/solicitudes/profesionales/modificar/${id}`);
+      let tipo = this.filtros.tipoEntidad == 'profesional' ? 'profesionales' : 'empresas';
+      this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
     }
   },
 

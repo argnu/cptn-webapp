@@ -892,6 +892,7 @@ export default {
 
   data() {
     return {
+      num_steps: 9,
       instituciones: [],
       titulos: [],
       deAcuerdo: true,
@@ -901,17 +902,6 @@ export default {
       nueva_formacion: new Formacion(),
       nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
-
-      steps: [
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false }
-      ],
 
       validator: {
         profesional: {
@@ -990,7 +980,7 @@ export default {
         if (this.id) { 
           axios.get(`/solicitudes/${this.id}`)
           .then(r => {
-              this.solicitud = new Solicitud(r.data.tipoEntidad);
+              this.solicitud = new Solicitud('profesional');
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               
