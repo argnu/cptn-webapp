@@ -149,7 +149,7 @@
 
                       <v-text-field 
                         label="Lugar Nacimiento" 
-                        v-model="solicitud.entidad.localidadNacimiento" 
+                        v-model="solicitud.entidad.lugarNacimiento" 
                         tabindex="10"
                       >
                       </v-text-field>
@@ -862,7 +862,7 @@
             <div><b>Sexo: </b> {{ sexo_selected }} </div>
             <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
-            <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.localidadNacimiento }} </div>
+            <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
             <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
             <div><b>Observaciones: </b> {{solicitud.entidad.observaciones }} </div>
           </v-card-text>
