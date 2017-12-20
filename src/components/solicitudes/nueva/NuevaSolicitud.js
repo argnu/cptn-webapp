@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
@@ -46,13 +47,8 @@ export default {
         solicitud: {
           fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
         },
-        domicilioReal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioProfesional: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioConstituido: {
+        domicilio: {
+          pais: [rules.required], provincia: [rules.required], departamento: [rules.required], 
           calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
         },
         contacto: {
@@ -115,7 +111,8 @@ export default {
     },
 
     nextStep: function() {
-       if (this.validStep(this.step)) this.step = +this.step + 1;
+      Vue.set(this.submitted.steps, this.step-1, true);
+      if (this.validStep(this.step)) this.step = +this.step + 1;
     },
 
     prevStep: function() {
