@@ -20,7 +20,13 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <input-fecha tabindex="1" v-model="solicitud.fecha" label="Fecha de Solicitud" :error="!validControl(validator.solicitud.fecha, solicitud.fecha) && steps[0].touched" :rules="validator.solicitud.fecha">
+                      <input-fecha 
+                        tabindex="1" 
+                        v-model="solicitud.fecha" 
+                        label="Fecha de Solicitud" 
+                        :rules="validator.solicitud.fecha"
+                        :error="submitted.steps[0] && !validControl(validator.solicitud.fecha, solicitud.fecha)"
+                      >
                       </input-fecha>
                     </v-flex>
 
@@ -33,8 +39,9 @@
                         :items="delegaciones"
                         v-model="solicitud.delegacion"
                         label="Delegación"
-                        :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
-                        :rules="validator.solicitud.delegacion">
+                        :rules="validator.solicitud.delegacion"
+                        :error="submitted.steps[0] && !validControl(validator.solicitud.delegacion, solicitud.delegacion)"
+                      >
                       </v-select>
                     </v-flex>
                   </v-layout>
@@ -59,7 +66,7 @@
                         v-model="solicitud.entidad.nombre"
                         tabindex="3"
                         :rules="validator.profesional.nombre"
-                        :error="!validControl(validator.profesional.nombre, solicitud.entidad.nombre) && steps[1].touched"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.nombre, solicitud.entidad.nombre)"
                       >
                       </v-text-field>
 
@@ -67,11 +74,12 @@
                         label="DNI"
                         v-model="solicitud.entidad.dni"
                         :rules="validator.profesional.dni"
-                        :error="!validControl(validator.profesional.dni, solicitud.entidad.dni) && steps[1].touched" tabindex="5"
+                        tabindex="5"
                       >
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         tabindex="7"
                         :items="opciones.sexo"
                         item-text="valor"
@@ -81,7 +89,7 @@
                         autocomplete
                         single-line bottom
                         :rules="validator.profesional.sexo"
-                        :error="!validControl(validator.profesional.sexo, solicitud.entidad.sexo) && steps[1].touched"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.sexo, solicitud.entidad.sexo)"
                       >
                       </v-select>
 
@@ -90,7 +98,7 @@
                         label="Fecha de Nacimiento"
                         tabindex="9"
                         :rules="validator.profesional.fechaNacimiento"
-                        :error="!validControl(validator.profesional.fechaNacimiento, solicitud.entidad.fechaNacimiento) && steps[1].touched"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.fechaNacimiento, solicitud.entidad.fechaNacimiento)"
                       >
                       </input-fecha>
 
@@ -101,18 +109,12 @@
                       >
                       </v-text-field>
 
-                      <v-select
-                        single-line bottom
-                        :items="opciones.condicionafip"
-                        item-text="valor"
-                        item-value="id"
-                        v-model="solicitud.entidad.condafip"
-                        label="Condición AFIP"
-                        tabindex="13"
-                        :rules="validator.profesional.condafip"
-                        :error="!validControl(validator.profesional.condafip, solicitud.entidad.condafip) && steps[1].touched"
+                      <v-text-field 
+                        label="Observaciones" 
+                        v-model="solicitud.entidad.observaciones" 
+                        tabindex="12"
                       >
-                      </v-select>
+                      </v-text-field>                      
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
@@ -120,7 +122,7 @@
                         label="Apellido"
                         v-model="solicitud.entidad.apellido"
                         :rules="validator.profesional.apellido"
-                        :error="!validControl(validator.profesional.apellido, solicitud.entidad.apellido) && steps[1].touched"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.apellido, solicitud.entidad.apellido)"
                         tabindex="4"
                       >
                       </v-text-field>
@@ -133,6 +135,7 @@
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         tabindex="8"
                         :items="opciones.estadocivil"
                         item-text="valor"
@@ -141,14 +144,29 @@
                         label="Estado Civil"
                         single-line bottom
                         :rules="validator.profesional.estadoCivil"
-                        :error="!validControl(validator.profesional.estadoCivil, solicitud.entidad.estadoCivil) && steps[1].touched"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.estadoCivil, solicitud.entidad.estadoCivil)"
                       >
                       </v-select>
 
-                      <v-text-field label="Lugar Nacimiento" v-model="solicitud.entidad.localidadNacimiento" tabindex="10">
+                      <v-text-field 
+                        label="Lugar Nacimiento" 
+                        v-model="solicitud.entidad.lugarNacimiento" 
+                        tabindex="10"
+                      >
                       </v-text-field>
-                      <v-text-field label="Observaciones" v-model="solicitud.entidad.observaciones" tabindex="12">
-                      </v-text-field>
+
+                      <v-select
+                        single-line bottom
+                        :items="opciones.condicionafip"
+                        item-text="valor"
+                        item-value="id"
+                        v-model="solicitud.entidad.condafip"
+                        label="Condición AFIP"
+                        tabindex="13"
+                        :rules="validator.profesional.condafip"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.condafip, solicitud.entidad.condafip)"
+                      >
+                      </v-select>                      
                     </v-flex>
                   </v-layout>
                 </v-card-text>
@@ -177,6 +195,8 @@
                         label="País"
                         @input="changePais('real')"
                         v-model="solicitud.entidad.domicilioReal.pais"
+                        :rules="validator.domicilio.pais"
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.pais, solicitud.entidad.domicilioReal.pais)"
                       >
                       </v-select>
 
@@ -189,11 +209,18 @@
                         label="Departamento"
                         @input="changeDepartamento('real')"
                         v-model="solicitud.entidad.domicilioReal.departamento"
+                        :rules="validator.domicilio.departamento"
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.departamento, solicitud.entidad.domicilioReal.departamento)"
                       >
                       </v-select>
 
-                      <v-text-field tabindex="19" label="Calle" v-model="solicitud.entidad.domicilioReal.calle" :rules="validator.domicilioReal.calle" :error="!validControl(validator.domicilioReal.calle, solicitud.entidad.domicilioReal.calle)
-                                && steps[2].touched">
+                      <v-text-field 
+                        tabindex="19" 
+                        label="Calle" 
+                        v-model="solicitud.entidad.domicilioReal.calle" 
+                        :rules="validator.domicilio.calle" 
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.calle, solicitud.entidad.domicilioReal.calle)"
+                      >
                       </v-text-field>
                     </v-flex>
 
@@ -207,6 +234,8 @@
                         label="Provincia"
                         @input="changeProvincia('real')"
                         v-model="solicitud.entidad.domicilioReal.provincia"
+                        :rules="validator.domicilio.departamento"
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.provincia, solicitud.entidad.domicilioReal.provincia)"
                       >
                       </v-select>
 
@@ -218,14 +247,19 @@
                         :items="localidades.real"
                         label="Localidad"
                         v-model="solicitud.entidad.domicilioReal.localidad"
-                        :rules="validator.domicilioReal.localidad"
-                        :error="!validControl(validator.domicilioReal.localidad, solicitud.entidad.domicilioReal.localidad)
-                                  && steps[2].touched"
+                        :rules="validator.domicilio.localidad"
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.localidad, solicitud.entidad.domicilioReal.localidad)"
                       >
                       </v-select>
 
-                      <v-text-field tabindex="20" label="Nro" v-model="solicitud.entidad.domicilioReal.numero" :rules="validator.domicilioReal.numero" :error="!validControl(validator.domicilioReal.numero, solicitud.entidad.domicilioReal.numero)
-                                && steps[2].touched">
+
+                      <v-text-field 
+                        tabindex="20" 
+                        label="Nro" 
+                        v-model="solicitud.entidad.domicilioReal.numero" 
+                        :rules="validator.domicilio.numero" 
+                        :error="submitted.steps[2] && !validControl(validator.domicilio.numero, solicitud.entidad.domicilioReal.numero)"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
@@ -392,16 +426,19 @@
                           item-value="id"
                           label="Tipo de Contacto"
                           v-model="nuevo_contacto.tipo"
-                          :rules="submitContacto ? validator.contacto.tipo : []"
-                          :error="!validControl(validator.contacto.tipo, nuevo_contacto.tipo)
-                                && submitContacto"
+                          :rules="submitted.contacto ? validator.contacto.tipo : []"
+                          :error="submitted.contacto && !validControl(validator.contacto.tipo, nuevo_contacto.tipo)"
                         >
                         </v-select>
                       </v-flex>
 
                       <v-flex xs6 class="mx-4">
-                        <v-text-field label="Valor" v-model="nuevo_contacto.valor" :rules="submitContacto ? validator.contacto.valor : []" :error="!validControl(validator.contacto.valor, nuevo_contacto.valor)
-                                && submitContacto">
+                        <v-text-field 
+                          label="Valor" 
+                          v-model="nuevo_contacto.valor" 
+                          :rules="submitted.contacto ? validator.contacto.valor : []"
+                          :error="submitted.contacto && !validControl(validator.contacto.valor, nuevo_contacto.valor)"
+                        >
                         </v-text-field>
                       </v-flex>
                     </v-layout>
@@ -413,15 +450,15 @@
                     </v-layout>
 
                     <v-data-table
-                      :headers="headers.contacto"
+                      :headers="headers.contactos"
                       :items="solicitud.entidad.contactos"
                       hide-actions
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="(header, i) of props.headers" class="pa-3 text-xs-left" :key="i">
-                              {{ header }}
+                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                              {{ header.text }}
                             </th>
                             <th></th>
                           </template>
@@ -460,7 +497,8 @@
                           label="Tipo de Formación"
                           single-line bottom
                           v-model="nueva_formacion.tipo"
-                          @input="chgFormacion"
+                          :rules="submitted.formacion ? validator.formacion.tipo : []"
+                          :error="submitted.formacion && !validControl(validator.formacion.tipo, nueva_formacion.tipo)"
                         >
                         </v-select>
 
@@ -468,12 +506,11 @@
                           autocomplete single-line bottom
                           item-text="nombre"
                           item-value="id"
-                          :items="titulos"
+                          :items="titulos_grado"
                           label="Título"
                           v-model="nueva_formacion.titulo"
-                          :rules="submitFormacion ? validator.formacion.titulo : []"
-                          :error="!validControl(validator.formacion.titulo, nueva_formacion.titulo)
-                                && submitFormacion"
+                          :rules="submitted.formacion ? validator.formacion.titulo : []"
+                          :error="submitted.formacion && !validControl(validator.formacion.titulo, nueva_formacion.titulo)"
                         >
                         </v-select>
                       </v-flex>
@@ -482,8 +519,8 @@
                         <input-fecha  
                           v-model="nueva_formacion.fecha" 
                           label="Fecha" 
-                          :rules="submitFormacion ? validator.formacion.fecha : []" 
-                          :error="!validControl(validator.formacion.fecha, nueva_formacion.fecha) && submitFormacion"
+                          :rules="submitted.formacion ? validator.formacion.fecha : []" 
+                          :error="submitted.formacion && !validControl(validator.formacion.fecha, nueva_formacion.fecha)"
                         >
                         </input-fecha>
 
@@ -493,9 +530,8 @@
                           item-value="id"
                           label="Institución"
                           v-model="nueva_formacion.institucion"
-                          :rules="submitFormacion ? validator.formacion.institucion : []"
-                          :error="!validControl(validator.formacion.institucion, nueva_formacion.institucion)
-                                && submitFormacion"
+                          :rules="submitted.formacion ? validator.formacion.institucion : []"
+                          :error="submitted.formacion && !validControl(validator.formacion.institucion, nueva_formacion.institucion)"
                         >
                         </v-select>
                       </v-flex>
@@ -520,7 +556,7 @@
                             <th></th>
                           </template>
                       <template slot="items" slot-scope="props">
-                            <td>{{ props.item.titulo }}</td>
+                            <td>{{ getTitulo(props.item.titulo) }}</td>
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
@@ -585,34 +621,59 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs3 class="ma-4">
-                      <v-checkbox label="Ya poseo Caja Previsional" v-model="solicitud.entidad.poseeCajaPrevisional">
+                      <v-checkbox 
+                        label="Ya poseo Caja Previsional" 
+                        v-model="solicitud.entidad.poseeCajaPrevisional"
+                      >
                       </v-checkbox>
-                      </v-radio-group>
                     </v-flex>
+
                     <v-flex xs6>
-                      <v-text-field label="Nombre" :disabled="!solicitud.entidad.poseeCajaPrevisional" v-model="solicitud.entidad.nombreCajaPrevisional">
+                      <v-text-field 
+                        label="Nombre" 
+                        :disabled="!solicitud.entidad.poseeCajaPrevisional" 
+                        v-model="solicitud.entidad.nombreCajaPrevisional"
+                      >
                       </v-text-field>
                     </v-flex>
                   </v-layout>
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_beneficiario.dni" :rules="submitBeneficiario ? validator.beneficiario.dni : []" :error="!validControl(validator.beneficiario.dni, nuevo_beneficiario.dni)
-                                  && submitBeneficiario">
+                      <v-text-field 
+                        label="DNI" 
+                        v-model="nuevo_beneficiario.dni" 
+                        :rules="submitted.beneficiario ? validator.beneficiario.dni : []"
+                        :error="submitted.beneficiario && !validControl(validator.beneficiario.dni, nuevo_beneficiario.dni)"
+                      >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_beneficiario.apellido" :rules="submitBeneficiario ? validator.beneficiario.apellido : []" :error="!validControl(validator.beneficiario.apellido, nuevo_beneficiario.apellido)
-                                  && submitBeneficiario">
+
+                      <v-text-field 
+                        label="Apellido" 
+                        v-model="nuevo_beneficiario.apellido" 
+                        :rules="submitted.beneficiario ? validator.beneficiario.apellido : []" 
+                        :error="submitted.beneficiario && !validControl(validator.beneficiario.apellido, nuevo_beneficiario.apellido)"
+                      >
                       </v-text-field>
-                      <v-text-field label="Nombre" v-model="nuevo_beneficiario.nombre" :rules="submitBeneficiario ? validator.beneficiario.nombre : []" :error="!validControl(validator.beneficiario.nombre, nuevo_beneficiario.nombre)
-                                  && submitBeneficiario">
+
+                      <v-text-field 
+                        label="Nombre" 
+                        v-model="nuevo_beneficiario.nombre" 
+                        :rules="submitted.beneficiario ? validator.beneficiario.nombre : []"
+                        :error="submitted.beneficiario && !validControl(validator.beneficiario.nombre, nuevo_beneficiario.nombre)"
+                      >
                       </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
-                      <v-text-field label="Vínculo" v-model="nuevo_beneficiario.vinculo" :rules="submitBeneficiario ? validator.beneficiario.vinculo : []" :error="!validControl(validator.beneficiario.vinculo, nuevo_beneficiario.vinculo)
-                                  && submitBeneficiario">
+                      <v-text-field 
+                        label="Vínculo" 
+                        v-model="nuevo_beneficiario.vinculo" 
+                        :rules="submitted.beneficiario ? validator.beneficiario.vinculo : []"
+                        :error="submitted.beneficiario && !validControl(validator.beneficiario.vinculo, nuevo_beneficiario.vinculo)"
+                      >
                       </v-text-field>
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
                       </v-checkbox>
@@ -673,26 +734,38 @@
                 <v-card-text>
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="DNI" v-model="nuevo_subsidiario.dni" :rules="submitSubsidiario ? validator.subsidiario.dni : []" :error="!validControl(validator.subsidiario.dni, nuevo_subsidiario.dni)
-                                  && submitSubsidiario">
+                      <v-text-field 
+                        label="DNI" 
+                        v-model="nuevo_subsidiario.dni" 
+                        :rules="submitted.subsidiario ? validator.subsidiario.dni : []"
+                        :error="submitted.subsidiario && !validControl(validator.subsidiario.dni, nuevo_subsidiario.dni)"
+                      >
                       </v-text-field>
-                      <v-text-field label="Apellido" v-model="nuevo_subsidiario.apellido" :rules="submitSubsidiario ? validator.subsidiario.apellido : []" :error="!validControl(validator.subsidiario.apellido, nuevo_subsidiario.apellido)
-                                  && submitSubsidiario">
+
+                      <v-text-field 
+                        label="Apellido" 
+                        v-model="nuevo_subsidiario.apellido" 
+                        :rules="submitted.subsidiario ? validator.subsidiario.apellido : []"
+                        :error="submitted.subsidiario && !validControl(validator.subsidiario.apellido, nuevo_subsidiario.apellido)"
+                      >
                       </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field label="Nombre" v-model="nuevo_subsidiario.nombre" :rules="submitSubsidiario ? validator.subsidiario.nombre : []" :error="!validControl(validator.subsidiario.nombre, nuevo_subsidiario.nombre)
-                                  && submitSubsidiario">
+                      <v-text-field 
+                        label="Nombre" 
+                        v-model="nuevo_subsidiario.nombre" 
+                        :rules="submitted.subsidiario ? validator.subsidiario.nombre : []"
+                        :error="submitted.subsidiario && !validControl(validator.subsidiario.nombre, nuevo_subsidiario.nombre)"
+                      >
                       </v-text-field>
 
                       <v-text-field
                         type="number"
                         label="Porcentaje"
                         v-model="nuevo_subsidiario.porcentaje"
-                        :rules="submitSubsidiario ? validator.subsidiario.porcentaje : []"
-                        :error="!validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)
-                                  && submitSubsidiario"
+                        :rules="submitted.subsidiario ? validator.subsidiario.porcentaje : []"
+                        :error="submitted.subsidiario && !validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)"
                       >
                       </v-text-field>
                     </v-flex>
@@ -794,7 +867,7 @@
             <div><b>Sexo: </b> {{ sexo_selected }} </div>
             <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
-            <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.localidadNacimiento }} </div>
+            <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
             <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
             <div><b>Observaciones: </b> {{solicitud.entidad.observaciones }} </div>
           </v-card-text>
@@ -807,6 +880,7 @@
 
 <script>
 import axios from '@/axios'
+import moment from 'moment'
 import * as utils from '@/utils'
 import rules from '@/rules'
 import {
@@ -854,11 +928,13 @@ const headers = {
 export default {
   name: 'nueva-solicitud',
   mixins: [ValidatorMixin, NuevaSolicitud],
+  props: ['id'],
+
   data() {
     return {
       instituciones: [],
       titulos: [],
-      deAcuerdo: false,
+      deAcuerdo: true,
       cajaPrevisional: '',
       solicitud: new Solicitud('profesional'),
       nuevo_contacto: new Contacto(),
@@ -866,16 +942,16 @@ export default {
       nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
 
-      steps: [
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false }
-      ],
+      submitted: {
+        steps: [ 
+          false, false, false, false, false,
+          false, false, false, false, 
+        ],
+        contacto: false,
+        formacion: false,
+        beneficiario: false,
+        subsidiario: false
+      },
 
       validator: {
         profesional: {
@@ -887,17 +963,21 @@ export default {
           fechaNacimiento: [rules.required, rules.fecha],
           condafip: [rules.required]
         },
+
         formacion: {
+          tipo: [rules.required],
           institucion: [rules.required],
           titulo: [rules.required],
           fecha: [rules.required, rules.fecha]
         },
+
         beneficiario: {
           dni: [rules.required],
           nombre: [rules.required],
           apellido: [rules.required],
           vinculo: [rules.required]
         },
+
         subsidiario: {
           dni: [rules.required],
           nombre: [rules.required],
@@ -905,11 +985,7 @@ export default {
           porcentaje: [rules.required],
         }
       },
-
-      submitContacto: false,
-      submitFormacion: false,
-      submitBeneficiario: false,
-      submitSubsidiario: false,
+      
     }
   },
 
@@ -926,36 +1002,133 @@ export default {
     estado_civil_selected: function() {
       if (!this.solicitud.entidad.estadoCivil) return '';
       return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
+    },
+
+    titulos_grado: function() {
+      const getTipo = () => {
+        if (this.nueva_formacion.tipo == 1) return 'Grado';
+        if (this.nueva_formacion.tipo == 2) return 'Posgrado';
+        else return null;
+      }
+
+      if (!this.nueva_formacion.tipo) return [];
+      return this.titulos.filter(t => t.tipo == getTipo());
     }
   },
 
-  created: function() {
+  created: function() {    
     Promise.all([
         axios.get('/paises'),
         axios.get('/opciones?sort=valor'),
         axios.get('/delegaciones'),
-        axios.get('/instituciones')
+        axios.get('/instituciones'),
+        axios.get('/titulos')
       ])
       .then(r => {
         this.paises = r[0].data;
         this.opciones = r[1].data;
         this.delegaciones = r[2].data;
         this.instituciones = r[3].data;
+        this.titulos = r[4].data;
+
+        if (this.id) { 
+          axios.get(`/solicitudes/${this.id}`)
+          .then(r => {
+              this.solicitud = new Solicitud('profesional');
+              this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
+              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+              
+              this.solicitud.entidad.nombre = r.data.entidad.nombre;
+              this.solicitud.entidad.apellido = r.data.entidad.apellido;
+              this.solicitud.entidad.dni = r.data.entidad.dni;
+              this.solicitud.entidad.cuit = r.data.entidad.cuit;
+              this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == r.data.entidad.sexo).id;
+              this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == r.data.entidad.estadoCivil).id;
+              this.solicitud.entidad.fechaNacimiento = moment(r.data.entidad.fechaNacimiento).format('DD/MM/YYYY');
+              this.solicitud.entidad.nacionalidad = r.data.entidad.nacionalidad;
+              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == r.data.entidad.condafip).id;
+              
+              this.solicitud.entidad.domicilioReal = r.data.entidad.domicilioReal.id;
+              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;
+              this.changePais('real', r.data.entidad.domicilioReal);
+              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
+              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
+
+              if (r.data.entidad.domicilioProfesional) {
+                this.solicitud.entidad.domicilioProfesional = r.data.entidad.domicilioProfesional.id;
+                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
+                this.changePais('profesional', r.data.entidad.domicilioProfesional);
+                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
+                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
+              }
+
+              if (r.data.entidad.domicilioConstituido) {
+                this.solicitud.entidad.domicilioConstituido = r.data.entidad.domicilioConstituido.id;
+                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
+                this.changePais('constituido', r.data.entidad.domicilioConstituido);
+                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
+                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
+              }
+
+              for(let contacto of r.data.entidad.contactos) {
+                let contacto_nuevo = contacto;
+                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+                this.solicitud.entidad.contactos.push(contacto_nuevo);
+              }
+
+              for(let formacion of r.data.entidad.formaciones) {
+                formacion_nueva.id = formacion.id;
+                formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
+                formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
+                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+                this.solicitud.entidad.formaciones.push(formacion_nueva);
+              }
+
+              this.solicitud.entidad.relacionDependencia = r.data.entidad.relacionDependencia;
+              this.solicitud.entidad.empresa = r.data.entidad.empresa;
+              this.solicitud.entidad.independiente = r.data.entidad.independiente;
+              this.solicitud.entidad.serviciosPrestados = r.data.entidad.serviciosPrestados;
+              this.solicitud.entidad.poseeCajaPrevisional = r.data.entidad.poseeCajaPrevisional;
+              this.solicitud.entidad.nombreCajaPrevisional = r.data.entidad.nombreCajaPrevisional;
+
+
+              for(let beneficiario of r.data.entidad.beneficiarios) {
+                beneficiario_nuevo.id = beneficiario.id;
+                beneficiario_nuevo.dni = beneficiario.dni;
+                beneficiario_nuevo.apellido = beneficiario.apellido;
+                beneficiario_nuevo.nombre = beneficiario.nombre;
+                beneficiario_nuevo.vinculo = beneficiario.vinculo;
+                beneficiario_nuevo.invalidez = beneficiario.invalidez;
+                beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
+                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+                this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
+              }              
+
+              for(let subsidiario of r.data.entidad.subsidiarios) {
+                subsidiario_nuevo.id = subsidiario.id;
+                subsidiario_nuevo.dni = subsidiario.dni;
+                subsidiario_nuevo.apellido = subsidiario.apellido;
+                subsidiario_nuevo.nombre = subsidiario.nombre;
+                subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
+                this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
+              }             
+
+              this.solicitud.exencionArt10 = r.data.exencionArt10;
+              this.solicitud.exencionArt6 = r.data.exencionArt6;           
+          });
+        }
       })
       .catch(e => console.error(e));
   },
 
 
   methods: {
-    chgFormacion: function(new_val) {
-      axios.get(`/titulos?tipo=${new_val}`)
-        .then(r => {          
-          this.titulos = r.data;
-        });
-    },
-
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
+    },
+
+    getTitulo: function(id) {
+      return this.titulos.find(i => id == i.id).nombre;
     },
 
     getTipoContacto: function(id) {
@@ -963,42 +1136,43 @@ export default {
     },
 
     addContacto: function() {
-      this.submitContacto = true;
+      this.submitted.contacto = true;
       if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
+        this.submitted.contacto = false;
         this.nuevo_contacto = new Contacto();
-        this.submitContacto = false;
       }
     },
 
     addFormacion: function() {
-      this.submitFormacion = true;
+      this.submitted.formacion = true;
       if (utils.validObject(this.nueva_formacion, this.validator.formacion)) {
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
+        this.submitted.formacion = false;
         this.nueva_formacion = new Formacion();
-        this.submitFormacion = false;
       }
     },
 
     addBeneficiario: function() {
-      this.submitBeneficiario = true;
+      this.submitted.beneficiario = true;
       if (utils.validObject(this.nuevo_beneficiario, this.validator.beneficiario)) {
         this.solicitud.entidad.beneficiarios.push(this.nuevo_beneficiario);
+        this.submitted.beneficiario = false;
         this.nuevo_beneficiario = new Beneficiario();
-        this.submitBeneficiario = false;
       }
     },
 
     addSubsidiario: function() {
-      this.submitSubsidiario = true;
+      this.submitted.subsidiario = true;
       if (utils.validObject(this.nuevo_subsidiario, this.validator.subsidiario)) {
         this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
+        this.submitted.subsidiario = false;
         this.nuevo_subsidiario = new Beneficiario();
-        this.submitSubsidiario = false;
       }
     },
 
     submit: function() {
+<<<<<<< HEAD
       axios.post('/solicitudes', this.solicitud)
         .then(r => {
           console.log(this.solicitud);
@@ -1011,6 +1185,34 @@ export default {
           this.$router.push('/solicitudes/lista');
         })
         .catch(e => this.submitError());
+=======
+      if (!this.id) {
+        axios.post('/solicitudes', this.solicitud)
+          .then(r => {
+            if (r.status != 201) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());
+      }
+      else {
+        axios.put(`/solicitudes/${this.id}`, this.solicitud)
+          .then(r => {
+            if (r.status != 200) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());        
+      }
+>>>>>>> 6db4ffe091cfab7ca9da4f1741a94e9db745d40b
     },
     imprimir:function(){
       window.print();
@@ -1022,7 +1224,7 @@ export default {
         let profesional = this.solicitud.entidad;
         return utils.validObject(profesional, this.validator.profesional);
       } else if (i == 3) {
-        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilioReal)
+        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilio)
       } else return true;
     },    
   },

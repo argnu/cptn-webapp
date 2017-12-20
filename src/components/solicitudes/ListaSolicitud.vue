@@ -10,12 +10,20 @@
         <v-container>
           <v-layout row>
             <v-flex xs6 class="ma-4">
-              <input-fecha v-model="matricula.fechaResolucion" label="Fecha de Resolución" :error="submitValidacion && !validControl(validator.matricula.fechaResolucion, matricula.fechaResolucion)" :rules="validator.matricula.fechaResolucion">
+              <input-fecha 
+                v-model="matricula.fechaResolucion" 
+                label="Fecha de Resolución" 
+                :rules="validator.matricula.fechaResolucion"
+              >
               </input-fecha>
             </v-flex>
 
             <v-flex xs6 class="ma-4">
-              <v-text-field v-model="matricula.numeroActa" label="N° Acta" :error="submitValidacion && !validControl(validator.matricula.numeroActa, matricula.numeroActa)" :rules="validator.matricula.numeroActa">
+              <v-text-field 
+                v-model="matricula.numeroActa" 
+                label="N° Acta" 
+                :rules="validator.matricula.numeroActa"
+              >
               </v-text-field>
             </v-flex>
           </v-layout>
@@ -145,6 +153,11 @@
               <v-list-tile-title>
                 <v-icon class="text--darken-2">print</v-icon>
                 <span class="ml-2">Imprimir</span>
+
+            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="editSolicitud(props.item.id)">
+              <v-list-tile-title>
+                <v-icon class="blue--text text--darken-2">edit</v-icon>
+                <span class="ml-2">Modificar</span>
               </v-list-tile-title>
             </v-list-tile>
           </v-list>
@@ -324,6 +337,11 @@ export default {
           })
           .catch(e => console.error(e));
       }
+    },
+
+    editSolicitud: function(id) {
+      let tipo = this.filtros.tipoEntidad == 'profesional' ? 'profesionales' : 'empresas';
+      this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
     }
   },
 

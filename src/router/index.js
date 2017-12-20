@@ -51,6 +51,12 @@ export default new Router({
           component: NuevaSolicitudProfesional
         },
         {
+          path: '/solicitudes/profesionales/modificar/:id',
+          name: 'ModificarSolicitudProfesional',
+          component: NuevaSolicitudProfesional,
+          props: true
+        },
+        {
           path: '/solicitudes/lista',
           name: 'ListaSolicitud',
           component: ListaSolicitud
@@ -66,6 +72,12 @@ export default new Router({
           component: ImprimirSolicitud,
           props: true
         },
+        {
+          path: '/solicitudes/empresas/modificar/:id',
+          name: 'ModificarSolicitudEmpresa',
+          component: NuevaSolicitudEmpresa,
+          props: true
+        },        
         {
           path: '/matriculas',
           component: MainMatriculas,

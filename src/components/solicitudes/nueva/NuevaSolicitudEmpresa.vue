@@ -25,7 +25,7 @@
                               v-model="solicitud.fecha"
                               label="Fecha de Solicitud"
                               :rules="validator.solicitud.fecha"
-                              :error="!validControl(validator.solicitud.fecha, solicitud.fecha) && steps[0].touched"
+                              :error="submitted.steps[0] && !validControl(validator.solicitud.fecha, solicitud.fecha)"
                             >
                             </input-fecha>
                           </v-flex>
@@ -39,8 +39,8 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :error="!validControl(validator.solicitud.delegacion, solicitud.delegacion) && steps[0].touched"
                               :rules="validator.solicitud.delegacion"
+                              :error="submitted.steps[0] && !validControl(validator.solicitud.delegacion, solicitud.delegacion)"
                             >
                             </v-select>
                           </v-flex>
@@ -65,11 +65,12 @@
                             label="Nombre"
                             v-model="solicitud.entidad.nombre"
                             :rules="validator.empresa.nombre"
-                            :error="!validControl(validator.empresa.nombre, solicitud.entidad.nombre) && steps[1].touched"
+                            :error="submitted.steps[1] && !validControl(validator.empresa.nombre, solicitud.entidad.nombre)"
                           >
                           </v-text-field>
 
                           <v-select
+                            autocomplete
                             tabindex="5"
                             item-text="valor"
                             item-value="id"
@@ -77,7 +78,7 @@
                             v-model="solicitud.entidad.tipoEmpresa"
                             label="Tipo de Empresa" single-line bottom
                             :rules="validator.empresa.tipoEmpresa"
-                            :error="!validControl(validator.empresa.tipoEmpresa, solicitud.entidad.tipoEmpresa) && steps[1].touched"
+                            :error="submitted.steps[1] && !validControl(validator.empresa.tipoEmpresa, solicitud.entidad.tipoEmpresa)"
                           >
                           </v-select>
 
@@ -89,6 +90,7 @@
                           </input-fecha>
 
                           <v-select
+                            autocomplete
                             tabindex="7"
                             item-text="valor"
                             item-value="id"
@@ -96,7 +98,7 @@
                             v-model="solicitud.entidad.condafip"
                             label="Condición AFIP" single-line bottom
                             :rules="validator.empresa.condafip"
-                            :error="!validControl(validator.empresa.condafip, solicitud.entidad.confafip) && steps[1].touched"
+                            :error="submitted.steps[1] && !validControl(validator.empresa.condafip, solicitud.entidad.condafip)"
                           >
                           </v-select>
                         </v-flex>
@@ -107,7 +109,7 @@
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
                             :rules="validator.empresa.cuit"
-                            :error="!validControl(validator.empresa.cuit, solicitud.entidad.cuit) && steps[1].touched"
+                            :error="submitted.steps[1] && !validControl(validator.empresa.cuit, solicitud.entidad.cuit)"
                           >
                           </v-text-field>
 
@@ -119,6 +121,7 @@
                           </input-fecha>
 
                           <v-select
+                            autocomplete
                             tabindex="10"
                             item-text="valor"
                             item-value="id"
@@ -126,7 +129,7 @@
                             v-model="solicitud.entidad.tipoSociedad"
                             label="Tipo de Sociedad" single-line bottom
                             :rules="validator.empresa.tipoSociedad"
-                            :error="!validControl(validator.empresa.tipoSociedad, solicitud.entidad.tipoSociedad) && steps[1].touched"
+                            :error="submitted.steps[1] && !validControl(validator.empresa.tipoSociedad, solicitud.entidad.tipoSociedad)"
                           >
                           </v-select>
                         </v-flex>
@@ -134,7 +137,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
-                  <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -157,6 +160,8 @@
                               item-text="nombre"
                               item-value="id"
                               @input="changePais('real')"
+                              :rules="validator.domicilio.pais"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.pais, solicitud.entidad.domicilioReal.pais)"
                             >
                             </v-select>
 
@@ -169,6 +174,8 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
+                              :rules="validator.domicilio.departamento"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.departamento, solicitud.entidad.domicilioReal.departamento)"
                             >
                             </v-select>
 
@@ -176,9 +183,8 @@
                               tabindex="16"
                               label="Calle"
                               v-model="solicitud.entidad.domicilioReal.calle"
-                              :rules="validator.domicilioReal.calle"
-                              :error="!validControl(validator.domicilioReal.calle, solicitud.entidad.domicilioReal.calle)
-                                && steps[2].touched"
+                              :rules="validator.domicilio.calle"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.calle, solicitud.entidad.domicilioReal.calle)"
                             >
                             </v-text-field>
                           </v-flex>
@@ -193,6 +199,8 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
+                              :rules="validator.domicilio.provincia"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.provincia, solicitud.entidad.domicilioReal.provincia)"
                             >
                             </v-select>
 
@@ -201,9 +209,8 @@
                               :items="localidades.real"
                               label="Localidad"
                               v-model="solicitud.entidad.domicilioReal.localidad"
-                              :rules="validator.domicilioReal.localidad"
-                              :error="!validControl(validator.domicilioReal.localidad, solicitud.entidad.domicilioReal.localidad)
-                                && steps[2].touched"
+                              :rules="validator.domicilio.localidad"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.localidad, solicitud.entidad.domicilioReal.localidad)"
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
@@ -214,9 +221,8 @@
                               tabindex="17"
                               label="Nro"
                               v-model="solicitud.entidad.domicilioReal.numero"
-                              :rules="validator.domicilioReal.numero"
-                              :error="!validControl(validator.domicilioReal.numero, solicitud.entidad.domicilioReal.numero)
-                                && steps[2].touched"
+                              :rules="validator.domicilio.numero"
+                              :error="submitted.steps[2] && !validControl(validator.domicilio.numero, solicitud.entidad.domicilioReal.numero)"
                             >
                             </v-text-field>
                           </v-flex>
@@ -381,9 +387,8 @@
                               single-line
                               bottom
                               v-model="nuevo_contacto.tipo"
-                              :rules="submitContacto ? validator.contacto.tipo : []"
-                              :error="!validControl(validator.contacto.tipo, nuevo_contacto.tipo)
-                                && submitContacto"
+                              :rules="submitted.contacto ? validator.contacto.tipo: []"
+                              :error="submitted.contacto && !validControl(validator.contacto.tipo, nuevo_contacto.tipo)"
                             >
                             </v-select>
                           </v-flex>
@@ -392,9 +397,8 @@
                             <v-text-field
                               label="Valor"
                               v-model="nuevo_contacto.valor"
-                              :rules="submitContacto ? validator.contacto.valor : []"
-                              :error="!validControl(validator.contacto.valor, nuevo_contacto.valor)
-                                && submitContacto"
+                              :rules="submitted.contacto ? validator.contacto.valor: []"
+                              :error="submitted.contacto && !validControl(validator.contacto.valor, nuevo_contacto.valor)"
                             >
                             </v-text-field>
                           </v-flex>
@@ -403,6 +407,8 @@
                             <v-btn light @click="addContacto">Agregar</v-btn>
                           </v-flex>
                         </v-layout>
+
+
                         <v-data-table
                             :headers="headers.contactos"
                             :items="solicitud.entidad.contactos"
@@ -410,7 +416,7 @@
                             class="elevation-1"
                             no-data-text="No hay contactos">
                           <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" class="pa-3">
+                            <th v-for="(header, i) of props.headers" :key="i" class="pa-3">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
@@ -429,7 +435,7 @@
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
-                  <v-btn flat @click.@click.native="prevStep" class="right">Volver</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
 
@@ -450,7 +456,8 @@
                               :items="opciones.incumbencia"
                               v-model="nueva_incumbencia"
                               label="Incumbencias"
-                              :rules="submitIncumbencia ? validator.incumbencia : []"
+                              :rules="submitted.incumbencia ? validator.incumbencia : []"
+                              :error="submitted.incumbencia && !validControl(validator.incumbencia, nueva_incumbencia)"
                             >
                             </v-select>
                           </v-flex>
@@ -468,7 +475,7 @@
                               class="elevation-1"
                               no-data-text="No hay incumbencias">
                             <template slot="headers" slot-scope="props">
-                              <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                              <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
                                 <b>{{ header.text }}</b>
                               </th>
                               <th></th>
@@ -476,14 +483,12 @@
                             <template slot="items" slot-scope="props">
                               <td>{{ getTipoIncumbencia(props.item) }}</td>
                               <td style="width:30px">
-                                <v-btn fab dark small color="blue" @click="removeElem('incumbencias', props.index)">
+                                <v-btn icon small @click="removeElem('incumbencias', props.index)">
                                   <v-icon>delete</v-icon>
                                 </v-btn>
                               </td>
                             </template>
                           </v-data-table>
-
-
                       </v-container>
                     </v-card-text>
                   </v-card>
@@ -541,7 +546,7 @@
                                 :loading="loading"
                                 >
                               <template slot="headers" slot-scope="props">
-                                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
                                   <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
@@ -580,7 +585,7 @@
                                 no-results-text="No se agregaron representates"
                                 >
                               <template slot="headers" slot-scope="props">
-                                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                                <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
                                   <b>{{ header.text }}</b>
                                 </th>
                                 <th></th>
@@ -592,7 +597,7 @@
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
                                   <td>
-                                    <v-btn fab dark small color="blue" @click="borrarRepresentante(props.item.id)">
+                                    <v-btn icon dark small @click="borrarRepresentante(props.item.id)">
                                       <v-icon>delete</v-icon>
                                     </v-btn>
                                   </td>
@@ -643,6 +648,7 @@
 
 <script>
 import axios from '@/axios'
+import * as moment from 'moment'
 import * as utils from '@/utils'
 import rules from '@/rules'
 import * as Model from '@/model'
@@ -669,11 +675,22 @@ const headers = {
 export default {
   name: 'nueva-solicitud-empresa',
   mixins: [ValidatorMixin, NuevaSolicitud],
+  props: ['id'],
+
   data () {
     return {
+      num_steps: 6,
       solicitud: new Model.Solicitud('empresa'),
       nuevo_contacto: new Model.Solicitud(),
       nueva_incumbencia: '',
+      submitted: {
+        steps: [
+          false, false, false, false, false,
+          false, false, false, false
+        ],
+        contacto: false,
+        incumbencia: false
+      },
 
       validator: {
         empresa: {
@@ -682,17 +699,6 @@ export default {
         },
         incumbencia: [ rules.required ]
       },
-
-      steps: [
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false },
-        { touched: false }
-      ],
-
-      submitContacto: false,
-      submitIncumbencia: false,
 
       matriculados: [],
       debouncedUpdate: null,
@@ -735,6 +741,7 @@ export default {
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    
     Promise.all([
       axios.get('/paises'),
       axios.get('/opciones?sort=valor'),
@@ -744,6 +751,65 @@ export default {
       this.paises = r[0].data;
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
+      
+      if (this.id) { 
+        axios.get(`/solicitudes/${this.id}`)
+        .then(r => {          
+              this.solicitud = new Model.Solicitud('empresa');
+              this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
+              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+              
+              this.solicitud.entidad.nombre = r.data.entidad.nombre;          
+              this.solicitud.entidad.cuit = r.data.entidad.cuit;
+              this.solicitud.entidad.fechaInicio = moment(r.data.entidad.fechaInicio).format('DD/MM/YYYY');
+              this.solicitud.entidad.fechaConstitucion = moment(r.data.entidad.fechaConstitucion).format('DD/MM/YYYY');
+              this.solicitud.entidad.tipoEmpresa = this.opciones.empresa.find(i => i.valor == r.data.entidad.tipoEmpresa).id;
+              this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
+              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
+
+              this.solicitud.entidad.domicilioReal.id = r.data.entidad.domicilioReal.id;
+              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;              
+              this.changePais('real', r.data.entidad.domicilioReal);
+              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
+              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
+
+              if (r.data.entidad.domicilioProfesional) {
+                this.solicitud.entidad.domicilioProfesional.id = r.data.entidad.domicilioProfesional.id;
+                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
+                this.changePais('profesional', r.data.entidad.domicilioProfesional);
+                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
+                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
+              }
+
+              if (r.data.entidad.domicilioConstituido) {
+                this.solicitud.entidad.domicilioConstituido.id = r.data.entidad.domicilioConstituido.id;
+                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
+                this.changePais('constituido', r.data.entidad.domicilioConstituido);
+                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
+                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
+              }
+
+              for(let contacto of r.data.entidad.contactos) {
+                let contacto_nuevo = contacto;
+                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+                this.solicitud.entidad.contactos.push(contacto_nuevo);
+              }
+
+              for(let incumbencia of r.data.entidad.incumbencias) {
+                let inc_nueva = this.opciones.incumbencia.find(i => i.valor == incumbencias).id;
+                this.solicitud.entidad.incumbencias.push(inc_nueva);
+              }
+
+              let proms_rep = r.data.entidad.representantes.map(r => 
+                axios.get(`/matriculas/${r.idMatricula}`)
+              )
+              
+              Promise.all(proms_rep)
+              .then(matriculas => {
+                this.solicitud.entidad.representantes = matriculas.map(r => r.data);
+              });
+        })
+      }
     })
     .catch(e => console.error(e));
   },
@@ -766,21 +832,21 @@ export default {
     },
 
     addContacto: function() {
-      this.submitContacto = true;
-       if ( utils.validObject(this.nuevo_contacto, this.validator.contacto) ) {
-         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
-         this.nuevo_contacto = new Model.Solicitud();
-         this.submitContacto = false;
-       }
+      this.submitted.contacto = true;
+      if ( utils.validObject(this.nuevo_contacto, this.validator.contacto) ) {
+        this.submitted.contacto = false;
+        this.solicitud.entidad.contactos.push(this.nuevo_contacto);
+        this.nuevo_contacto = new Model.Solicitud();
+      }
     },
 
     addIncumbencia: function() {
-       this.submitIncumbencia = true;
-       if ( this.validator.incumbencia[0](this.nueva_incumbencia) != 'Dato Obligatorio' ) {
-         this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
-         this.nueva_incumbencia = '';
-         this.submitIncumbencia = false;
-       }
+      this.submitted.incumbencia = true;
+      if ( this.validator.incumbencia[0](this.nueva_incumbencia) != 'Dato Obligatorio' ) {
+        this.submitted.incumbencia = false;
+        this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
+        this.nueva_incumbencia = '';
+      }
     },
 
     prepareSubmit: function() {
@@ -811,7 +877,7 @@ export default {
         return utils.validObject(empresa, this.validator.empresa);
       }
       else if (i == 3) {
-        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilioReal)
+        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilio)
       }
       else return true;
     },

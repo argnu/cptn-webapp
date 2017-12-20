@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from '@/axios';
 import * as utils from '@/utils';
 import rules from '@/rules';
@@ -46,13 +47,8 @@ export default {
         solicitud: {
           fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
         },
-        domicilioReal: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioProfesional: {
-          calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-        },
-        domicilioConstituido: {
+        domicilio: {
+          pais: [rules.required], provincia: [rules.required], departamento: [rules.required], 
           calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
         },
         contacto: {
@@ -63,34 +59,48 @@ export default {
   },
 
   methods: {
-    changePais: function(tipoDomicilio) {
+    changePais: function(tipoDomicilio, domicilio_existente) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
-      let id_pais = this.solicitud.entidad[domicilio].pais;
-      if (id_pais) {
-        axios.get(`/provincias?pais_id=${id_pais}`)
-             .then(r => this.provincias[tipoDomicilio] = r.data)
+      if (this.solicitud.entidad[domicilio].pais) {
+        axios.get(`/provincias?pais_id=${this.solicitud.entidad[domicilio].pais}`)
+             .then(r => {
+               this.provincias[tipoDomicilio] = r.data;
+               if (domicilio_existente) {                 
+                 this.solicitud.entidad[domicilio].provincia = r.data.find(i => i.nombre == domicilio_existente.provincia).id;
+                 this.changeProvincia(tipoDomicilio, domicilio_existente)
+               }
+              })
              .catch(e => console.error(e));
       }
       else this.provincias[tipoDomicilio] = [];
     },
 
-    changeProvincia: function(tipoDomicilio) {
+    changeProvincia: function (tipoDomicilio, domicilio_existente) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
-      let provincia = this.solicitud.entidad[domicilio].provincia;
-      if (provincia) {
-        axios.get(`/departamentos?provincia_id=${provincia}`)
-             .then(r => this.departamentos[tipoDomicilio] = r.data)
+      if (this.solicitud.entidad[domicilio].provincia) {        
+        axios.get(`/departamentos?provincia_id=${this.solicitud.entidad[domicilio].provincia}`)
+             .then(r => {
+               this.departamentos[tipoDomicilio] = r.data;
+               if (domicilio_existente) {
+                 this.solicitud.entidad[domicilio].departamento = r.data.find(i => i.nombre == domicilio_existente.departamento).id;
+                 this.changeDepartamento(tipoDomicilio, domicilio_existente)
+               }
+              })
              .catch(e => console.error(e));
       }
       else this.departamentos[tipoDomicilio] = [];
     },
 
-    changeDepartamento: function(tipoDomicilio) {
+    changeDepartamento: function (tipoDomicilio, domicilio_existente) {
       let domicilio = getTipoDomicilio(tipoDomicilio);
-      let departamento = this.solicitud.entidad[domicilio].departamento;
-      if (departamento) {
-        axios.get(`/localidades?departamento_id=${departamento}`)
-             .then(r => this.localidades[tipoDomicilio] = r.data)
+      if (this.solicitud.entidad[domicilio].departamento) {
+        axios.get(`/localidades?departamento_id=${this.solicitud.entidad[domicilio].departamento}`)
+             .then(r => {
+               this.localidades[tipoDomicilio] = r.data
+               if (domicilio_existente) {
+                 this.solicitud.entidad[domicilio].localidad = r.data.find(i => i.nombre == domicilio_existente.localidad).id;
+               }               
+              })
              .catch(e => console.error(e));
       }
       else this.localidades[tipoDomicilio] = [];
@@ -101,8 +111,8 @@ export default {
     },
 
     nextStep: function() {
-       this.steps[+this.step - 1].touched = true;
-       if (this.validStep(this.step)) this.step = +this.step + 1;
+      Vue.set(this.submitted.steps, this.step-1, true);
+      if (this.validStep(this.step)) this.step = +this.step + 1;
     },
 
     prevStep: function() {

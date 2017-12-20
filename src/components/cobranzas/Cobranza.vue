@@ -29,7 +29,7 @@
                   :items="tipos_pago"
                   v-model="nueva_forma_pago.forma_pago"
                   :rules="submit_forma_pago ? validator.tipo : []"
-                  :error="!validControl(validator.forma_pago, nueva_forma_pago.forma_pago) && submit_forma_pago"
+                  :error="submit_forma_pago & !validControl(validator.tipo, nueva_forma_pago.forma_pago)"
                 >
                 </v-select>
               </v-flex>
@@ -41,7 +41,7 @@
                   v-model="nueva_forma_pago.importe"
                   prefix="$"
                   :rules="submit_forma_pago ? validator.importe : []"
-                  :error="!validControl(validator.importe, nueva_forma_pago.importe) && submit_forma_pago"
+                  :error="submit_forma_pago & !validControl(validator.importe, nueva_forma_pago.importe)"
                 >
                 </v-text-field>
               </v-flex>
@@ -55,14 +55,14 @@
                     label="N° Cheque"
                     v-model="nueva_forma_pago.cheque.numero"
                     :rules="submit_forma_pago ? validator.cheque.numero : []"
-                    :error="!validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero) && submit_forma_pago"
+                    :error="submit_forma_pago & !validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero)"
                   >
                   </v-text-field>
                   <input-fecha
                     label="Fecha Vto"
                     v-model="nueva_forma_pago.cheque.fecha_vencimiento"
                     :rules="submit_forma_pago ? validator.cheque.fecha_vencimiento : []"
-                    :error="!validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento) && submit_forma_pago"
+                    :error="submit_forma_pago & !validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento)"
                   >
                 </input-fecha>
                 </v-flex>
@@ -76,14 +76,14 @@
                     v-model="nueva_forma_pago.cheque.banco"
                     :items="bancos"
                     :rules="submit_forma_pago ? validator.cheque.banco : []"
-                    :error="!validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco) && submit_forma_pago"
+                    :error="submit_forma_pago & !validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco)"
                   >
                 </v-select>
                   <v-text-field
                     label="Titular Cuenta"
                     v-model="nueva_forma_pago.cheque.titular"
                     :rules="submit_forma_pago ? validator.cheque.titular : []"
-                    :error="!validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular) && submit_forma_pago"
+                    :error="submit_forma_pago & !validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular)"
                   >
                   </v-text-field>
                 </v-flex>

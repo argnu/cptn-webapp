@@ -23,6 +23,7 @@ export class Subsidiario {
 
 export class Contacto {
   constructor() {
+    this.id = null;
     this.tipo = '';
     this.valor = '';
   }
@@ -47,7 +48,7 @@ export class Profesional {
     this.cuit = '';
     this.sexo = '';
     this.estadoCivil = '';
-    this.localidadNacimiento = '';
+    this.lugarNacimiento = '';
     this.fechaNacimiento = '';
     this.nacionalidad = '';
     this.observaciones = '';
