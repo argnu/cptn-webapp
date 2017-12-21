@@ -153,7 +153,8 @@
               <v-list-tile-title>
                 <v-icon class="text--darken-2">print</v-icon>
                 <span class="ml-2">Imprimir</span>
-
+              </v-list-tile-title>
+            </v-list-tile>
             <v-list-tile v-show="props.item.estado != 'aprobada'" @click="editSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="blue--text text--darken-2">edit</v-icon>

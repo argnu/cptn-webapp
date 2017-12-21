@@ -137,6 +137,7 @@ import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import Store from '@/Store'
+import { impresionVolante } from '@/utils/PDFUtils'
 
 const headers = [
   { text: 'Fecha' },
@@ -296,6 +297,9 @@ export default {
       axios.post('volantespago', volante)
       .then(r => {
         console.info(`Volante ${r.data.id} generado!`);
+        console.log(r.data);
+        let pdf = impresionVolante(r.data);
+        pdf.save(`Volante ${r.data.id}.pdf`);
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;        

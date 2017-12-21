@@ -14,13 +14,14 @@ export function impresionVolante(volante) {
   doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
   doc.setFontSize(12);
-  doc.text(130, 45, 'Fecha de Emision');
+  doc.text(120, 45, 'Fecha de Emision');
   doc.text(160, 45, getSimpleFormatedDate(volante.fecha));
-  doc.text(130, 50, 'Fecha Expiración ');
+  doc.text(120, 50, 'Fecha Expiración ');
   doc.text(160, 50, getSimpleFormatedDate(volante.fecha_vencimiento));
   doc.setFontSize(10);
-  doc.text(20, 45, `N° Matricula`);
-  doc.text(20, 50, `Nombre`);
+  // doc.text(20, 45, `N° Matricula ${volante.matricula.numero}`);
+  // doc.text(20, 50, `Nombre ${volante.matricula.nombre}`);
+  // doc.text(20, 55, `Apellido ${volante.matricula.apellido}`);
   return doc;
 }
 

@@ -1172,20 +1172,6 @@ export default {
     },
 
     submit: function() {
-<<<<<<< HEAD
-      axios.post('/solicitudes', this.solicitud)
-        .then(r => {
-          console.log(this.solicitud);
-          if (r.status != 201) {
-            this.submitError();
-          }
-          this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
-          this.$router.push('/solicitudes/lista');
-        })
-        .catch(e => this.submitError());
-=======
       if (!this.id) {
         axios.post('/solicitudes', this.solicitud)
           .then(r => {
@@ -1212,7 +1198,6 @@ export default {
           })
           .catch(e => this.submitError());        
       }
->>>>>>> 6db4ffe091cfab7ca9da4f1741a94e9db745d40b
     },
     imprimir:function(){
       window.print();
