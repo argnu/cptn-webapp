@@ -107,7 +107,7 @@
 
     <br>
 
-    <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay=false>
+    <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
         <v-toolbar dark class="blue">
           <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>

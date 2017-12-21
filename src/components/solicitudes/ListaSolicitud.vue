@@ -1,7 +1,7 @@
 <template>
 <v-container class="grey lighten-3">
 
-  <v-dialog v-model="show_validar" persistent max-width="50%">
+<!--   <v-dialog v-model="show_validar" persistent max-width="50%">
     <v-toolbar class="blue darken-3">
       <v-toolbar-title class="white--text">Aprobar Matrícula</v-toolbar-title>
     </v-toolbar>
@@ -42,7 +42,7 @@
         </v-container>
       </v-card-text>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
 
 
   <v-toolbar class="blue darken-3">
@@ -167,18 +167,69 @@
       </template>
     </v-data-table>
   </v-card>
+
+  <v-dialog v-model="show_validar" fullscreen transition="dialog-bottom-transition" :overlay="false">
+    <v-card>
+      <v-toolbar dark class="blue">
+        <v-toolbar-title class="white--text">Aprobación de Matrícula</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="show_validar = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <v-layout row>
+        <v-flex xs4 class="ma-4">
+          <input-fecha 
+            v-model="matricula.fechaResolucion" 
+            label="Fecha de Resolución" 
+            :rules="validator.matricula.fechaResolucion"
+          >
+          </input-fecha>
+        </v-flex>
+
+        <v-flex xs4 class="ma-4">
+          <v-text-field 
+            v-model="matricula.numeroActa" 
+            label="N° Acta" 
+            :rules="validator.matricula.numeroActa"
+          >
+          </v-text-field>
+        </v-flex>
+
+        <v-flex xs4 class="ma-4">
+          <input-fecha 
+            v-model="fecha_pago" 
+            label="Fecha de Pago" 
+          >
+          </input-fecha>
+        </v-flex>        
+      </v-layout>
+
+      <cobranza
+        :fecha="fecha_pago"
+        :importe="123"
+        @cancelar="show_validar = false"
+        @aceptar="aprobar"
+      >
+      </cobranza>
+    </v-card>
+  </v-dialog>
+
 </v-container>
 </template>
 
 <script>
-import axios from '@/axios';
-import * as _ from 'lodash';
-import * as utils from '@/utils';
-import rules from '@/rules';
-import InputFecha from '@/components/base/InputFecha';
-import { Matricula } from '@/model';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import * as moment from 'moment'
+import axios from '@/axios'
+import * as _ from 'lodash'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import InputFecha from '@/components/base/InputFecha'
+import { Matricula } from '@/model'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import { impresionSolicitud } from '@/utils/PDFUtils'
+import Cobranza from '@/components/cobranzas/Cobranza'
 
 const select_items = {
   estado: [
@@ -208,6 +259,7 @@ export default {
   mixins: [ValidatorMixin],
   data() {
     return {
+      fecha_pago: moment().format('DD/MM/YYYY'),
       matricula: new Matricula(),
       show_validar: false,
       totalItems: 0,
@@ -326,28 +378,30 @@ export default {
           .catch(e => console.error(e));
     },
 
-    validarMatricula: function() {
+    aprobar: function() {
       this.submitValidacion = true;
-      if (utils.validObject(this.matricula, this.validator.matricula)) {
-        axios.post('/matriculas', this.matricula)
-          .then(r => {
-            this.updateSolicitudes();
-            this.matricula = new Matricula();
-            this.show_validar = false;
-            this.submitValidacion = false;
-          })
-          .catch(e => console.error(e));
-      }
+      alert('Matricula aprobada!')
+      // if (utils.validObject(this.matricula, this.validator.matricula)) {
+      //   axios.post('/matriculas', this.matricula)
+      //     .then(r => {
+      //       this.updateSolicitudes();
+      //       this.matricula = new Matricula();
+      //       this.show_validar = false;
+      //       this.submitValidacion = false;
+      //     })
+      //     .catch(e => console.error(e));
+      // }
     },
 
     editSolicitud: function(id) {
       let tipo = this.filtros.tipoEntidad == 'profesional' ? 'profesionales' : 'empresas';
       this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
-    }
+    },
   },
 
   components: {
-    InputFecha
+    InputFecha,
+    Cobranza
   }
 
 }
