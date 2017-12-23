@@ -1,19 +1,27 @@
 <template>
 <v-container class="grey lighten-3">
 
-<!--   <v-dialog v-model="show_validar" persistent max-width="50%">
+  <v-dialog v-model="show_validar" persistent max-width="50%">
     <v-toolbar class="blue darken-3">
-      <v-toolbar-title class="white--text">Aprobar Matrícula</v-toolbar-title>
+      <v-toolbar-title class="white--text">Aprobar Solicitud de Matriculación</v-toolbar-title>
     </v-toolbar>
     <v-card>
       <v-card-text class="grey lighten-4">
         <v-container>
+          <v-layout>
+            <v-flex xs12 class="mx-4">
+              N° Matrícula: {{ num_matricula_nueva }}
+            </v-flex>
+          </v-layout>
+
           <v-layout row>
             <v-flex xs6 class="ma-4">
               <input-fecha 
                 v-model="matricula.fechaResolucion" 
                 label="Fecha de Resolución" 
                 :rules="validator.matricula.fechaResolucion"
+                :error="submitValidacion 
+                  && !validControl(validator.matricula.fechaResolucion, matricula.fechaResolucion)"
               >
               </input-fecha>
             </v-flex>
@@ -23,13 +31,15 @@
                 v-model="matricula.numeroActa" 
                 label="N° Acta" 
                 :rules="validator.matricula.numeroActa"
+                :error="submitValidacion 
+                  && !validControl(validator.matricula.numeroActa, matricula.numeroActa)"
               >
               </v-text-field>
             </v-flex>
           </v-layout>
           <v-layout row>
             <v-flex xs12>
-              <v-btn class="right green white--text" @click.native="validarMatricula">
+              <v-btn class="right green white--text" @click.native="aprobar">
                 Aprobar
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
@@ -42,7 +52,7 @@
         </v-container>
       </v-card-text>
     </v-card>
-  </v-dialog> -->
+  </v-dialog>
 
 
   <v-toolbar class="blue darken-3">
@@ -149,7 +159,7 @@
                 <span class="ml-2">Aprobar</span>
               </v-list-tile-title>
             </v-list-tile>
-            <v-list-tile v-show="props.item.estado == 'pendiente'" @click="imprimirSolicitud(props.item.id)">
+            <v-list-tile @click="imprimirSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="text--darken-2">print</v-icon>
                 <span class="ml-2">Imprimir</span>
@@ -168,54 +178,6 @@
     </v-data-table>
   </v-card>
 
-  <v-dialog v-model="show_validar" fullscreen transition="dialog-bottom-transition" :overlay="false">
-    <v-card>
-      <v-toolbar dark class="blue">
-        <v-toolbar-title class="white--text">Aprobación de Matrícula</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon @click="show_validar = false">
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-toolbar>
-
-      <v-layout row>
-        <v-flex xs4 class="ma-4">
-          <input-fecha 
-            v-model="matricula.fechaResolucion" 
-            label="Fecha de Resolución" 
-            :rules="validator.matricula.fechaResolucion"
-          >
-          </input-fecha>
-        </v-flex>
-
-        <v-flex xs4 class="ma-4">
-          <v-text-field 
-            v-model="matricula.numeroActa" 
-            label="N° Acta" 
-            :rules="validator.matricula.numeroActa"
-          >
-          </v-text-field>
-        </v-flex>
-
-        <v-flex xs4 class="ma-4">
-          <input-fecha 
-            v-model="fecha_pago" 
-            label="Fecha de Pago" 
-          >
-          </input-fecha>
-        </v-flex>        
-      </v-layout>
-
-      <cobranza
-        :fecha="fecha_pago"
-        :importe="123"
-        @cancelar="show_validar = false"
-        @aceptar="aprobar"
-      >
-      </cobranza>
-    </v-card>
-  </v-dialog>
-
 </v-container>
 </template>
 
@@ -230,6 +192,7 @@ import { Matricula } from '@/model'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 import Cobranza from '@/components/cobranzas/Cobranza'
+import Store from '@/Store'
 
 const select_items = {
   estado: [
@@ -259,9 +222,10 @@ export default {
   mixins: [ValidatorMixin],
   data() {
     return {
-      fecha_pago: moment().format('DD/MM/YYYY'),
-      matricula: new Matricula(),
+      global_state: Store.state,
+      matricula: new Matricula(Store.state.delegacion),
       show_validar: false,
+      num_matricula_nueva: null,
       totalItems: 0,
       loading: false,
       pagination: {
@@ -364,8 +328,13 @@ export default {
     },
 
     selectSolicitud: function(id) {
-      this.show_validar = true;
-      this.matricula.solicitud = id;
+      axios('/matriculas/nuevo_numero')
+      .then(r => {
+        this.num_matricula_nueva = r.data;
+        this.show_validar = true;
+        this.matricula.solicitud = id;
+      })
+      .catch(e => console.error(e));
     },
 
     imprimirSolicitud: function(id) {
@@ -380,17 +349,19 @@ export default {
 
     aprobar: function() {
       this.submitValidacion = true;
-      alert('Matricula aprobada!')
-      // if (utils.validObject(this.matricula, this.validator.matricula)) {
-      //   axios.post('/matriculas', this.matricula)
-      //     .then(r => {
-      //       this.updateSolicitudes();
-      //       this.matricula = new Matricula();
-      //       this.show_validar = false;
-      //       this.submitValidacion = false;
-      //     })
-      //     .catch(e => console.error(e));
-      // }
+      if (utils.validObject(this.matricula, this.validator.matricula)) {
+        axios.post('/matriculas', this.matricula)
+          .then(r => {
+            this.updateSolicitudes();
+            this.matricula = new Matricula();
+            this.show_validar = false;
+            this.submitValidacion = false;
+            this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;            
+          })
+          .catch(e => console.error(e));
+      }
     },
 
     editSolicitud: function(id) {

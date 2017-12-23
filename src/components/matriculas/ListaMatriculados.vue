@@ -70,6 +70,7 @@
           <th v-for="header of props.headers" class="pa-3">
             <b>{{ header.text }}</b>
           </th>
+          <th></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
@@ -79,7 +80,7 @@
           </v-btn>
         </td>
         <td>{{ props.item.numeroMatricula }}</td>
-        <td>{{ props.item.estado | upperFirst }}</td>
+        <td>{{ props.item.estado }}</td>
                 <template v-if="filtros.tipoEntidad == 'profesional'">
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.apellido }}</td>
@@ -89,21 +90,31 @@
                   <td>{{ props.item.entidad.nombre }}</td>
                   <td>{{ props.item.entidad.cuit }}</td>
                 </template>
-      <!-- <td>
-        <v-menu>
-          <v-list>
-            <v-list-tile @click="verDetalle(props.item.id)">
-              <v-list-tile-title>Ver Detalle</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="verCuenta(props.item.id)">
-              <v-list-tile-title>Resumen de Cuenta</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="irPermiso(props.item.id)">
-              <v-list-tile-title>Legajo Técnico</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-      </td> -->
+        <td>
+          <v-menu>
+            <v-btn icon slot="activator">
+              <v-icon class="blue--text">more_vert</v-icon>
+            </v-btn>            
+            <v-list>
+              <v-list-tile 
+                v-if="props.item.estado != 'Habilitado'" 
+                @click="habilitar(props.item.id)"
+              >
+                <v-icon class="green--text mr-2">check_circle</v-icon>
+                <v-list-tile-title>Habilitar</v-list-tile-title>
+              </v-list-tile>
+              <!-- <v-list-tile @click="verDetalle(props.item.id)">
+                <v-list-tile-title>Ver Detalle</v-list-tile-title>
+              </v-list-tile>
+              <v-list-tile @click="verCuenta(props.item.id)">
+                <v-list-tile-title>Resumen de Cuenta</v-list-tile-title>
+              </v-list-tile>
+              <v-list-tile @click="irPermiso(props.item.id)">
+                <v-list-tile-title>Legajo Técnico</v-list-tile-title>
+              </v-list-tile> -->
+            </v-list>
+          </v-menu>
+        </td>
       </template>
     </v-data-table>
   </v-card>
@@ -292,6 +303,15 @@ export default {
     verMatricula: function(id) {
       this.$router.push(`/matriculas/${id}`);
     },
+
+    habilitar: function(id) {
+      if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
+        // 13 ES ESTADO 'Habilitado'
+        axios.patch(`/matriculas/${this.id}`, { estado: 13 })
+        .then(r => this.update())
+        .catch(e => console.error(e));
+      }
+    }
 
   },
 

@@ -1,7 +1,10 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
 
-    <datos-basicos :matricula="matricula">
+    <datos-basicos 
+      :matricula="matricula"
+      @habilitar="habilitar"
+    >
     </datos-basicos>
 
     <br>
@@ -70,15 +73,24 @@ export default {
   },
 
   created: function() {
-    axios.get(`/matriculas/${this.id_matricula}`)
-         .then(r => {
-           this.matricula = r.data;
-         })
-         .catch(e => console.error(e));
-
+    this.update();
   },
 
   methods: {
+    update: function() {
+      axios.get(`/matriculas/${this.id_matricula}`)
+      .then(r => {
+        this.matricula = r.data;
+      })
+      .catch(e => console.error(e));
+    },
+
+    habilitar: function() {
+      // 13 ES ESTADO 'Habilitado'
+      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
+      .then(r => this.update())
+      .catch(e => console.error(e));
+    }
   },
 
   components: {

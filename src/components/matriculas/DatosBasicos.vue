@@ -7,17 +7,26 @@
           <v-card class="grey lighten-4">
             <v-card-text>
               <v-layout row wrap>
-                <v-flex xs3>
+                <v-flex xs4>
                   N° Matrícula: {{ matricula.numeroMatricula }}
                 </v-flex>
-                <v-flex xs3>
+                <v-flex xs4>
                   Apellido: {{ matricula.entidad.apellido }}
                 </v-flex>
-                <v-flex xs3>
+                <v-flex xs4>
                   Nombre: {{ matricula.entidad.nombre }}
                 </v-flex>
-                <v-flex xs3>
+              </v-layout>
+
+              <v-layout class="mt-4">
+                <v-flex xs4 >
                   Estado: {{ matricula.estado }}
+                </v-flex>
+                <v-flex v-if="matricula.estado != 'Habilitada'">
+                  <v-btn class="right green white--text" @click.native="habilitar">
+                    Hablilitar
+                    <v-icon dark right>check_circle</v-icon>
+                  </v-btn>
                 </v-flex>
               </v-layout>
             </v-card-text>
@@ -30,13 +39,10 @@
 export default {
   name: 'DatosBasicos',
   props: ['matricula'],
-
-  data () {
-    return {
-    }
-  },
-
   methods: {
+    habilitar: function() {
+      this.$emit('habilitar');
+    }
   },
 
 }

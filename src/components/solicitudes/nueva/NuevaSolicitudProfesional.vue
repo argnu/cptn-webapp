@@ -75,6 +75,7 @@
                         v-model="solicitud.entidad.dni"
                         :rules="validator.profesional.dni"
                         tabindex="5"
+                        @change="chgDni"
                       >
                       </v-text-field>
 
@@ -1037,84 +1038,9 @@ export default {
               this.solicitud = new Solicitud('profesional');
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
-              
-              this.solicitud.entidad.nombre = r.data.entidad.nombre;
-              this.solicitud.entidad.apellido = r.data.entidad.apellido;
-              this.solicitud.entidad.dni = r.data.entidad.dni;
-              this.solicitud.entidad.cuit = r.data.entidad.cuit;
-              this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == r.data.entidad.sexo).id;
-              this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == r.data.entidad.estadoCivil).id;
-              this.solicitud.entidad.fechaNacimiento = moment(r.data.entidad.fechaNacimiento).format('DD/MM/YYYY');
-              this.solicitud.entidad.nacionalidad = r.data.entidad.nacionalidad;
-              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == r.data.entidad.condafip).id;
-              
-              this.solicitud.entidad.domicilioReal = r.data.entidad.domicilioReal.id;
-              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;
-              this.changePais('real', r.data.entidad.domicilioReal);
-              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
-              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
-
-              if (r.data.entidad.domicilioProfesional) {
-                this.solicitud.entidad.domicilioProfesional = r.data.entidad.domicilioProfesional.id;
-                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
-                this.changePais('profesional', r.data.entidad.domicilioProfesional);
-                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
-                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
-              }
-
-              if (r.data.entidad.domicilioConstituido) {
-                this.solicitud.entidad.domicilioConstituido = r.data.entidad.domicilioConstituido.id;
-                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
-                this.changePais('constituido', r.data.entidad.domicilioConstituido);
-                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
-                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
-              }
-
-              for(let contacto of r.data.entidad.contactos) {
-                let contacto_nuevo = contacto;
-                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
-                this.solicitud.entidad.contactos.push(contacto_nuevo);
-              }
-
-              for(let formacion of r.data.entidad.formaciones) {
-                formacion_nueva.id = formacion.id;
-                formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-                formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
-                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
-                this.solicitud.entidad.formaciones.push(formacion_nueva);
-              }
-
-              this.solicitud.entidad.relacionDependencia = r.data.entidad.relacionDependencia;
-              this.solicitud.entidad.empresa = r.data.entidad.empresa;
-              this.solicitud.entidad.independiente = r.data.entidad.independiente;
-              this.solicitud.entidad.serviciosPrestados = r.data.entidad.serviciosPrestados;
-              this.solicitud.entidad.poseeCajaPrevisional = r.data.entidad.poseeCajaPrevisional;
-              this.solicitud.entidad.nombreCajaPrevisional = r.data.entidad.nombreCajaPrevisional;
-
-
-              for(let beneficiario of r.data.entidad.beneficiarios) {
-                beneficiario_nuevo.id = beneficiario.id;
-                beneficiario_nuevo.dni = beneficiario.dni;
-                beneficiario_nuevo.apellido = beneficiario.apellido;
-                beneficiario_nuevo.nombre = beneficiario.nombre;
-                beneficiario_nuevo.vinculo = beneficiario.vinculo;
-                beneficiario_nuevo.invalidez = beneficiario.invalidez;
-                beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
-                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
-                this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
-              }              
-
-              for(let subsidiario of r.data.entidad.subsidiarios) {
-                subsidiario_nuevo.id = subsidiario.id;
-                subsidiario_nuevo.dni = subsidiario.dni;
-                subsidiario_nuevo.apellido = subsidiario.apellido;
-                subsidiario_nuevo.nombre = subsidiario.nombre;
-                subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
-                this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
-              }             
-
               this.solicitud.exencionArt10 = r.data.exencionArt10;
               this.solicitud.exencionArt6 = r.data.exencionArt6;           
+              this.fillProfesional(r.data.entidad);
           });
         }
       })
@@ -1123,6 +1049,92 @@ export default {
 
 
   methods: {
+    fillProfesional: function(entidad) {
+      this.solicitud.entidad.id = entidad.id;
+      this.solicitud.entidad.nombre = entidad.nombre;
+      this.solicitud.entidad.apellido = entidad.apellido;
+      this.solicitud.entidad.dni = entidad.dni;
+      this.solicitud.entidad.cuit = entidad.cuit;
+      this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo).id;
+      this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
+      this.solicitud.entidad.fechaNacimiento = moment(entidad.fechaNacimiento).format('DD/MM/YYYY');
+      this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
+      this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
+      
+      this.solicitud.entidad.domicilioReal.id = entidad.domicilioReal.id;
+      this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == entidad.domicilioReal.pais).id;
+      this.changePais('real', entidad.domicilioReal);
+      this.solicitud.entidad.domicilioReal.calle = entidad.domicilioReal.calle;
+      this.solicitud.entidad.domicilioReal.numero = entidad.domicilioReal.numero;
+
+      if (entidad.domicilioProfesional) {
+        this.solicitud.entidad.domicilioProfesional.id = entidad.domicilioProfesional.id;
+        this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == entidad.domicilioProfesional.pais).id;
+        this.changePais('profesional', entidad.domicilioProfesional);
+        this.solicitud.entidad.domicilioProfesional.calle = entidad.domicilioProfesional.calle;
+        this.solicitud.entidad.domicilioProfesional.numero = entidad.domicilioProfesional.numero;                
+      }
+
+      if (entidad.domicilioConstituido) {
+        this.solicitud.entidad.domicilioConstituido.id = entidad.domicilioConstituido.id;
+        this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == entidad.domicilioConstituido.pais).id;
+        this.changePais('constituido', entidad.domicilioConstituido);
+        this.solicitud.entidad.domicilioConstituido.calle = entidad.domicilioConstituido.calle;
+        this.solicitud.entidad.domicilioConstituido.numero = entidad.domicilioConstituido.numero;                
+      }
+
+      for(let contacto of entidad.contactos) {
+        let contacto_nuevo = contacto;
+        contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+        this.solicitud.entidad.contactos.push(contacto_nuevo);
+      }
+
+      for(let formacion of entidad.formaciones) {
+        formacion_nueva.id = formacion.id;
+        formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
+        formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
+        formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+        this.solicitud.entidad.formaciones.push(formacion_nueva);
+      }
+
+      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
+      this.solicitud.entidad.empresa = entidad.empresa;
+      this.solicitud.entidad.independiente = entidad.independiente;
+      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
+      this.solicitud.entidad.poseeCajaPrevisional = entidad.poseeCajaPrevisional;
+      this.solicitud.entidad.nombreCajaPrevisional = entidad.nombreCajaPrevisional;
+
+
+      for(let beneficiario of entidad.beneficiarios) {
+        beneficiario_nuevo.id = beneficiario.id;
+        beneficiario_nuevo.dni = beneficiario.dni;
+        beneficiario_nuevo.apellido = beneficiario.apellido;
+        beneficiario_nuevo.nombre = beneficiario.nombre;
+        beneficiario_nuevo.vinculo = beneficiario.vinculo;
+        beneficiario_nuevo.invalidez = beneficiario.invalidez;
+        beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
+        formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+        this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
+      }              
+
+      for(let subsidiario of entidad.subsidiarios) {
+        subsidiario_nuevo.id = subsidiario.id;
+        subsidiario_nuevo.dni = subsidiario.dni;
+        subsidiario_nuevo.apellido = subsidiario.apellido;
+        subsidiario_nuevo.nombre = subsidiario.nombre;
+        subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
+        this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
+      }
+    },
+
+    chgDni: function() {
+      axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      .then(r => {
+        if (r.data.length) this.fillProfesional(r.data[0]);
+      })
+      .catch(e => console.error(e));
+    },
+
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
     },
