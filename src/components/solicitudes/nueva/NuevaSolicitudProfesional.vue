@@ -87,7 +87,6 @@
                         item-value="id"
                         v-model="solicitud.entidad.sexo"
                         label="Sexo"
-                        autocomplete
                         single-line bottom
                         :rules="validator.profesional.sexo"
                         :error="submitted.steps[1] && !validControl(validator.profesional.sexo, solicitud.entidad.sexo)"
@@ -168,6 +167,31 @@
                         :error="submitted.steps[1] && !validControl(validator.profesional.condafip, solicitud.entidad.condafip)"
                       >
                       </v-select>                      
+                    </v-flex>
+                  </v-layout>
+
+                  <v-layout row>
+                    <v-flex xs12 class="mx-4">
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td style="padding-right:10px;padding-bottom:20px">
+                              Foto:
+                            </td>
+                            <td style="padding-bottom:20px">
+                              <input type="file"> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding-right:10px">
+                              Firma:
+                            </td>
+                            <td>
+                              <input type="file"> 
+                            </td>
+                          </tr>
+                        </tbody> 
+                      </table>
                     </v-flex>
                   </v-layout>
                 </v-card-text>

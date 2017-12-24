@@ -37,6 +37,18 @@
               </v-text-field>
             </v-flex>
           </v-layout>
+
+          <v-layout row>
+            <v-flex class="ml-4">
+              <v-checkbox 
+                label="Generar Boleta de Inscripción" 
+                v-model="matricula.generar_boleta" 
+                color="primary"
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+
           <v-layout row>
             <v-flex xs12>
               <v-btn class="right green white--text" @click.native="aprobar">
