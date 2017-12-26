@@ -179,7 +179,7 @@
                               Foto:
                             </td>
                             <td style="padding-bottom:20px">
-                              <input type="file" ref="archivo_foto"> 
+                              <input type="file" ref="archivo_foto" name="foto"> 
                             </td>
                           </tr>
                           <tr>
@@ -187,7 +187,7 @@
                               Firma:
                             </td>
                             <td>
-                              <input type="file" ref="archivo_firma"> 
+                              <input type="file" ref="archivo_firma" name="firma"> 
                             </td>
                           </tr>
                         </tbody> 
@@ -1212,23 +1212,24 @@ export default {
       if (this.$refs.archivo_foto.files[0]) 
         form_data.append('foto', this.$refs.archivo_foto.files[0]);      
       if (this.$refs.archivo_firma.files[0]) 
-        form_data.append('firma', this.$refs.archivo_foto.files[0]);      
+        form_data.append('firma', this.$refs.archivo_firma.files[0]);      
       form_data.append('solicitud', JSON.stringify(this.solicitud));
+      return form_data;
     },
 
     submit: function() {
       if (!this.id) {
-        // axios.post('/solicitudes', this.makeFormData())
-        //   .then(r => {
-        //     if (r.status != 201) {
-        //       this.submitError();
-        //     }
-        //     this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-        //     this.global_state.snackbar.color = 'success';
-        //     this.global_state.snackbar.show = true;
-        //     this.$router.replace('/solicitudes/lista');
-        //   })
-        //   .catch(e => this.submitError());
+        axios.post('/solicitudes', this.makeFormData())
+          .then(r => {
+            if (r.status != 201) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());
       }
       else {
         axios.put(`/solicitudes/${this.id}`, this.solicitud)

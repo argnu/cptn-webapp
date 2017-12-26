@@ -61,7 +61,7 @@ export class Profesional {
     this.independiente = false;
     this.empresa = '';
     this.serviciosPrestados = '';
-    this.poseeCajaPrevisional = "true";
+    this.poseeCajaPrevisional = false;
     this.nombreCajaPrevisional = '';
     this.beneficiarios = [];
     this.subsidiarios = [];
