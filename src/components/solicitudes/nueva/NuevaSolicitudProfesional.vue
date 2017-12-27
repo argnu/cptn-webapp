@@ -693,13 +693,16 @@
                     <v-flex xs6 class="ma-4">
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
-                      <v-text-field 
-                        label="Vínculo" 
+                      <v-select
+                        label="Vínculo"
+                        :items="opciones.vinculo"
+                        item-text="valor"
+                        item-value="id"
                         v-model="nuevo_beneficiario.vinculo" 
                         :rules="submitted.beneficiario ? validator.beneficiario.vinculo : []"
                         :error="submitted.beneficiario && !validControl(validator.beneficiario.vinculo, nuevo_beneficiario.vinculo)"
                       >
-                      </v-text-field>
+                      </v-select>
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
                       </v-checkbox>
                     </v-flex>

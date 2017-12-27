@@ -7,7 +7,7 @@
           <v-card class="grey lighten-4">
             <v-card-text>
               <v-layout row wrap>
-                <v-flex xs2>
+                <v-flex xs2 class="ml-4">
                   <v-avatar
                     v-if="matricula.entidad.foto"
                     size="100px"
@@ -20,31 +20,29 @@
                   N° Matrícula: {{ matricula.numeroMatricula }} <br> <br>
                   Estado: {{ matricula.estado }}
                 </v-flex>
-                <v-flex xs3>
+                <v-flex xs2>
                   Apellido: {{ matricula.entidad.apellido }} <br> <br>
                 </v-flex>
-                <v-flex xs3>
+                <v-flex xs2>
                   Nombre: {{ matricula.entidad.nombre }} <br> <br>                 
                 </v-flex>
-                <v-flex xs1>
-                  <v-avatar
-                    v-if="matricula.entidad.firma"
-                    size="50px"
-                    class="grey lighten-4"
+                <v-flex xs1>                    
+                  <img 
+                    v-if="matricula.entidad.firma" 
+                    :src="matricula.entidad.firma" 
+                    alt="Firma"
                   >
-                    <img :src="matricula.entidad.firma" alt="Firma">
-                  </v-avatar>                   
                 </v-flex>
               </v-layout>
 
-              <v-layout row>
+              <!-- <v-layout row class="mt-4">
                 <v-flex xs12>
                   <v-btn class="right green white--text" @click.native="habilitar">
                     Hablilitar
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>                  
                 </v-flex>
-              </v-layout>
+              </v-layout> -->
             </v-card-text>
           </v-card>
       </v-flex>

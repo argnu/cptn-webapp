@@ -666,6 +666,7 @@ export default {
       if (this.id_legajo) {
         return axios.get(`/legajos/${this.id_legajo}`)
               .then(r => {
+                
                   this.legajo = r.data;
                   this.legajo.comitente.tipo = '';
                   this.paises = [this.legajo.domicilio.pais];
