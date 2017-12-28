@@ -584,6 +584,7 @@ const Legajo = (matricula) => ({
   matricula,
   aporte_bruto: null,
   aporte_neto: null,
+  aporte_neto_bonificacion: null,
   cantidad_planos: null,
   comitente: Comitente(),
   domicilio: new Domicilio(),
@@ -732,7 +733,6 @@ export default {
     },
 
     submit: function() {
-      console.log(JSON.stringify(this.legajo));
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              if (r.status != 201) {

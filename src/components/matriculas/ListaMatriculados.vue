@@ -104,22 +104,14 @@
                 <v-list-tile-title>Habilitar</v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile 
+              <!-- <v-list-tile 
                 v-if="props.item.estado == 'Habilitado'" 
                 @click="deshabilitar(props.item.id)"
               >
                 <v-icon class="red--text mr-2">thumb_down</v-icon>
                 <v-list-tile-title>Deshabilitar por Res.</v-list-tile-title>
-              </v-list-tile>
-              <!-- <v-list-tile @click="verDetalle(props.item.id)">
-                <v-list-tile-title>Ver Detalle</v-list-tile-title>
-              </v-list-tile>
-              <v-list-tile @click="verCuenta(props.item.id)">
-                <v-list-tile-title>Resumen de Cuenta</v-list-tile-title>
-              </v-list-tile>
-              <v-list-tile @click="irPermiso(props.item.id)">
-                <v-list-tile-title>Legajo Técnico</v-list-tile-title>
               </v-list-tile> -->
+              
             </v-list>
           </v-menu>
         </td>

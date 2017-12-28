@@ -25,3 +25,16 @@ export const Subsidiarios = [
     { text: 'DNI', value: 'dni' },
     { text: 'Porcentaje', value: 'porcentaje' }
   ];
+
+export const Incumbencias = [
+    { text: 'Nombre', value: 'nombre' }
+  ];
+
+export const Representantes = [
+    { text: 'N° Matrícula', value: 'numero_matricula' },
+    { text: 'DNI', value: 'dni' },
+    { text: 'Apellido', value: 'apellido' },
+    { text: 'Nombre', value: 'nombre' },
+    { text: 'Fecha Inicio', value: 'fecha_inicio' },
+    { text: 'Fecha Fin', value: 'fecha_fin' }
+  ];

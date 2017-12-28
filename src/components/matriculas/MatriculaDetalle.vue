@@ -32,7 +32,47 @@
 
         <br>
 
-        <v-expansion-panel expand>
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
+          <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
+            <div slot="header"><b>Datos de la Empresa</b></div>
+            <v-card >
+              <v-card-text>
+                <v-layout row wrap class="mx-5">
+                  <v-flex xs6>
+                    <div class="mb-3">
+                      Nombre: {{ matricula.entidad.nombre }}
+                    </div>
+                    <div class="mb-3">
+                      CUIT: {{ matricula.entidad.cuit }}
+                    </div>
+                    <div class="mb-3">
+                      Fecha de Constitución: {{ matricula.entidad.fechaConstitucion | fecha }}
+                    </div>
+                    <div>
+                      Fecha de Inicio de Actividades: {{ matricula.entidad.fechaInicio | fecha }}
+                    </div>
+                  </v-flex>
+
+                  <v-flex xs6>
+                    <div class="mb-3">
+                      Tipo de Empresa: {{ matricula.entidad.tipoEmpresa }}
+                    </div>
+                    <div class="mb-3">
+                      Tipo de Sociedad: {{ matricula.entidad.tipoSociedad }}
+                    </div>
+                    <div>
+                      Condición AFIP: {{ matricula.entidad.condafip }}
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <br>
+
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Datos del Profesional</b></div>
             <v-card >
@@ -159,7 +199,7 @@
                   no-data-text="No hay contactos"
                 >
                   <template slot="headers" slot-scope="props">
-                          <th v-for="header of props.headers" class="pa-3">
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
                             <b>{{ header.text }}</b>
                           </th>
                         </template>
@@ -175,7 +215,7 @@
 
         <br>
 
-        <v-expansion-panel expand>
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.formaciones" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Formaciones</b></div>
             <v-card class="white">
@@ -188,7 +228,7 @@
                   no-data-text="No hay formaciones"
                 >
                   <template slot="headers" slot-scope="props">
-                  <th v-for="header of props.headers" class="pa-3">
+                  <th v-for="header of props.headers" :key="header.value" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
@@ -206,7 +246,7 @@
 
         <br>
 
-        <v-expansion-panel expand>
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.caja" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Caja Previsional</b></div>
             <v-card class="white">
@@ -226,7 +266,7 @@
                   no-data-text="No hay beneficiarios"
                 >
                   <template slot="headers" slot-scope="props">
-                  <th v-for="header of props.headers" class="pa-3">
+                  <th v-for="header of props.headers" :key="header.value" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
@@ -246,7 +286,7 @@
 
         <br>
 
-        <v-expansion-panel expand>
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.subsidiarios" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Subsidiarios</b></div>
             <v-card class="white">
@@ -259,7 +299,7 @@
                   no-data-text="No hay subsidiarios"
                 >
                   <template slot="headers" slot-scope="props">
-                  <th v-for="header of props.headers" class="pa-3">
+                  <th v-for="header of props.headers" :key="header.value" class="pa-3">
                     <b>{{ header.text }}</b>
                   </th>
                 </template>
@@ -274,6 +314,68 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+
+        <br>
+
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
+          <v-expansion-panel-content v-model="expand.incumbencias" class="blue lighten-4 grey--text text--darken-3">
+            <div slot="header"><b>Incumbencias</b></div>
+            <v-card class="white">
+              <v-card-text >
+                <v-data-table
+                  :headers="headers.Incumbencias"
+                  :items="matricula.entidad.incumbencias"
+                  hide-actions
+                  class="elevation-1 mt-4"
+                  no-data-text="No hay incumbencias"
+                >
+                  <template slot="headers" slot-scope="props">
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
+                            <b>{{ header.text }}</b>
+                          </th>
+                        </template>
+                  <template slot="items" slot-scope="props">
+                          <td>{{ props.item.valor }}</td>
+                        </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>        
+
+        <br>
+
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
+          <v-expansion-panel-content v-model="expand.representantes" class="blue lighten-4 grey--text text--darken-3">
+            <div slot="header"><b>Representantes Técnicos</b></div>
+            <v-card class="white">
+              <v-card-text >
+                <v-data-table
+                  :headers="headers.Representantes"
+                  :items="matricula.entidad.representantes"
+                  hide-actions
+                  class="elevation-1 mt-4"
+                  no-data-text="No hay representantes"
+                >
+                  <template slot="headers" slot-scope="props">
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
+                            <b>{{ header.text }}</b>
+                          </th>
+                        </template>
+                  <template slot="items" slot-scope="props">
+                          <td>{{ props.item.numeroMatricula }}</td>
+                          <td>{{ props.item.dni }}</td>
+                          <td>{{ props.item.apellido }}</td>
+                          <td>{{ props.item.nombre }}</td>
+                          <td>{{ props.item.fechaInicio | fecha }}</td>
+                          <td>{{ props.item.fechaFin | fecha }}</td>
+                        </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>        
     </v-layout>
 </template>
 
@@ -294,7 +396,9 @@ export default {
         contactos: false,
         formaciones: false,
         caja: false,
-        subsidiarios: false
+        subsidiarios: false,
+        incumbencias: false,
+        representantes: false
       },
     }
   },
