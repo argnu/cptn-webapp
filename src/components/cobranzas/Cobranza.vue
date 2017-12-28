@@ -29,7 +29,7 @@
                   :items="tipos_pago"
                   v-model="nueva_forma_pago.forma_pago"
                   :rules="submit_forma_pago ? validator.tipo : []"
-                  :error="submit_forma_pago & !validControl(validator.tipo, nueva_forma_pago.forma_pago)"
+                  :error="submit_forma_pago && !validControl(validator.tipo, nueva_forma_pago.forma_pago)"
                 >
                 </v-select>
               </v-flex>
@@ -41,7 +41,7 @@
                   v-model="nueva_forma_pago.importe"
                   prefix="$"
                   :rules="submit_forma_pago ? validator.importe : []"
-                  :error="submit_forma_pago & !validControl(validator.importe, nueva_forma_pago.importe)"
+                  :error="submit_forma_pago && !validControl(validator.importe, nueva_forma_pago.importe)"
                 >
                 </v-text-field>
               </v-flex>
@@ -55,14 +55,14 @@
                     label="N° Cheque"
                     v-model="nueva_forma_pago.cheque.numero"
                     :rules="submit_forma_pago ? validator.cheque.numero : []"
-                    :error="submit_forma_pago & !validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero)"
+                    :error="submit_forma_pago && !validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero)"
                   >
                   </v-text-field>
                   <input-fecha
                     label="Fecha Vto"
                     v-model="nueva_forma_pago.cheque.fecha_vencimiento"
                     :rules="submit_forma_pago ? validator.cheque.fecha_vencimiento : []"
-                    :error="submit_forma_pago & !validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento)"
+                    :error="submit_forma_pago && !validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento)"
                   >
                 </input-fecha>
                 </v-flex>
@@ -76,14 +76,14 @@
                     v-model="nueva_forma_pago.cheque.banco"
                     :items="bancos"
                     :rules="submit_forma_pago ? validator.cheque.banco : []"
-                    :error="submit_forma_pago & !validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco)"
+                    :error="submit_forma_pago && !validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco)"
                   >
                 </v-select>
                   <v-text-field
                     label="Titular Cuenta"
                     v-model="nueva_forma_pago.cheque.titular"
                     :rules="submit_forma_pago ? validator.cheque.titular : []"
-                    :error="submit_forma_pago & !validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular)"
+                    :error="submit_forma_pago && !validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular)"
                   >
                   </v-text-field>
                 </v-flex>
@@ -109,7 +109,7 @@
                 hide-actions
               >
               <template slot="headers" slot-scope="props">
-                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                   <b>{{ header.text }}</b>
                 </th>
                 <th></th>
@@ -119,7 +119,7 @@
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe }}</td>
                   <td>{{ props.item.cheque.numero }}</td>
-                  <td>{{ props.item.cheque.banco }}</td>
+                  <td>{{ getBanco(props.item.cheque.banco) }}</td>
                   <td>
                     <v-btn fab class="grey" dark small @click="borrarPago(props.index)">
                       <v-icon>delete</v-icon>
@@ -263,7 +263,7 @@ export default {
     ])
     .then(r => {
       this.tipos_pago = r[0].data.formaPago;
-      this.bancos = r[1].data.map(b => b.nombre.trim());
+      this.bancos = r[1].data;
     })
     .catch(e => console.error(e));
   },
@@ -272,7 +272,7 @@ export default {
     addItemPago: function() {
       this.submit_forma_pago = true;
       if (this.esCheque && !utils.validObject(this.nueva_forma_pago, this.validator)) return;
-      if (!this.esCheuque && !this.nueva_forma_pago.importe.length) return;
+      if (!this.esCheque && !this.nueva_forma_pago.importe.length) return;
 
       this.items_pago.push(this.nueva_forma_pago);
       this.submit_forma_pago = false;
@@ -287,6 +287,11 @@ export default {
     getTipoPago: function(id) {
       let forma_pago = this.tipos_pago.find(f => f.id == id);
       return forma_pago ? forma_pago.nombre : '';
+    },
+
+    getBanco: function(id) {
+      let banco = this.bnacos.find(b => b.id == id);
+      return banco ? banco.nombre : '';
     },
 
     borrarPago: function(index) {

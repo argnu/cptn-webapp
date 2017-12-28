@@ -10,8 +10,9 @@
 
       <v-flex xs6>
         Tipo de Comprobante: {{ boleta.tipo_comprobante.abreviatura }}<br>
-        Fecha de Pago: {{ boleta.fecha_pago | fecha }}<br>
-        <!-- Tipo de Pago: {{ boleta.tipo_pago }}<br> -->
+        Fecha de Pago: 
+          <span v-if="boleta.estado.id == 2">{{ boleta.fecha_update | fecha }}
+          </span><br>
       </v-flex>
     </v-layout>
 

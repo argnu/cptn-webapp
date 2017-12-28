@@ -1,7 +1,10 @@
 export class Matricula {
-  constructor() {
+  constructor(delegacion) {
     this.fechaResolucion = '';
     this.numeroActa = '';
     this.solicitud = null;
+    this.delegacion = delegacion;
+    this.generar_boleta = true;
+    this.tipo = 'TECA';
   }
 }

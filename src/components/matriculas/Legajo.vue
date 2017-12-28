@@ -587,7 +587,7 @@ const Legajo = (matricula) => ({
   cantidad_planos: null,
   comitente: Comitente(),
   domicilio: new Domicilio(),
-  delegacion: this.global_state.delegacion,
+  delegacion: Store.state.delegacion,
   dependencia: false,
   fecha_solicitud: null,
   finalizacion_tarea: null,
@@ -665,13 +665,17 @@ export default {
       this.categorias = r[1].data;
       if (this.id_legajo) {
         return axios.get(`/legajos/${this.id_legajo}`)
-              .then(r => {
+              .then(r => {                
                   this.legajo = r.data;
                   this.legajo.comitente.tipo = '';
-                  this.paises = [this.legajo.domicilio.pais];
-                  this.provincias = [this.legajo.domicilio.provincia];
-                  this.departamentos = [this.legajo.domicilio.departamento];
-                  this.localidades = [this.legajo.domicilio.localidad];
+                  if (this.legajo.domicilio) {
+                    this.paises = [this.legajo.domicilio.pais];
+                    this.provincias = [this.legajo.domicilio.provincia];
+                    this.departamentos = [this.legajo.domicilio.departamento];
+                    this.localidades = [this.legajo.domicilio.localidad];
+                  }
+                  else this.legajo.domicilio = new Domicilio();
+
                   this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
                   return axios.get(`/matriculas/${this.legajo.matricula}`);
               })

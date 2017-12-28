@@ -7,7 +7,7 @@
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
-
+        
         <v-container>
           <v-stepper v-model="step" vertical>
 
@@ -62,19 +62,20 @@
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
                       <v-text-field
-                        label="Nombre"
-                        v-model="solicitud.entidad.nombre"
+                        label="DNI"
+                        v-model="solicitud.entidad.dni"
+                        :rules="validator.profesional.dni"
                         tabindex="3"
-                        :rules="validator.profesional.nombre"
-                        :error="submitted.steps[1] && !validControl(validator.profesional.nombre, solicitud.entidad.nombre)"
+                        @change="chgDni"
                       >
                       </v-text-field>
 
                       <v-text-field
-                        label="DNI"
-                        v-model="solicitud.entidad.dni"
-                        :rules="validator.profesional.dni"
+                        label="Nombre"
+                        v-model="solicitud.entidad.nombre"
                         tabindex="5"
+                        :rules="validator.profesional.nombre"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.nombre, solicitud.entidad.nombre)"
                       >
                       </v-text-field>
 
@@ -86,7 +87,6 @@
                         item-value="id"
                         v-model="solicitud.entidad.sexo"
                         label="Sexo"
-                        autocomplete
                         single-line bottom
                         :rules="validator.profesional.sexo"
                         :error="submitted.steps[1] && !validControl(validator.profesional.sexo, solicitud.entidad.sexo)"
@@ -112,7 +112,7 @@
                       <v-text-field 
                         label="Observaciones" 
                         v-model="solicitud.entidad.observaciones" 
-                        tabindex="12"
+                        tabindex="13"
                       >
                       </v-text-field>                      
                     </v-flex>
@@ -156,17 +156,43 @@
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         single-line bottom
                         :items="opciones.condicionafip"
                         item-text="valor"
                         item-value="id"
                         v-model="solicitud.entidad.condafip"
                         label="Condición AFIP"
-                        tabindex="13"
+                        tabindex="12"
                         :rules="validator.profesional.condafip"
                         :error="submitted.steps[1] && !validControl(validator.profesional.condafip, solicitud.entidad.condafip)"
                       >
                       </v-select>                      
+                    </v-flex>
+                  </v-layout>
+
+                  <v-layout row>
+                    <v-flex xs12 class="mx-4">
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td style="padding-right:10px;padding-bottom:20px">
+                              Foto:
+                            </td>
+                            <td style="padding-bottom:20px">
+                              <input type="file" ref="archivo_foto" name="foto"> 
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding-right:10px">
+                              Firma:
+                            </td>
+                            <td>
+                              <input type="file" ref="archivo_firma" name="firma"> 
+                            </td>
+                          </tr>
+                        </tbody> 
+                      </table>
                     </v-flex>
                   </v-layout>
                 </v-card-text>
@@ -550,7 +576,7 @@
                       style="margin-top:30px"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
@@ -560,7 +586,7 @@
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeFormacion('formaciones', props.index)">
+                              <v-btn fab dark small color="blue" @click="removeElem('formaciones', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -668,13 +694,17 @@
                     <v-flex xs6 class="ma-4">
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
-                      <v-text-field 
-                        label="Vínculo" 
+                      <v-select
+                        autocomplete single-line bottom
+                        label="Vínculo"
+                        :items="opciones.vinculo"
+                        item-text="valor"
+                        item-value="id"
                         v-model="nuevo_beneficiario.vinculo" 
                         :rules="submitted.beneficiario ? validator.beneficiario.vinculo : []"
                         :error="submitted.beneficiario && !validControl(validator.beneficiario.vinculo, nuevo_beneficiario.vinculo)"
                       >
-                      </v-text-field>
+                      </v-select>
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
                       </v-checkbox>
                     </v-flex>
@@ -707,7 +737,7 @@
                                <td>{{ props.item.apellido }}</td>
                                <td>{{ props.item.nombre }}</td>
                                <td>{{ props.item.fechaNacimiento }}</td>
-                               <td>{{ props.item.vinculo }}</td>
+                               <td>{{ getVinculo(props.item.vinculo) }}</td>
                                <td>{{ props.item.invalidez | boolean }}</td>
                                <td style="width:30px">
                                  <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
@@ -1037,84 +1067,9 @@ export default {
               this.solicitud = new Solicitud('profesional');
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
-              
-              this.solicitud.entidad.nombre = r.data.entidad.nombre;
-              this.solicitud.entidad.apellido = r.data.entidad.apellido;
-              this.solicitud.entidad.dni = r.data.entidad.dni;
-              this.solicitud.entidad.cuit = r.data.entidad.cuit;
-              this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == r.data.entidad.sexo).id;
-              this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == r.data.entidad.estadoCivil).id;
-              this.solicitud.entidad.fechaNacimiento = moment(r.data.entidad.fechaNacimiento).format('DD/MM/YYYY');
-              this.solicitud.entidad.nacionalidad = r.data.entidad.nacionalidad;
-              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == r.data.entidad.condafip).id;
-              
-              this.solicitud.entidad.domicilioReal = r.data.entidad.domicilioReal.id;
-              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;
-              this.changePais('real', r.data.entidad.domicilioReal);
-              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
-              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
-
-              if (r.data.entidad.domicilioProfesional) {
-                this.solicitud.entidad.domicilioProfesional = r.data.entidad.domicilioProfesional.id;
-                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
-                this.changePais('profesional', r.data.entidad.domicilioProfesional);
-                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
-                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
-              }
-
-              if (r.data.entidad.domicilioConstituido) {
-                this.solicitud.entidad.domicilioConstituido = r.data.entidad.domicilioConstituido.id;
-                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
-                this.changePais('constituido', r.data.entidad.domicilioConstituido);
-                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
-                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
-              }
-
-              for(let contacto of r.data.entidad.contactos) {
-                let contacto_nuevo = contacto;
-                contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
-                this.solicitud.entidad.contactos.push(contacto_nuevo);
-              }
-
-              for(let formacion of r.data.entidad.formaciones) {
-                formacion_nueva.id = formacion.id;
-                formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-                formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
-                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
-                this.solicitud.entidad.formaciones.push(formacion_nueva);
-              }
-
-              this.solicitud.entidad.relacionDependencia = r.data.entidad.relacionDependencia;
-              this.solicitud.entidad.empresa = r.data.entidad.empresa;
-              this.solicitud.entidad.independiente = r.data.entidad.independiente;
-              this.solicitud.entidad.serviciosPrestados = r.data.entidad.serviciosPrestados;
-              this.solicitud.entidad.poseeCajaPrevisional = r.data.entidad.poseeCajaPrevisional;
-              this.solicitud.entidad.nombreCajaPrevisional = r.data.entidad.nombreCajaPrevisional;
-
-
-              for(let beneficiario of r.data.entidad.beneficiarios) {
-                beneficiario_nuevo.id = beneficiario.id;
-                beneficiario_nuevo.dni = beneficiario.dni;
-                beneficiario_nuevo.apellido = beneficiario.apellido;
-                beneficiario_nuevo.nombre = beneficiario.nombre;
-                beneficiario_nuevo.vinculo = beneficiario.vinculo;
-                beneficiario_nuevo.invalidez = beneficiario.invalidez;
-                beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
-                formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
-                this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
-              }              
-
-              for(let subsidiario of r.data.entidad.subsidiarios) {
-                subsidiario_nuevo.id = subsidiario.id;
-                subsidiario_nuevo.dni = subsidiario.dni;
-                subsidiario_nuevo.apellido = subsidiario.apellido;
-                subsidiario_nuevo.nombre = subsidiario.nombre;
-                subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
-                this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
-              }             
-
               this.solicitud.exencionArt10 = r.data.exencionArt10;
-              this.solicitud.exencionArt6 = r.data.exencionArt6;           
+              this.solicitud.exencionArt6 = r.data.exencionArt6;        
+              this.fillProfesional(r.data.entidad);
           });
         }
       })
@@ -1123,8 +1078,101 @@ export default {
 
 
   methods: {
+    fillProfesional: function(entidad) {
+      this.solicitud.entidad.id = entidad.id;
+      this.solicitud.entidad.nombre = entidad.nombre;
+      this.solicitud.entidad.apellido = entidad.apellido;
+      this.solicitud.entidad.dni = entidad.dni;
+      this.solicitud.entidad.cuit = entidad.cuit;
+      this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo).id;
+      this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
+      this.solicitud.entidad.fechaNacimiento = moment(entidad.fechaNacimiento).format('DD/MM/YYYY');
+      this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
+      this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
+      this.solicitud.entidad.observaciones = entidad.observaciones;
+      this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
+      
+      this.solicitud.entidad.domicilioReal.id = entidad.domicilioReal.id;
+      this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == entidad.domicilioReal.pais).id;
+      this.changePais('real', entidad.domicilioReal);
+      this.solicitud.entidad.domicilioReal.calle = entidad.domicilioReal.calle;
+      this.solicitud.entidad.domicilioReal.numero = entidad.domicilioReal.numero;
+
+      if (entidad.domicilioProfesional) {
+        this.solicitud.entidad.domicilioProfesional.id = entidad.domicilioProfesional.id;
+        this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == entidad.domicilioProfesional.pais).id;
+        this.changePais('profesional', entidad.domicilioProfesional);
+        this.solicitud.entidad.domicilioProfesional.calle = entidad.domicilioProfesional.calle;
+        this.solicitud.entidad.domicilioProfesional.numero = entidad.domicilioProfesional.numero;                
+      }
+
+      if (entidad.domicilioConstituido) {
+        this.solicitud.entidad.domicilioConstituido.id = entidad.domicilioConstituido.id;
+        this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == entidad.domicilioConstituido.pais).id;
+        this.changePais('constituido', entidad.domicilioConstituido);
+        this.solicitud.entidad.domicilioConstituido.calle = entidad.domicilioConstituido.calle;
+        this.solicitud.entidad.domicilioConstituido.numero = entidad.domicilioConstituido.numero;                
+      }
+
+      for(let contacto of entidad.contactos) {
+        let contacto_nuevo = contacto;
+        contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
+        this.solicitud.entidad.contactos.push(contacto_nuevo);
+      }
+
+      for(let formacion of entidad.formaciones) {
+        let formacion_nueva = { id: formacion.id };
+        formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
+        formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
+        formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
+        formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
+        this.solicitud.entidad.formaciones.push(formacion_nueva);
+      }
+
+      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
+      this.solicitud.entidad.empresa = entidad.empresa;
+      this.solicitud.entidad.independiente = entidad.independiente;
+      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
+      this.solicitud.entidad.poseeCajaPrevisional = entidad.poseeCajaPrevisional;
+      this.solicitud.entidad.nombreCajaPrevisional = entidad.nombreCajaPrevisional;
+
+
+      for(let beneficiario of entidad.beneficiarios) {
+        let beneficiario_nuevo = { id: beneficiario.id };
+        beneficiario_nuevo.dni = beneficiario.dni;
+        beneficiario_nuevo.apellido = beneficiario.apellido;
+        beneficiario_nuevo.nombre = beneficiario.nombre;
+        beneficiario_nuevo.vinculo = beneficiario.vinculo;
+        beneficiario_nuevo.invalidez = beneficiario.invalidez;
+        beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
+        this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
+      }              
+
+      for(let subsidiario of entidad.subsidiarios) {
+        let subsidiario_nuevo = { id: subsidiario.id };
+        subsidiario_nuevo.dni = subsidiario.dni;
+        subsidiario_nuevo.apellido = subsidiario.apellido;
+        subsidiario_nuevo.nombre = subsidiario.nombre;
+        subsidiario_nuevo.porcentaje = subsidiario.porcentaje;
+        this.solicitud.entidad.subsidiarios.push(subsidiario_nuevo);
+      }
+    },
+
+    chgDni: function() {
+      axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      .then(r => {
+        if (r.data.length == 1) this.fillProfesional(r.data[0]);
+        else this.solicitud.entidad.id = null;
+      })
+      .catch(e => console.error(e));
+    },
+
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
+    },
+
+    getVinculo: function(id) {
+      return this.opciones.vinculo.find(i => id == i.id).valor;
     },
 
     getTitulo: function(id) {
@@ -1171,9 +1219,19 @@ export default {
       }
     },
 
+    makeFormData: function() {
+      let form_data = new FormData();
+      if (this.$refs.archivo_foto.files[0]) 
+        form_data.append('foto', this.$refs.archivo_foto.files[0]);      
+      if (this.$refs.archivo_firma.files[0]) 
+        form_data.append('firma', this.$refs.archivo_firma.files[0]);      
+      form_data.append('solicitud', JSON.stringify(this.solicitud));
+      return form_data;
+    },
+
     submit: function() {
       if (!this.id) {
-        axios.post('/solicitudes', this.solicitud)
+        axios.post('/solicitudes', this.makeFormData())
           .then(r => {
             if (r.status != 201) {
               this.submitError();
@@ -1186,7 +1244,7 @@ export default {
           .catch(e => this.submitError());
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.solicitud)
+        axios.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
             if (r.status != 200) {
               this.submitError();

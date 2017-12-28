@@ -3,17 +3,37 @@
 
   <v-dialog v-model="show_validar" persistent max-width="50%">
     <v-toolbar class="blue darken-3">
-      <v-toolbar-title class="white--text">Aprobar Matrícula</v-toolbar-title>
+      <v-toolbar-title class="white--text">Aprobar Solicitud de Matriculación</v-toolbar-title>
     </v-toolbar>
     <v-card>
       <v-card-text class="grey lighten-4">
         <v-container>
+          <v-layout>
+            <v-flex xs12 class="mx-4">
+              <v-select
+                label="Tipo:"
+                :items="select_items.tipos_matricula"
+                v-model="matricula.tipo"
+                @input="chgTipoMatricula"
+              >
+              </v-select>
+            </v-flex>
+          </v-layout>
+
+          <v-layout row class="mt-4">
+            <v-flex xs6 class="mx-4">
+              N° Matrícula: {{ num_matricula_nueva }}
+            </v-flex>            
+          </v-layout>
+
           <v-layout row>
             <v-flex xs6 class="ma-4">
               <input-fecha 
                 v-model="matricula.fechaResolucion" 
                 label="Fecha de Resolución" 
                 :rules="validator.matricula.fechaResolucion"
+                :error="submitValidacion 
+                  && !validControl(validator.matricula.fechaResolucion, matricula.fechaResolucion)"
               >
               </input-fecha>
             </v-flex>
@@ -23,13 +43,27 @@
                 v-model="matricula.numeroActa" 
                 label="N° Acta" 
                 :rules="validator.matricula.numeroActa"
+                :error="submitValidacion 
+                  && !validControl(validator.matricula.numeroActa, matricula.numeroActa)"
               >
               </v-text-field>
             </v-flex>
           </v-layout>
+
+          <v-layout row>
+            <v-flex class="ml-4">
+              <v-checkbox 
+                label="Generar Boleta de Inscripción" 
+                v-model="matricula.generar_boleta" 
+                color="primary"
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+
           <v-layout row>
             <v-flex xs12>
-              <v-btn class="right green white--text" @click.native="validarMatricula">
+              <v-btn class="right green white--text" @click.native="aprobar">
                 Aprobar
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
@@ -149,7 +183,7 @@
                 <span class="ml-2">Aprobar</span>
               </v-list-tile-title>
             </v-list-tile>
-            <v-list-tile v-show="props.item.estado == 'pendiente'" @click="imprimirSolicitud(props.item.id)">
+            <v-list-tile @click="imprimirSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="text--darken-2">print</v-icon>
                 <span class="ml-2">Imprimir</span>
@@ -167,18 +201,22 @@
       </template>
     </v-data-table>
   </v-card>
+
 </v-container>
 </template>
 
 <script>
-import axios from '@/axios';
-import * as _ from 'lodash';
-import * as utils from '@/utils';
-import rules from '@/rules';
-import InputFecha from '@/components/base/InputFecha';
-import { Matricula } from '@/model';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import * as moment from 'moment'
+import axios from '@/axios'
+import * as _ from 'lodash'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import InputFecha from '@/components/base/InputFecha'
+import { Matricula } from '@/model'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import { impresionSolicitud } from '@/utils/PDFUtils'
+import Cobranza from '@/components/cobranzas/Cobranza'
+import Store from '@/Store'
 
 const select_items = {
   estado: [
@@ -190,6 +228,10 @@ const select_items = {
   tipo: [
     { text: 'Profesionales', value: 'profesional' },
     { text: 'Empresas', value: 'empresa' }
+  ],
+  tipos_matricula: [
+    { text: 'TECA', value: 'TECA' },
+    { text: 'TECB', value: 'TECB' }
   ]
 }
 
@@ -208,8 +250,10 @@ export default {
   mixins: [ValidatorMixin],
   data() {
     return {
-      matricula: new Matricula(),
+      global_state: Store.state,
+      matricula: new Matricula(Store.state.delegacion),
       show_validar: false,
+      num_matricula_nueva: null,
       totalItems: 0,
       loading: false,
       pagination: {
@@ -248,9 +292,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 600, {
-      'maxWait': 1000
-    });
+    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
   },
 
   computed: {
@@ -296,10 +338,10 @@ export default {
         this.solicitudes = [];
         let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
         if (this.filtros.estado && this.filtros.estado != 'todas') url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
-        if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
-        if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
-        if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
 
         axios.get(url)
           .then(r => {
@@ -312,8 +354,19 @@ export default {
     },
 
     selectSolicitud: function(id) {
-      this.show_validar = true;
-      this.matricula.solicitud = id;
+      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
+      .then(r => {
+        this.num_matricula_nueva = r.data
+        this.show_validar = true;
+        this.matricula.solicitud = id;
+      })
+      .catch(e => console.error(e));      
+    },
+
+    chgTipoMatricula: function() {
+      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
+      .then(r => this.num_matricula_nueva = r.data)
+      .catch(e => console.error(e));
     },
 
     imprimirSolicitud: function(id) {
@@ -326,7 +379,7 @@ export default {
           .catch(e => console.error(e));
     },
 
-    validarMatricula: function() {
+    aprobar: function() {
       this.submitValidacion = true;
       if (utils.validObject(this.matricula, this.validator.matricula)) {
         axios.post('/matriculas', this.matricula)
@@ -335,6 +388,9 @@ export default {
             this.matricula = new Matricula();
             this.show_validar = false;
             this.submitValidacion = false;
+            this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;            
           })
           .catch(e => console.error(e));
       }
@@ -343,11 +399,12 @@ export default {
     editSolicitud: function(id) {
       let tipo = this.filtros.tipoEntidad == 'profesional' ? 'profesionales' : 'empresas';
       this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
-    }
+    },
   },
 
   components: {
-    InputFecha
+    InputFecha,
+    Cobranza
   }
 
 }

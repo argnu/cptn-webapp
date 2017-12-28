@@ -13,7 +13,7 @@
             no-data-text="No hay deudas pendientes"
         >
           <template slot="headers" slot-scope="props">
-            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
               <b>{{ header.text }}</b>
             </th>
           </template>
@@ -43,7 +43,7 @@
         </v-data-table>
       </v-flex>
 
-      <v-flex xs3>
+      <v-flex xs3 v-if="boletas.length">
         <input-fecha
           class="ml-5"
           label="Fecha de Pago"
@@ -107,7 +107,7 @@
 
     <br>
 
-    <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay=false>
+    <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
         <v-toolbar dark class="blue">
           <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>

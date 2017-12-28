@@ -796,8 +796,7 @@ export default {
               }
 
               for(let incumbencia of r.data.entidad.incumbencias) {
-                let inc_nueva = this.opciones.incumbencia.find(i => i.valor == incumbencias).id;
-                this.solicitud.entidad.incumbencias.push(inc_nueva);
+                this.solicitud.entidad.incumbencias.push(incumbencia.incumbencia);
               }
 
               let proms_rep = r.data.entidad.representantes.map(r => 

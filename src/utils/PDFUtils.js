@@ -104,7 +104,7 @@ export function impresionSolicitud(solicitud) {
   doc.setFontSize(12);
   offsetLoop = 0;
   solicitud.entidad.contactos.forEach(contacto => {
-      doc.text(20, 230 + offsetLoop, `${contacto.tipo} ${contacto.valor}` );
+      doc.text(20, 230 + offsetLoop, `${contacto.tipo}: ${contacto.valor}` );
       offsetLoop += 6;
     });
 
