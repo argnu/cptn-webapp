@@ -10,8 +10,20 @@
         <v-container>
           <v-layout>
             <v-flex xs12 class="mx-4">
-              N° Matrícula: {{ num_matricula_nueva }}
+              <v-select
+                label="Tipo:"
+                :items="select_items.tipos_matricula"
+                v-model="matricula.tipo"
+                @input="chgTipoMatricula"
+              >
+              </v-select>
             </v-flex>
+          </v-layout>
+
+          <v-layout row class="mt-4">
+            <v-flex xs6 class="mx-4">
+              N° Matrícula: {{ num_matricula_nueva }}
+            </v-flex>            
           </v-layout>
 
           <v-layout row>
@@ -216,6 +228,10 @@ const select_items = {
   tipo: [
     { text: 'Profesionales', value: 'profesional' },
     { text: 'Empresas', value: 'empresa' }
+  ],
+  tipos_matricula: [
+    { text: 'TECA', value: 'TECA' },
+    { text: 'TECB', value: 'TECB' }
   ]
 }
 
@@ -276,9 +292,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 600, {
-      'maxWait': 1000
-    });
+    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
   },
 
   computed: {
@@ -324,10 +338,10 @@ export default {
         this.solicitudes = [];
         let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
         if (this.filtros.estado && this.filtros.estado != 'todas') url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
-        if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
-        if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
-        if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
 
         axios.get(url)
           .then(r => {
@@ -340,12 +354,18 @@ export default {
     },
 
     selectSolicitud: function(id) {
-      axios('/matriculas/nuevo_numero')
+      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
       .then(r => {
-        this.num_matricula_nueva = r.data;
+        this.num_matricula_nueva = r.data
         this.show_validar = true;
         this.matricula.solicitud = id;
       })
+      .catch(e => console.error(e));      
+    },
+
+    chgTipoMatricula: function() {
+      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
+      .then(r => this.num_matricula_nueva = r.data)
       .catch(e => console.error(e));
     },
 

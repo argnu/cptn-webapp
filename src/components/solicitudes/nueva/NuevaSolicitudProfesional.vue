@@ -62,20 +62,20 @@
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
                       <v-text-field
-                        label="Nombre"
-                        v-model="solicitud.entidad.nombre"
+                        label="DNI"
+                        v-model="solicitud.entidad.dni"
+                        :rules="validator.profesional.dni"
                         tabindex="3"
-                        :rules="validator.profesional.nombre"
-                        :error="submitted.steps[1] && !validControl(validator.profesional.nombre, solicitud.entidad.nombre)"
+                        @change="chgDni"
                       >
                       </v-text-field>
 
                       <v-text-field
-                        label="DNI"
-                        v-model="solicitud.entidad.dni"
-                        :rules="validator.profesional.dni"
+                        label="Nombre"
+                        v-model="solicitud.entidad.nombre"
                         tabindex="5"
-                        @change="chgDni"
+                        :rules="validator.profesional.nombre"
+                        :error="submitted.steps[1] && !validControl(validator.profesional.nombre, solicitud.entidad.nombre)"
                       >
                       </v-text-field>
 
@@ -112,7 +112,7 @@
                       <v-text-field 
                         label="Observaciones" 
                         v-model="solicitud.entidad.observaciones" 
-                        tabindex="12"
+                        tabindex="13"
                       >
                       </v-text-field>                      
                     </v-flex>
@@ -156,13 +156,14 @@
                       </v-text-field>
 
                       <v-select
+                        autocomplete
                         single-line bottom
                         :items="opciones.condicionafip"
                         item-text="valor"
                         item-value="id"
                         v-model="solicitud.entidad.condafip"
                         label="Condición AFIP"
-                        tabindex="13"
+                        tabindex="12"
                         :rules="validator.profesional.condafip"
                         :error="submitted.steps[1] && !validControl(validator.profesional.condafip, solicitud.entidad.condafip)"
                       >
@@ -575,7 +576,7 @@
                       style="margin-top:30px"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
@@ -585,7 +586,7 @@
                             <td>{{ props.item.fecha }}</td>
                             <td>{{ getInstitucion(props.item.institucion) }}</td>
                             <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeFormacion('formaciones', props.index)">
+                              <v-btn fab dark small color="blue" @click="removeElem('formaciones', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
@@ -694,6 +695,7 @@
                       <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
                       </input-fecha>
                       <v-select
+                        autocomplete single-line bottom
                         label="Vínculo"
                         :items="opciones.vinculo"
                         item-text="valor"
@@ -735,7 +737,7 @@
                                <td>{{ props.item.apellido }}</td>
                                <td>{{ props.item.nombre }}</td>
                                <td>{{ props.item.fechaNacimiento }}</td>
-                               <td>{{ props.item.vinculo }}</td>
+                               <td>{{ getVinculo(props.item.vinculo) }}</td>
                                <td>{{ props.item.invalidez | boolean }}</td>
                                <td style="width:30px">
                                  <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
@@ -1066,7 +1068,7 @@ export default {
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.exencionArt10 = r.data.exencionArt10;
-              this.solicitud.exencionArt6 = r.data.exencionArt6;           
+              this.solicitud.exencionArt6 = r.data.exencionArt6;        
               this.fillProfesional(r.data.entidad);
           });
         }
@@ -1087,6 +1089,8 @@ export default {
       this.solicitud.entidad.fechaNacimiento = moment(entidad.fechaNacimiento).format('DD/MM/YYYY');
       this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
       this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
+      this.solicitud.entidad.observaciones = entidad.observaciones;
+      this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
       
       this.solicitud.entidad.domicilioReal.id = entidad.domicilioReal.id;
       this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == entidad.domicilioReal.pais).id;
@@ -1117,10 +1121,11 @@ export default {
       }
 
       for(let formacion of entidad.formaciones) {
-        formacion_nueva.id = formacion.id;
+        let formacion_nueva = { id: formacion.id };
         formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
         formacion_nueva.fecha = moment(formacion.fecha).format('DD/MM/YYYY');
-        formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
+        formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
+        formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
 
@@ -1133,19 +1138,18 @@ export default {
 
 
       for(let beneficiario of entidad.beneficiarios) {
-        beneficiario_nuevo.id = beneficiario.id;
+        let beneficiario_nuevo = { id: beneficiario.id };
         beneficiario_nuevo.dni = beneficiario.dni;
         beneficiario_nuevo.apellido = beneficiario.apellido;
         beneficiario_nuevo.nombre = beneficiario.nombre;
         beneficiario_nuevo.vinculo = beneficiario.vinculo;
         beneficiario_nuevo.invalidez = beneficiario.invalidez;
         beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
-        formacion_nueva.titulo = this.titulos.find(i => i.valor == formacion.titulo);
         this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
       }              
 
       for(let subsidiario of entidad.subsidiarios) {
-        subsidiario_nuevo.id = subsidiario.id;
+        let subsidiario_nuevo = { id: subsidiario.id };
         subsidiario_nuevo.dni = subsidiario.dni;
         subsidiario_nuevo.apellido = subsidiario.apellido;
         subsidiario_nuevo.nombre = subsidiario.nombre;
@@ -1157,13 +1161,18 @@ export default {
     chgDni: function() {
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
-        if (r.data.length) this.fillProfesional(r.data[0]);
+        if (r.data.length == 1) this.fillProfesional(r.data[0]);
+        else this.solicitud.entidad.id = null;
       })
       .catch(e => console.error(e));
     },
 
     getInstitucion: function(id) {
       return this.instituciones.find(i => id == i.id).nombre;
+    },
+
+    getVinculo: function(id) {
+      return this.opciones.vinculo.find(i => id == i.id).valor;
     },
 
     getTitulo: function(id) {
@@ -1235,7 +1244,7 @@ export default {
           .catch(e => this.submitError());
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.solicitud)
+        axios.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
             if (r.status != 200) {
               this.submitError();

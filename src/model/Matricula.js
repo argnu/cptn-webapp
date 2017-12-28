@@ -5,5 +5,6 @@ export class Matricula {
     this.solicitud = null;
     this.delegacion = delegacion;
     this.generar_boleta = true;
+    this.tipo = 'TECA';
   }
 }

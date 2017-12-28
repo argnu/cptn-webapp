@@ -109,7 +109,7 @@
                 hide-actions
               >
               <template slot="headers" slot-scope="props">
-                <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                   <b>{{ header.text }}</b>
                 </th>
                 <th></th>
@@ -119,7 +119,7 @@
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe }}</td>
                   <td>{{ props.item.cheque.numero }}</td>
-                  <td>{{ props.item.cheque.banco }}</td>
+                  <td>{{ getBanco(props.item.cheque.banco) }}</td>
                   <td>
                     <v-btn fab class="grey" dark small @click="borrarPago(props.index)">
                       <v-icon>delete</v-icon>
@@ -223,7 +223,7 @@ export default {
       nueva_forma_pago: FormaPago(),
       submit_forma_pago: false,
       validator: {
-        tipo: [rules.required],
+        forma_pago: [rules.required],
         importe: [rules.required],
         cheque: {
           numero: [rules.required],
@@ -263,7 +263,7 @@ export default {
     ])
     .then(r => {
       this.tipos_pago = r[0].data.formaPago;
-      this.bancos = r[1].data.map(b => b.nombre.trim());
+      this.bancos = r[1].data;
     })
     .catch(e => console.error(e));
   },
@@ -272,7 +272,7 @@ export default {
     addItemPago: function() {
       this.submit_forma_pago = true;
       if (this.esCheque && !utils.validObject(this.nueva_forma_pago, this.validator)) return;
-      if (!this.esCheuque && !this.nueva_forma_pago.importe.length) return;
+      if (!this.esCheque && !this.nueva_forma_pago.importe.length) return;
 
       this.items_pago.push(this.nueva_forma_pago);
       this.submit_forma_pago = false;
@@ -287,6 +287,11 @@ export default {
     getTipoPago: function(id) {
       let forma_pago = this.tipos_pago.find(f => f.id == id);
       return forma_pago ? forma_pago.nombre : '';
+    },
+
+    getBanco: function(id) {
+      let banco = this.bnacos.find(b => b.id == id);
+      return banco ? banco.nombre : '';
     },
 
     borrarPago: function(index) {

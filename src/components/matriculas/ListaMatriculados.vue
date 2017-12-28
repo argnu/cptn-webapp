@@ -315,19 +315,19 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${this.id}`, { estado: 13 })
-        .then(r => this.update())
+        axios.patch(`/matriculas/${id}`, { estado: 13 })
+        .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
     },
 
     deshabilitar: function(id) {
-      // if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
-      //   // ? ES ESTADO 'DesHabilitado'
-      //   axios.patch(`/matriculas/${this.id}`, { estado: ? })
-      //   .then(r => this.update())
-      //   .catch(e => console.error(e));
-      // }
+      if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
+        // 35 ES ESTADO 'DesHabilitado'
+        axios.patch(`/matriculas/${id}`, { estado: 35 })
+        .then(r => this.updateMatriculas())
+        .catch(e => console.error(e));
+      }
     }
 
   },
