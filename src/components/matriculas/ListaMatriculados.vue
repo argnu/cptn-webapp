@@ -103,6 +103,14 @@
                 <v-icon class="green--text mr-2">check_circle</v-icon>
                 <v-list-tile-title>Habilitar</v-list-tile-title>
               </v-list-tile>
+
+              <v-list-tile 
+                v-if="props.item.estado == 'Habilitado'" 
+                @click="deshabilitar(props.item.id)"
+              >
+                <v-icon class="red--text mr-2">thumb_down</v-icon>
+                <v-list-tile-title>Deshabilitar por Res.</v-list-tile-title>
+              </v-list-tile>
               <!-- <v-list-tile @click="verDetalle(props.item.id)">
                 <v-list-tile-title>Ver Detalle</v-list-tile-title>
               </v-list-tile>
@@ -311,6 +319,15 @@ export default {
         .then(r => this.update())
         .catch(e => console.error(e));
       }
+    },
+
+    deshabilitar: function(id) {
+      // if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
+      //   // ? ES ESTADO 'DesHabilitado'
+      //   axios.patch(`/matriculas/${this.id}`, { estado: ? })
+      //   .then(r => this.update())
+      //   .catch(e => console.error(e));
+      // }
     }
 
   },
