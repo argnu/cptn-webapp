@@ -38,11 +38,19 @@
         </v-tabs-content>
 
         <v-tabs-content id="tab-cuenta">
-          <resumen-cuenta :id="matricula.id"></resumen-cuenta>
+          <resumen-cuenta 
+            :id="matricula.id"
+            ref="resumen"
+          >
+          </resumen-cuenta>
         </v-tabs-content>
 
         <v-tabs-content id="tab-pendientes">
-          <deudas-pendientes :id="matricula.id"></deudas-pendientes>
+          <deudas-pendientes 
+            :id="matricula.id" 
+            @update="updateDeudas"
+          >            
+          </deudas-pendientes>
         </v-tabs-content>
 
         <v-tabs-content id="tab-legajo">
@@ -90,6 +98,10 @@ export default {
       axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
       .then(r => this.update())
       .catch(e => console.error(e));
+    },
+
+    updateDeudas: function() {
+      this.$refs.resumen.updateBoletas();
     }
   },
 

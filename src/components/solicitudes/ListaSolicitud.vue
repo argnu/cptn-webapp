@@ -11,6 +11,7 @@
           <v-layout>
             <v-flex xs12 class="mx-4">
               <v-select
+                v-show="matricula.tipo != 'EMP'"
                 label="Tipo:"
                 :items="select_items.tipos_matricula"
                 v-model="matricula.tipo"
@@ -177,7 +178,7 @@
             <v-icon>more_vert</v-icon>
           </v-btn>
           <v-list>
-            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item.id)">
+            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
               <v-list-tile-title>
                 <v-icon class="green--text text--darken-2">check_circle</v-icon>
                 <span class="ml-2">Aprobar</span>
@@ -353,12 +354,13 @@ export default {
       }
     },
 
-    selectSolicitud: function(id) {
+    selectSolicitud: function(solicitud) {
+      if (solicitud.entidad.tipo == 'empresa') this.matricula.tipo = 'EMP';
       axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
       .then(r => {
         this.num_matricula_nueva = r.data
         this.show_validar = true;
-        this.matricula.solicitud = id;
+        this.matricula.solicitud = solicitud.id;
       })
       .catch(e => console.error(e));      
     },

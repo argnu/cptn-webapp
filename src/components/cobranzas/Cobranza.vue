@@ -184,7 +184,7 @@ const Cheque = () => ({
 
 const FormaPago = () => ({
     forma_pago: '',
-    importe: '',
+    importe: 0,
     cheque: Cheque()
 })
 
@@ -290,7 +290,7 @@ export default {
     },
 
     getBanco: function(id) {
-      let banco = this.bnacos.find(b => b.id == id);
+      let banco = this.bancos.find(b => b.id == id);
       return banco ? banco.nombre : '';
     },
 

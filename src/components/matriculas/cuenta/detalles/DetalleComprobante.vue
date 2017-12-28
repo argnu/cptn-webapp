@@ -21,14 +21,14 @@
         hide-actions
         >
       <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" class="pa-3 text-xs-left">
+        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
           <b>{{ header.text }}</b>
         </th>
       </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
-        <td>{{ props.item.importe }}</td>
+        <td>{{ props.item.importe | round }}</td>
       </template>
     </v-data-table>
 
@@ -41,14 +41,14 @@
         hide-actions
     >
       <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" class="pa-3 text-xs-left">
+        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
           <b>{{ header.text }}</b>
         </th>
       </template>
       <template slot="items" slot-scope="props">
         <td>{{ getFormaPago(props.item.forma_pago) }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
-        <td>{{ props.item.importe }}</td>
+        <td>{{ props.item.importe | round  }}</td>
       </template>
     </v-data-table>
   </v-container>
@@ -102,9 +102,9 @@ export default {
 
   methods: {
     getFormaPago: function(id) {
-      return id ?
-        this.formas_pago.find(f => f.id == id).nombre
-      : '';
+      if (!id) return '';
+      let forma_pago = this.formas_pago.find(f => f.id == id);
+      return forma_pago ? forma_pago.nombre : '';
     }
   },
 

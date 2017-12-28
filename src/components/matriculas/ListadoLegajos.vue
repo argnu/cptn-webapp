@@ -17,7 +17,7 @@
               :rows-per-page-items="[5, 10, 25]"
           >
             <template slot="headers" slot-scope="props">
-              <th v-for="header of props.headers" class="pa-3 text-xs-left">
+              <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                 <b>{{ header.text }}</b>
               </th>
               <th></th>

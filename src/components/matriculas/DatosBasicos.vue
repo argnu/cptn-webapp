@@ -16,11 +16,11 @@
                     <img :src="matricula.entidad.foto" alt="Foto">
                   </v-avatar>
                 </v-flex>
-                <v-flex xs3>
+                <v-flex xs4>
                   N° Matrícula: {{ matricula.numeroMatricula }} <br> <br>
                   Estado: {{ matricula.estado }}
                 </v-flex>
-                <v-flex xs2>
+                <v-flex xs2 v-if="matricula.entidad.tipo == 'profesional'">
                   Apellido: {{ matricula.entidad.apellido }} <br> <br>
                 </v-flex>
                 <v-flex xs2>

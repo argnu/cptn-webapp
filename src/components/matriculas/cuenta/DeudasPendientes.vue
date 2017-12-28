@@ -13,12 +13,21 @@
             no-data-text="No hay deudas pendientes"
         >
           <template slot="headers" slot-scope="props">
+            <th></th>
             <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
               <b>{{ header.text }}</b>
             </th>
           </template>
           <template slot="items" slot-scope="props">
             <tr>
+              <td>
+                <v-btn 
+                  v-if="props.item.tipo == 'volante'"
+                  fab dark small @click="imprimirVolante(props.item.id)" color="blue"
+                >
+                  <v-icon>print</v-icon>
+                </v-btn>                
+              </td>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
               <template v-if="props.item.tipo == 'boleta'">
@@ -248,6 +257,7 @@ export default {
         items_pago,
         matricula: this.id,
         fecha: moment(),
+        fecha_vencimiento: moment(),
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
@@ -262,6 +272,7 @@ export default {
         this.global_state.snackbar.show = true;        
         this.expand_pago = false;
         this.updateBoletas();
+        this.$emit('update');
       })
       .catch(e => console.error(e));      
     },
@@ -297,25 +308,28 @@ export default {
       axios.post('volantespago', volante)
       .then(r => {
         console.info(`Volante ${r.data.id} generado!`);
-        axios.get(`/volantespago/${r.data.id}`)
-        .then(v => {
-              let volante = v.data;
-              axios.get(`/matriculas/${volante.matricula}`)
-              .then(m =>{
-                console.log(volante, matricula);
-                let matricula = m.data;
-                volante.matricula= matricula;
-                console.log(volante);
-                let pdf = impresionVolante(volante);
-                pdf.save(`Volante ${r.data.id}.pdf`);             
-              })
-          });
+        this.imprimirVolante(r.data.id);
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;        
         this.updateBoletas();
+        this.$emit('update');
       })
       .catch(e => console.error(e));
+    },
+
+    imprimirVolante(id) {
+        axios.get(`/volantespago/${id}`)
+        .then(v => {
+              let volante = v.data;
+              axios.get(`/matriculas/${volante.matricula}`)
+              .then(m =>{
+                let matricula = m.data;
+                volante.matricula= matricula;
+                let pdf = impresionVolante(volante);
+                pdf.save(`Volante ${id}.pdf`);             
+              })
+          });
     }
   },
 

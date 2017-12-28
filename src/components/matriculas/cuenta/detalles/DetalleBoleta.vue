@@ -26,14 +26,14 @@
         hide-actions
         >
       <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" class="pa-3 text-xs-left">
+        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
           <b>{{ header.text }}</b>
         </th>
       </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
-        <td>{{ props.item.importe }}</td>
+        <td>{{ props.item.importe | round }}</td>
       </template>
     </v-data-table>
   </div>
