@@ -2,20 +2,55 @@ const jsPDF = require('jspdf');
 
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
-  //doc.addImage(, 10, 10, 28, 28);
-  console.log(volante);
+  var img = new Image();
+  img.src = "/static/logoImpresion.jpg";
+  doc.addImage(img,'JPG', 10, 10, 60, 19);
   doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
   doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
+  doc.line(20, 43, 190, 43);
   doc.setFontSize(12);
-  doc.text(120, 45, 'Fecha de Emision');
-  doc.text(160, 45, getSimpleFormatedDate(volante.fecha));
-  doc.text(120, 50, 'Fecha Expiración ');
-  doc.text(160, 50, getSimpleFormatedDate(volante.fecha_vencimiento));
+  doc.text(24, 40, `Volante de Pago N° ${volante.id}`);
+  doc.text(120, 50, 'Fecha de Emision');
+  doc.text(160, 50, getSimpleFormatedDate(volante.fecha));
+  doc.text(120, 55, 'Fecha Expiración ');
+  doc.text(160, 55, getSimpleFormatedDate(volante.fecha_vencimiento));
   doc.setFontSize(10);
-  doc.text(20, 45, `N° Matricula ${volante.matricula.numero}`);
-  doc.text(20, 50, `Nombre ${volante.matricula.nombre}`);
-  doc.text(20, 55, `Apellido ${volante.matricula.apellido}`);
+  doc.text(24, 50, `N° Matricula  ${volante.matricula.numeroMatricula}`);
+  doc.text(24, 55, `Nombre   ${volante.matricula.entidad.nombre}`);
+  doc.text(24, 60, `Apellido  ${volante.matricula.entidad.apellido}`);
+  doc.setLineWidth(0.5);
+
+  // Se suman los intereses de las boletas
+  let offsetLoop = 0;
+  volante.boletas.forEach(b => {
+    if (b.items && b.items.length) {
+      b.items.forEach(item => {
+        doc.text(24, 75 + offsetLoop, `${item.descripcion}`);
+        doc.text(160, 75 + offsetLoop, `${item.importe}`);
+        offsetLoop += 2;
+      })
+    }
+    offsetLoop += 2;
+  })
+
+  let indice = 75 + offsetLoop;
+  // Se imprime el interes 
+  if (volante.interes_total) {
+    doc.text(24, indice, `Intereses`);
+    doc.text(160, indice, `${volante.interes_total}`);
+  }
+  indice += 10;
+  doc.line(20, indice, 190, indice);
+  doc.setFontSize(12);
+  indice += 5;
+  doc.text(110, indice, `TOTAL A PAGAR`);
+  doc.text(160, indice, `${volante.importe_total}`);
+  doc.line(20, indice+5, 190, indice+5);
+
+
+
+
   return doc;
 }
 
@@ -95,7 +130,7 @@ export function impresionSolicitud(solicitud) {
   doc.setLineWidth(0.5);
   doc.line(20, 162 + offsetLoop, 190, 162 + offsetLoop);
   offsetLoop += 26;
-   
+
 
   //   // Contacto
   doc.setFontSize(14);
@@ -104,9 +139,9 @@ export function impresionSolicitud(solicitud) {
   doc.setFontSize(12);
   offsetLoop = 0;
   solicitud.entidad.contactos.forEach(contacto => {
-      doc.text(20, 230 + offsetLoop, `${contacto.tipo}: ${contacto.valor}` );
-      offsetLoop += 6;
-    });
+    doc.text(20, 230 + offsetLoop, `${contacto.tipo}: ${contacto.valor}`);
+    offsetLoop += 6;
+  });
 
   // Firmas
   doc.text('..............................................', 50, 265, 'center');

@@ -197,7 +197,7 @@ export default {
     },
 
     importe_total: function() {
-      return this.subtotal + this.intereses_total;
+      return utils.round(this.subtotal + this.intereses_total, 2);
     }
   },
 
@@ -297,9 +297,19 @@ export default {
       axios.post('volantespago', volante)
       .then(r => {
         console.info(`Volante ${r.data.id} generado!`);
-        console.log(r.data);
-        let pdf = impresionVolante(r.data);
-        pdf.save(`Volante ${r.data.id}.pdf`);
+        axios.get(`/volantespago/${r.data.id}`)
+        .then(v => {
+              let volante = v.data;
+              axios.get(`/matriculas/${volante.matricula}`)
+              .then(m =>{
+                console.log(volante, matricula);
+                let matricula = m.data;
+                volante.matricula= matricula;
+                console.log(volante);
+                let pdf = impresionVolante(volante);
+                pdf.save(`Volante ${r.data.id}.pdf`);             
+              })
+          });
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;        
