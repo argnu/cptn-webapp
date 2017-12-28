@@ -1,15 +1,9 @@
 const jsPDF = require('jspdf');
 
-export function generarCredencial(imgsData, profesional, formacionGrado) {
-  const doc = new jsPDF('p', 'mm', [217.5, 304.3]);
-  doc.setFontSize(6);
-  doc.setFontStyle('bold');
-  return doc;
-}
-
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
   //doc.addImage(, 10, 10, 28, 28);
+  console.log(volante);
   doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
   doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
@@ -19,9 +13,9 @@ export function impresionVolante(volante) {
   doc.text(120, 50, 'Fecha Expiración ');
   doc.text(160, 50, getSimpleFormatedDate(volante.fecha_vencimiento));
   doc.setFontSize(10);
-  // doc.text(20, 45, `N° Matricula ${volante.matricula.numero}`);
-  // doc.text(20, 50, `Nombre ${volante.matricula.nombre}`);
-  // doc.text(20, 55, `Apellido ${volante.matricula.apellido}`);
+  doc.text(20, 45, `N° Matricula ${volante.matricula.numero}`);
+  doc.text(20, 50, `Nombre ${volante.matricula.nombre}`);
+  doc.text(20, 55, `Apellido ${volante.matricula.apellido}`);
   return doc;
 }
 

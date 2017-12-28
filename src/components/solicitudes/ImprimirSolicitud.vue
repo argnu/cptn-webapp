@@ -18,8 +18,8 @@
 
       <hr class="my-3">
 
-      <h3 class="my-4">Datos del Profesional</h3>
-      <v-layout row>
+      <v-layout row v-if="solicitud.entidad.tipo==='profesional'">
+        <!-- <h3 class="my-4">Datos del Profesional</h3> -->
         <v-flex xs1></v-flex>
         <v-flex xs5>
           <div class="mb-3">
@@ -350,7 +350,7 @@ th {
     margin-bottom: 2.5cm;
     line-height: 1.3;
   }
-   a[href]:after {
+  a[href]:after {
     content: none
   }
   /* table {
