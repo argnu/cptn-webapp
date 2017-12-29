@@ -1,10 +1,10 @@
 const jsPDF = require('jspdf');
+const img = new Image();
+img.src = "/static/logoImpresion.jpg";
 
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
-  var img = new Image();
-  img.src = "/static/logoImpresion.jpg";
-  doc.addImage(img,'JPG', 10, 10, 60, 19);
+  doc.addImage(img,'JPG', 10, 10, 60, 13);
   doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
   doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
@@ -56,9 +56,9 @@ export function impresionVolante(volante) {
 
 export function impresionSolicitud(solicitud) {
   const doc = new jsPDF('p', 'mm', 'a4');
-  //doc.addImage(, 10, 10, 28, 28);
-  doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
-  doc.text('de la Provincia del Neuquén', 120, 26, 'center');
+  doc.addImage(img, 'JPG', 10, 10, 60, 13);
+  // doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
+  // doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(1);
 
   doc.line(20, 40, 190, 40);
@@ -72,136 +72,234 @@ export function impresionSolicitud(solicitud) {
   doc.setLineWidth(0.5);
   doc.line(20, 59, 190, 59);
 
+  let eje_y = 65;
+
   doc.setFontSize(12);
-  doc.text(20, 65, 'Apellido/s:');
-  doc.text(20, 71, 'Nombre/s:');
-  doc.text(20, 77, 'Documento:');
-  doc.text(20, 83, 'Fecha de Nacimiento:');
-  doc.text(20, 89, 'Lugar de Nacimiento:');
-  doc.text(20, 95, 'Sexo:');
-  doc.text(20, 101, 'Nacionalidad:');
 
-  doc.line(20, 105, 190, 105);
+  if (solicitud.entidad.tipo == 'profesional') {
+    doc.text(20, eje_y, 'Apellido/s:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Nombre/s:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Documento:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Fecha de Nacimiento:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Lugar de Nacimiento:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Sexo:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Nacionalidad:');
+    eje_y += 6;
 
-  doc.text(20, 111, 'Profesión:');
-  doc.text(20, 117, 'Título:');
-  doc.text(20, 123, 'Ent. Formadora:');
-  doc.text(20, 129, 'Fecha de Egreso:');
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 6;
 
-  doc.line(20, 135, 190, 135);
+    // doc.text(20, 111, 'Profesión:');
+    doc.text(20, eje_y, 'Título:');
+    doc.text(20, eje_y + 6, 'Ent. Formadora:');
+    doc.text(20, eje_y + 12, 'Fecha de Egreso:');
+    let formacion_grado = solicitud.entidad.formaciones.find(f => f.tipo == 'Grado');
+    if (formacion_grado) {
+      // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
+      doc.text(65, eje_y, formacion_grado.titulo);
+      doc.text(65, eje_y + 6, formacion_grado.institucion);
+      doc.text(65, eje_y + 12, this.getSimpleFormatedDate(formacion_grado.fecha));
+    }
+    eje_y += 18;   
+  }
+
+  
+  if (solicitud.entidad.tipo == 'empresa') {
+    doc.text(20, eje_y, 'Nombre:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'CUIT:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Tipo de Empresa:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Tipo de Sociedad:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Fecha de Constitución:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Fecha de Inicio de Act.:');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Confición AFIP:');
+    eje_y += 6;
+  }
+
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
 
   // Domicilios Real 
-
-  let offsetLoop = 0;
   doc.setFontSize(14);
-  doc.text(20, 141 + offsetLoop, 'Domicilio Real');
-  doc.line(20, 143 + offsetLoop, 190, 143 + offsetLoop);
+  doc.text(20, eje_y, 'Domicilio Real');
+  eje_y += 6;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
+
+  let eje_y_domicilio = eje_y;
   doc.setFontSize(12);
-  doc.text(20, 148 + offsetLoop, 'Calle:');
-  doc.text(20, 154 + offsetLoop, 'País:');
-  doc.text(120, 154 + offsetLoop, 'Provincia:');
-  doc.text(20, 160 + offsetLoop, 'Departamento:');
-  doc.text(120, 160 + offsetLoop, 'Localidad:');
+  doc.text(20, eje_y, 'Calle:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'País:');
+  doc.text(100, eje_y, 'Provincia:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'Departamento:');
+  doc.text(100, eje_y, 'Localidad:');
+  eje_y += 6;
+
   doc.setLineWidth(0.5);
-  doc.line(20, 162 + offsetLoop, 190, 162 + offsetLoop);
-  offsetLoop += 26;
+  doc.line(20, eje_y, 190, eje_y);
+
+  eje_y += 6;
+  
 
   // Domicilios Profesional
-  doc.text(20, 141 + offsetLoop, 'Domicilio Profesional');
-  doc.line(20, 143 + offsetLoop, 190, 143 + offsetLoop);
+  doc.text(20, eje_y, 'Domicilio Profesional');
+  eje_y += 6;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
   doc.setFontSize(12);
-  doc.text(20, 148 + offsetLoop, 'Calle:');
-  doc.text(20, 154 + offsetLoop, 'País:');
-  doc.text(120, 154 + offsetLoop, 'Provincia:');
-  doc.text(20, 160 + offsetLoop, 'Departamento:');
-  doc.text(120, 160 + offsetLoop, 'Localidad:');
+  doc.text(20, eje_y, 'Calle:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'País:');
+  doc.text(100, eje_y, 'Provincia:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'Departamento:');
+  doc.text(100, eje_y, 'Localidad:');
+  eje_y += 6;
   doc.setLineWidth(0.5);
-  doc.line(20, 162 + offsetLoop, 190, 162 + offsetLoop);
-  offsetLoop += 26;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
 
-  doc.text(20, 141 + offsetLoop, 'Domicilio Constituido');
-  doc.line(20, 143 + offsetLoop, 190, 143 + offsetLoop);
+  doc.text(20, eje_y, 'Domicilio Constituido');
+  eje_y += 6;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
   doc.setFontSize(12);
-  doc.text(20, 148 + offsetLoop, 'Calle:');
-  doc.text(20, 154 + offsetLoop, 'País:');
-  doc.text(120, 154 + offsetLoop, 'Provincia:');
-  doc.text(20, 160 + offsetLoop, 'Departamento:');
-  doc.text(120, 160 + offsetLoop, 'Localidad:');
+  doc.text(20, eje_y, 'Calle:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'País:');
+  doc.text(100, eje_y, 'Provincia:');
+  eje_y += 6;
+  doc.text(20, eje_y, 'Departamento:');
+  doc.text(100, eje_y, 'Localidad:');
+  eje_y += 6;
   doc.setLineWidth(0.5);
-  doc.line(20, 162 + offsetLoop, 190, 162 + offsetLoop);
-  offsetLoop += 26;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
 
 
   //   // Contacto
   doc.setFontSize(14);
-  doc.text(20, 220, 'Información de Contacto');
-  doc.line(20, 221, 190, 221);
+  doc.text(20, eje_y, 'Información de Contacto');
+  eje_y += 6;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 6;
   doc.setFontSize(12);
-  offsetLoop = 0;
   solicitud.entidad.contactos.forEach(contacto => {
-    doc.text(20, 230 + offsetLoop, `${contacto.tipo}: ${contacto.valor}`);
-    offsetLoop += 6;
+    doc.text(20, eje_y, `${contacto.tipo}: ${contacto.valor}`);
+    eje_y += 6;
   });
 
-  // Firmas
-  doc.text('..............................................', 50, 265, 'center');
-  doc.text('Interesado', 50, 271, 'center');
+  if (solicitud.entidad.tipo == 'empresa') {
+    eje_y += 6;
+    // RESPONSABLES
+    doc.setFontSize(14);
+    doc.text(20, eje_y, 'Representantes Técnicos');
+    eje_y += 6;
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 6;
+    doc.setFontSize(12);
+    solicitud.entidad.representantes.forEach(representante => {
+      doc.text(20, eje_y, `${representante.numeroMatricula} - ${representante.nombre} ${representante.apellido}`);
+      eje_y += 6;
+    });
+  }
 
-  doc.text('..............................................', 160, 265, 'center');
-  doc.text('Colegio Técnico', 160, 271, 'center');
+  eje_y += 6;
+
+  // Firmas
+  doc.text('..............................................', 50, eje_y, 'center');
+  doc.text('Interesado', 50, eje_y + 6, 'center');
+
+  doc.text('..............................................', 160, eje_y, 'center');
+  doc.text('Colegio Técnico', 160, eje_y + 6, 'center');
 
 
   // Completado
   doc.setFont('courier');
   doc.text(65, 55, getSimpleFormatedDate(solicitud.fecha));
-  doc.text(65, 65, solicitud.entidad.apellido);
-  doc.text(65, 71, solicitud.entidad.nombre);
-  doc.text(65, 77, 'DNI ' + solicitud.entidad.dni);
-  doc.text(65, 83, getSimpleFormatedDate(solicitud.entidad.fechaNacimiento));
-  // doc.text(65, 89, solicitud.entidad.lugarNacimiento);
-  doc.text(65, 95, solicitud.entidad.sexo);
-  doc.text(65, 101, solicitud.entidad.nacionalidad);
 
-  //   doc.text(65, 111, solicitud.entidad.formacionGrado[0].profesion.nombre);
-  //   doc.text(65, 117, solicitud.entidad.formacionGrado[0].titulo);
-  //   doc.text(65, 123, solicitud.entidad.formacionGrado[0].entidadFormadora.nombre);
-  //   doc.text(65, 129, this.getSimpleFormatedDate(solicitud.entidad.formacionGrado[0].fechaTitulo));
+  eje_y = 65;
+
+  if (solicitud.entidad.tipo == 'profesional') {
+    doc.text(65, eje_y, solicitud.entidad.apellido);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.nombre);
+    eje_y += 6;
+    doc.text(65, eje_y, 'DNI ' + solicitud.entidad.dni);
+    eje_y += 6;
+    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaNacimiento));
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.lugarNacimiento);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.sexo);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.nacionalidad);
+    eje_y += 6;
+  }
+
+  if (solicitud.entidad.tipo == 'empresa') {
+    doc.text(65, eje_y, solicitud.entidad.nombre);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.cuit);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.tipoEmpresa);
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.tipoSociedad);
+    eje_y += 6;
+    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaConstitucion));
+    eje_y += 6;
+    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaInicio));
+    eje_y += 6;
+    doc.text(65, eje_y, solicitud.entidad.condafip);
+    eje_y += 6;
+  }
 
   //   // completado domicilios
-  offsetLoop = 0;
   doc.setFontSize(12);
-  doc.text(35, 148 + offsetLoop, `${solicitud.entidad.domicilioReal.calle} ${solicitud.entidad.domicilioReal.numero}`);
-  doc.text(35, 154 + offsetLoop, solicitud.entidad.domicilioReal.pais);
-  doc.text(140, 154 + offsetLoop, solicitud.entidad.domicilioReal.provincia);
-  doc.text(50, 160 + offsetLoop, solicitud.entidad.domicilioReal.departamento);
-  doc.text(140, 160 + offsetLoop, solicitud.entidad.domicilioReal.localidad);
-  offsetLoop += 26;
+  doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioReal.calle} ${solicitud.entidad.domicilioReal.numero}`);
+  eje_y_domicilio += 6;
+  doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioReal.pais);
+  doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioReal.provincia);
+  eje_y_domicilio += 6;
+  doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioReal.departamento);
+  doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioReal.localidad);
+  eje_y_domicilio += 6;
 
   if (solicitud.entidad.domicilioProfesional) {
-    doc.text(35, 148 + offsetLoop, `${solicitud.entidad.domicilioProfesional.calle} ${solicitud.entidad.domicilioProfesional.numero}`);
-    doc.text(35, 154 + offsetLoop, solicitud.entidad.domicilioProfesional.pais);
-    doc.text(140, 154 + offsetLoop, solicitud.entidad.domicilioProfesional.provincia);
-    doc.text(50, 160 + offsetLoop, solicitud.entidad.domicilioProfesional.departamento);
-    doc.text(140, 160 + offsetLoop, solicitud.entidad.domicilioProfesional.localidad);
-    offsetLoop += 26;
+    eje_y_domicilio += 18;
+    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioProfesional.calle} ${solicitud.entidad.domicilioProfesional.numero}`);
+    eje_y_domicilio += 6;
+    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioProfesional.pais);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioProfesional.provincia);
+    eje_y_domicilio += 6;
+    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioProfesional.departamento);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioProfesional.localidad);
+    eje_y_domicilio += 6;
   }
 
   if (solicitud.entidad.domicilioConstituido) {
-    doc.text(35, 148 + offsetLoop, `${solicitud.entidad.domicilioConstituido.calle} ${solicitud.entidad.domicilioConstituido.numero}`);
-    doc.text(35, 154 + offsetLoop, solicitud.entidad.domicilioConstituido.pais);
-    doc.text(140, 154 + offsetLoop, solicitud.entidad.domicilioConstituido.provincia);
-    doc.text(50, 160 + offsetLoop, solicitud.entidad.domicilioConstituido.departamento);
-    doc.text(140, 160 + offsetLoop, solicitud.entidad.domicilioConstituido.localidad);
-    offsetLoop += 26;
+    eje_y_domicilio += 18;
+    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioConstituido.calle} ${solicitud.entidad.domicilioConstituido.numero}`);
+    eje_y_domicilio += 6;
+    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioConstituido.pais);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioConstituido.provincia);
+    eje_y_domicilio += 6;
+    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioConstituido.departamento);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioConstituido.localidad);
   }
-
-
-  //   // Completado contactos
-  //   offsetLoop = 0;
-  //   solicitud.entidad.contactos.forEach(contacto => {
-  //     doc.text(50, 225 + offsetLoop, contacto.valor);
-  //     offsetLoop += 6;
-  //   });
 
   return doc;
 

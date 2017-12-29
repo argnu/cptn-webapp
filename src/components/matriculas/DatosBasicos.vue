@@ -17,14 +17,12 @@
                   </v-avatar>
                 </v-flex>
                 <v-flex xs4>
-                  N° Matrícula: {{ matricula.numeroMatricula }} <br> <br>
+                  N° Matrícula: {{ matricula.numeroMatricula }} <br>
                   Estado: {{ matricula.estado }}
                 </v-flex>
                 <v-flex xs2 v-if="matricula.entidad.tipo == 'profesional'">
-                  Apellido: {{ matricula.entidad.apellido }} <br> <br>
-                </v-flex>
-                <v-flex xs2>
-                  Nombre: {{ matricula.entidad.nombre }} <br> <br>                 
+                  Apellido: {{ matricula.entidad.apellido }} <br>
+                  Nombre: {{ matricula.entidad.nombre }}
                 </v-flex>
                 <v-flex xs1>                    
                   <img 

@@ -9,6 +9,18 @@
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
+    <v-layout row>
+      <v-flex xs12>
+        <v-btn
+          class="blue darken-1 white--text right"
+          @click.native="imprimir"
+        >
+          <v-icon dark left>print</v-icon>
+          Imprimir
+        </v-btn>          
+      </v-flex>  
+    </v-layout>  
+
     <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
@@ -751,6 +763,10 @@ export default {
       this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
       this.global_state.snackbar.color = 'error';
       this.global_state.snackbar.show = true;
+    },
+
+    imprimir: function() {
+      window.print();
     }
   },
 
@@ -770,5 +786,49 @@ input:disabled {
 
 .input-group:not(.input-group--error).input-group--disabled .input-group__selections__comma {
   color: rgb(58, 148, 209) !important;
+}
+
+@media print {
+
+
+  @page {
+    size: portrait;
+    margin-top: 2cm;
+    margin-right: 2cm;
+    margin-bottom: 2cm;
+    margin-left: 2cm
+  }
+  nav,
+  hr,
+  footer,
+  .btnImprimir {
+    display: none;
+  }
+  body {
+    padding-top: 0;
+    margin-bottom: 2.5cm;
+    line-height: 1.3;
+  }
+  a[href]:after {
+    content: none
+  }
+  /* table {
+    page-break-after: always;
+  } */
+  th {
+    font-size: 0.7rem;
+  }
+  tr {
+    border-bottom: 2px solid rgba(0, 0, 0, .15);
+  }
+  /* .page-break {
+    page-break-before: always;
+  } */
+  small {
+    font-size: 0.7rem;
+  }
+  .content {
+    margin: 0 !important;
+  }
 }
 </style>

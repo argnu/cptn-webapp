@@ -850,6 +850,7 @@
                     Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provinca de Neuquén, previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo
                     Profesional de Técnicos de Neuquén. Nota: de comprobarse la falsedad de la presente Declaración Jurada el Consejo Profesional aplicará al profesional una sanción consistente en duplo de la matrículo anual vigente. Art 29, Ley 708
                   </blockquote>
+                  <br>
 
                   <v-checkbox label="De Acuerdo" v-model="deAcuerdo">
                   </v-checkbox>
@@ -860,8 +861,39 @@
                   <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 6" v-model="solicitud.exencionArt6">
                   </v-checkbox>
 
-                  <v-checkbox class="ma-0 pa-0" label="Permitir la publicación de los datos" v-model="solicitud.entidad.publicar">
-                  </v-checkbox>
+                  <h3>Permitir la publicación de los datos:</h3>
+
+                  <v-layout row class="mt-2">
+                    <v-flex xs6>
+                      <v-checkbox 
+                        class="ma-0 pa-0" 
+                        label="Email" 
+                        v-model="solicitud.entidad.publicarEmail"
+                      >
+                      </v-checkbox>
+                      <v-checkbox 
+                        class="ma-0 pa-0" 
+                        label="Celular" 
+                        v-model="solicitud.entidad.publicarCelular"
+                      >
+                      </v-checkbox>
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-checkbox 
+                        class="ma-0 pa-0" 
+                        label="Dirección" 
+                        v-model="solicitud.entidad.publicarDireccion"
+                      >
+                      </v-checkbox>
+                      <v-checkbox 
+                        class="ma-0 pa-0" 
+                        label="Acervo" 
+                        v-model="solicitud.entidad.publicarAcervo"
+                      >
+                      </v-checkbox>
+                    </v-flex>
+
+                  </v-layout>
 
                 </v-card-text>
               </v-card>
@@ -1079,6 +1111,10 @@ export default {
 
   methods: {
     fillProfesional: function(entidad) {
+      this.solicitud.entidad.publicarEmail = entidad.publicarEmail;
+      this.solicitud.entidad.publicarDireccion = entidad.publicarDireccion;
+      this.solicitud.entidad.publicarAcervo = entidad.publicarAcervo;
+      this.solicitud.entidad.publicarCelular = entidad.publicarCelular;
       this.solicitud.entidad.id = entidad.id;
       this.solicitud.entidad.nombre = entidad.nombre;
       this.solicitud.entidad.apellido = entidad.apellido;

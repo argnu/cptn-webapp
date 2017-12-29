@@ -574,13 +574,10 @@
                         <v-layout row wrap>
                           <v-flex xs12 class="mx-3">
                             <v-data-table
-                                :rows-per-page-items="[5, 10, 25]"
+                                hide-actions
                                 :headers="headers.matriculados"
                                 :items="solicitud.entidad.representantes"
-                                class="elevation-1"
-                                v-bind:pagination.sync="pagination"
-                                :total-items="totalItems"
-                                :loading="loading"
+                                class="elevation-1"                                
                                 no-data-text="No se agregaron representates"
                                 no-results-text="No se agregaron representates"
                                 >
@@ -593,11 +590,11 @@
                               <template slot="items" slot-scope="props">
                                 <tr>
                                   <td>{{ props.item.numeroMatricula }}</td>
-                                  <td>{{ props.item.entidad.nombre }}</td>
-                                  <td>{{ props.item.entidad.apellido }}</td>
-                                  <td>{{ props.item.entidad.dni }}</td>
+                                  <td>{{ props.item.nombre }}</td>
+                                  <td>{{ props.item.apellido }}</td>
+                                  <td>{{ props.item.dni }}</td>
                                   <td>
-                                    <v-btn icon dark small @click="borrarRepresentante(props.item.id)">
+                                    <v-btn icon small @click="borrarRepresentante(props.item.numeroMatricula)">
                                       <v-icon>delete</v-icon>
                                     </v-btn>
                                   </td>
@@ -759,6 +756,7 @@ export default {
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               
+              this.solicitud.entidad.id = r.data.entidad.id;
               this.solicitud.entidad.nombre = r.data.entidad.nombre;          
               this.solicitud.entidad.cuit = r.data.entidad.cuit;
               this.solicitud.entidad.fechaInicio = moment(r.data.entidad.fechaInicio).format('DD/MM/YYYY');
@@ -796,17 +794,10 @@ export default {
               }
 
               for(let incumbencia of r.data.entidad.incumbencias) {
-                this.solicitud.entidad.incumbencias.push(incumbencia.incumbencia);
+                this.solicitud.entidad.incumbencias.push(incumbencia.id);
               }
 
-              let proms_rep = r.data.entidad.representantes.map(r => 
-                axios.get(`/matriculas/${r.idMatricula}`)
-              )
-              
-              Promise.all(proms_rep)
-              .then(matriculas => {
-                this.solicitud.entidad.representantes = matriculas.map(r => r.data);
-              });
+              this.solicitud.entidad.representantes = r.data.entidad.representantes;
         })
       }
     })
@@ -850,23 +841,38 @@ export default {
 
     prepareSubmit: function() {
       let solicitud = utils.clone(this.solicitud);
-      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.id);
+      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.idMatricula);
       return solicitud;
     },
 
     submit: function() {
-      axios.post('/solicitudes', this.prepareSubmit())
-           .then(r => {
-             if (r.status != 201) {
-               this.submitError();
-             }
-             this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-             this.global_state.snackbar.color = 'success';
-             this.global_state.snackbar.show = true;
-             this.$router.push('/solicitudes/lista')
+      if (!this.id) {
+        axios.post('/solicitudes', this.prepareSubmit())
+            .then(r => {
+              if (r.status != 201) {
+                this.submitError();
+              }
+              this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
+              this.global_state.snackbar.color = 'success';
+              this.global_state.snackbar.show = true;
+              this.$router.push('/solicitudes/lista')
 
-           })
-           .catch(e => this.submitError());
+            })
+            .catch(e => this.submitError());
+      }
+      else {
+        axios.put(`/solicitudes/${this.id}`, this.prepareSubmit())
+          .then(r => {
+            if (r.status != 200) {
+              this.submitError();
+            }
+            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+            this.$router.replace('/solicitudes/lista');
+          })
+          .catch(e => this.submitError());        
+      }      
     },
 
     validStep: function(i) {
@@ -908,12 +914,18 @@ export default {
     },
 
     addRepresentante: function(matricula) {
-      this.solicitud.entidad.representantes.push(matricula);
+      this.solicitud.entidad.representantes.push({
+        idMatricula: matricula.id,
+        numeroMatricula: matricula.numeroMatricula,
+        dni: matricula.entidad.dni,
+        apellido: matricula.entidad.apellido,
+        nombre: matricula.entidad.nombre
+      });
     },
 
-    borrarRepresentante: function(id) {
+    borrarRepresentante: function(numeroMatricula) {
       this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
-                                                  .filter(r => r.id != id);
+                                                  .filter(r => r.numeroMatricula != numeroMatricula);
     }
   },
 

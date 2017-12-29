@@ -65,6 +65,9 @@ export class Profesional {
     this.nombreCajaPrevisional = '';
     this.beneficiarios = [];
     this.subsidiarios = [];
-    this.publicar = false;
+    this.publicarEmail = false;
+    this.publicarCelular = false;
+    this.publicarDireccion = false;
+    this.publicarAcervo = false;
   }
 }
