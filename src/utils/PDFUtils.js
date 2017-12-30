@@ -1,20 +1,23 @@
-const jsPDF = require('jspdf');
+import * as jsPDF from 'jspdf'
+import * as moment from 'moment'
+import { getTipoLegajo } from '@/utils/legajo'
+
 const img = new Image();
 img.src = "/static/logoImpresion.jpg";
 
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
   doc.addImage(img,'JPG', 10, 10, 60, 13);
-  doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
-  doc.text('de la Provincia del Neuquén', 120, 26, 'center');
+  // doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
+  // doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
   doc.line(20, 43, 190, 43);
   doc.setFontSize(12);
   doc.text(24, 40, `Volante de Pago N° ${volante.id}`);
   doc.text(120, 50, 'Fecha de Emision');
-  doc.text(160, 50, getSimpleFormatedDate(volante.fecha));
+  doc.text(160, 50, moment(volante.fecha).format('DD/MM/YYYY'));
   doc.text(120, 55, 'Fecha Expiración ');
-  doc.text(160, 55, getSimpleFormatedDate(volante.fecha_vencimiento));
+  doc.text(160, 55, moment(volante.fecha_vencimiento).format('DD/MM/YYYY'));
   doc.setFontSize(10);
   doc.text(24, 50, `N° Matricula  ${volante.matricula.numeroMatricula}`);
   doc.text(24, 55, `Nombre   ${volante.matricula.entidad.nombre}`);
@@ -53,6 +56,8 @@ export function impresionVolante(volante) {
 
   return doc;
 }
+
+
 
 export function impresionSolicitud(solicitud) {
   const doc = new jsPDF('p', 'mm', 'a4');
@@ -104,7 +109,7 @@ export function impresionSolicitud(solicitud) {
       // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
       doc.text(65, eje_y, formacion_grado.titulo);
       doc.text(65, eje_y + 6, formacion_grado.institucion);
-      doc.text(65, eje_y + 12, this.getSimpleFormatedDate(formacion_grado.fecha));
+      doc.text(65, eje_y + 12, moment(formacion_grado.fecha).format('DD/MM/YYYY'));
     }
     eje_y += 18;   
   }
@@ -229,7 +234,7 @@ export function impresionSolicitud(solicitud) {
 
   // Completado
   doc.setFont('courier');
-  doc.text(65, 55, getSimpleFormatedDate(solicitud.fecha));
+  doc.text(65, 55, moment(solicitud.fecha).format('DD/MM/YYYY'));
 
   eje_y = 65;
 
@@ -240,7 +245,7 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, 'DNI ' + solicitud.entidad.dni);
     eje_y += 6;
-    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaNacimiento));
+    doc.text(65, eje_y, moment(solicitud.entidad.fechaNacimiento).format('DD/MM/YYYY'));
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.lugarNacimiento);
     eje_y += 6;
@@ -259,9 +264,9 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.tipoSociedad);
     eje_y += 6;
-    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaConstitucion));
+    doc.text(65, eje_y, solicitud.entidad.fechaConstitucion ? moment(solicitud.entidad.fechaConstitucion).format('DD/MM/YYYY') : '');
     eje_y += 6;
-    doc.text(65, eje_y, getSimpleFormatedDate(solicitud.entidad.fechaInicio));
+    doc.text(65, eje_y, solicitud.entidad.fechaInicio ? moment(solicitud.entidad.fechaInicio).format('DD/MM/YYYY') : '');
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.condafip);
     eje_y += 6;
@@ -305,7 +310,106 @@ export function impresionSolicitud(solicitud) {
 
 }
 
-function getSimpleFormatedDate(date) {
-  const fecha = new Date(date);
-  return fecha.getDate() + '/' + (fecha.getMonth() + 1) + '/' + fecha.getFullYear();
+
+
+
+export function impresionLegajo(legajo, categoria) {
+  const encabezado = (str) => {
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 5;
+    doc.setFontSize(12);
+    doc.text(25, eje_y, str);
+    eje_y += 3;
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 5;
+    doc.setFontSize(10);
+  }
+
+  const doc = new jsPDF('p', 'mm', 'a4');
+  doc.addImage(img,'JPG', 10, 10, 60, 13);
+  doc.setLineWidth(1);
+  doc.line(20, 38, 190, 38);
+  doc.setFontSize(14);
+  doc.text(25, 45, getTipoLegajo(legajo.tipo));  
+  doc.line(20, 50, 190, 50);
+
+  let eje_y = 57;
+  doc.setFontSize(10);
+  doc.text(25, eje_y, `N° ${legajo.numero_legajo}`);  
+  doc.text(50, eje_y, `Fecha: ${moment(legajo.fecha_solicitud).format('DD/MM/YYYY')}`);
+  eje_y += 5
+  doc.setLineWidth(0.5);
+
+  encabezado('Comitente');
+
+  doc.text(25, eje_y, `Apellido: ${legajo.comitente.apellido}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `Nombre: ${legajo.comitente.nombres}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `DNI: ${legajo.comitente.numero_documento ? legajo.comitente.numero_documento : ''}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `Teléfono: ${legajo.comitente.telefono ? legajo.comitente.telefono : ''}`);
+  eje_y += 5;
+
+  encabezado('Ubicación del Trabajo');
+
+  doc.text(25, eje_y, `Nomenclatura: ${legajo.nomenclatura}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `País: ${legajo.domicilio ? legajo.domicilio.pais : ''}`);
+  doc.text(100, eje_y, `Provincia: ${legajo.domicilio ? legajo.domicilio.provincia : ''}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `Departamento: ${legajo.domicilio ? legajo.domicilio.departamento : ''}`);
+  doc.text(100, eje_y, `Localidad: ${legajo.domicilio ? legajo.domicilio.localidad : ''}`);
+  eje_y += 5;
+  doc.text(25, eje_y, `Calle: ${legajo.domicilio ? legajo.domicilio.calle : ''}`);
+  doc.text(100, eje_y, `N°: ${legajo.domicilio &&  legajo.domicilio.numero ? legajo.domicilio.numero: ''}`);
+  eje_y += 5;
+
+  let subcategoria = categoria.subcategorias.find(s => s.id == legajo.subcategoria)
+  encabezado('Tareas');
+  doc.text(25, eje_y, `${categoria.descripcion} - ${subcategoria.descripcion}`);
+  eje_y += 5;
+  
+  for(let item of legajo.items) {
+    doc.text(25, eje_y, `${item.item.descripcion}: ${item.valor}`);
+    eje_y += 5;
+  }
+
+  // SI ES ORDEN DE TRABAJO
+  if (legajo.tipo == 2) {
+    encabezado('Honorarios');
+    doc.text(25, eje_y, `Plazo Cumplimiento: ${legajo.plazo_cumplimiento ? moment(legajo.plazo_cumplimiento).format('DD/MM/YYYY') : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Honorarios Presupuestados: ${legajo.honorarios_presupuestados ? '$ '+legajo.honorarios_presupuestados : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Forma de Pago: ${legajo.forma_pago}`);
+    eje_y += 5;
+  }
+
+  // SI ES LEGAJO TÉCNICO
+  else if (legajo.tipo == 3) {
+    encabezado('Honorarios');
+    doc.text(25, eje_y, `Honorarios Reales: ${legajo.honorarios_reales ? '$ '+legajo.honorarios_reales : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Finalización Tarea: ${legajo.finalizacion_tarea ? moment(legajo.finalizacion_tarea).format('DD/MM/YYYY') : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Porcentaje Cumplimiento: ${legajo.porcentaje_cumplimiento}%`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Tarea Pública: ${legajo.tarea_publica ? 'Sí' : 'No'}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Relación de Dependencia: ${legajo.relacion_dependencia ? 'Sí' : 'No'}`);
+    eje_y += 5;
+
+    encabezado('Aportes')
+    doc.text(25, eje_y, `Aporte Neto: ${legajo.aporte_neto ? '$ '+legajo.aporte_neto : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Aporte Bruto: ${legajo.aporte_bruto ? '$ '+legajo.aporte_bruto : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Aporte Neto Bonificación: ${legajo.aporte_neto_bonificacion ? '$ '+legajo.aporte_neto_bonificacion : ''}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Cantidad de Planos: ${legajo.cantidad_planos ? legajo.cantidad_planos : ''}`);
+    eje_y += 5;
+  }
+
+  return doc;
 }

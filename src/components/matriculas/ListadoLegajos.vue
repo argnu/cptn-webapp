@@ -26,6 +26,9 @@
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.numero_legajo }}</td>
               <td>
+                <v-btn fab dark small @click="imprimir(props.item.id)" color="blue">
+                  <v-icon>print</v-icon>
+                </v-btn>                
                 <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
                   <v-icon>launch</v-icon>
                 </v-btn>
@@ -40,6 +43,8 @@
 
 <script>
 import axios from '@/axios';
+import { impresionLegajo } from '@/utils/PDFUtils'
+import { getTipoLegajo } from '@/utils/legajo'
 
 const Header = (text, value) => ({
   text, value
@@ -83,7 +88,19 @@ export default {
 
     nuevoLegajo: function() {
       this.$router.push({ path: `/matriculas/${this.id}/nuevo-legajo` });
-    }
+    },
+
+    imprimir: function(id) {
+      Promise.all([
+        axios.get(`/legajos/${id}`),
+        axios.get('/tareas/categorias')
+      ])
+      .then(([legajo, categorias]) => {        
+        let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))
+        let pdf = impresionLegajo(legajo.data, categoria);
+        pdf.save(`${getTipoLegajo(legajo.data.tipo)} - N° ${legajo.data.numero_legajo}.pdf`)
+      }) 
+    }    
   },
 
 }

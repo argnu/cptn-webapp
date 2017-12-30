@@ -20,11 +20,11 @@
                   N° Matrícula: {{ matricula.numeroMatricula }} <br>
                   Estado: {{ matricula.estado }}
                 </v-flex>
-                <v-flex xs2 v-if="matricula.entidad.tipo == 'profesional'">
+                <v-flex xs4 v-if="matricula.entidad.tipo == 'profesional'">
                   Apellido: {{ matricula.entidad.apellido }} <br>
                   Nombre: {{ matricula.entidad.nombre }}
                 </v-flex>
-                <v-flex xs1>                    
+                <v-flex xs2>                    
                   <img 
                     v-if="matricula.entidad.firma" 
                     :src="matricula.entidad.firma" 

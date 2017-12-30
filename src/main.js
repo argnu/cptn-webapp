@@ -6,6 +6,7 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import * as utils from '@/utils'
+import { getTipoLegajo } from '@/utils/legajo'
 import * as moment from 'moment'
 
 Vue.use(Vuetify)
@@ -19,11 +20,8 @@ new Vue({
   components: { App }
 })
 
-const tipos_legajos = ['Permiso de Construcción', 'Orden de Trabajo', 'Legajo Técnico'];
 
-Vue.filter('tipo_legajo', function(i) {
-    return i ? tipos_legajos[i-1] : '';
-});
+Vue.filter('tipo_legajo', getTipoLegajo);
 
 Vue.filter('boolean', function(str) {
   return str ? 'Sí' : 'No';

@@ -322,7 +322,7 @@
                     hide-actions
                 >
                   <template slot="headers" slot-scope="props">
-                    <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                    <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                       <b>{{ header.text }}</b>
                     </th>
                   </template>
@@ -565,6 +565,8 @@ import Typeahead from '@/components/base/Typeahead'
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import Store from '@/Store'
+import { impresionLegajo } from '@/utils/PDFUtils'
+import { getTipoLegajo } from '@/utils/legajo'
 
 const tipos = [
   Header('Permiso de Construcción', 1),
@@ -766,7 +768,13 @@ export default {
     },
 
     imprimir: function() {
-      window.print();
+      let categoria = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria))
+      axios.get(`/legajos/${this.id_legajo}`)
+      .then(r => {
+        let legajo = r.data;
+        let pdf = impresionLegajo(legajo, categoria);
+        pdf.save(`${getTipoLegajo(legajo.tipo)} - N° ${legajo.numero_legajo}.pdf`)
+      })
     }
   },
 
@@ -786,49 +794,5 @@ input:disabled {
 
 .input-group:not(.input-group--error).input-group--disabled .input-group__selections__comma {
   color: rgb(58, 148, 209) !important;
-}
-
-@media print {
-
-
-  @page {
-    size: portrait;
-    margin-top: 2cm;
-    margin-right: 2cm;
-    margin-bottom: 2cm;
-    margin-left: 2cm
-  }
-  nav,
-  hr,
-  footer,
-  .btnImprimir {
-    display: none;
-  }
-  body {
-    padding-top: 0;
-    margin-bottom: 2.5cm;
-    line-height: 1.3;
-  }
-  a[href]:after {
-    content: none
-  }
-  /* table {
-    page-break-after: always;
-  } */
-  th {
-    font-size: 0.7rem;
-  }
-  tr {
-    border-bottom: 2px solid rgba(0, 0, 0, .15);
-  }
-  /* .page-break {
-    page-break-before: always;
-  } */
-  small {
-    font-size: 0.7rem;
-  }
-  .content {
-    margin: 0 !important;
-  }
 }
 </style>

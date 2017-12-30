@@ -20,7 +20,15 @@
             </v-flex>
 
             <v-flex xs4 class="mx-4">
-              <v-select :items="estados" label="Estado" single-line bottom v-model="filtros.estado">
+              <v-select 
+                :items="select_items.estados" 
+                item-value="id"
+                item-text="valor"
+                label="Estado" 
+                single-line bottom 
+                autocomplete
+                v-model="filtros.estado"
+              >
               </v-select>
               <div v-show="filtros.tipoEntidad == 'profesional'">
                 <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
@@ -237,12 +245,6 @@ export default {
     }
   },
 
-  computed: {
-    estados: function() {
-      return this.select_items.estados ? this.select_items.estados.map(e => e.valor) : [];
-    }
-  },
-
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
@@ -268,10 +270,7 @@ export default {
 
         let url = `/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
-        if (this.filtros.estado) {
-          let estado = this.select_items.estados.find(e => e.valor == this.filtros.estado);
-          url += `&estado=${estado.id}`
-        }
+        if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
         if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
         if (this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
         if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
