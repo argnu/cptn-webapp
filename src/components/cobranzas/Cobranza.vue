@@ -117,7 +117,7 @@
               <template slot="items" slot-scope="props">
                 <tr>
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
-                  <td>${{ props.item.importe }}</td>
+                  <td>${{ props.item.importe | round }}</td>
                   <td>{{ props.item.cheque.numero }}</td>
                   <td>{{ getBanco(props.item.cheque.banco) }}</td>
                   <td>
@@ -137,7 +137,7 @@
               </v-alert>
             </div>
             <div class="right mr-5">
-              <h4 class="blue--text"> Total: ${{ total }}</h4>
+              <h4 class="blue--text"> Total: ${{ total | round }}</h4>
             </div>
           </v-flex>
         </v-layout>

@@ -168,7 +168,7 @@ export default {
 
       filtros: {
         tipoEntidad: 'profesional',
-        estado: '',
+        estado: 'Habilitado',
         numero: '',
         profesional: {
           dni: '',
