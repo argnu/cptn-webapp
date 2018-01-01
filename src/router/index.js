@@ -29,6 +29,7 @@ export default new Router({
       path: '/',
       name: 'MainContainer',
       component: MainContainer,
+      redirect: '/seleccionar-delegacion',
       beforeEnter: (to, from, next) => {
         if (!Cookies.get('CPTNUser')) next({ path: '/login' });
         else {
