@@ -28,8 +28,8 @@
                   label="Forma de Pago"
                   :items="tipos_pago"
                   v-model="nueva_forma_pago.forma_pago"
-                  :rules="submit_forma_pago ? validator.tipo : []"
-                  :error="submit_forma_pago && !validControl(validator.tipo, nueva_forma_pago.forma_pago)"
+                  :rules="submit_forma_pago ? validator.forma_pago : []"
+                  :error="submit_forma_pago && !validControl(validator.forma_pago, nueva_forma_pago.forma_pago)"
                 >
                 </v-select>
               </v-flex>
@@ -280,8 +280,10 @@ export default {
     },
 
     pagar: function() {
-      this.$emit('aceptar', utils.clone(this.items_pago));
-      this.items_pago = [];
+      if (this.form_valid) {
+        this.$emit('aceptar', utils.clone(this.items_pago));
+        this.items_pago = [];
+      }
     },
 
     getTipoPago: function(id) {
