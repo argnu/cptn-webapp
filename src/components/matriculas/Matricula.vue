@@ -95,7 +95,7 @@ export default {
 
     habilitar: function() {
       // 13 ES ESTADO 'Habilitado'
-      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
+      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13, operador: JSON.parse(Cookies.get('CPTNUser')).id })
       .then(r => this.update())
       .catch(e => console.error(e));
     },

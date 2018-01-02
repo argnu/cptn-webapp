@@ -846,6 +846,9 @@ export default {
     },
 
     submit: function() {
+      let user = JSON.parse(Cookies.get('CPTNUser'));
+      this.solicitud.operador = user.id;
+      
       if (!this.id) {
         axios.post('/solicitudes', this.prepareSubmit())
             .then(r => {

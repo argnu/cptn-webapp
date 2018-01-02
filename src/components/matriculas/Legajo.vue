@@ -747,6 +747,9 @@ export default {
     },
 
     submit: function() {
+      let user = JSON.parse(Cookies.get('CPTNUser'));
+      this.legajo.operador = user.id;      
+
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              if (r.status != 201) {
