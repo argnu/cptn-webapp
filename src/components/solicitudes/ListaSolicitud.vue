@@ -177,6 +177,7 @@
           <v-btn fab dark small color="blue" slot="activator">
             <v-icon>more_vert</v-icon>
           </v-btn>
+          
           <v-list>
             <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
               <v-list-tile-title>
@@ -184,12 +185,14 @@
                 <span class="ml-2">Aprobar</span>
               </v-list-tile-title>
             </v-list-tile>
+
             <v-list-tile @click="imprimirSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="text--darken-2">print</v-icon>
                 <span class="ml-2">Imprimir</span>
               </v-list-tile-title>
             </v-list-tile>
+
             <v-list-tile v-show="props.item.estado != 'aprobada'" @click="editSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="blue--text text--darken-2">edit</v-icon>
@@ -376,7 +379,7 @@ export default {
           .then(s => {
             let solicitud = s.data;
             let pdf = impresionSolicitud(solicitud);
-            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido || '' }.pdf`)
           })
           .catch(e => console.error(e));
     },

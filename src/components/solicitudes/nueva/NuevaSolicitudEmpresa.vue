@@ -607,6 +607,12 @@
 
                     </v-card-text>
                   </v-card>
+
+                  <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
+                    Imprimir
+                    <v-icon dark right>check_circle</v-icon>
+                  </v-btn>
+
                   <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!validForm()">
                     Guardar Solicitud
                     <v-icon dark right>check_circle</v-icon>
@@ -652,6 +658,7 @@ import * as Model from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
+import { impresionSolicitud } from '@/utils/PDFUtils'
 
 const headers = {
   contactos: [
@@ -926,7 +933,17 @@ export default {
     borrarRepresentante: function(numeroMatricula) {
       this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
                                                   .filter(r => r.numeroMatricula != numeroMatricula);
-    }
+    },
+
+    imprimir: function() {
+      axios.get(`/solicitudes/${this.id}`)
+          .then(s => {
+            let solicitud = s.data;
+            let pdf = impresionSolicitud(solicitud);
+            pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
+          })
+          .catch(e => console.error(e));
+    },    
   },
 
   components: {

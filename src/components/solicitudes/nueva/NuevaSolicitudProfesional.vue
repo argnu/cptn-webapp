@@ -444,7 +444,7 @@
                 <v-card-text>
                   <v-container>
                     <v-layout row>
-                      <v-flex xs6 class="mx-4">
+                      <v-flex xs5 class="mx-2">
                         <v-select
                           single-line bottom
                           :items="opciones.contacto"
@@ -458,9 +458,9 @@
                         </v-select>
                       </v-flex>
 
-                      <v-flex xs6 class="mx-4">
+                      <v-flex xs5 class="mx-2">
                         <v-text-field 
-                          label="Valor" 
+                          :prefix="nuevo_contacto.tipo === 2 ? '+54 9' : ''"
                           v-model="nuevo_contacto.valor" 
                           :rules="submitted.contacto ? validator.contacto.valor : []"
                           :error="submitted.contacto && !validControl(validator.contacto.valor, nuevo_contacto.valor)"
@@ -483,7 +483,7 @@
                       no-data-text="No hay contactos"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                               {{ header.text }}
                             </th>
                             <th></th>
@@ -646,7 +646,7 @@
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <v-layout row>
-                    <v-flex xs3 class="ma-4">
+                    <v-flex xs5 class="ma-4">
                       <v-checkbox 
                         label="Ya poseo Caja Previsional" 
                         v-model="solicitud.entidad.poseeCajaPrevisional"
@@ -654,7 +654,7 @@
                       </v-checkbox>
                     </v-flex>
 
-                    <v-flex xs6>
+                    <v-flex xs5>
                       <v-text-field 
                         label="Nombre" 
                         :disabled="!solicitud.entidad.poseeCajaPrevisional" 
@@ -665,6 +665,23 @@
                   </v-layout>
 
                   <v-layout row>
+                    <v-flex xs12 class="ml-4">
+                      <v-checkbox 
+                        label="Solicitar Caja Previsional de Profesionales" 
+                        v-model="solicitud.entidad.solicitaCajaPrevisional"
+                      >
+                      </v-checkbox>
+
+                      <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 10" v-model="solicitud.exencionArt10">
+                      </v-checkbox>
+
+                      <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 6" v-model="solicitud.exencionArt6">
+                      </v-checkbox>
+
+                    </v-flex>
+                  </v-layout>                  
+
+                  <!-- <v-layout row>
                     <v-flex xs6 class="ma-4">
                       <v-text-field 
                         label="DNI" 
@@ -708,9 +725,9 @@
                       <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
                       </v-checkbox>
                     </v-flex>
-                  </v-layout>
+                  </v-layout> -->
 
-                  <v-layout row wrap class="mb-4">
+                  <!-- <v-layout row wrap class="mb-4">
                     <v-flex xs12>
                       <v-btn class="right" light @click="addBeneficiario">
                         Agregar
@@ -746,7 +763,8 @@
                                </td>
                              </template>
                     </v-data-table>
-                  </div>
+                  </div> -->
+
                 </v-card-text>
               </v-card>
               <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
@@ -813,7 +831,7 @@
                     no-data-text="No hay subsidiarios"
                   >
                     <template slot="headers" slot-scope="props">
-                             <th v-for="header of props.headers" class="pa-3 text-xs-left">
+                             <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                                <b>{{ header.text }}</b>
                              </th>
                              <th></th>
@@ -831,6 +849,12 @@
                            </template>
                   </v-data-table>
 
+                  <br>
+
+              <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
+                Los porcentajes deben sumar 100%
+              </v-alert>                  
+
                 </v-card-text>
               </v-card>
               <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
@@ -846,19 +870,13 @@
             <v-stepper-content step="9">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <blockquote>
+                  <!-- <blockquote>
                     Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provinca de Neuquén, previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo
                     Profesional de Técnicos de Neuquén. Nota: de comprobarse la falsedad de la presente Declaración Jurada el Consejo Profesional aplicará al profesional una sanción consistente en duplo de la matrículo anual vigente. Art 29, Ley 708
                   </blockquote>
-                  <br>
+                  <br> -->
 
                   <v-checkbox label="De Acuerdo" v-model="deAcuerdo">
-                  </v-checkbox>
-
-                  <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 10" v-model="solicitud.exencionArt10">
-                  </v-checkbox>
-
-                  <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 6" v-model="solicitud.exencionArt6">
                   </v-checkbox>
 
                   <h3>Permitir la publicación de los datos:</h3>
@@ -897,14 +915,17 @@
 
                 </v-card-text>
               </v-card>
+
               <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!validForm()">
                 Guardar Solicitud
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
-              <v-btn class="blue darken-1 white--text right" @click.native="imprimir">
+
+              <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
                 Imprimir
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
+
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
           </v-stepper>
@@ -956,6 +977,7 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
+import { impresionSolicitud } from '@/utils/PDFUtils'
 
 const headers = {
   contactos: [
@@ -1075,6 +1097,15 @@ export default {
 
       if (!this.nueva_formacion.tipo) return [];
       return this.titulos.filter(t => t.tipo == getTipo());
+    },
+
+    suma_subsidiarios: function() {
+      if (!this.solicitud.entidad.subsidiarios.length) return 0;
+      return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
+    },
+
+    valid_subsidiarios: function() {
+      return this.suma_subsidiarios === 100 || this.solicitud.entidad.subsidiarios.length === 0;   
     }
   },
 
@@ -1293,8 +1324,15 @@ export default {
           .catch(e => this.submitError());        
       }
     },
-    imprimir:function(){
-      window.print();
+
+    imprimir: function() {
+      axios.get(`/solicitudes/${this.id}`)
+          .then(s => {
+            let solicitud = s.data;
+            let pdf = impresionSolicitud(solicitud);
+            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+          })
+          .catch(e => console.error(e));
     },
 
     validStep: function(i) {
@@ -1304,6 +1342,8 @@ export default {
         return utils.validObject(profesional, this.validator.profesional);
       } else if (i == 3) {
         return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilio)
+      } else if (i == 8) {
+        return this.valid_subsidiarios;
       } else return true;
     },    
   },
