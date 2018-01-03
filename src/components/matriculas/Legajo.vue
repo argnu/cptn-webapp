@@ -382,14 +382,12 @@
               </v-flex>
 
               <v-flex xs3 class="ml-5">
-                <v-text-field
+                <input-numero
                   tabindex="22"
                   label="Honorarios Presupuestados"
-                  type="number"
                   v-model="legajo.honorarios_presupuestados"
                   :disabled="legajo.id > 0"
-                >
-                </v-text-field>
+                ></input-numero>                
               </v-flex>
 
               <v-flex xs3 class="ml-5">
@@ -418,14 +416,12 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="24"
                     label="Honorarios Reales"
-                    type="number"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
 
                   <v-checkbox
                     tabindex="27"
@@ -455,14 +451,12 @@
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="26"
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
-                    type="number"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
               </v-layout>
             </v-card-text>
@@ -480,46 +474,38 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="29"
                     label="Aporte Neto"
-                    type="number"
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
                     :rules="validator.aporte_neto"
-                  >
-                  </v-text-field>
+                  ></input-numero>
 
-                  <v-text-field
+                  <input-numero
                     tabindex="32"
                     label="Cantidad de Planos"
-                    type="number"
                     v-model="legajo.cantidad_planos"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="30"
                     label="Aporte Bruto"
-                    type="number"
                     v-model="legajo.aporte_bruto"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="31"
                     label="Aporte Neto Bonificación"
-                    type="number"
                     v-model="legajo.aporte_neto_bonificacion"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
               </v-layout>
 
@@ -561,6 +547,7 @@ import axios from '@/axios'
 import rules from '@/rules'
 import { Header, Domicilio } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import Typeahead from '@/components/base/Typeahead'
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
@@ -780,6 +767,7 @@ export default {
 
   components: {
     InputFecha,
+    InputNumero,
     Typeahead,
     DatosBasicos
   }

@@ -808,14 +808,13 @@
                       >
                       </v-text-field>
 
-                      <v-text-field
-                        type="number"
+                      <input-numero
                         label="Porcentaje"
                         v-model="nuevo_subsidiario.porcentaje"
                         :rules="submitted.subsidiario ? validator.subsidiario.porcentaje : []"
                         :error="submitted.subsidiario && !validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)"
                       >
-                      </v-text-field>
+                      </input-numero>
                     </v-flex>
                   </v-layout>
 
@@ -975,6 +974,7 @@ import {
   Header
 } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
+import InputNumero from '@/components/base/InputNumero';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -1349,7 +1349,8 @@ export default {
   },
 
   components: {
-    InputFecha
+    InputFecha,
+    InputNumero
   }
 }
 </script>
