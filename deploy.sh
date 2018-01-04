@@ -13,10 +13,11 @@ done
 if [ "$DIR_APP" != "" ]; then
     git checkout develop;
     npm install;
+    npm update;
     echo "Construyendo empaquetado de aplicación \n";
     npm run build;
 
-    sed -i 's,/static/,/'"$DIR_APP"'/static/,g' "dist/index.html";
+    #sed -i 's,/static/,/'"$DIR_APP"'/static/,g' "dist/index.html";
 
     if [ "$URL_API" != "" ]; then
       echo "Reemplazando URL de la API por $URL_API";
