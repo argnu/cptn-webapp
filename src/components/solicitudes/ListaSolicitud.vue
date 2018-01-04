@@ -387,6 +387,9 @@ export default {
     aprobar: function() {
       this.submitValidacion = true;
       if (utils.validObject(this.matricula, this.validator.matricula)) {
+        let user = JSON.parse(Cookies.get('CPTNUser'));
+        this.matricula.operador = user.id;
+
         axios.post('/matriculas', this.matricula)
           .then(r => {
             this.updateSolicitudes();

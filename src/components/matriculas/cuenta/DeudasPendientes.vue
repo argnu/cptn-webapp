@@ -261,7 +261,8 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion
+        delegacion: this.global_state.delegacion,
+        operador: JSON.parse(Cookies.get('CPTNUser')).id 
       }
       
       axios.post('comprobantes', comprobante)
@@ -302,7 +303,8 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion
+        delegacion: this.global_state.delegacion,
+        operador: JSON.parse(Cookies.get('CPTNUser')).id 
       }
       
       axios.post('volantespago', volante)
