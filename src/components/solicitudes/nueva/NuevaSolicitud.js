@@ -52,7 +52,7 @@ export default {
           calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
         },
         contacto: {
-          tipo: [ rules.required ], valor: [ rules.required ]
+          tipo: [rules.required], valor: [ rules.required ]
         },
       },
     }

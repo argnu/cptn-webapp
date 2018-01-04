@@ -603,10 +603,13 @@
                             </v-data-table>
                           </v-flex>
                         </v-layout>
-
-
                     </v-card-text>
                   </v-card>
+
+                  <br><br>
+
+                  <v-checkbox class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones">
+                  </v-checkbox>                  
 
                   <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
                     Imprimir

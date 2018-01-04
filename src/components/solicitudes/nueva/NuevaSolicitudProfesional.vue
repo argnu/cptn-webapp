@@ -444,13 +444,13 @@
                 <v-card-text>
                   <v-container>
                     <v-layout row>
-                      <v-flex xs5 class="mx-2">
+                      <v-flex xs3 class="mx-2">
                         <v-select
                           single-line bottom
                           :items="opciones.contacto"
                           item-text="valor"
                           item-value="id"
-                          label="Tipo de Contacto"
+                          label="Tipo"
                           v-model="nuevo_contacto.tipo"
                           :rules="submitted.contacto ? validator.contacto.tipo : []"
                           :error="submitted.contacto && !validControl(validator.contacto.tipo, nuevo_contacto.tipo)"
@@ -458,9 +458,20 @@
                         </v-select>
                       </v-flex>
 
-                      <v-flex xs5 class="mx-2">
+                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
+                        <input-celular 
+                          v-model="nuevo_contacto.celular"
+                        ></input-celular>
+
+                        <v-checkbox 
+                          label="Whatsapp" 
+                          v-model="nuevo_contacto.whatsapp" 
+                          light
+                        ></v-checkbox>
+                      </v-flex>
+
+                      <v-flex xs8 class="mx-2" v-else>
                         <v-text-field 
-                          :prefix="nuevo_contacto.tipo === 2 ? '+54 9' : ''"
                           v-model="nuevo_contacto.valor" 
                           :rules="submitted.contacto ? validator.contacto.valor : []"
                           :error="submitted.contacto && !validControl(validator.contacto.valor, nuevo_contacto.valor)"
@@ -910,9 +921,12 @@
                       >
                       </v-checkbox>
                     </v-flex>
-
                   </v-layout>
 
+                  <br>
+
+                  <v-checkbox class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones">
+                  </v-checkbox>
                 </v-card-text>
               </v-card>
 
@@ -975,6 +989,7 @@ import {
   Header
 } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
+import InputCelular from '@/components/base/InputCelular';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -1252,6 +1267,10 @@ export default {
 
     addContacto: function() {
       this.submitted.contacto = true;
+      if (this.nuevo_contacto.tipo === 2) {
+        this.nuevo_contacto.valor = this.nuevo_contacto.celular.prefijo + this.nuevo_contacto.celular.numero;
+        console.log(this.nuevo_contacto.valor, this.nuevo_contacto.celular.prefijo)
+      }      
       if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         this.submitted.contacto = false;
@@ -1352,7 +1371,7 @@ export default {
   },
 
   components: {
-    InputFecha
+    InputFecha, InputCelular
   }
 }
 </script>

@@ -14,5 +14,15 @@ export default {
   codpostal: (value) => {
     if (value.length != 4 || isNaN(value)) return 'Formato incorrecto';
     return true;
-  }
+  },
+
+  prefijoCelular: (value) => {
+    if (value.substring(0, 1) == '0') return 'Formato incorrecto. Omitir 0';
+    return true;
+  },
+
+  numeroCelular: (value) => {
+    if (value.substring(0,2) == '15') return 'Formato incorrecto. Omitir 15';
+    return true;
+  },
 }

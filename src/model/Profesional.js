@@ -26,6 +26,11 @@ export class Contacto {
     this.id = null;
     this.tipo = '';
     this.valor = '';
+    this.whatsapp = false;
+    this.celular = {
+      prefijo: '',
+      numero: ''
+    };
   }
 }
 
@@ -41,6 +46,7 @@ export class Formacion {
 export class Profesional {
   constructor() {
     this.tipo = 'profesional';
+    this.recibirActualizaciones = true;
     this.condafip = '';
     this.nombre = '';
     this.apellido = '';
@@ -63,6 +69,7 @@ export class Profesional {
     this.serviciosPrestados = '';
     this.poseeCajaPrevisional = false;
     this.nombreCajaPrevisional = '';
+    this.solicitaCajaPrevisional = '';
     this.beneficiarios = [];
     this.subsidiarios = [];
     this.publicarEmail = false;
