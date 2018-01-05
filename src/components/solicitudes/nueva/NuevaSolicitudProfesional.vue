@@ -982,7 +982,6 @@ import * as utils from '@/utils'
 import rules from '@/rules'
 import {
   Solicitud,
-  Contacto,
   Formacion,
   Beneficiario,
   Subsidiario,
@@ -1036,7 +1035,6 @@ export default {
       deAcuerdo: true,
       cajaPrevisional: '',
       solicitud: new Solicitud('profesional'),
-      nuevo_contacto: new Contacto(),
       nueva_formacion: new Formacion(),
       nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
@@ -1265,19 +1263,6 @@ export default {
       return this.opciones.contacto.find(i => id == i.id).valor;
     },
 
-    addContacto: function() {
-      this.submitted.contacto = true;
-      if (this.nuevo_contacto.tipo === 2) {
-        this.nuevo_contacto.valor = this.nuevo_contacto.celular.prefijo + this.nuevo_contacto.celular.numero;
-        console.log(this.nuevo_contacto.valor, this.nuevo_contacto.celular.prefijo)
-      }      
-      if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
-        this.solicitud.entidad.contactos.push(this.nuevo_contacto);
-        this.submitted.contacto = false;
-        this.nuevo_contacto = new Contacto();
-      }
-    },
-
     addFormacion: function() {
       this.submitted.formacion = true;
       if (utils.validObject(this.nueva_formacion, this.validator.formacion)) {
@@ -1316,7 +1301,6 @@ export default {
     },
 
     submit: function() {
-      let user = JSON.parse(Cookies.get('CPTNUser'));
       this.solicitud.operador = user.id;
       
       if (!this.id) {

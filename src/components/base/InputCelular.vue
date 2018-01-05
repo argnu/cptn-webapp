@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-flex xs3>
+        <v-flex xs4>
             <v-text-field 
                 ref="prefijo"
                 prefix="+54 9"
@@ -11,7 +11,7 @@
             >
             </v-text-field>
         </v-flex>
-        <v-flex xs5 class="mx-2">
+        <v-flex xs5 class="ml-2">
             <v-text-field 
                 ref="numero"
                 :value="value.numero"

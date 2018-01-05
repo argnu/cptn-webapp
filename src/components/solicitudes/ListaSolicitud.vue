@@ -254,7 +254,6 @@ export default {
   mixins: [ValidatorMixin],
   data() {
     return {
-      global_state: Store.state,
       matricula: new Matricula(Store.state.delegacion),
       show_validar: false,
       num_matricula_nueva: null,
@@ -387,8 +386,7 @@ export default {
     aprobar: function() {
       this.submitValidacion = true;
       if (utils.validObject(this.matricula, this.validator.matricula)) {
-        let user = JSON.parse(Cookies.get('CPTNUser'));
-        this.matricula.operador = user.id;
+        this.matricula.operador = this.user.id;
 
         axios.post('/matriculas', this.matricula)
           .then(r => {

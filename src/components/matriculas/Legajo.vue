@@ -17,9 +17,9 @@
         >
           <v-icon dark left>print</v-icon>
           Imprimir
-        </v-btn>          
-      </v-flex>  
-    </v-layout>  
+        </v-btn>
+      </v-flex>
+    </v-layout>
 
     <v-layout row wrap>
       <v-flex xs12>
@@ -64,83 +64,111 @@
       </v-flex>
     </v-layout>
 
+
     <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-title>
-            <span class="subheading blue--text text--darken-4"><b>Comitente</b></span>
+            <span class="subheading blue--text text--darken-4"><b>Comitentes</b></span>
           </v-card-title>
           <v-card-text>
-              <v-layout row wrap>
-                <template v-if="legajo.comitente.tipo == 'empresa' || legajo.comitente.empresa.length">
-                  <v-flex xs6>
-                    <template v-if="!legajo.id">
-                        <v-text-field
-                          tabindex="3"
-                          label="Empresa:"
-                          v-model="legajo.comitente.empresa"
-                          :disabled="legajo.id > 0"
-                        >
-                        </v-text-field>
-                    </template>
-                  </v-flex>
-                </template>
+              <v-layout row>
+                  <v-flex xs3 class="mx-4">
+                    <v-select
+                      label="Tipo"
+                      :items="tipo_persona"
+                      v-model="nuevo_comitente.persona.tipo"
+                      @input="chgTipoComitente"
+                    ></v-select>
 
-                <template v-if="legajo.comitente.tipo == 'persona' || !legajo.comitente.empresa.length">
-                  <v-flex xs5 class="ml-5">
-                    <template>
-                        <v-text-field
-                          tabindex="4"
-                          label="Apellido"
-                          v-model="legajo.comitente.apellido"
-                          :disabled="legajo.id > 0"
-                        >
-                        </v-text-field>
-                    </template>
-                  </v-flex>
+                    <v-text-field
+                      label="CUIT/CUIL"
+                      v-model="nuevo_comitente.persona.cuit"
+                      :rules="submit_comitente ? validator.comitente.cuit : []"
+                      :error="submit_comitente && !validControl(validator.comitente.cuit, nuevo_comitente.persona.cuit)"
+                      @input="chgCuitComitente"
+                    >
+                    </v-text-field>
 
-                  <v-flex xs5 class="ml-5">
+                    <v-text-field
+                      label="Telefono"
+                      v-model="nuevo_comitente.persona.telefono"
+                    >
+                    </v-text-field>
+
+                    <v-text-field
+                      label="Porcentaje"
+                      v-model="nuevo_comitente.porcentaje"
+                    ></v-text-field>
+
+                    <v-btn @click="addComitente">
+                      Agregar
+                    </v-btn>
+                </v-flex>
+
+                <v-flex xs3>
+                  <v-text-field
+                    label="Nombre"
+                    v-model="nuevo_comitente.persona.nombre"
+                    :rules="submit_comitente ? validator.comitente.nombre : []"
+                    :error="submit_comitente && !validControl(validator.comitente.nombre, nuevo_comitente.persona.nombre)"
+                  >
+                  </v-text-field>
+
+                  <template v-if="nuevo_comitente.persona.tipo == 'fisica'">
                       <v-text-field
-                        tabindex="5"
-                        label="Nombre"
-                        v-model="legajo.comitente.nombres"
-                        :disabled="legajo.id > 0"
+                        label="Apellido"
+                        v-model="nuevo_comitente.persona.apellido"
+                        :rules="submit_comitente ? validator.comitente.apellido : []"
+                        :error="submit_comitente && !validControl(validator.comitente.apellido, nuevo_comitente.persona.apellido)"
                       >
                       </v-text-field>
-                  </v-flex>
-                </template>
-              </v-layout>
 
-              <v-layout row wrap
-                class="mt-4"
-                v-if="legajo.comitente.tipo == 'persona' || !legajo.comitente.empresa.length"
-              >
-                <v-flex xs5 class="ml-5">
                     <v-text-field
                       label="DNI"
-                        tabindex="6"
-                      v-model="legajo.comitente.numero_documento"
-                      :disabled="legajo.id > 0"
-                    >
-                    </v-text-field>
+                      v-model="nuevo_comitente.persona.dni"
+                      :rules="submit_comitente ? validator.comitente.dni : []"
+                      :error="submit_comitente && !validControl(validator.comitente.dni, nuevo_comitente.persona.dni)"
+                    ></v-text-field>
+                  </template>
                 </v-flex>
 
-                <v-flex xs5 class="ml-5">
-                    <v-text-field
-                      tabindex="7"
-                      label="Telefono"
-                      v-model="legajo.comitente.telefono"
-                      :disabled="legajo.id > 0"
-                    >
-                    </v-text-field>
-                </v-flex>
-              </v-layout>
 
+              <v-flex xs5 class="mx-4">
+                <v-data-table
+                    :headers="headers.comitentes"
+                    :items="legajo.comitentes"
+                    class="elevation-4"
+                    no-data-text="No hay comitentes"
+                    hide-actions
+                >
+                  <template slot="headers" slot-scope="props">
+                    <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                      <b>{{ header.text }}</b>
+                    </th>
+                    <th></th>
+                  </template>
+                  <template slot="items" slot-scope="props">
+                    <tr>
+                      <td>{{ props.item.persona.cuit }}</td>
+                      <td>{{ props.item.persona.nombre }}</td>
+                      <td>{{ props.item.porcentaje }}</td>
+                      <td>
+                        <v-btn fab small @click="rmComitente(props.item.persona.cuit)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-flex>
+            </v-layout>
           </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
 
+    <v-layout>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-title>
@@ -315,7 +343,7 @@
             <v-layout row wrap class="mt-3">
               <v-flex xs12>
                 <v-data-table
-                    :headers="headers_items"
+                    :headers="headers.items"
                     :items="legajo.items"
                     class="elevation-4"
                     no-data-text="No hay items"
@@ -559,12 +587,11 @@
 <script>
 import axios from '@/axios'
 import rules from '@/rules'
-import { Header, Domicilio } from '@/model'
+import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import Typeahead from '@/components/base/Typeahead'
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
-import Store from '@/Store'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
@@ -574,10 +601,23 @@ const tipos = [
   Header('Legajo Técnico', 3)
 ]
 
-const headers_items = [
-  Header('Descripción', 'descripcion'),
-  Header('Valor', 'valor')
+const tipo_persona = [
+  Header('Física', 'fisica'),
+  Header('Jurídica', 'juridica')
 ]
+
+const headers = {
+  items: [
+    Header('Descripción', 'descripcion'),
+    Header('Valor', 'valor')
+  ],
+
+  comitentes: [
+    Header('CUIT/CUIL', 'cuit'),
+    Header('Nombre', 'nombre'),
+    Header('%', 'porcentaje')
+  ]
+}
 
 const Item = () => ({
   id: '',
@@ -585,24 +625,17 @@ const Item = () => ({
   valor: ''
 })
 
-const Comitente = () => ({
-  apellido: '',
-  empresa: '',
-  nombres: '',
-  numero_documento: '',
-  telefono: '',
-  tipo: ''
-})
+
 
 const Legajo = (matricula) => ({
   matricula,
+  comitentes: [],
   aporte_bruto: null,
   aporte_neto: null,
   aporte_neto_bonificacion: null,
   cantidad_planos: null,
-  comitente: Comitente(),
   domicilio: new Domicilio(),
-  delegacion: Store.state.delegacion,
+  delegacion: null,
   dependencia: false,
   fecha_solicitud: null,
   finalizacion_tarea: null,
@@ -627,7 +660,6 @@ export default {
 
   data () {
     return {
-      global_state: Store.state,
       legajo: Legajo(),
       matricula: null,
       categorias: [],
@@ -635,6 +667,8 @@ export default {
       provincias: [],
       departamentos: [],
       localidades: [],
+      nuevo_comitente: new Comitente('fisica'),
+      submit_comitente: false,
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
@@ -643,7 +677,13 @@ export default {
         fecha: [ rules.required, rules.fecha ],
         nomenclatura: [ rules.required ],
         aporte_neto: [ rules.required ],
-        subcategoria: [ rules.required ]
+        subcategoria: [ rules.required ],
+        comitente: {
+          cuit: [ rules.required ],
+          nombre: [ rules.required ],
+          apellido: [ rules.required ],
+          dni: [ rules.required ]
+        }
       },
     }
   },
@@ -653,8 +693,12 @@ export default {
       return tipos;
     },
 
-    headers_items: function() {
-      return headers_items;
+    tipo_persona: function() {
+      return tipo_persona;
+    },
+
+    headers: function() {
+      return headers;
     },
 
     subcategorias: function() {
@@ -667,6 +711,19 @@ export default {
         && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura)
         && this.validControl(this.validator.subcategoria, this.legajo.subcategoria)
         && (this.legajo.tipo !=3 || this.validControl(this.validator.aporte_neto, this.legajo.aporte_neto));
+    },
+
+    valid_comitente: function() {
+      if (this.nuevo_comitente.persona.tipo == 'juridica') {
+        return this.validControl(this.validator.comitente.cuit, this.nuevo_comitente.persona.cuit)
+          && this.validControl(this.validator.comitente.nombre, this.nuevo_comitente.persona.nombre)
+      }
+      else {
+        return this.validControl(this.validator.comitente.cuit, this.nuevo_comitente.persona.cuit)
+          && this.validControl(this.validator.comitente.nombre, this.nuevo_comitente.persona.nombre)        
+          && this.validControl(this.validator.comitente.apellido, this.nuevo_comitente.persona.apellido)        
+          && this.validControl(this.validator.comitente.dni, this.nuevo_comitente.persona.dni)        
+      }
     }
   },
 
@@ -680,9 +737,8 @@ export default {
       this.categorias = r[1].data;
       if (this.id_legajo) {
         return axios.get(`/legajos/${this.id_legajo}`)
-              .then(r => {                
+              .then(r => {
                   this.legajo = r.data;
-                  this.legajo.comitente.tipo = '';
                   if (this.legajo.domicilio) {
                     this.paises = [this.legajo.domicilio.pais];
                     this.provincias = [this.legajo.domicilio.provincia];
@@ -737,6 +793,33 @@ export default {
       }
     },
 
+    chgTipoComitente: function() {
+      if (this.nuevo_comitente.persona.tipo == 'fisica') this.nuevo_comitente = new Comitente('fisica');
+      else this.nuevo_comitente = new Comitente('juridica');
+    },
+
+    chgCuitComitente: function() {
+      axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
+      .then(r => {
+        if (r.data.length == 1)  {
+          this.nuevo_comitente.persona = r.data[0];
+        }
+      })
+    },
+
+    addComitente: function() {
+      this.submit_comitente = true;
+      if (this.valid_comitente) {
+        this.legajo.comitentes.push(this.nuevo_comitente);
+        this.submit_comitente = false;
+        this.chgTipoComitente();
+      }
+    },
+
+    rmComitente: function(cuit) {
+      this.legajo.comitentes = this.legajo.comitentes.filter(c => c.cuit != cuit);
+    },
+
     addItem: function() {
       if (typeof this.nuevo_item.id == 'number') {
         this.nuevo_item.descripcion = this.items_predeterminados.find(i => i.id == this.nuevo_item.id).descripcion;
@@ -747,8 +830,9 @@ export default {
     },
 
     submit: function() {
-      let user = JSON.parse(Cookies.get('CPTNUser'));
-      this.legajo.operador = user.id;      
+      this.legajo.operador = this.user.id;
+      this.legajo.delegacion = this.global_state.delegacion;
+      console.log(this.legajo)
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {

@@ -378,7 +378,7 @@
                     <v-card-text>
                       <v-container>
                         <v-layout row>
-                          <v-flex xs5 class="ma-4">
+                          <v-flex xs6>
                             <v-select
                               item-text="valor"
                               item-value="id"
@@ -393,21 +393,31 @@
                             </v-select>
                           </v-flex>
 
-                          <v-flex xs5 class="ma-4">
-                            <v-text-field
-                              label="Valor"
-                              v-model="nuevo_contacto.valor"
-                              :rules="submitted.contacto ? validator.contacto.valor: []"
+                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo === 2">
+                            <input-celular 
+                              v-model="nuevo_contacto.celular"
+                            ></input-celular>
+
+                            <v-checkbox 
+                              label="Whatsapp" 
+                              v-model="nuevo_contacto.whatsapp" 
+                              light
+                            ></v-checkbox>
+                          </v-flex>
+
+                          <v-flex xs6 class="mx-4" v-else>
+                            <v-text-field 
+                              v-model="nuevo_contacto.valor" 
+                              :rules="submitted.contacto ? validator.contacto.valor : []"
                               :error="submitted.contacto && !validControl(validator.contacto.valor, nuevo_contacto.valor)"
                             >
                             </v-text-field>
-                          </v-flex>
+                          </v-flex>    
 
-                          <v-flex xs2 class="ma-4">
-                            <v-btn light @click="addContacto">Agregar</v-btn>
-                          </v-flex>
-                        </v-layout>
-
+                          <v-flex xs2>
+                            <v-btn class="right" light @click="addContacto">Agregar</v-btn>
+                          </v-flex>                                                
+                      </v-layout>
 
                         <v-data-table
                             :headers="headers.contactos"
@@ -659,6 +669,7 @@ import * as utils from '@/utils'
 import rules from '@/rules'
 import * as Model from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import InputCelular from '@/components/base/InputCelular'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -831,15 +842,6 @@ export default {
       return this.opciones.incumbencia.find(o => o.id == id).valor;
     },
 
-    addContacto: function() {
-      this.submitted.contacto = true;
-      if ( utils.validObject(this.nuevo_contacto, this.validator.contacto) ) {
-        this.submitted.contacto = false;
-        this.solicitud.entidad.contactos.push(this.nuevo_contacto);
-        this.nuevo_contacto = new Model.Solicitud();
-      }
-    },
-
     addIncumbencia: function() {
       this.submitted.incumbencia = true;
       if ( this.validator.incumbencia[0](this.nueva_incumbencia) != 'Dato Obligatorio' ) {
@@ -856,8 +858,7 @@ export default {
     },
 
     submit: function() {
-      let user = JSON.parse(Cookies.get('CPTNUser'));
-      this.solicitud.operador = user.id;
+      this.solicitud.operador = this.user.id;
       
       if (!this.id) {
         axios.post('/solicitudes', this.prepareSubmit())
@@ -953,7 +954,7 @@ export default {
   },
 
   components: {
-    InputFecha
+    InputFecha, InputCelular
   }
 }
 </script>

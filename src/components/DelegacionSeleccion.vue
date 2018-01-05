@@ -35,7 +35,6 @@ export default {
     name: 'DelegacionSeleccion',
     data() {
         return {
-            global_state: Store.state,
             delegaciones: []
         }
     },

@@ -1,4 +1,4 @@
-import { Domicilio } from '@/model/Domicilio';
+import { Entidad } from '@/model/Entidad';
 
 export class Beneficiario {
   constructor() {
@@ -20,20 +20,6 @@ export class Subsidiario {
   }
 }
 
-
-export class Contacto {
-  constructor() {
-    this.id = null;
-    this.tipo = '';
-    this.valor = '';
-    this.whatsapp = false;
-    this.celular = {
-      prefijo: '',
-      numero: ''
-    };
-  }
-}
-
 export class Formacion {
   constructor() {
     this.titulo = '';
@@ -43,25 +29,18 @@ export class Formacion {
   }
 }
 
-export class Profesional {
+export class Profesional extends Entidad {
   constructor() {
+    super();
     this.tipo = 'profesional';
-    this.recibirActualizaciones = true;
-    this.condafip = '';
-    this.nombre = '';
     this.apellido = '';
     this.dni = '';
-    this.cuit = '';
     this.sexo = '';
     this.estadoCivil = '';
     this.lugarNacimiento = '';
     this.fechaNacimiento = '';
     this.nacionalidad = '';
     this.observaciones = '';
-    this.domicilioReal = new Domicilio();
-    this.domicilioProfesional = new Domicilio();
-    this.domicilioConstituido = new Domicilio();
-    this.contactos = [];
     this.formaciones = [];
     this.relacionDependencia = false;
     this.independiente = false;

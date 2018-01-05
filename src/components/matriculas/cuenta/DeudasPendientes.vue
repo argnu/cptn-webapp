@@ -145,7 +145,6 @@ import * as utils from '@/utils'
 import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
-import Store from '@/Store'
 import { impresionVolante } from '@/utils/PDFUtils'
 
 const headers = [
@@ -167,7 +166,6 @@ export default {
 
   data () {
     return {
-      global_state: Store.state,
       boletas: [],
       fecha_pago: moment().format('DD/MM/YYYY'),
       expand_pago: false
@@ -262,7 +260,7 @@ export default {
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
         delegacion: this.global_state.delegacion,
-        operador: JSON.parse(Cookies.get('CPTNUser')).id 
+        operador: this.user.id 
       }
       
       axios.post('comprobantes', comprobante)
@@ -304,7 +302,7 @@ export default {
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
         delegacion: this.global_state.delegacion,
-        operador: JSON.parse(Cookies.get('CPTNUser')).id 
+        operador: this.user.id 
       }
       
       axios.post('volantespago', volante)

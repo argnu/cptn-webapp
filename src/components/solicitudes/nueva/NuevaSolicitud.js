@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import axios from '@/axios';
-import * as utils from '@/utils';
-import rules from '@/rules';
-import Store from '@/Store'
+import axios from '@/axios'
+import * as utils from '@/utils'
+import rules from '@/rules'
+import { Contacto } from '@/model'
 
 const Header = (text, value) => ({
     text, value
@@ -15,7 +15,6 @@ function getTipoDomicilio(str) {
 export default {
   data () {
     return {
-      global_state: Store.state,
       step: 1,
 
       snackbar: {
@@ -23,6 +22,8 @@ export default {
         show: false,
         color: ''
       },
+
+      nuevo_contacto: new Contacto(),
 
       delegaciones: [],
       opciones: {},
@@ -105,6 +106,18 @@ export default {
       }
       else this.localidades[tipoDomicilio] = [];
     },
+
+    addContacto: function () {
+      this.submitted.contacto = true;
+      if (this.nuevo_contacto.tipo === 2) {
+        this.nuevo_contacto.valor = this.nuevo_contacto.celular.prefijo + this.nuevo_contacto.celular.numero;
+      }
+      if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
+        this.solicitud.entidad.contactos.push(this.nuevo_contacto);
+        this.submitted.contacto = false;
+        this.nuevo_contacto = new Contacto();
+      }
+    },    
 
     removeElem: function(tipo, index) {
       this.solicitud.entidad[tipo].splice(index, 1);
