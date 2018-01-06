@@ -35,15 +35,12 @@
               </v-flex>
 
               <v-flex xs4 class="ml-3">
-                <v-text-field
-                  type="number"
+                <input-numero
                   label="Importe"
-                  v-model="nueva_forma_pago.importe"
                   prefix="$"
                   :rules="submit_forma_pago ? validator.importe : []"
-                  :error="submit_forma_pago && !validControl(validator.importe, nueva_forma_pago.importe)"
-                >
-                </v-text-field>
+                  v-model="nueva_forma_pago.importe"
+                ></input-numero>
               </v-flex>
             </v-layout>
           </v-flex>
@@ -172,6 +169,7 @@ import * as Model from '@/model'
 import * as utils from '@/utils'
 import rules from '@/rules'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
@@ -184,7 +182,7 @@ const Cheque = () => ({
 
 const FormaPago = () => ({
     forma_pago: '',
-    importe: 0,
+    importe: '',
     cheque: Cheque()
 })
 
@@ -212,7 +210,7 @@ export default {
   mixins: [ValidatorMixin],
 
   components: {
-    InputFecha
+    InputFecha, InputNumero
   },
 
   data () {
