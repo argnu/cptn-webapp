@@ -272,7 +272,12 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
   }
 
-  //   // completado domicilios
+  // completado domicilios
+  let domicilioReal = solicitud.entidad.domicilios.find(d => d.tipo == 'real');
+  let domicilioLegal = solicitud.entidad.domicilios.find(d => d.tipo == 'legal');
+  let domicilioEspecial = solicitud.entidad.domicilios.find(d => d.tipo == 'especial');
+
+
   doc.setFontSize(12);
   doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioReal.calle} ${solicitud.entidad.domicilioReal.numero}`);
   eje_y_domicilio += 6;
@@ -283,27 +288,27 @@ export function impresionSolicitud(solicitud) {
   doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioReal.localidad);
   eje_y_domicilio += 6;
 
-  if (solicitud.entidad.domicilioProfesional) {
+  if (solicitud.entidad.domicilioLegal) {
     eje_y_domicilio += 18;
-    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioProfesional.calle} ${solicitud.entidad.domicilioProfesional.numero}`);
+    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioLegal.calle} ${solicitud.entidad.domicilioLegal.numero}`);
     eje_y_domicilio += 6;
-    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioProfesional.pais);
-    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioProfesional.provincia);
+    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioLegal.pais);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioLegal.provincia);
     eje_y_domicilio += 6;
-    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioProfesional.departamento);
-    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioProfesional.localidad);
+    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioLegal.departamento);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioLegal.localidad);
     eje_y_domicilio += 6;
   }
 
-  if (solicitud.entidad.domicilioConstituido) {
+  if (solicitud.entidad.domicilioEspecial) {
     eje_y_domicilio += 18;
-    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioConstituido.calle} ${solicitud.entidad.domicilioConstituido.numero}`);
+    doc.text(35, eje_y_domicilio, `${solicitud.entidad.domicilioEspecial.calle} ${solicitud.entidad.domicilioEspecial.numero}`);
     eje_y_domicilio += 6;
-    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioConstituido.pais);
-    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioConstituido.provincia);
+    doc.text(35, eje_y_domicilio, solicitud.entidad.domicilioEspecial.pais);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioEspecial.provincia);
     eje_y_domicilio += 6;
-    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioConstituido.departamento);
-    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioConstituido.localidad);
+    doc.text(50, eje_y_domicilio, solicitud.entidad.domicilioEspecial.departamento);
+    doc.text(120, eje_y_domicilio, solicitud.entidad.domicilioEspecial.localidad);
   }
 
   return doc;
@@ -367,7 +372,7 @@ export function impresionLegajo(legajo, categoria) {
     else if (comitente.tipo == 'juridica') comitenteJuridico(comitente);
     eje_y += 5;
   }
-  
+
   encabezado('Ubicación del Trabajo');
 
   doc.text(25, eje_y, `Nomenclatura: ${legajo.nomenclatura}`);
