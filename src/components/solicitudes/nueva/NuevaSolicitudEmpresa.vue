@@ -148,43 +148,70 @@
                 <v-stepper-content step="3">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
-                        <span class="title ml-4">Domicilio Real</span>
+                        <v-layout row class="mx-4">
+                          <v-flex xs5>
+                            <v-select
+                              :items="tipos_domicilio"
+                              label="Tipo"
+                              v-model="nuevo_domicilio.tipo"
+                              autocomplete
+                              :rules="validator.entdomicilio.tipo"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.tipo, nuevo_domicilio.tipo)"
+                            >
+                            </v-select>                          
+                          </v-flex>
+
+                          <v-flex xs5 class="mt-2 ml-4">
+                            <v-menu offset-y>
+                              <v-btn slot="activator">Copiar de...</v-btn>
+                              <v-list>
+                                <v-list-tile 
+                                  v-for="tipo of tipos_domicilio_cargados" 
+                                  :key="tipo.value" @click="copiarDomicilio(tipo.value)"
+                                >
+                                  <v-list-tile-title>{{ tipo.text }}</v-list-tile-title>
+                                </v-list-tile>
+                              </v-list>
+                            </v-menu>
+                          </v-flex>
+                        </v-layout>
+
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <v-select
                               tabindex="12"
                               :items="paises"
                               label="País"
-                              v-model="solicitud.entidad.domicilioReal.pais"
+                              v-model="nuevo_domicilio.domicilio.pais"
                               autocomplete
                               item-text="nombre"
                               item-value="id"
-                              @input="changePais('real')"
-                              :rules="validator.domicilio.pais"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.pais, solicitud.entidad.domicilioReal.pais)"
+                              @input="changePais"
+                              :rules="validator.entdomicilio.domicilio.pais"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.pais, nuevo_domicilio.domicilio.pais)"
                             >
                             </v-select>
 
                             <v-select
                               tabindex="14"
-                              :items="departamentos.real"
+                              :items="departamentos"
                               label="Departamento"
-                              @input="changeDepartamento('real')"
-                              v-model="solicitud.entidad.domicilioReal.departamento"
+                              @input="changeDepartamento"
+                              v-model="nuevo_domicilio.domicilio.departamento"
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :rules="validator.domicilio.departamento"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.departamento, solicitud.entidad.domicilioReal.departamento)"
+                              :rules="validator.entdomicilio.domicilio.departamento"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.departamento, nuevo_domicilio.domicilio.departamento)"
                             >
                             </v-select>
 
                             <v-text-field
                               tabindex="16"
                               label="Calle"
-                              v-model="solicitud.entidad.domicilioReal.calle"
-                              :rules="validator.domicilio.calle"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.calle, solicitud.entidad.domicilioReal.calle)"
+                              v-model="nuevo_domicilio.domicilio.calle"
+                              :rules="validator.entdomicilio.domicilio.calle"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.calle, nuevo_domicilio.domicilio.calle)"
                             >
                             </v-text-field>
                           </v-flex>
@@ -192,25 +219,25 @@
                           <v-flex xs6 class="ma-4">
                             <v-select
                               tabindex="13"
-                              :items="provincias.real"
+                              :items="provincias"
                               label="Provincia"
-                              @input="changeProvincia('real')"
-                              v-model="solicitud.entidad.domicilioReal.provincia"
+                              @input="changeProvincia"
+                              v-model="nuevo_domicilio.domicilio.provincia"
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :rules="validator.domicilio.provincia"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.provincia, solicitud.entidad.domicilioReal.provincia)"
+                              :rules="validator.entdomicilio.domicilio.provincia"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.provincia, nuevo_domicilio.domicilio.provincia)"
                             >
                             </v-select>
 
                             <v-select
                               tabindex="15"
-                              :items="localidades.real"
+                              :items="localidades"
                               label="Localidad"
-                              v-model="solicitud.entidad.domicilioReal.localidad"
-                              :rules="validator.domicilio.localidad"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.localidad, solicitud.entidad.domicilioReal.localidad)"
+                              v-model="nuevo_domicilio.domicilio.localidad"
+                              :rules="validator.entdomicilio.domicilio.localidad"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.localidad, nuevo_domicilio.domicilio.localidad)"
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
@@ -219,149 +246,59 @@
 
                             <v-text-field
                               tabindex="17"
-                              label="Nro"
-                              v-model="solicitud.entidad.domicilioReal.numero"
-                              :rules="validator.domicilio.numero"
-                              :error="submitted.steps[2] && !validControl(validator.domicilio.numero, solicitud.entidad.domicilioReal.numero)"
+                              label="N°"
+                              v-model="nuevo_domicilio.domicilio.numero"
+                              :rules="validator.entdomicilio.domicilio.numero"
+                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.numero, nuevo_domicilio.domicilio.numero)"
                             >
                             </v-text-field>
                           </v-flex>
                         </v-layout>
 
-                        <br>
-
-                        <span class="title ml-4">Domicilio Profesional</span>
-                        <v-layout row>
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="18"
-                              :items="paises"
-                              label="País"
-                              @input="changePais('profesional')"
-                              v-model="solicitud.entidad.domicilioProfesional.pais"
-                            >
-                            </v-select>
-
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="20"
-                              :items="departamentos.profesional"
-                              label="Departamento"
-                              @input="changeDepartamento('profesional')"
-                              v-model="solicitud.entidad.domicilioProfesional.departamento"
-                            >
-                            </v-select>
-                            <v-text-field
-                              tabindex="22"
-                              label="Calle"
-                              v-model="solicitud.entidad.domicilioProfesional.calle"
-                            >
-                            </v-text-field>
-                          </v-flex>
-
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="19"
-                              :items="provincias.profesional"
-                              label="Provincia"
-                              @input="changeProvincia('profesional')"
-                              v-model="solicitud.entidad.domicilioProfesional.provincia"
-                            >
-                            </v-select>
-
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="21"
-                              :items="localidades.profesional"
-                              label="Localidad"
-                              v-model="solicitud.entidad.domicilioProfesional.localidad"
-                            >
-                            </v-select>
-                            <v-text-field
-                              tabindex="23"
-                              label="Nro"
-                              v-model="solicitud.entidad.domicilioProfesional.numero"
-                            >
-                            </v-text-field>
-                          </v-flex>
+                        <v-layout class="mb-4">
+                          <v-flex xs12>
+                            <v-btn class="right" light @click="addDomicilio">Agregar</v-btn>
+                          </v-flex>                     
                         </v-layout>
-                        <br>
 
-                        <span class="title ml-4">Domicilio Constituido</span>
-                        <v-layout row>
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="24"
-                              :items="paises"
-                              label="País"
-                              @input="changePais('constituido')"
-                              v-model="solicitud.entidad.domicilioConstituido.pais"
-                            >
-                            </v-select>
+                        <v-data-table
+                            :headers="headers.domicilios"
+                            :items="solicitud.entidad.domicilios"
+                            hide-actions
+                            class="elevation-1"
+                            no-data-text="No hay domicilios">
+                          <template slot="headers" slot-scope="props">
+                            <th v-for="(header, i) of props.headers" :key="i" class="pa-3">
+                              <b>{{ header.text }}</b>
+                            </th>
+                            <th></th>
+                          </template>
+                          <template slot="items" slot-scope="props">
+                            <td>{{ props.item.tipo | upperFirst }}</td>
 
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="26"
-                              :items="departamentos.constituido"
-                              label="Departamento"
-                              @input="changeDepartamento('constituido')"
-                              v-model="solicitud.entidad.domicilioConstituido.departamento"
-                            >
-                            </v-select>
-                            <v-text-field
-                              tabindex="28"
-                              label="Calle"
-                              v-model="solicitud.entidad.domicilioConstituido.calle"
-                            >
-                            </v-text-field>
-                          </v-flex>
+                            <template v-if="!props.item.id">
+                              <td>{{ props.item.pais_nombre }}</td>
+                              <td>{{ props.item.provincia_nombre }}</td>
+                              <td>{{ props.item.departamento_nombre }}</td>
+                              <td>{{ props.item.localidad_nombre }}</td>                             
+                            </template>
+                            <template v-else>
+                              <td>{{ props.item.domicilio.pais }}</td>
+                              <td>{{ props.item.domicilio.provincia }}</td>
+                              <td>{{ props.item.domicilio.departamento }}</td>
+                              <td>{{ props.item.domicilio.localidad }}</td>                             
+                            </template>
 
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="25"
-                              :items="provincias.constituido"
-                              label="Provincia"
-                              @input="changeProvincia('constituido')"
-                              v-model="solicitud.entidad.domicilioConstituido.provincia"
-                            >
-                            </v-select>
+                            <td>{{ props.item.domicilio.calle }}</td>
+                            <td>{{ props.item.domicilio.numero }}</td>                             
+                            <td style="width:30px">
+                              <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>
+                            </td>
+                          </template>
+                        </v-data-table>
 
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="nombre"
-                              item-value="id"
-                              tabindex="27"
-                              :items="localidades.constituido"
-                              label="Localidad"
-                              v-model="solicitud.entidad.domicilioConstituido.localidad"
-                            >
-                            </v-select>
-                            <v-text-field
-                              tabindex="29"
-                              label="Nro"
-                              v-model="solicitud.entidad.domicilioConstituido.numero"
-                            >
-                            </v-text-field>
-                          </v-flex>
-                        </v-layout>
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
@@ -674,21 +611,6 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 
-const headers = {
-  contactos: [
-    Model.Header('Tipo', 'tipo'),
-    Model.Header('Valor', 'valor'),
-  ],
-  incumbencias: [
-    Model.Header('Nombre', 'nombre'),
-  ],
-  matriculados: [
-    Model.Header('N°', 'numero'),
-    Model.Header('Nombre', 'nombre'),
-    Model.Header('Apellido', 'nombre'),
-    Model.Header('DNI', 'dni')
-  ]
-}
 
 export default {
   name: 'nueva-solicitud-empresa',
@@ -750,13 +672,6 @@ export default {
     }
   },
 
-  computed: {
-    headers: function() {
-      return headers;
-    }
-
-  },
-
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     
@@ -786,27 +701,7 @@ export default {
               this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
               this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
 
-              this.solicitud.entidad.domicilioReal.id = r.data.entidad.domicilioReal.id;
-              this.solicitud.entidad.domicilioReal.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioReal.pais).id;              
-              this.changePais('real', r.data.entidad.domicilioReal);
-              this.solicitud.entidad.domicilioReal.calle = r.data.entidad.domicilioReal.calle;
-              this.solicitud.entidad.domicilioReal.numero = r.data.entidad.domicilioReal.numero;
-
-              if (r.data.entidad.domicilioProfesional) {
-                this.solicitud.entidad.domicilioProfesional.id = r.data.entidad.domicilioProfesional.id;
-                this.solicitud.entidad.domicilioProfesional.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioProfesional.pais).id;
-                this.changePais('profesional', r.data.entidad.domicilioProfesional);
-                this.solicitud.entidad.domicilioProfesional.calle = r.data.entidad.domicilioProfesional.calle;
-                this.solicitud.entidad.domicilioProfesional.numero = r.data.entidad.domicilioProfesional.numero;                
-              }
-
-              if (r.data.entidad.domicilioConstituido) {
-                this.solicitud.entidad.domicilioConstituido.id = r.data.entidad.domicilioConstituido.id;
-                this.solicitud.entidad.domicilioConstituido.pais = this.paises.find(p => p.nombre == r.data.entidad.domicilioConstituido.pais).id;
-                this.changePais('constituido', r.data.entidad.domicilioConstituido);
-                this.solicitud.entidad.domicilioConstituido.calle = r.data.entidad.domicilioConstituido.calle;
-                this.solicitud.entidad.domicilioConstituido.numero = r.data.entidad.domicilioConstituido.numero;                
-              }
+              this.solicitud.entidad.domicilios = entidad.domicilios;
 
               for(let contacto of r.data.entidad.contactos) {
                 let contacto_nuevo = contacto;
@@ -853,7 +748,7 @@ export default {
 
     prepareSubmit: function() {
       let solicitud = utils.clone(this.solicitud);
-      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.idMatricula);
+      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.matricula);
       return solicitud;
     },
 
@@ -896,7 +791,7 @@ export default {
         return utils.validObject(empresa, this.validator.empresa);
       }
       else if (i == 3) {
-        return utils.validObject(this.solicitud.entidad.domicilioReal, this.validator.domicilio)
+        return this.solicitud.entidad.domicilios.length > 0;
       }
       else return true;
     },
@@ -929,7 +824,7 @@ export default {
 
     addRepresentante: function(matricula) {
       this.solicitud.entidad.representantes.push({
-        idMatricula: matricula.id,
+        matricula: matricula.id,
         numeroMatricula: matricula.numeroMatricula,
         dni: matricula.entidad.dni,
         apellido: matricula.entidad.apellido,

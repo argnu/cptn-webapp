@@ -364,6 +364,11 @@
                         <td>{{ props.item.item.descripcion }}</td>
                         <td>{{ props.item.valor }}</td>
                       </template>
+                      <td>
+                        <v-btn fab small @click="removeItem(props.index)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </td>                      
                     </tr>
                   </template>
                 </v-data-table>
@@ -814,6 +819,10 @@ export default {
       else this.nuevo_item.descripcion = this.nuevo_item.id;
       this.legajo.items.push(this.nuevo_item);
       this.nuevo_item = Item();
+    },
+
+    removeItem: function(index) {
+      this.legajo.items.splice(index, 1);
     },
 
     submit: function() {
