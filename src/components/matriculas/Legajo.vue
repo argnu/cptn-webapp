@@ -161,6 +161,12 @@
                     </tr>
                   </template>
                 </v-data-table>
+
+                <br>
+
+              <v-alert color="error" icon="priority_high" :value="!valid_comitentes">
+                Los porcentajes deben sumar 100%
+              </v-alert>                                  
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -577,6 +583,7 @@
 
 <script>
 import axios from '@/axios'
+import * as moment from 'moment'
 import rules from '@/rules'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
@@ -629,7 +636,7 @@ const Legajo = (matricula) => ({
   domicilio: new Domicilio(),
   delegacion: null,
   dependencia: false,
-  fecha_solicitud: null,
+  fecha_solicitud: moment().format('DD/MM/YYYY'),
   finalizacion_tarea: null,
   forma_pago: '',
   honorarios_presupuestados: null,
@@ -716,7 +723,16 @@ export default {
           && this.validControl(this.validator.comitente.apellido, this.nuevo_comitente.persona.apellido)        
           && this.validControl(this.validator.comitente.dni, this.nuevo_comitente.persona.dni)        
       }
-    }
+    },
+
+    suma_comitentes: function() {
+      if (!this.legajo.comitentes.length) return 0;
+      return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
+    },    
+
+    valid_comitentes: function() {
+      return this.suma_comitentes === 100;   
+    }    
   },
 
   created: function() {
