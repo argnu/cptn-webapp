@@ -505,8 +505,8 @@
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
                                   <td>
-                                    <v-btn fab dark small color="blue" @click="addRepresentante(props.item)">
-                                      <v-icon>note_add</v-icon>
+                                    <v-btn fab dark small color="blue" @click="selectRepresentantePrimario(props.item)">
+                                      <v-icon>check</v-icon>
                                     </v-btn>
                                   </td>
                                 </tr>
@@ -532,7 +532,7 @@
                                 <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
                                   <b>{{ header.text }}</b>
                                 </th>
-                                <th></th>
+                                <!-- <th></th> -->
                               </template>
                               <template slot="items" slot-scope="props">
                                 <tr>
@@ -540,11 +540,11 @@
                                   <td>{{ props.item.nombre }}</td>
                                   <td>{{ props.item.apellido }}</td>
                                   <td>{{ props.item.dni }}</td>
-                                  <td>
+                                  <!-- <td>
                                     <v-btn icon small @click="borrarRepresentante(props.item.numeroMatricula)">
                                       <v-icon>delete</v-icon>
                                     </v-btn>
-                                  </td>
+                                  </td> -->
                                 </tr>
                               </template>
                             </v-data-table>
@@ -746,17 +746,11 @@ export default {
       }
     },
 
-    prepareSubmit: function() {
-      let solicitud = utils.clone(this.solicitud);
-      solicitud.entidad.representantes = solicitud.entidad.representantes.map(r => r.matricula);
-      return solicitud;
-    },
-
     submit: function() {
       this.solicitud.operador = this.user.id;
       
       if (!this.id) {
-        axios.post('/solicitudes', this.prepareSubmit())
+        axios.post('/solicitudes', this.solicitud)
             .then(r => {
               if (r.status != 201) {
                 this.submitError();
@@ -770,7 +764,7 @@ export default {
             .catch(e => this.submitError());
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.prepareSubmit())
+        axios.put(`/solicitudes/${this.id}`, this.solicitud)
           .then(r => {
             if (r.status != 200) {
               this.submitError();
@@ -822,14 +816,15 @@ export default {
       this.debouncedUpdate();
     },
 
-    addRepresentante: function(matricula) {
-      this.solicitud.entidad.representantes.push({
+    selectRepresentantePrimario: function(matricula) {
+      this.solicitud.entidad.representantes = [{
+        tipo: 'primario',
         matricula: matricula.id,
         numeroMatricula: matricula.numeroMatricula,
         dni: matricula.entidad.dni,
         apellido: matricula.entidad.apellido,
         nombre: matricula.entidad.nombre
-      });
+      }]
     },
 
     borrarRepresentante: function(numeroMatricula) {
