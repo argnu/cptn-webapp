@@ -1180,7 +1180,7 @@ export default {
     },
 
     submit: function() {
-      this.solicitud.operador = user.id;
+      this.solicitud.operador = this.user.id;
       
       if (!this.id) {
         axios.post('/solicitudes', this.makeFormData())

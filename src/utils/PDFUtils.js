@@ -38,7 +38,7 @@ export function impresionVolante(volante) {
   })
 
   let indice = 75 + offsetLoop;
-  // Se imprime el interes 
+  // Se imprime el interes
   if (volante.interes_total) {
     doc.text(24, indice, `Intereses`);
     doc.text(160, indice, `${volante.interes_total}`);
@@ -111,10 +111,10 @@ export function impresionSolicitud(solicitud) {
       doc.text(65, eje_y + 6, formacion_grado.institucion);
       doc.text(65, eje_y + 12, moment(formacion_grado.fecha).format('DD/MM/YYYY'));
     }
-    eje_y += 18;   
+    eje_y += 18;
   }
 
-  
+
   if (solicitud.entidad.tipo == 'empresa') {
     doc.text(20, eje_y, 'Nombre:');
     eje_y += 6;
@@ -135,7 +135,7 @@ export function impresionSolicitud(solicitud) {
   doc.line(20, eje_y, 190, eje_y);
   eje_y += 6;
 
-  // Domicilios Real 
+  // Domicilios Real
   doc.setFontSize(14);
   doc.text(20, eje_y, 'Domicilio Real');
   eje_y += 6;
@@ -157,7 +157,7 @@ export function impresionSolicitud(solicitud) {
   doc.line(20, eje_y, 190, eje_y);
 
   eje_y += 6;
-  
+
 
   // Domicilios Profesional
   doc.text(20, eje_y, 'Domicilio Profesional');
@@ -325,32 +325,49 @@ export function impresionLegajo(legajo, categoria) {
     doc.setFontSize(10);
   }
 
+  const comitenteFisico = (comitente) => {
+    doc.text(25, eje_y, `Apellido: ${comitente.persona.apellido}`);
+    doc.text(100, eje_y, `Nombre: ${comitente.persona.nombre}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Nombre: ${comitente.persona.nombre}`);
+    doc.text(100, eje_y, `DNI: ${comitente.persona.dni}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Teléfono: ${comitente.persona.telefono}`);
+    doc.text(25, eje_y, `Porcentaje: ${comitente.persona.porcentaje}`);
+  }
+
+  const comitenteJuridico = (comitente) => {
+    doc.text(25, eje_y, `Nombre: ${comitente.persona.nombre}`);
+    doc.text(100, eje_y, `CUIT: ${comitente.persona.cuit}`);
+    eje_y += 5;
+    doc.text(25, eje_y, `Teléfono: ${comitente.persona.telefono}`);
+    doc.text(25, eje_y, `Porcentaje: ${comitente.persona.porcentaje}`);
+  }
+
+
   const doc = new jsPDF('p', 'mm', 'a4');
   doc.addImage(img,'JPG', 10, 10, 60, 13);
   doc.setLineWidth(1);
   doc.line(20, 38, 190, 38);
   doc.setFontSize(14);
-  doc.text(25, 45, getTipoLegajo(legajo.tipo));  
+  doc.text(25, 45, getTipoLegajo(legajo.tipo));
   doc.line(20, 50, 190, 50);
 
   let eje_y = 57;
   doc.setFontSize(10);
-  doc.text(25, eje_y, `N° ${legajo.numero_legajo}`);  
+  doc.text(25, eje_y, `N° ${legajo.numero_legajo}`);
   doc.text(50, eje_y, `Fecha: ${moment(legajo.fecha_solicitud).format('DD/MM/YYYY')}`);
   eje_y += 5
   doc.setLineWidth(0.5);
 
-  encabezado('Comitente');
+  encabezado('Comitentes');
 
-  doc.text(25, eje_y, `Apellido: ${legajo.comitente.apellido}`);
-  eje_y += 5;
-  doc.text(25, eje_y, `Nombre: ${legajo.comitente.nombres}`);
-  eje_y += 5;
-  doc.text(25, eje_y, `DNI: ${legajo.comitente.numero_documento ? legajo.comitente.numero_documento : ''}`);
-  eje_y += 5;
-  doc.text(25, eje_y, `Teléfono: ${legajo.comitente.telefono ? legajo.comitente.telefono : ''}`);
-  eje_y += 5;
-
+  for(let comitente of legajo.comitentes) {
+    if (comitente.tipo == 'fisica') comitenteFisico(comitente);
+    else if (comitente.tipo == 'juridica') comitenteJuridico(comitente);
+    eje_y += 5;
+  }
+  
   encabezado('Ubicación del Trabajo');
 
   doc.text(25, eje_y, `Nomenclatura: ${legajo.nomenclatura}`);
@@ -369,7 +386,7 @@ export function impresionLegajo(legajo, categoria) {
   encabezado('Tareas');
   doc.text(25, eje_y, `${categoria.descripcion} - ${subcategoria.descripcion}`);
   eje_y += 5;
-  
+
   for(let item of legajo.items) {
     doc.text(25, eje_y, `${item.item.descripcion}: ${item.valor}`);
     eje_y += 5;

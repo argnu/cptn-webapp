@@ -48,7 +48,7 @@ export class Profesional extends Entidad {
     this.serviciosPrestados = '';
     this.poseeCajaPrevisional = false;
     this.nombreCajaPrevisional = '';
-    this.solicitaCajaPrevisional = '';
+    this.solicitaCajaPrevisional = false;
     this.beneficiarios = [];
     this.subsidiarios = [];
     this.publicarEmail = false;

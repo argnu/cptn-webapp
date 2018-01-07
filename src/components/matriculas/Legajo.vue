@@ -9,7 +9,7 @@
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
-    <v-layout row>
+    <v-layout row v-if="legajo.id">
       <v-flex xs12>
         <v-btn
           class="blue darken-1 white--text right"
@@ -72,8 +72,8 @@
             <span class="subheading blue--text text--darken-4"><b>Comitentes</b></span>
           </v-card-title>
           <v-card-text>
-              <v-layout row>
-                  <v-flex xs3 class="mx-4">
+              <v-layout row v-if="!legajo.id">
+                  <v-flex xs6 class="mx-4">
                     <v-select
                       label="Tipo"
                       :items="tipo_persona"
@@ -100,13 +100,9 @@
                       label="Porcentaje"
                       v-model="nuevo_comitente.porcentaje"
                     ></v-text-field>
-
-                    <v-btn @click="addComitente">
-                      Agregar
-                    </v-btn>
                 </v-flex>
 
-                <v-flex xs3>
+                <v-flex xs6>
                   <v-text-field
                     label="Nombre"
                     v-model="nuevo_comitente.persona.nombre"
@@ -131,10 +127,21 @@
                       :error="submit_comitente && !validControl(validator.comitente.dni, nuevo_comitente.persona.dni)"
                     ></v-text-field>
                   </template>
+
+                  <v-btn @click="addComitente">
+                    Agregar
+                  </v-btn>                  
                 </v-flex>
+            </v-layout>
 
+            <!-- <v-layout>
+              <v-flex xs12>
+                
+              </v-flex>
+            </v-layout> -->
 
-              <v-flex xs5 class="mx-4">
+            <v-layout row class="mt-4">
+              <v-flex xs12 class="mx-4">
                 <v-data-table
                     :headers="headers.comitentes"
                     :items="legajo.comitentes"
@@ -164,9 +171,9 @@
 
                 <br>
 
-              <v-alert color="error" icon="priority_high" :value="!valid_comitentes">
-                Los porcentajes deben sumar 100%
-              </v-alert>                                  
+                <v-alert color="error" icon="priority_high" :value="!this.legajo.id && !valid_comitentes">
+                  Los porcentajes deben sumar 100%
+                </v-alert>                                  
               </v-flex>
             </v-layout>
           </v-card-text>

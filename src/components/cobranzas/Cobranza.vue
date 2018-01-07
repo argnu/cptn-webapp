@@ -30,7 +30,7 @@
                   v-model="nueva_forma_pago.forma_pago"
                   :rules="submit_forma_pago ? validator.forma_pago : []"
                   :error="submit_forma_pago && !validControl(validator.forma_pago, nueva_forma_pago.forma_pago)"
-                  @change="chgFormaPago"
+                  @input="chgFormaPago($event)"
                 >
                 </v-select>
               </v-flex>
@@ -175,20 +175,19 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
 class ComprobantePago {
-  constructor() {
-    this.forma_pago = '';
+  constructor(forma_pago) {
+    this.forma_pago = forma_pago;
     this.importe = '';
   }
 }
 
 class ComprobantePagoCheque extends ComprobantePago {
-  constructor() {
-    super();
-    this.forma_pago = 4;
-    this.numero_cheque = null;
-    this.banco = null;
+  constructor(forma_pago) {
+    super(forma_pago);
+    this.numero_cheque = '';
+    this.banco = '';
     this.titular_cuenta = '';
-    this.fecha_vencimiento = null;
+    this.fecha_vto_cheque = '';
   }
 }
 
@@ -271,9 +270,9 @@ export default {
   },
 
   methods: {
-    chgFormaPago: function() {
-      if (this.esCheque) this.nueva_forma_pago = new ComprobantePagoCheque();
-      else this.nueva_forma_pago = new ComprobantePago();
+    chgFormaPago: function(tipo) {
+      if (this.esCheque) this.nueva_forma_pago = new ComprobantePagoCheque(tipo);
+      else this.nueva_forma_pago = new ComprobantePago(tipo);
     },
 
     addItemPago: function() {

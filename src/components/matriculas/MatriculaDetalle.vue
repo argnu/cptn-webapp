@@ -150,31 +150,31 @@
 
                   <v-flex xs3 class="ml-5">
                     <div class="mb-4">
-                      <b>Domicilio Profesional</b>
+                      <b>Domicilio Legal</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.localidad : ''}}
+                      Localidad: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.calle : '' }}
+                      Calle: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioProfesional ? matricula.entidad.domicilioProfesional.numero : ''}}
+                      N°: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.numero : ''}}
                     </div>
                   </v-flex>
 
                   <v-flex xs3 class="ml-5">
                     <div class="mb-4">
-                      <b>Domicilio Constituido</b>
+                      <b>Domicilio Especial</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.localidad : ''}}
+                      Localidad: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.calle : '' }}
+                      Calle: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioConstituido ? matricula.entidad.domicilioConstituido.numero : ''}}
+                      N°: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.numero : ''}}
                     </div>
                   </v-flex>
                 </v-layout>
@@ -406,6 +406,21 @@ export default {
   computed: {
     headers: function() {
       return headers;
+    },
+
+    domicilioReal: function() {
+      if (!matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'real')
+    },
+
+    domicilioLegal: function() {
+      if (!matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'legal')
+    },
+
+    domicilioEspecial: function() {
+      if (!matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'especial')
     }
   },
 
