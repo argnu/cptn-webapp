@@ -207,7 +207,7 @@
               Domicilios del Profesional
             </v-stepper-step>
             <v-stepper-content step="3">
-              <v-card class="grey lighten-4 elevation-4 mb-2">
+              <v-card class="grey lighten-4 elevation-4 mb-2" ref="form">
                 <v-card-text>
                         <v-layout row class="mx-4">
                           <v-flex xs5>
@@ -216,7 +216,7 @@
                               label="Tipo"
                               v-model="nuevo_domicilio.tipo"
                               autocomplete
-                              :rules="validator.entdomicilio.tipo"
+                              :rules="submitted.domicilio ? validator.entdomicilio.tipo : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.tipo, nuevo_domicilio.tipo)"
                             >
                             </v-select>                          
@@ -248,8 +248,7 @@
                               item-text="nombre"
                               item-value="id"
                               @input="changePais"
-                              :rules="validator.entdomicilio.domicilio.pais"
-                              :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.pais, nuevo_domicilio.domicilio.pais)"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.pais : []"
                             >
                             </v-select>
 
@@ -262,7 +261,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :rules="validator.entdomicilio.domicilio.departamento"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.departamento : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.departamento, nuevo_domicilio.domicilio.departamento)"
                             >
                             </v-select>
@@ -271,7 +270,7 @@
                               tabindex="16"
                               label="Calle"
                               v-model="nuevo_domicilio.domicilio.calle"
-                              :rules="validator.entdomicilio.domicilio.calle"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.calle : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.calle, nuevo_domicilio.domicilio.calle)"
                             >
                             </v-text-field>
@@ -287,7 +286,7 @@
                               autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
-                              :rules="validator.entdomicilio.domicilio.provincia"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.provincia : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.provincia, nuevo_domicilio.domicilio.provincia)"
                             >
                             </v-select>
@@ -297,7 +296,7 @@
                               :items="localidades"
                               label="Localidad"
                               v-model="nuevo_domicilio.domicilio.localidad"
-                              :rules="validator.entdomicilio.domicilio.localidad"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.localidad : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.localidad, nuevo_domicilio.domicilio.localidad)"
                               autocomplete single-line bottom
                               item-text="nombre"
@@ -309,7 +308,7 @@
                               tabindex="17"
                               label="N°"
                               v-model="nuevo_domicilio.domicilio.numero"
-                              :rules="validator.entdomicilio.domicilio.numero"
+                              :rules="submitted.domicilio ? validator.entdomicilio.domicilio.numero : []"
                               :error="submitted.domicilio && !validControl(validator.entdomicilio.domicilio.numero, nuevo_domicilio.domicilio.numero)"
                             >
                             </v-text-field>
@@ -723,79 +722,78 @@
             <v-stepper-content step="8">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-layout row>
-                    <v-flex xs6 class="ma-4">
-                      <v-text-field 
-                        label="DNI" 
-                        v-model="nuevo_subsidiario.dni" 
-                        :rules="submitted.subsidiario ? validator.subsidiario.dni : []"
-                        :error="submitted.subsidiario && !validControl(validator.subsidiario.dni, nuevo_subsidiario.dni)"
+                  <v-form ref="form_subsidiario" lazy-validation>
+                      <v-layout row>
+                        <v-flex xs6 class="ma-4">
+                          <v-text-field 
+                            label="DNI" 
+                            v-model="nuevo_subsidiario.dni" 
+                            :rules="validator.subsidiario.dni"
+                          >
+                          </v-text-field>
+
+                          <v-text-field 
+                            label="Apellido" 
+                            v-model="nuevo_subsidiario.apellido" 
+                            :rules="validator.subsidiario.apellido"
+                          >
+                          </v-text-field>
+                        </v-flex>
+
+                        <v-flex xs6 class="ma-4">
+                          <v-text-field 
+                            label="Nombre" 
+                            v-model="nuevo_subsidiario.nombre" 
+                            :rules="validator.subsidiario.nombre"
+                          >
+                          </v-text-field>
+
+                          <input-numero
+                            label="Porcentaje"
+                            v-model="nuevo_subsidiario.porcentaje"
+                            :rules="validator.subsidiario.porcentaje"
+                          >
+                          </input-numero>
+                        </v-flex>
+                      </v-layout>
+
+                      <v-btn class="right mb-4" light @click="addSubsidiario">
+                        Agregar
+                      </v-btn>
+
+                      <v-data-table
+                        :headers="headers.subsidiarios"
+                        :items="solicitud.entidad.subsidiarios"
+                        hide-actions
+                        class="elevation-1"
+                        no-data-text="No hay subsidiarios"
                       >
-                      </v-text-field>
+                        <template slot="headers" slot-scope="props">
+                                <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                                  <b>{{ header.text }}</b>
+                                </th>
+                                <th></th>
+                              </template>
+                        <template slot="items" slot-scope="props">
+                                <td>{{ props.item.dni }}</td>
+                                <td>{{ props.item.apellido }}</td>
+                                <td>{{ props.item.nombre }}</td>
+                                <td>{{ props.item.porcentaje }}</td>
+                                <td style="width:30px">
+                                  <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
+                                    <v-icon>delete</v-icon>
+                                  </v-btn>
+                                </td>
+                              </template>
+                      </v-data-table>
 
-                      <v-text-field 
-                        label="Apellido" 
-                        v-model="nuevo_subsidiario.apellido" 
-                        :rules="submitted.subsidiario ? validator.subsidiario.apellido : []"
-                        :error="submitted.subsidiario && !validControl(validator.subsidiario.apellido, nuevo_subsidiario.apellido)"
-                      >
-                      </v-text-field>
-                    </v-flex>
+                      <br>
 
-                    <v-flex xs6 class="ma-4">
-                      <v-text-field 
-                        label="Nombre" 
-                        v-model="nuevo_subsidiario.nombre" 
-                        :rules="submitted.subsidiario ? validator.subsidiario.nombre : []"
-                        :error="submitted.subsidiario && !validControl(validator.subsidiario.nombre, nuevo_subsidiario.nombre)"
-                      >
-                      </v-text-field>
+                      <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
+                        Los porcentajes deben sumar 100%
+                      </v-alert>  
 
-                      <input-numero
-                        label="Porcentaje"
-                        v-model="nuevo_subsidiario.porcentaje"
-                        :rules="submitted.subsidiario ? validator.subsidiario.porcentaje : []"
-                        :error="submitted.subsidiario && !validControl(validator.subsidiario.porcentaje, nuevo_subsidiario.porcentaje)"
-                      >
-                      </input-numero>
-                    </v-flex>
-                  </v-layout>
-
-                  <v-btn class="right mb-4" light @click="addSubsidiario">
-                    Agregar
-                  </v-btn>
-
-                  <v-data-table
-                    :headers="headers.subsidiarios"
-                    :items="solicitud.entidad.subsidiarios"
-                    hide-actions
-                    class="elevation-1"
-                    no-data-text="No hay subsidiarios"
-                  >
-                    <template slot="headers" slot-scope="props">
-                             <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                               <b>{{ header.text }}</b>
-                             </th>
-                             <th></th>
-                           </template>
-                    <template slot="items" slot-scope="props">
-                             <td>{{ props.item.dni }}</td>
-                             <td>{{ props.item.apellido }}</td>
-                             <td>{{ props.item.nombre }}</td>
-                             <td>{{ props.item.porcentaje }}</td>
-                             <td style="width:30px">
-                               <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
-                                 <v-icon>delete</v-icon>
-                               </v-btn>
-                             </td>
-                           </template>
-                  </v-data-table>
-
-                  <br>
-
-              <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
-                Los porcentajes deben sumar 100%
-              </v-alert>                  
+                  </v-form>                
 
                 </v-card-text>
               </v-card>
@@ -1063,7 +1061,8 @@ export default {
       this.solicitud.entidad.apellido = entidad.apellido;
       this.solicitud.entidad.dni = entidad.dni;
       this.solicitud.entidad.cuit = entidad.cuit;
-      this.solicitud.entidad.sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo).id;
+      let sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo);
+      this.solicitud.entidad.sexo = sexo ? sexo.id : '';
       this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
       this.solicitud.entidad.fechaNacimiento = moment(entidad.fechaNacimiento).format('DD/MM/YYYY');
       this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
@@ -1071,6 +1070,7 @@ export default {
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
       
+      console.log(entidad.domicilios)
       this.solicitud.entidad.domicilios = entidad.domicilios;
       
       for(let contacto of entidad.contactos) {
@@ -1161,11 +1161,11 @@ export default {
     },
 
     addSubsidiario: function() {
-      this.submitted.subsidiario = true;
-      if (utils.validObject(this.nuevo_subsidiario, this.validator.subsidiario)) {
+      this.$refs.form_subsidiario.validate(true);
+      if (this.$refs.form_subsidiario.validate()) {
         this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
-        this.submitted.subsidiario = false;
-        this.nuevo_subsidiario = new Beneficiario();
+        this.nuevo_subsidiario = new Subsidiario();
+        this.$refs.form_subsidiario.reset();
       }
     },
 

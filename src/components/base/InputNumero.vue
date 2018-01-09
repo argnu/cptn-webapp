@@ -16,7 +16,7 @@
 <script>
 export default {
     name: 'InputNumero',
-    props: ['label', 'disabled', 'value', 'rules', 'error', 'prefix', 'tabindex'],
+    props: ['label', 'disabled', 'value', 'rules', 'error', 'prefix', 'tabindex', 'decimal'],
 
     methods: {
         keypress: function(e) {
@@ -35,7 +35,7 @@ export default {
         },
 
         update: function(e) {
-            this.$emit('input', e.replace('.', ','));
+            if (e) this.$emit('input', e.replace('.', ','));
         }
     }
 

@@ -25,7 +25,7 @@ const headers = {
   incumbencias: [
     Header('Nombre', 'nombre'),
   ],
-  
+
   matriculados: [
     Header('N°', 'numero'),
     Header('Nombre', 'nombre'),
@@ -63,7 +63,7 @@ const headers = {
     Header('Apellido', 'apellido'),
     Header('Nombre', 'nombre'),
     Header('Porcentaje', 'porcentaje')
-  ]  
+  ]
 }
 
 export default {
@@ -94,7 +94,7 @@ export default {
         entdomicilio: {
           tipo: [rules.required],
           domicilio: {
-            pais: [rules.required], provincia: [rules.required], departamento: [rules.required], 
+            pais: [rules.required], provincia: [rules.required], departamento: [rules.required],
             calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
           }
         },
@@ -128,7 +128,7 @@ export default {
           return tipos.find(t => t == d.value)
         });
       }
-    }    
+    }
   },
 
   methods: {
@@ -142,7 +142,7 @@ export default {
     },
 
     changeProvincia: function () {
-      if (this.nuevo_domicilio.domicilio.provincia) {        
+      if (this.nuevo_domicilio.domicilio.provincia) {
         axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
              .then(r => this.departamentos = r.data)
              .catch(e => console.error(e));
@@ -169,7 +169,7 @@ export default {
         this.submitted.contacto = false;
         this.nuevo_contacto = new Contacto();
       }
-    },    
+    },
 
     addDomicilio: function () {
       this.submitted.domicilio = true;
@@ -182,29 +182,54 @@ export default {
         this.submitted.domicilio = false;
         this.nuevo_domicilio = EntidadDomicilio();
       }
-    },    
+    },
 
     copiarDomicilio: function(tipo) {
       let domicilio_copiar = this.solicitud.entidad.domicilios.find(d => d.tipo == tipo).domicilio;
-      this.nuevo_domicilio.domicilio.pais = domicilio_copiar.pais;
-      axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
-      .then(r => {
-        this.provincias = r.data;
-        this.nuevo_domicilio.domicilio.provincia = domicilio_copiar.provincia;
-        return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
-      })
-      .then(r => {
-        this.departamentos = r.data
-        this.nuevo_domicilio.domicilio.departamento = domicilio_copiar.departamento;
-        return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
-      })
-      .then(r => {
-        this.localidades = r.data;
-        this.nuevo_domicilio.domicilio.localidad = domicilio_copiar.localidad;
-        this.nuevo_domicilio.domicilio.calle = domicilio_copiar.calle;
-        this.nuevo_domicilio.domicilio.numero = domicilio_copiar.numero;
-      })
-      .catch(e => console.error(e));
+
+      if (typeof domicilio_copiar.pais == 'number') {
+        this.nuevo_domicilio.domicilio.pais = domicilio_copiar.pais;
+        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+          .then(r => {
+            this.provincias = r.data;
+            this.nuevo_domicilio.domicilio.provincia = domicilio_copiar.provincia;
+            return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+          })
+          .then(r => {
+            this.departamentos = r.data
+            this.nuevo_domicilio.domicilio.departamento = domicilio_copiar.departamento;
+            return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+          })
+          .then(r => {
+            this.localidades = r.data;
+            this.nuevo_domicilio.domicilio.localidad = domicilio_copiar.localidad;
+            this.nuevo_domicilio.domicilio.calle = domicilio_copiar.calle;
+            this.nuevo_domicilio.domicilio.numero = domicilio_copiar.numero;
+          })
+          .catch(e => console.error(e));
+      }
+      
+      else {
+        this.nuevo_domicilio.domicilio.pais = this.paises.find(p => p.nombre == domicilio_copiar.pais).id;
+        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+          .then(r => {
+            this.provincias = r.data;
+            this.nuevo_domicilio.domicilio.provincia = this.provincias.find(p => p.nombre == domicilio_copiar.provincia).id;
+            return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+          })
+          .then(r => {
+            this.departamentos = r.data
+            this.nuevo_domicilio.domicilio.departamento = this.departamentos.find(p => p.nombre == domicilio_copiar.departamento).id;
+            return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+          })
+          .then(r => {
+            this.localidades = r.data;
+            this.nuevo_domicilio.domicilio.localidad = this.localidades.find(p => p.nombre == domicilio_copiar.localidad).id;
+            this.nuevo_domicilio.domicilio.calle = domicilio_copiar.calle;
+            this.nuevo_domicilio.domicilio.numero = domicilio_copiar.numero || '';
+          })
+          .catch(e => console.error(e));
+      }
     },
 
     removeElem: function(tipo, index) {
