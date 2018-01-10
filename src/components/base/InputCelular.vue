@@ -1,36 +1,39 @@
 <template>
     <v-layout>
         <v-flex xs4>
-            <v-text-field 
+            <input-numero
                 ref="prefijo"
                 prefix="+54 9"
                 :value="value.prefijo"
-                maxlength="4"
-                @input="updatePrefijo"
                 :rules="[rules.required, rules.prefijoCelular]"
+                @input="updatePrefijo"
             >
-            </v-text-field>
+            </input-numero>
         </v-flex>
         <v-flex xs5 class="ml-2">
-            <v-text-field 
+            <input-numero
                 ref="numero"
                 :value="value.numero"
-                maxlength="8"
-                @input="updateNumero"
                 :rules="[rules.required, rules.numeroCelular]"
+                @input="updateNumero"
             >
-            </v-text-field>
+            </input-numero>
         </v-flex>
     </v-layout>  
 </template>
 
 <script>
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import InputNumero from '@/components/base/InputNumero'
 
 export default {
     name: 'InputCelular',
-    props: ['value', 'whatsapp', 'rules', 'error'],
-    mxins: [ValidatorMixin],
+    mixins: [ValidatorMixin],
+    props: ['value', 'whatsapp'],
+    data() {
+        return {
+        }
+    },
 
     methods: {
         updatePrefijo: function(e) {
@@ -40,8 +43,10 @@ export default {
         updateNumero: function(e) {
             this.$emit('input', { prefijo: this.value.prefijo, numero: e });
         }
+    },
 
-
+    components: {
+        InputNumero
     }
 
 }
