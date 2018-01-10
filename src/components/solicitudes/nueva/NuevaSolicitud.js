@@ -104,6 +104,10 @@ export default {
           return tipos.find(t => t == d.value)
         });
       }
+    },
+
+    valid_domicilios: function() {
+      return this.solicitud.entidad.domicilios.length > 0;
     }
   },
 

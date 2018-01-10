@@ -71,7 +71,7 @@
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
                         tabindex="3"
-                        @change="chgDni"
+                        @input="chgDni"
                       >
                       </v-text-field>
 
@@ -207,8 +207,8 @@
             <!-- PASO 3: DOMICILIOS -->
             <v-stepper-step step="3" edit-icon="check" 
               editable 
-              :complete="solicitud.entidad.domicilios.length > 0 && step > 3" 
-              :rules="[() => step <= 3 || solicitud.entidad.domicilios.length > 0]"
+              :complete="valid_domicilios && step > 3" 
+              :rules="[() => step <= 3 || valid_domicilios]"
             >
               Domicilios del Profesional
             </v-stepper-step>
@@ -359,6 +359,10 @@
                             </td>
                           </template>
                         </v-data-table>
+
+                      <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
+                        Debe ingresar al menos un domicilio
+                      </v-alert>                          
 
                       </v-form>
                     </v-card-text>
@@ -981,7 +985,7 @@ export default {
 
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
-        && this.valid_subsidiarios && this.solicitud.entidad.domicilios.length > 0;
+        && this.valid_subsidiarios && valid_domicilios;
     }
   },
 
@@ -1083,9 +1087,10 @@ export default {
     },
 
     chgDni: function() {
+      console.log(this.solicitud.entidad.dni)
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
-        if (r.data.length == 1) this.fillProfesional(r.data[0]);
+        if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
       })
       .catch(e => console.error(e));
@@ -1186,7 +1191,7 @@ export default {
       let next = true;
       if (this.step == 1) next = this.$refs.form_solicitud.validate();
       else if (this.step == 2) next = this.$refs.form_profesional.validate();
-      else if (this.step == 3) next = this.solicitud.entidad.domicilios.length > 0;
+      else if (this.step == 3) next = this.valid_domicilios;
 
       if (next) this.step = +this.step + 1;
     }   

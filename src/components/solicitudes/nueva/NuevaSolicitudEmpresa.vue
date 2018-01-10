@@ -150,8 +150,8 @@
 
                 <!-- PASO 3: DOMICILIOS -->
                 <v-stepper-step step="3" edit-icon="check" editable 
-                  :complete="solicitud.entidad.domicilios.length > 0 && step > 3" 
-                  :rules="[() => step <= 3 || solicitud.entidad.domicilios.length > 0]"
+                  :complete="valid_domicilios && step > 3" 
+                  :rules="[() => step <= 3 || valid_domicilios]"
                 >
                   Domicilios de la Empresa
                 </v-stepper-step>
@@ -302,6 +302,10 @@
                             </td>
                           </template>
                         </v-data-table>
+
+                      <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
+                        Debe ingresar al menos un domicilio
+                      </v-alert>                             
 
                       </v-form>
                     </v-card-text>
@@ -563,6 +567,10 @@
                             </v-data-table>
                           </v-flex>
                         </v-layout>
+
+                      <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_representante">
+                        Debe seleccionar un representante
+                      </v-alert>                             
                     </v-card-text>
                   </v-card>
 
@@ -680,7 +688,7 @@ export default {
 
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_empresa 
-        && this.solicitud.entidad.domicilios.length > 0
+        && this.valid_domicilios
         && this.valid_representante;
     }
   },
@@ -794,7 +802,7 @@ export default {
       let next = true;
       if (this.step == 1) next = this.$refs.form_solicitud.validate();
       else if (this.step == 2) next = this.$refs.form_empresa.validate();
-      else if (this.step == 3) next = this.solicitud.entidad.domicilios.length > 0;
+      else if (this.step == 3) next = this.valid_domicilios;
 
       if (next) this.step = +this.step + 1;
     },      
