@@ -40,8 +40,9 @@
                   <input-numero
                     label="Importe"
                     prefix="$"
+                    :decimal="true"
                     v-model="nueva_forma_pago.importe"
-                    :rules="[rules.required, rules.number]"
+                    :rules="[rules.required]"
                   ></input-numero>
                 </v-flex>
             </v-layout>

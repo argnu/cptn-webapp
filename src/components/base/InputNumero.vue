@@ -5,7 +5,6 @@
         :prefix="prefix"
         :label="label"
         :rules="rules"
-        :error="error"
         :disabled="disabled"
         :value="value"
         @keypress="keypress($event)"
@@ -16,7 +15,7 @@
 <script>
 export default {
     name: 'InputNumero',
-    props: ['label', 'disabled', 'value', 'rules', 'error', 'prefix', 'tabindex', 'decimal'],
+    props: ['label', 'disabled', 'value', 'rules', 'prefix', 'tabindex', 'decimal'],
 
     methods: {
         keypress: function(e) {

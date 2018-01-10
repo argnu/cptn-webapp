@@ -101,11 +101,12 @@
                       @input="chgDni"
                     ></v-text-field>                    
 
-                    <v-text-field
+                    <input-numero
                       label="Porcentaje"
+                      :decimal="true"
                       v-model="nuevo_comitente.porcentaje"
-                      :rules="[rules.required, rules.number]"
-                    ></v-text-field>
+                      :rules="[rules.required]"
+                    ></input-numero>
                 </v-flex>
 
                 <v-flex xs6>
@@ -533,9 +534,10 @@
                   <input-numero
                     tabindex="29"
                     label="Aporte Neto"
+                    :decimal="true"
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
-                    :rules="[rules.required, rules.number]"
+                    :rules="[rules.required]"
                   ></input-numero>
 
                   <input-numero

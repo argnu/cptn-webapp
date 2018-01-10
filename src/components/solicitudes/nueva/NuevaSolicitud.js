@@ -70,35 +70,14 @@ export default {
   data () {
     return {
       step: 1,
-
-      snackbar: {
-        msg: '',
-        show: false,
-        color: ''
-      },
-
       nuevo_contacto: new Contacto(),
       nuevo_domicilio: EntidadDomicilio(),
-
       delegaciones: [],
       opciones: {},
       paises: [],
       provincias: [],
       departamentos: [],
       localidades: [],
-
-      validator: {
-        entdomicilio: {
-          tipo: [rules.required],
-          domicilio: {
-            pais: [rules.required], provincia: [rules.required], departamento: [rules.required],
-            calle: [ rules.required ], numero: [ rules.required, rules.number ], localidad: [ rules.required ]
-          }
-        },
-        contacto: {
-          tipo: [rules.required], valor: [ rules.required ]
-        },
-      },
     }
   },
 

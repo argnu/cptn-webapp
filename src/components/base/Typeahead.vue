@@ -9,7 +9,6 @@
       @keyup.up="up"
       @keyup.enter="enter"
       :tabindex="tabindex"
-      :error="error"
       :rules="rules"
       :value="input_val"
       :disabled="disabled"

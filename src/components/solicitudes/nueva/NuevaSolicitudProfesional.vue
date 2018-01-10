@@ -753,8 +753,9 @@
 
                           <input-numero
                             label="Porcentaje"
+                            :decimal="true"
                             v-model="nuevo_subsidiario.porcentaje"
-                            :rules="[rules.required, rules.number]"
+                            :rules="[rules.required]"
                           >
                           </input-numero>
                         </v-flex>
