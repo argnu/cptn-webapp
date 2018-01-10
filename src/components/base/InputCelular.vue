@@ -7,7 +7,7 @@
                 :value="value.prefijo"
                 maxlength="4"
                 @input="updatePrefijo"
-                :rules="validator.prefijo"
+                :rules="[rules.required, rules.prefijoCelular]"
             >
             </v-text-field>
         </v-flex>
@@ -17,7 +17,7 @@
                 :value="value.numero"
                 maxlength="8"
                 @input="updateNumero"
-                :rules="validator.numero"
+                :rules="[rules.required, rules.numeroCelular]"
             >
             </v-text-field>
         </v-flex>
@@ -25,19 +25,12 @@
 </template>
 
 <script>
-import rules from '@/rules'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 export default {
     name: 'InputCelular',
     props: ['value', 'whatsapp', 'rules', 'error'],
-    data() {
-        return {
-            validator: {
-                prefijo: [rules.required, rules.prefijoCelular],
-                numero: [rules.required, rules.numeroCelular]
-            }
-        }
-    },
+    mxins: [ValidatorMixin],
 
     methods: {
         updatePrefijo: function(e) {

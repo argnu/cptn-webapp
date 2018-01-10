@@ -27,9 +27,9 @@ export default {
                 e.preventDefault();
             } 
             else {
-                if ((key_code === 46 || key_code === 44) && (this.$refs.input.value.indexOf(',') !== -1 || this.$refs.input.value.length === 0)) {
-                    e.preventDefault();
-                }           
+                if (!this.decimal && (key_code === 44 || key_code === 46)) e.preventDefault();
+                else if ((key_code === 46 || key_code === 44) && (this.$refs.input.value.indexOf(',') !== -1 || this.$refs.input.value.length === 0)) 
+                    e.preventDefault();     
                 else return true;
             }
         },

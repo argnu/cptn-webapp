@@ -21,10 +21,12 @@
       </v-flex>
     </v-layout>
 
-    <v-layout row wrap>
+    <v-layout row wrap>     
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-text>
+            <v-form v-model="valid.basicos">
+
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
                 <v-select
@@ -52,13 +54,13 @@
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
                   :disabled="legajo.id > 0"
-                  :rules="validator.fecha"
+                  :rules="[rules.required, rules.fecha]"
                 >
                 </input-fecha>
               </v-flex>
             </v-layout>
 
-
+            </v-form> 
           </v-card-text>
         </v-card>
       </v-flex>
@@ -72,33 +74,37 @@
             <span class="subheading blue--text text--darken-4"><b>Comitentes</b></span>
           </v-card-title>
           <v-card-text>
+              <v-form lazy-validation ref="form_comitente">
+
               <v-layout row v-if="!legajo.id">
                   <v-flex xs6 class="mx-4">
                     <v-select
                       label="Tipo"
                       :items="tipo_persona"
                       v-model="nuevo_comitente.persona.tipo"
+                      :rules="[rules.required]"
                       @input="chgTipoComitente"
                     ></v-select>
 
                     <v-text-field
                       label="CUIT/CUIL"
                       v-model="nuevo_comitente.persona.cuit"
-                      :rules="submit_comitente ? validator.comitente.cuit : []"
-                      :error="submit_comitente && !validControl(validator.comitente.cuit, nuevo_comitente.persona.cuit)"
+                      :rules="[rules.required, rules.integer]"
                       @input="chgCuitComitente"
                     >
                     </v-text-field>
 
                     <v-text-field
-                      label="Telefono"
-                      v-model="nuevo_comitente.persona.telefono"
-                    >
-                    </v-text-field>
+                      label="DNI"
+                      v-model="nuevo_comitente.persona.dni"
+                      :rules="[rules.required, rules.integer]"
+                      @input="chgDni"
+                    ></v-text-field>                    
 
                     <v-text-field
                       label="Porcentaje"
                       v-model="nuevo_comitente.porcentaje"
+                      :rules="[rules.required, rules.number]"
                     ></v-text-field>
                 </v-flex>
 
@@ -106,8 +112,7 @@
                   <v-text-field
                     label="Nombre"
                     v-model="nuevo_comitente.persona.nombre"
-                    :rules="submit_comitente ? validator.comitente.nombre : []"
-                    :error="submit_comitente && !validControl(validator.comitente.nombre, nuevo_comitente.persona.nombre)"
+                    :rules="[rules.required]"
                   >
                   </v-text-field>
 
@@ -115,17 +120,16 @@
                       <v-text-field
                         label="Apellido"
                         v-model="nuevo_comitente.persona.apellido"
-                        :rules="submit_comitente ? validator.comitente.apellido : []"
-                        :error="submit_comitente && !validControl(validator.comitente.apellido, nuevo_comitente.persona.apellido)"
+                        :rules="[rules.required]"
                       >
                       </v-text-field>
 
                     <v-text-field
-                      label="DNI"
-                      v-model="nuevo_comitente.persona.dni"
-                      :rules="submit_comitente ? validator.comitente.dni : []"
-                      :error="submit_comitente && !validControl(validator.comitente.dni, nuevo_comitente.persona.dni)"
-                    ></v-text-field>
+                      label="Telefono"
+                      v-model="nuevo_comitente.persona.telefono"
+                    >
+                    </v-text-field>
+
                   </template>
 
                   <v-btn @click="addComitente">
@@ -134,11 +138,8 @@
                 </v-flex>
             </v-layout>
 
-            <!-- <v-layout>
-              <v-flex xs12>
-                
-              </v-flex>
-            </v-layout> -->
+            </v-form>
+
 
             <v-layout row class="mt-4">
               <v-flex xs12 class="mx-4">
@@ -183,6 +184,7 @@
 
     <v-layout>
       <v-flex xs12>
+        <v-form ref="form_ubicacion" v-model="valid.ubicacion">
         <v-card class="ma-2 elevation-4">
           <v-card-title>
             <span class="subheading blue--text text--darken-4"><b>Ubicación del Trabajo</b></span>
@@ -195,7 +197,7 @@
                     label="Nomenclatura"
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
-                    :rules="validator.nomenclatura"
+                    :rules="[rules.required]"
                   >
                   </v-text-field>
               </v-flex>
@@ -275,12 +277,16 @@
             </v-layout>
           </v-card-text>
         </v-card>
+
+        </v-form>
       </v-flex>
     </v-layout>
 
 
     <v-layout row wrap>
       <v-flex xs12>
+        <v-form ref="form_tareas" v-model="valid.tareas">
+
         <v-card class="ma-2 elevation-4">
           <v-card-title>
             <span class="subheading blue--text text--darken-4"><b>Tareas</b></span>
@@ -310,7 +316,7 @@
                     v-model="legajo.subcategoria"
                     :disabled="legajo.id > 0"
                     @input="chgSubcategoria"
-                    :rules="validator.subcategoria"
+                    :rules="[rules.required]"
                   >
                   </v-select>
                 </v-flex>
@@ -405,6 +411,8 @@
 
           </v-card-text>
         </v-card>
+
+        </v-form>
       </v-flex>
     </v-layout>
 
@@ -513,6 +521,8 @@
 
       <v-layout row wrap>
         <v-flex xs12>
+          <v-form ref="form_aportes" v-model="valid.aportes"> 
+
           <v-card class="ma-2 elevation-4">
             <v-card-title>
               <span class="subheading blue--text text--darken-4"><b>Aportes</b></span>
@@ -525,7 +535,7 @@
                     label="Aporte Neto"
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
-                    :rules="validator.aporte_neto"
+                    :rules="[rules.required, rules.number]"
                   ></input-numero>
 
                   <input-numero
@@ -570,6 +580,7 @@
               </v-layout>
             </v-card-text>
           </v-card>
+          </v-form>
         </v-flex>
       </v-layout>
     </template>
@@ -667,6 +678,12 @@ export default {
   data () {
     return {
       legajo: Legajo(),
+      valid: {
+        basicos: false,
+        ubicacion: false,
+        tareas: false,
+        aportes: false
+      },
       matricula: null,
       categorias: [],
       paises: [],
@@ -674,23 +691,10 @@ export default {
       departamentos: [],
       localidades: [],
       nuevo_comitente: new Comitente('fisica'),
-      submit_comitente: false,
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: Item(),
-      validator: {
-        fecha: [ rules.required, rules.fecha ],
-        nomenclatura: [ rules.required ],
-        aporte_neto: [ rules.required ],
-        subcategoria: [ rules.required ],
-        comitente: {
-          cuit: [ rules.required ],
-          nombre: [ rules.required ],
-          apellido: [ rules.required ],
-          dni: [ rules.required ]
-        }
-      },
+      nuevo_item: Item()
     }
   },
 
@@ -712,26 +716,6 @@ export default {
       return categoria ? categoria.subcategorias : [];
     },
 
-    valid_form: function() {
-      return this.validControl(this.validator.fecha, this.legajo.fecha_solicitud)
-        && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura)
-        && this.validControl(this.validator.subcategoria, this.legajo.subcategoria)
-        && (this.legajo.tipo !=3 || this.validControl(this.validator.aporte_neto, this.legajo.aporte_neto));
-    },
-
-    valid_comitente: function() {
-      if (this.nuevo_comitente.persona.tipo == 'juridica') {
-        return this.validControl(this.validator.comitente.cuit, this.nuevo_comitente.persona.cuit)
-          && this.validControl(this.validator.comitente.nombre, this.nuevo_comitente.persona.nombre)
-      }
-      else {
-        return this.validControl(this.validator.comitente.cuit, this.nuevo_comitente.persona.cuit)
-          && this.validControl(this.validator.comitente.nombre, this.nuevo_comitente.persona.nombre)        
-          && this.validControl(this.validator.comitente.apellido, this.nuevo_comitente.persona.apellido)        
-          && this.validControl(this.validator.comitente.dni, this.nuevo_comitente.persona.dni)        
-      }
-    },
-
     suma_comitentes: function() {
       if (!this.legajo.comitentes.length) return 0;
       return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -739,7 +723,12 @@ export default {
 
     valid_comitentes: function() {
       return this.suma_comitentes === 100;   
-    }    
+    },
+
+    valid_form: function() {
+      return this.valid.basicos && this.valid_comitentes && this.valid.ubicacion && this.valid.tareas
+        && (this.legajo.tipo !=3 || this.valid.aportes);
+    },    
   },
 
   created: function() {
@@ -814,20 +803,32 @@ export default {
     },
 
     chgCuitComitente: function() {
-      axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
-      .then(r => {
-        if (r.data.length == 1)  {
-          this.nuevo_comitente.persona = r.data[0];
-        }
-      })
+      if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
+        axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
+        .then(r => {
+          if (r.data.length == 1)  {
+            this.nuevo_comitente.persona = r.data[0];
+          }
+        })
+      }
+    },
+
+    chgDni: function() {
+      if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+        axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
+        .then(r => {
+          if (r.data.length == 1)  {
+            this.nuevo_comitente.persona = r.data[0];
+          }
+        })
+      }
     },
 
     addComitente: function() {
-      this.submit_comitente = true;
-      if (this.valid_comitente) {
+      if (this.$refs.form_comitente.validate()) {
         this.legajo.comitentes.push(this.nuevo_comitente);
-        this.submit_comitente = false;
         this.chgTipoComitente();
+        this.$refs.form_comitente.reset()
       }
     },
 
@@ -851,7 +852,6 @@ export default {
     submit: function() {
       this.legajo.operador = this.user.id;
       this.legajo.delegacion = this.global_state.delegacion;
-      console.log(this.legajo)
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {

@@ -88,9 +88,6 @@ export default {
       localidades: [],
 
       validator: {
-        solicitud: {
-          fecha: [ rules.required, rules.fecha ], delegacion: [ rules.required ]
-        },
         entdomicilio: {
           tipo: [rules.required],
           domicilio: {
@@ -160,27 +157,26 @@ export default {
     },
 
     addContacto: function () {
-      this.submitted.contacto = true;
       if (this.nuevo_contacto.tipo === 2) {
         this.nuevo_contacto.valor = this.nuevo_contacto.celular.prefijo + this.nuevo_contacto.celular.numero;
       }
-      if (utils.validObject(this.nuevo_contacto, this.validator.contacto)) {
+
+      if (this.$refs.form_contacto.validate()) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
-        this.submitted.contacto = false;
         this.nuevo_contacto = new Contacto();
+        this.$refs.form_contacto.reset();
       }
     },
 
     addDomicilio: function () {
-      this.submitted.domicilio = true;
-      if (utils.validObject(this.nuevo_domicilio, this.validator.entdomicilio)) {
+      if (this.$refs.form_domicilio.validate()) {
         this.nuevo_domicilio.pais_nombre = this.paises.find(p => p.id == this.nuevo_domicilio.domicilio.pais).nombre;
         this.nuevo_domicilio.provincia_nombre = this.provincias.find(p => p.id == this.nuevo_domicilio.domicilio.provincia).nombre;
         this.nuevo_domicilio.departamento_nombre = this.departamentos.find(p => p.id == this.nuevo_domicilio.domicilio.departamento).nombre;
         this.nuevo_domicilio.localidad_nombre = this.localidades.find(p => p.id == this.nuevo_domicilio.domicilio.localidad).nombre;
         this.solicitud.entidad.domicilios.push(this.nuevo_domicilio);
-        this.submitted.domicilio = false;
         this.nuevo_domicilio = EntidadDomicilio();
+        this.$refs.form_domicilio.reset();
       }
     },
 
@@ -236,10 +232,6 @@ export default {
       this.solicitud.entidad[tipo].splice(index, 1);
     },
 
-    nextStep: function() {
-      Vue.set(this.submitted.steps, this.step-1, true);
-      if (this.validStep(this.step)) this.step = +this.step + 1;
-    },
 
     prevStep: function() {
       this.step = this.step - 1;

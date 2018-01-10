@@ -1,17 +1,10 @@
-import { validRules } from '@/utils';
+import rules from '@/rules'
 
 export default {
 
-  methods: {
-    validForm: function() {
-      for (let i = 1; i < this.submitted.steps.length; i++) {
-        if (!this.validStep(i)) return false;
-      }
-      return true;
-    },
-
-    validControl: function(rules, value) {
-      return validRules(value, rules);
-    },
+  data() {
+    return {
+      rules: rules
+    }
   }
 }
