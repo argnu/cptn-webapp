@@ -985,7 +985,7 @@ export default {
 
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
-        && this.valid_subsidiarios && valid_domicilios;
+        && this.valid_subsidiarios && this.valid_domicilios;
     }
   },
 
