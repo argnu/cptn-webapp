@@ -23,7 +23,7 @@ Vue.filter('boolean', function (str) {
 Vue.filter('fecha', function (str) {
   if (!str && !str.length) return '';
   let moment_date = moment(str);
-  return moment_date.isValid() ? format('DD/MM/YYYY') : '';
+  return moment_date.isValid() ? moment_date.format('DD/MM/YYYY') : '';
 });
 
 Vue.filter('round', function (number) {

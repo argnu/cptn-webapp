@@ -18,7 +18,7 @@
             <v-stepper-content step="1">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_solicitud" lazy-validation v-model="valid.form_solicitud">
+                  <v-form ref="form_solicitud" v-model="valid.form_solicitud">
                     <v-layout row>
                       <v-flex xs6 class="ma-4">
                         <input-fecha 
