@@ -15,8 +15,12 @@
         <v-container class="white black--text">
           <v-layout row>
             <v-flex xs4 class="ml-4">
-              <v-select :items="select_items.tipo" label="Tipo de Entidad" single-line bottom v-model="filtros.tipoEntidad">
-              </v-select>
+              <v-select 
+                :items="select_items.tipo" 
+                label="Tipo de Entidad" 
+                single-line bottom 
+                v-model="filtros.tipoEntidad"
+              ></v-select>
             </v-flex>
 
             <v-flex xs4 class="mx-4">
@@ -27,6 +31,7 @@
                 label="Estado" 
                 single-line bottom 
                 autocomplete
+                clearable
                 v-model="filtros.estado"
               >
               </v-select>
