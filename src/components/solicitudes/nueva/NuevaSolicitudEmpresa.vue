@@ -735,6 +735,10 @@ export default {
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
         })
       }
+      else {
+        this.changePais();
+        this.changeProvincia();
+      }      
     })
     .catch(e => console.error(e));
   },
