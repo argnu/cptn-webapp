@@ -197,7 +197,7 @@ export default {
             return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
           })
           .then(r => {
-            this.departamentos = r.data
+            this.departamentos = r.data;
             this.nuevo_domicilio.domicilio.departamento = this.departamentos.find(p => p.nombre == domicilio_copiar.departamento).id;
             return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
           })

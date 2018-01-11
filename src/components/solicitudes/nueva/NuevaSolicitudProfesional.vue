@@ -62,7 +62,7 @@
             <v-stepper-content step="2">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_profesional" lazy-validation v-model="valid.form_profesional">
+                  <v-form ref="form_profesional" v-model="valid.form_profesional">
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
@@ -1087,7 +1087,6 @@ export default {
     },
 
     chgDni: function() {
-      console.log(this.solicitud.entidad.dni)
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);

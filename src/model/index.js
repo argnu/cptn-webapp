@@ -8,5 +8,5 @@ export { Matricula } from '@/model/Matricula';
 export { Comitente, Persona, PersonaJuridica, PersonaFisica } from '@/model/Persona';
 
 export const Header = (text, value) => ({
-    text, value
+    text, value, sortable: false
 })
