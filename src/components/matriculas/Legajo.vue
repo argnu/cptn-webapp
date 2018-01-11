@@ -757,11 +757,13 @@ export default {
                   return axios.get(`/matriculas/${this.legajo.matricula}`);
               })
       }
-      else return axios.get(`/matriculas/${this.id_matricula}`);
+      else { 
+        this.changePais();
+        this.changeProvincia();        
+        return axios.get(`/matriculas/${this.id_matricula}`);
+      }
     })
-    .then(r => {
-        this.matricula = r.data;
-    })
+    .then(r => this.matricula = r.data)
     .catch(e => console.error(e))
   },
 

@@ -18,7 +18,7 @@
             <v-stepper-content step="1">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_solicitud" lazy-validation v-model="valid.form_solicitud">
+                  <v-form ref="form_solicitud" v-model="valid.form_solicitud">
                     <v-layout row>
                       <v-flex xs6 class="ma-4">
                         <input-fecha 
@@ -62,7 +62,7 @@
             <v-stepper-content step="2">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_profesional" lazy-validation v-model="valid.form_profesional">
+                  <v-form ref="form_profesional" v-model="valid.form_profesional">
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
@@ -985,7 +985,7 @@ export default {
 
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
-        && this.valid_subsidiarios && valid_domicilios;
+        && this.valid_subsidiarios && this.valid_domicilios;
     }
   },
 
@@ -1014,6 +1014,10 @@ export default {
               this.solicitud.exencionArt6 = r.data.exencionArt6;        
               this.fillProfesional(r.data.entidad);
           });
+        }
+        else {
+          this.changePais();
+          this.changeProvincia();
         }
       })
       .catch(e => console.error(e));
@@ -1087,7 +1091,6 @@ export default {
     },
 
     chgDni: function() {
-      console.log(this.solicitud.entidad.dni)
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);

@@ -3,8 +3,8 @@ export class Domicilio {
     this.calle = '';
     this.numero = '';
     this.localidad = '';
-    this.pais = '';
-    this.provincia = '';
+    this.pais = 1;
+    this.provincia = 14;
     this.departamento = '';
   }
 }

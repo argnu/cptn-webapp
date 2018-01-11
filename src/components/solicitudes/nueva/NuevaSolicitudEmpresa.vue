@@ -440,7 +440,8 @@
                               <th></th>
                             </template>
                             <template slot="items" slot-scope="props">
-                              <td>{{ getTipoIncumbencia(props.item) }}</td>
+                              <td v-if="props.item.id">{{ props.item.valor }}</td>
+                              <td v-else>{{ getTipoIncumbencia(props.item) }}</td>
                               <td style="width:30px">
                                 <v-btn icon small @click="removeElem('incumbencias', props.index)">
                                   <v-icon>delete</v-icon>
@@ -722,7 +723,7 @@ export default {
               this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
               this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
 
-              this.solicitud.entidad.domicilios = entidad.domicilios;
+              this.solicitud.entidad.domicilios = r.data.entidad.domicilios;
 
               for(let contacto of r.data.entidad.contactos) {
                 let contacto_nuevo = contacto;
@@ -730,13 +731,14 @@ export default {
                 this.solicitud.entidad.contactos.push(contacto_nuevo);
               }
 
-              for(let incumbencia of r.data.entidad.incumbencias) {
-                this.solicitud.entidad.incumbencias.push(incumbencia.id);
-              }
-
+              this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias;
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
         })
       }
+      else {
+        this.changePais();
+        this.changeProvincia();
+      }      
     })
     .catch(e => console.error(e));
   },
