@@ -109,7 +109,7 @@ export function impresionSolicitud(solicitud) {
       // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
       doc.text(65, eje_y, formacion_grado.titulo);
       doc.text(65, eje_y + 6, formacion_grado.institucion);
-      doc.text(65, eje_y + 12, moment(formacion_grado.fecha).format('DD/MM/YYYY'));
+      doc.text(65, eje_y + 12, formacion_grado.fecha ? moment(formacion_grado.fecha).format('DD/MM/YYYY'): '');
     }
     eje_y += 18;
   }
@@ -251,7 +251,7 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.sexo);
     eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.nacionalidad);
+    doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
     eje_y += 6;
   }
 
