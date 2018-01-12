@@ -71,7 +71,7 @@
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
                         tabindex="3"
-                        @input="chgDni"
+                        @blur="chgDni"
                       >
                       </v-text-field>
 
