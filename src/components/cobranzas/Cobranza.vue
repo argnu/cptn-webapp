@@ -250,7 +250,7 @@ export default {
     },
 
     form_valid: function() {
-      return this.total === this.importe && this.valid_cobranza;
+      return this.total === this.importe;
     }
   },
 

@@ -5,7 +5,7 @@ import rules from '@/rules'
 import { Contacto, Domicilio, Header } from '@/model'
 
 const EntidadDomicilio = () => ({
-    tipo: '',
+    tipo: 'real',
     domicilio: new Domicilio()
 })
 

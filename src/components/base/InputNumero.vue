@@ -6,7 +6,7 @@
         :label="label"
         :rules="rules"
         :disabled="disabled"
-        :value="value"
+        :value="formatted"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
@@ -20,6 +20,12 @@ export default {
         return {
         }
     },    
+
+    computed: {
+        formatted: function() {
+            return this.value ? this.value.toString().replace('.', ',') : '';
+        }
+    },
 
     methods: {
         keypress: function(e) {

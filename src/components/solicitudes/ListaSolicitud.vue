@@ -96,14 +96,23 @@
           <v-layout row>
             <v-flex xs3 class="ma-4">
               Tipo de Entidad:
-              <v-select :items="select_items.tipo" label="Tipo de Entidad" single-line bottom v-model="filtros.tipoEntidad">
-              </v-select>
+              <v-select 
+                :items="select_items.tipo" 
+                label="Tipo de Entidad" 
+                single-line bottom 
+                v-model="filtros.tipoEntidad"
+              ></v-select>
             </v-flex>
 
             <v-flex xs3 class="ma-4">
               Estado:
-              <v-select :items="select_items.estado" label="Estado de Solicitud" single-line bottom v-model="filtros.estado">
-              </v-select>
+              <v-select 
+                :items="select_items.estado" 
+                label="Estado de Solicitud" 
+                single-line bottom 
+                clearable
+                v-model="filtros.estado"
+              ></v-select>
             </v-flex>
 
             <v-flex xs3 class="ma-4">
@@ -225,7 +234,6 @@ import Store from '@/Store'
 
 const select_items = {
   estado: [
-    { text: 'Todas', value: 'todas' },
     { text: 'Pendiente', value: 'pendiente' },
     { text: 'Aprobada', value: 'aprobada' },
     { text: 'Rechazada', value: 'rechazada' }

@@ -138,13 +138,13 @@
                       <b>Domicilio Real</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.localidad : ''}}
+                      Localidad: {{ domicilioReal ? domicilioReal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.calle : ''}}
+                      Calle: {{ domicilioReal ? domicilioReal.calle : ''}}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioReal ? matricula.entidad.domicilioReal.numero : ''}}
+                      N°: {{ domicilioReal ? domicilioReal.numero : ''}}
                     </div>
                   </v-flex>
 
@@ -153,13 +153,13 @@
                       <b>Domicilio Legal</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.localidad : ''}}
+                      Localidad: {{ domicilioLegal ? domicilioLegal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.calle : '' }}
+                      Calle: {{ domicilioLegal ? domicilioLegal.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioLegal ? matricula.entidad.domicilioLegal.numero : ''}}
+                      N°: {{ domicilioLegal ? domicilioLegal.numero : ''}}
                     </div>
                   </v-flex>
 
@@ -168,13 +168,13 @@
                       <b>Domicilio Especial</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.localidad : ''}}
+                      Localidad: {{ domicilioEspecial ? domicilioEspecial.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.calle : '' }}
+                      Calle: {{ domicilioEspecial ? domicilioEspecial.calle : '' }}
                     </div>
                     <div class="mb-4">
-                      N°: {{ matricula.entidad.domicilioEspecial ? matricula.entidad.domicilioEspecial.numero : ''}}
+                      N°: {{ domicilioEspecial ? domicilioEspecial.numero : ''}}
                     </div>
                   </v-flex>
                 </v-layout>
@@ -257,8 +257,11 @@
                 <div v-if="matricula.entidad.poseeCajaPrevisional" class="mb-3">
                   Nombre Caja Previsional: {{ matricula.entidad.nombreCajaPrevisional }}
                 </div>
+                <div>
+                  Solicitó Caja Previsional: {{ matricula.entidad.solicitaCajaPrevisional | boolean }}
+                </div>
 
-                <v-data-table
+                <!-- <v-data-table
                   :headers="headers.Beneficiarios"
                   :items="matricula.entidad.beneficiarios"
                   hide-actions
@@ -278,7 +281,7 @@
                   <td>{{ props.item.vinculo }}</td>
                   <td>{{ props.item.invalidez | boolean }}</td>
                 </template>
-                </v-data-table>
+                </v-data-table> -->
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
@@ -409,18 +412,18 @@ export default {
     },
 
     domicilioReal: function() {
-      if (!matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'real')
+      if (!this.matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'real').domicilio
     },
 
     domicilioLegal: function() {
-      if (!matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'legal')
+      if (!this.matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'legal').domicilio
     },
 
     domicilioEspecial: function() {
-      if (!matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'especial')
+      if (!this.matricula.entidad.domicilios.length) return null;
+      return this.matricula.entidad.domicilios.find(d => d.tipo == 'especial').domicilio
     }
   },
 

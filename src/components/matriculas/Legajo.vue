@@ -442,6 +442,7 @@
                   label="Honorarios Presupuestados"
                   v-model="legajo.honorarios_presupuestados"
                   :disabled="legajo.id > 0"
+                  :decimal="true"
                 ></input-numero>                
               </v-flex>
 
@@ -476,6 +477,7 @@
                     label="Honorarios Reales"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
+                    :decimal="true"
                   ></input-numero>
 
                   <v-checkbox
@@ -511,6 +513,7 @@
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
                     :disabled="legajo.id > 0"
+                    :decimal="true"
                   ></input-numero>
                 </v-flex>
               </v-layout>
@@ -552,6 +555,7 @@
                   <input-numero
                     tabindex="30"
                     label="Aporte Bruto"
+                    :decimal="true"
                     v-model="legajo.aporte_bruto"
                     :disabled="legajo.id > 0"
                   ></input-numero>
@@ -561,6 +565,7 @@
                   <input-numero
                     tabindex="31"
                     label="Aporte Neto Bonificación"
+                    :decimal="true"
                     v-model="legajo.aporte_neto_bonificacion"
                     :disabled="legajo.id > 0"
                   ></input-numero>
@@ -794,6 +799,7 @@ export default {
 
     chgItemPredeterminado: function() {
       this.items_valores_predeterminados = [];
+      console.log(this.nuevo_item.id)
       if (typeof this.nuevo_item.id == 'number') {
         axios.get(`/tareas/items/${this.nuevo_item.id}/predeterminados`)
              .then(r => this.items_valores_predeterminados = r.data)
