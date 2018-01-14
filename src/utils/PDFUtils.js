@@ -1,13 +1,15 @@
 import * as jsPDF from 'jspdf'
 import * as moment from 'moment'
-import { getTipoLegajo } from '@/utils/legajo'
+import {
+  getTipoLegajo
+} from '@/utils/legajo'
 
 const img = new Image();
 img.src = "/static/logoImpresion.jpg";
 
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
-  doc.addImage(img,'JPG', 10, 10, 60, 13);
+  doc.addImage(img, 'JPG', 10, 10, 60, 13);
   // doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
   // doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(0.5);
@@ -49,7 +51,7 @@ export function impresionVolante(volante) {
   indice += 5;
   doc.text(110, indice, `TOTAL A PAGAR`);
   doc.text(160, indice, `${volante.importe_total}`);
-  doc.line(20, indice+5, 190, indice+5);
+  doc.line(20, indice + 5, 190, indice + 5);
 
 
 
@@ -62,54 +64,45 @@ export function impresionVolante(volante) {
 export function impresionSolicitud(solicitud) {
   const doc = new jsPDF('p', 'mm', 'a4');
   doc.addImage(img, 'JPG', 10, 10, 60, 13);
-  // doc.text('Colegio de Profesionales Técnicos', 120, 20, 'center');
-  // doc.text('de la Provincia del Neuquén', 120, 26, 'center');
   doc.setLineWidth(1);
 
-  doc.line(20, 40, 190, 40);
+  doc.line(20, 30, 190, 30);
   doc.setFontSize(12);
-  doc.text(20, 45, 'Solicitud de alta de matricula');
-  doc.text(155, 45, 'MATRICULACIÓN');
-  doc.line(20, 47, 190, 47);
+  doc.text(20, 35, 'Solicitud de alta de matricula N° ');
+  doc.line(20, 37, 190, 37);
   doc.setFontSize(10);
 
-  doc.text(20, 55, 'Fecha de Solicitud');
-  doc.setLineWidth(0.5);
-  doc.line(20, 59, 190, 59);
-
-  let eje_y = 65;
+  let eje_y = 45;
 
   doc.setFontSize(12);
 
   if (solicitud.entidad.tipo == 'profesional') {
-    doc.text(20, eje_y, 'Apellido/s:');
+    doc.text(20, eje_y, 'Apellido/s y Nombre/s:');
     eje_y += 6;
-    doc.text(20, eje_y, 'Nombre/s:');
-    eje_y += 6;
-    doc.text(20, eje_y, 'Documento:');
+    doc.text(20, eje_y, 'DNI:');
+    doc.text(60, eje_y, 'Sexo:');
     eje_y += 6;
     doc.text(20, eje_y, 'Fecha de Nacimiento:');
     eje_y += 6;
-    doc.text(20, eje_y, 'Lugar de Nacimiento:');
-    eje_y += 6;
-    doc.text(20, eje_y, 'Sexo:');
-    eje_y += 6;
-    doc.text(20, eje_y, 'Nacionalidad:');
+    doc.text(20, eje_y, `Lugar de Nacimiento: ${solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: ''}   Nacionalidad: ${solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : ''}`);
+    // doc.text(65, eje_y, solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: '');
+    // doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
+
+    //doc.text(20, eje_y, 'Nacionalidad:');
     eje_y += 6;
 
     doc.line(20, eje_y, 190, eje_y);
     eje_y += 6;
-
     // doc.text(20, 111, 'Profesión:');
     doc.text(20, eje_y, 'Título:');
-    doc.text(20, eje_y + 6, 'Ent. Formadora:');
-    doc.text(20, eje_y + 12, 'Fecha de Egreso:');
+    doc.text(20, eje_y + 6, 'Expedido por:');
+    doc.text(20, eje_y + 12, 'Fecha:');
     let formacion_grado = solicitud.entidad.formaciones.find(f => f.tipo == 'Grado');
     if (formacion_grado) {
       // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
-      doc.text(65, eje_y, formacion_grado.titulo);
-      doc.text(65, eje_y + 6, formacion_grado.institucion);
-      doc.text(65, eje_y + 12, formacion_grado.fecha ? moment(formacion_grado.fecha).format('DD/MM/YYYY'): '');
+      doc.text(60, eje_y, formacion_grado.titulo);
+      doc.text(60, eje_y + 6, formacion_grado.institucion);
+      doc.text(60, eje_y + 12, formacion_grado.fecha ? moment(formacion_grado.fecha).format('DD/MM/YYYY') : '');
     }
     eje_y += 18;
   }
@@ -128,24 +121,19 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(20, eje_y, 'Fecha de Inicio de Act.:');
     eje_y += 6;
-    doc.text(20, eje_y, 'Confición AFIP:');
+    doc.text(20, eje_y, 'Situación AFIP:');
     eje_y += 6;
-  }
 
+  }
   doc.line(20, eje_y, 190, eje_y);
   eje_y += 6;
 
   // Domicilios Real
-  doc.setFontSize(14);
+  doc.setFontSize(12);
   doc.text(20, eje_y, 'Domicilio Real');
-  eje_y += 6;
-  doc.line(20, eje_y, 190, eje_y);
   eje_y += 6;
 
   let eje_y_domicilio = eje_y;
-  doc.setFontSize(12);
-  doc.text(20, eje_y, 'Calle:');
-  eje_y += 6;
   doc.text(20, eje_y, 'País:');
   doc.text(100, eje_y, 'Provincia:');
   eje_y += 6;
@@ -162,50 +150,43 @@ export function impresionSolicitud(solicitud) {
   // Domicilios Profesional
   doc.text(20, eje_y, 'Domicilio Legal');
   eje_y += 6;
-  doc.line(20, eje_y, 190, eje_y);
-  eje_y += 6;
-  doc.setFontSize(12);
-  doc.text(20, eje_y, 'Calle:');
-  eje_y += 6;
   doc.text(20, eje_y, 'País:');
   doc.text(100, eje_y, 'Provincia:');
   eje_y += 6;
   doc.text(20, eje_y, 'Departamento:');
   doc.text(100, eje_y, 'Localidad:');
   eje_y += 6;
+
   doc.setLineWidth(0.5);
   doc.line(20, eje_y, 190, eje_y);
+
   eje_y += 6;
 
   doc.text(20, eje_y, 'Domicilio Especial');
   eje_y += 6;
-  doc.line(20, eje_y, 190, eje_y);
-  eje_y += 6;
-  doc.setFontSize(12);
-  doc.text(20, eje_y, 'Calle:');
-  eje_y += 6;
   doc.text(20, eje_y, 'País:');
   doc.text(100, eje_y, 'Provincia:');
   eje_y += 6;
   doc.text(20, eje_y, 'Departamento:');
   doc.text(100, eje_y, 'Localidad:');
-  eje_y += 6;
+  eje_y += 4;
+
   doc.setLineWidth(0.5);
   doc.line(20, eje_y, 190, eje_y);
   eje_y += 6;
 
 
-  //   // Contacto
-  doc.setFontSize(14);
-  doc.text(20, eje_y, 'Información de Contacto');
-  eje_y += 6;
-  doc.line(20, eje_y, 190, eje_y);
-  eje_y += 6;
+  // Contacto
   doc.setFontSize(12);
+  doc.text(20, eje_y, 'Información de Contacto');
+  eje_y += 4;
+  doc.line(20, eje_y, 190, eje_y);
+  eje_y += 4;
   solicitud.entidad.contactos.forEach(contacto => {
     doc.text(20, eje_y, `${contacto.tipo}: ${contacto.valor}`);
-    eje_y += 6;
+    eje_y += 5;
   });
+
 
   if (solicitud.entidad.tipo == 'empresa') {
     eje_y += 6;
@@ -222,37 +203,82 @@ export function impresionSolicitud(solicitud) {
     });
   }
 
+  if (solicitud.entidad.tipo == 'profesional') {
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 6;
+    doc.text(20, eje_y, 'Situación AFIP: ');
+    doc.text(50, eje_y, solicitud.entidad.condafip);
+    doc.text(120, eje_y, 'CUIT/CUIL: ');
+    doc.text(145, eje_y, solicitud.entidad.cuit);
+    //Se muestran los datos de los subsidiarios
+    eje_y += 3;
+    doc.line(20, eje_y, 190, eje_y);
+    eje_y += 6;
+    doc.text(20, eje_y, 'Beneficiarios del subsidio');
+    eje_y += 6;
+    doc.text(20, eje_y, 'Apellido');
+    doc.text(80, eje_y, 'Nombre');
+    doc.text(150, eje_y, 'Dni');
+    doc.text(170, eje_y, 'Porcentaje');
+    eje_y += 6;
+    doc.setFontSize(10);
+    solicitud.entidad.subsidiarios.forEach(subsidiario => {
+      doc.text(20, eje_y, `${subsidiario.apellido}`);
+      doc.text(80, eje_y, `${subsidiario.nombre}`);
+      doc.text(150, eje_y, `${subsidiario.dni}`);
+      doc.text(180, eje_y, `${subsidiario.porcentaje} %`);
+      eje_y += 6;
+    });
+    doc.setFontSize(12);
+  }
+
   eje_y += 6;
-
+  doc.setFontSize(14);
+  doc.text(20, eje_y, 'Declaración Jurada');
+  doc.setFontSize(10);
+  eje_y += 6;
+  doc.text(20, eje_y, 'Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provincia de Neuquén,');
+  eje_y += 5;  
+  doc.text(20,eje_y,'previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas');
+  eje_y += 5;  
+  doc.text(20, eje_y, 'y recargos impuestos por el Consejo Profesional de Técnicos de Neuquén.')
   // Firmas
-  doc.text('..............................................', 50, eje_y, 'center');
-  doc.text('Interesado', 50, eje_y + 6, 'center');
+  eje_y += 8;
+  doc.text('..............................................', 80, eje_y, 'center');
+  eje_y += 5;
+  doc.text('Firma y aclaración del solicitante', 80, eje_y, 'center');
+  eje_y += 5;
+  doc.text(20, eje_y,'Verificó originales: ');
+  eje_y += 5;
+  doc.text(20, eje_y,'A ser completados únicamente por el personal del Colegio Profesional');
+  eje_y += 5;
+  doc.text(20, eje_y,'Número de Acta: ');
+  doc.text(90, eje_y,'Fecha de Acta: ');
+  eje_y += 5;
+  doc.text(20, eje_y,'Matricula: ');
+  doc.text(90, eje_y,'Fecha: ');
 
-  doc.text('..............................................', 160, eje_y, 'center');
-  doc.text('Colegio Técnico', 160, eje_y + 6, 'center');
+  doc.text('...................................', 180, eje_y, 'center');
+  doc.text('Firma del autorizante', 180, eje_y + 6, 'center');
 
 
   // Completado
   doc.setFont('courier');
-  doc.text(65, 55, moment(solicitud.fecha).format('DD/MM/YYYY'));
+  doc.text(155, 35, moment(solicitud.fecha).format('DD/MM/YYYY'));
 
-  eje_y = 65;
+  eje_y = 45;
 
   if (solicitud.entidad.tipo == 'profesional') {
-    doc.text(65, eje_y, solicitud.entidad.apellido);
+    doc.text(65, eje_y, `${solicitud.entidad.apellido} ${solicitud.entidad.nombre}`);
     eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.nombre);
-    eje_y += 6;
-    doc.text(65, eje_y, 'DNI ' + solicitud.entidad.dni);
+    doc.text(30, eje_y, solicitud.entidad.dni);
+    doc.text(75, eje_y, solicitud.entidad.sexo);
     eje_y += 6;
     doc.text(65, eje_y, moment(solicitud.entidad.fechaNacimiento).format('DD/MM/YYYY'));
     eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.lugarNacimiento);
-    eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.sexo);
-    eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
-    eje_y += 6;
+    //doc.text(65, eje_y, solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: '');
+    //doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
+    // eje_y += 6;
   }
 
   if (solicitud.entidad.tipo == 'empresa') {
@@ -279,8 +305,8 @@ export function impresionSolicitud(solicitud) {
 
 
   doc.setFontSize(12);
-  doc.text(35, eje_y_domicilio, `${domicilioReal.domicilio.calle} ${domicilioReal.domicilio.numero}`);
-  eje_y_domicilio += 6;
+  doc.text(50, eje_y_domicilio - 6, `${domicilioReal.domicilio.calle} ${domicilioReal.domicilio.numero ? domicilioReal.domicilio.numero:'' }`);
+  //eje_y_domicilio += 6;
   doc.text(35, eje_y_domicilio, domicilioReal.domicilio.pais);
   doc.text(120, eje_y_domicilio, domicilioReal.domicilio.provincia);
   eje_y_domicilio += 6;
@@ -289,9 +315,9 @@ export function impresionSolicitud(solicitud) {
   eje_y_domicilio += 6;
 
   if (domicilioLegal) {
-    eje_y_domicilio += 18;
-    doc.text(35, eje_y_domicilio, `${domicilioLegal.domicilio.calle} ${domicilioLegal.domicilio.numero}`);
-    eje_y_domicilio += 6;
+    eje_y_domicilio += 12;
+    doc.text(50, eje_y_domicilio - 6, `${domicilioLegal.domicilio.calle} ${domicilioLegal.domicilio.numero ? domicilioLegal.domicilio.numero: ''}`);
+    // eje_y_domicilio += 6;
     doc.text(35, eje_y_domicilio, domicilioLegal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -299,11 +325,11 @@ export function impresionSolicitud(solicitud) {
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.localidad);
     eje_y_domicilio += 6;
   }
-
+  
   if (domicilioEspecial) {
-    eje_y_domicilio += 18;
-    doc.text(35, eje_y_domicilio, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero}`);
-    eje_y_domicilio += 6;
+    eje_y_domicilio += 12;
+    doc.text(57, eje_y_domicilio - 6, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero}`);
+    //eje_y_domicilio += 6;
     doc.text(35, eje_y_domicilio, domicilioEspecial.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioEspecial.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -351,7 +377,7 @@ export function impresionLegajo(legajo, categoria) {
 
 
   const doc = new jsPDF('p', 'mm', 'a4');
-  doc.addImage(img,'JPG', 10, 10, 60, 13);
+  doc.addImage(img, 'JPG', 10, 10, 60, 13);
   doc.setLineWidth(1);
   doc.line(20, 38, 190, 38);
   doc.setFontSize(14);
@@ -367,7 +393,7 @@ export function impresionLegajo(legajo, categoria) {
 
   encabezado('Comitentes');
 
-  for(let comitente of legajo.comitentes) {
+  for (let comitente of legajo.comitentes) {
     if (comitente.tipo == 'fisica') comitenteFisico(comitente);
     else if (comitente.tipo == 'juridica') comitenteJuridico(comitente);
     eje_y += 5;
@@ -392,7 +418,7 @@ export function impresionLegajo(legajo, categoria) {
   doc.text(25, eje_y, `${categoria.descripcion} - ${subcategoria.descripcion}`);
   eje_y += 5;
 
-  for(let item of legajo.items) {
+  for (let item of legajo.items) {
     doc.text(25, eje_y, `${item.item.descripcion}: ${item.valor}`);
     eje_y += 5;
   }
