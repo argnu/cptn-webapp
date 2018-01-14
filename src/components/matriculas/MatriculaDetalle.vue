@@ -413,17 +413,20 @@ export default {
 
     domicilioReal: function() {
       if (!this.matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'real').domicilio
+      let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'real');
+      return dom ? dom.domicilio : null;
     },
 
     domicilioLegal: function() {
       if (!this.matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'legal').domicilio
+      let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'legal');
+      return dom ? dom.domicilio : null;
     },
 
     domicilioEspecial: function() {
       if (!this.matricula.entidad.domicilios.length) return null;
-      return this.matricula.entidad.domicilios.find(d => d.tipo == 'especial').domicilio
+      let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'especial');
+      return dom ? dom.domicilio : null;
     }
   },
 

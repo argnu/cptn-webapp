@@ -24,7 +24,7 @@
                   Apellido: {{ matricula.entidad.apellido }} <br>
                   Nombre: {{ matricula.entidad.nombre }}
                 </v-flex>
-                <v-flex xs2>                    
+                <v-flex xs1>                    
                   <img 
                     v-if="matricula.entidad.firma" 
                     :src="matricula.entidad.firma" 

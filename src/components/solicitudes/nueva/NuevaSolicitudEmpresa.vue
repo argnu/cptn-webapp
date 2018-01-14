@@ -736,6 +736,7 @@ export default {
         })
       }
       else {
+        this.solicitud.delegacion = +this.global_state.delegacion;
         this.changePais();
         this.changeProvincia();
       }      

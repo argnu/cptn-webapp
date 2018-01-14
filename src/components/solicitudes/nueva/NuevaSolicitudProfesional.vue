@@ -7,7 +7,7 @@
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
-        
+
         <v-container>
           <v-stepper v-model="step" vertical>
 
@@ -21,10 +21,10 @@
                   <v-form ref="form_solicitud" v-model="valid.form_solicitud">
                     <v-layout row>
                       <v-flex xs6 class="ma-4">
-                        <input-fecha 
-                          tabindex="1" 
-                          v-model="solicitud.fecha" 
-                          label="Fecha de Solicitud" 
+                        <input-fecha
+                          tabindex="1"
+                          v-model="solicitud.fecha"
+                          label="Fecha de Solicitud"
                           :rules="[rules.required, rules.fecha]"
                         >
                         </input-fecha>
@@ -53,8 +53,8 @@
 
 
             <!-- PASO 2: DATOS DE PROFESIONAL -->
-            <v-stepper-step step="2" edit-icon="check" editable 
-              :complete="valid.form_profesional && step > 2" 
+            <v-stepper-step step="2" edit-icon="check" editable
+              :complete="valid.form_profesional && step > 2"
               :rules="[() => step <= 2 || valid.form_profesional]"
             >
               Datos del Profesional
@@ -71,7 +71,8 @@
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
                         tabindex="3"
-                        @input="chgDni"
+                        clearable
+                        @blur="chgDni"
                       >
                       </v-text-field>
 
@@ -111,12 +112,12 @@
                       >
                       </v-text-field>
 
-                      <v-text-field 
-                        label="Observaciones" 
-                        v-model="solicitud.entidad.observaciones" 
+                      <v-text-field
+                        label="Observaciones"
+                        v-model="solicitud.entidad.observaciones"
                         tabindex="13"
                       >
-                      </v-text-field>                      
+                      </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
@@ -149,9 +150,9 @@
                       >
                       </v-select>
 
-                      <v-text-field 
-                        label="Lugar Nacimiento" 
-                        v-model="solicitud.entidad.lugarNacimiento" 
+                      <v-text-field
+                        label="Lugar Nacimiento"
+                        v-model="solicitud.entidad.lugarNacimiento"
                         tabindex="10"
                       >
                       </v-text-field>
@@ -167,7 +168,7 @@
                         tabindex="12"
                         :rules="[rules.required]"
                       >
-                      </v-select>                      
+                      </v-select>
                     </v-flex>
                   </v-layout>
 
@@ -180,7 +181,7 @@
                               Foto:
                             </td>
                             <td style="padding-bottom:20px">
-                              <input type="file" ref="archivo_foto" name="foto"> 
+                              <input type="file" ref="archivo_foto" name="foto" id="foto">
                             </td>
                           </tr>
                           <tr>
@@ -188,10 +189,10 @@
                               Firma:
                             </td>
                             <td>
-                              <input type="file" ref="archivo_firma" name="firma"> 
+                              <input type="file" ref="archivo_firma" name="firma" id="firma">
                             </td>
                           </tr>
-                        </tbody> 
+                        </tbody>
                       </table>
                     </v-flex>
                   </v-layout>
@@ -205,9 +206,9 @@
 
 
             <!-- PASO 3: DOMICILIOS -->
-            <v-stepper-step step="3" edit-icon="check" 
-              editable 
-              :complete="valid_domicilios && step > 3" 
+            <v-stepper-step step="3" edit-icon="check"
+              editable
+              :complete="valid_domicilios && step > 3"
               :rules="[() => step <= 3 || valid_domicilios]"
             >
               Domicilios del Profesional
@@ -225,15 +226,15 @@
                               autocomplete
                               :rules="[rules.required]"
                             >
-                            </v-select>                          
+                            </v-select>
                           </v-flex>
 
                           <v-flex xs5 class="mt-2 ml-4">
                             <v-menu offset-y>
                               <v-btn slot="activator">Copiar de...</v-btn>
                               <v-list>
-                                <v-list-tile 
-                                  v-for="tipo of tipos_domicilio_cargados" 
+                                <v-list-tile
+                                  v-for="tipo of tipos_domicilio_cargados"
                                   :key="tipo.value" @click="copiarDomicilio(tipo.value)"
                                 >
                                   <v-list-tile-title>{{ tipo.text }}</v-list-tile-title>
@@ -319,7 +320,7 @@
                         <v-layout class="mb-4">
                           <v-flex xs12>
                             <v-btn class="right" light @click="addDomicilio">Agregar</v-btn>
-                          </v-flex>                     
+                          </v-flex>
                         </v-layout>
 
                         <v-data-table
@@ -341,17 +342,17 @@
                               <td>{{ props.item.pais_nombre }}</td>
                               <td>{{ props.item.provincia_nombre }}</td>
                               <td>{{ props.item.departamento_nombre }}</td>
-                              <td>{{ props.item.localidad_nombre }}</td>                             
+                              <td>{{ props.item.localidad_nombre }}</td>
                             </template>
                             <template v-else>
                               <td>{{ props.item.domicilio.pais }}</td>
                               <td>{{ props.item.domicilio.provincia }}</td>
                               <td>{{ props.item.domicilio.departamento }}</td>
-                              <td>{{ props.item.domicilio.localidad }}</td>                             
+                              <td>{{ props.item.domicilio.localidad }}</td>
                             </template>
 
                             <td>{{ props.item.domicilio.calle }}</td>
-                            <td>{{ props.item.domicilio.numero }}</td>   
+                            <td>{{ props.item.domicilio.numero }}</td>
                             <td>
                               <v-btn fab small @click="removeElem('domicilios', props.index)">
                                 <v-icon>delete</v-icon>
@@ -362,7 +363,7 @@
 
                       <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
                         Debe ingresar al menos un domicilio
-                      </v-alert>                          
+                      </v-alert>
 
                       </v-form>
                     </v-card-text>
@@ -397,20 +398,20 @@
                       </v-flex>
 
                       <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
-                        <input-celular 
+                        <input-celular
                           v-model="nuevo_contacto.celular"
                         ></input-celular>
 
-                        <v-checkbox 
-                          label="Whatsapp" 
-                          v-model="nuevo_contacto.whatsapp" 
+                        <v-checkbox
+                          label="Whatsapp"
+                          v-model="nuevo_contacto.whatsapp"
                           light
                         ></v-checkbox>
                       </v-flex>
 
                       <v-flex xs8 class="mx-2" v-else>
-                        <v-text-field 
-                          v-model="nuevo_contacto.valor" 
+                        <v-text-field
+                          v-model="nuevo_contacto.valor"
                           :rules="[rules.required]"
                         >
                         </v-text-field>
@@ -492,9 +493,9 @@
                       </v-flex>
 
                       <v-flex xs6 class="ma-4">
-                        <input-fecha  
-                          v-model="nueva_formacion.fecha" 
-                          label="Fecha" 
+                        <input-fecha
+                          v-model="nueva_formacion.fecha"
+                          label="Fecha"
                           :rules="[rules.required, rules.fecha]"
                         >
                         </input-fecha>
@@ -599,17 +600,17 @@
 
                   <v-layout row>
                     <v-flex xs5 class="ma-4">
-                      <v-checkbox 
-                        label="Ya poseo Caja Previsional" 
+                      <v-checkbox
+                        label="Ya poseo Caja Previsional"
                         v-model="solicitud.entidad.poseeCajaPrevisional"
                       >
                       </v-checkbox>
                     </v-flex>
 
                     <v-flex xs5>
-                      <v-text-field 
-                        label="Nombre" 
-                        :disabled="!solicitud.entidad.poseeCajaPrevisional" 
+                      <v-text-field
+                        label="Nombre"
+                        :disabled="!solicitud.entidad.poseeCajaPrevisional"
                         v-model="solicitud.entidad.nombreCajaPrevisional"
                       >
                       </v-text-field>
@@ -618,8 +619,8 @@
 
                   <v-layout row>
                     <v-flex xs12 class="ml-4">
-                      <v-checkbox 
-                        label="Solicitar Caja Previsional de Profesionales" 
+                      <v-checkbox
+                        label="Solicitar Caja Previsional de Profesionales"
                         v-model="solicitud.entidad.solicitaCajaPrevisional"
                       >
                       </v-checkbox>
@@ -631,27 +632,27 @@
                       </v-checkbox>
 
                     </v-flex>
-                  </v-layout>                  
+                  </v-layout>
 
                   <!-- <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field 
-                        label="DNI" 
-                        v-model="nuevo_beneficiario.dni" 
+                      <v-text-field
+                        label="DNI"
+                        v-model="nuevo_beneficiario.dni"
                         :rules="[rules.required, rules.integer]"
                       >
                       </v-text-field>
 
-                      <v-text-field 
-                        label="Apellido" 
-                        v-model="nuevo_beneficiario.apellido" 
+                      <v-text-field
+                        label="Apellido"
+                        v-model="nuevo_beneficiario.apellido"
                         :rules="[rules.required]"
                       >
                       </v-text-field>
 
-                      <v-text-field 
-                        label="Nombre" 
-                        v-model="nuevo_beneficiario.nombre" 
+                      <v-text-field
+                        label="Nombre"
+                        v-model="nuevo_beneficiario.nombre"
                         :rules="[rules.required]"
                       >
                       </v-text-field>
@@ -666,7 +667,7 @@
                         :items="opciones.vinculo"
                         item-text="valor"
                         item-value="id"
-                        v-model="nuevo_beneficiario.vinculo" 
+                        v-model="nuevo_beneficiario.vinculo"
                         :rules="[rules.required]"
                       >
                       </v-select>
@@ -732,25 +733,25 @@
                   <v-form ref="form_subsidiario" lazy-validation>
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
-                          <v-text-field 
-                            label="DNI" 
-                            v-model="nuevo_subsidiario.dni" 
+                          <v-text-field
+                            label="DNI"
+                            v-model="nuevo_subsidiario.dni"
                             :rules="[rules.required, rules.integer]"
                           >
                           </v-text-field>
 
-                          <v-text-field 
-                            label="Apellido" 
-                            v-model="nuevo_subsidiario.apellido" 
+                          <v-text-field
+                            label="Apellido"
+                            v-model="nuevo_subsidiario.apellido"
                             :rules="[rules.required]"
                           >
                           </v-text-field>
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
-                          <v-text-field 
-                            label="Nombre" 
-                            v-model="nuevo_subsidiario.nombre" 
+                          <v-text-field
+                            label="Nombre"
+                            v-model="nuevo_subsidiario.nombre"
                             :rules="[rules.required]"
                           >
                           </v-text-field>
@@ -799,9 +800,9 @@
 
                       <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
                         Los porcentajes deben sumar 100%
-                      </v-alert>  
+                      </v-alert>
 
-                  </v-form>                
+                  </v-form>
 
                 </v-card-text>
               </v-card>
@@ -831,29 +832,29 @@
 
                   <v-layout row class="mt-2">
                     <v-flex xs6>
-                      <v-checkbox 
-                        class="ma-0 pa-0" 
-                        label="Email" 
+                      <v-checkbox
+                        class="ma-0 pa-0"
+                        label="Email"
                         v-model="solicitud.entidad.publicarEmail"
                       >
                       </v-checkbox>
-                      <v-checkbox 
-                        class="ma-0 pa-0" 
-                        label="Celular" 
+                      <v-checkbox
+                        class="ma-0 pa-0"
+                        label="Celular"
                         v-model="solicitud.entidad.publicarCelular"
                       >
                       </v-checkbox>
                     </v-flex>
                     <v-flex xs6>
-                      <v-checkbox 
-                        class="ma-0 pa-0" 
-                        label="Dirección" 
+                      <v-checkbox
+                        class="ma-0 pa-0"
+                        label="Dirección"
                         v-model="solicitud.entidad.publicarDireccion"
                       >
                       </v-checkbox>
-                      <v-checkbox 
-                        class="ma-0 pa-0" 
-                        label="Acervo" 
+                      <v-checkbox
+                        class="ma-0 pa-0"
+                        label="Acervo"
                         v-model="solicitud.entidad.publicarAcervo"
                       >
                       </v-checkbox>
@@ -948,7 +949,7 @@ export default {
       valid: {
         form_solicitud: false,
         form_profesional: false
-      }      
+      }
     }
   },
 
@@ -980,7 +981,7 @@ export default {
     },
 
     valid_subsidiarios: function() {
-      return this.suma_subsidiarios === 100 || this.solicitud.entidad.subsidiarios.length === 0;   
+      return this.suma_subsidiarios === 100 || this.solicitud.entidad.subsidiarios.length === 0;
     },
 
     valid_form: function() {
@@ -989,7 +990,7 @@ export default {
     }
   },
 
-  created: function() {    
+  created: function() {
     Promise.all([
         axios.get('/paises'),
         axios.get('/opciones?sort=valor'),
@@ -1004,18 +1005,19 @@ export default {
         this.instituciones = r[3].data;
         this.titulos = r[4].data;
 
-        if (this.id) { 
+        if (this.id) {
           axios.get(`/solicitudes/${this.id}`)
           .then(r => {
               this.solicitud = new Solicitud('profesional');
               this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.exencionArt10 = r.data.exencionArt10;
-              this.solicitud.exencionArt6 = r.data.exencionArt6;        
+              this.solicitud.exencionArt6 = r.data.exencionArt6;
               this.fillProfesional(r.data.entidad);
           });
         }
         else {
+          this.solicitud.delegacion = +this.global_state.delegacion;
           this.changePais();
           this.changeProvincia();
         }
@@ -1043,9 +1045,9 @@ export default {
       this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
-      
+
       this.solicitud.entidad.domicilios = entidad.domicilios;
-      
+
       for(let contacto of entidad.contactos) {
         let contacto_nuevo = contacto;
         contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
@@ -1078,7 +1080,7 @@ export default {
         beneficiario_nuevo.invalidez = beneficiario.invalidez;
         beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
         this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
-      }              
+      }
 
       for(let subsidiario of entidad.subsidiarios) {
         let subsidiario_nuevo = { id: subsidiario.id };
@@ -1141,17 +1143,17 @@ export default {
 
     makeFormData: function() {
       let form_data = new FormData();
-      if (this.$refs.archivo_foto.files[0]) 
-        form_data.append('foto', this.$refs.archivo_foto.files[0]);      
-      if (this.$refs.archivo_firma.files[0]) 
-        form_data.append('firma', this.$refs.archivo_firma.files[0]);      
+      if (this.$refs.archivo_foto.files[0])
+        form_data.append('foto', this.$refs.archivo_foto.files[0]);
+      if (this.$refs.archivo_firma.files[0])
+        form_data.append('firma', this.$refs.archivo_firma.files[0]);
       form_data.append('solicitud', JSON.stringify(this.solicitud));
       return form_data;
     },
 
     submit: function() {
       this.solicitud.operador = this.user.id;
-      
+
       if (!this.id) {
         axios.post('/solicitudes', this.makeFormData())
           .then(r => {
@@ -1176,7 +1178,7 @@ export default {
             this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => this.submitError());        
+          .catch(e => this.submitError());
       }
     },
 
@@ -1197,11 +1199,11 @@ export default {
       else if (this.step == 3) next = this.valid_domicilios;
 
       if (next) this.step = +this.step + 1;
-    }   
+    }
   },
 
   components: {
-    InputFecha, 
+    InputFecha,
     InputCelular,
     InputNumero
   }
