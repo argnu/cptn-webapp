@@ -68,7 +68,7 @@ export function impresionSolicitud(solicitud) {
 
   doc.line(20, 30, 190, 30);
   doc.setFontSize(12);
-  doc.text(20, 35,  `'Solicitud de alta de matricula N° ${solicitud.numero}` );
+  doc.text(20, 35,  `Solicitud de alta de matricula N° ${solicitud.numero}` );
   doc.line(20, 37, 190, 37);
   doc.setFontSize(10);
 
