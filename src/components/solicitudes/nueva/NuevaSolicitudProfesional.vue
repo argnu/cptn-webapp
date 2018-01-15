@@ -71,6 +71,7 @@
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
                         tabindex="3"
+                        maxlength="10"
                         clearable
                         @blur="chgDni"
                       >
@@ -80,6 +81,7 @@
                         label="Nombre"
                         v-model="solicitud.entidad.nombre"
                         tabindex="5"
+                        maxlength="100"
                         :rules="[rules.required]"
                       >
                       </v-text-field>
@@ -108,6 +110,7 @@
                       <v-text-field
                         label="Nacionalidad"
                         v-model="solicitud.entidad.nacionalidad"
+                        maxlength="45"
                         tabindex="11"
                       >
                       </v-text-field>
@@ -125,6 +128,7 @@
                         label="Apellido"
                         v-model="solicitud.entidad.apellido"
                         :rules="[rules.required]"
+                        maxlength="100"
                         tabindex="4"
                       >
                       </v-text-field>
@@ -134,6 +138,7 @@
                         v-model="solicitud.entidad.cuit"
                         :rules="[rules.integer]"
                         tabindex="6"
+                        maxlength="20"
                       >
                       </v-text-field>
 
@@ -153,6 +158,7 @@
                       <v-text-field
                         label="Lugar Nacimiento"
                         v-model="solicitud.entidad.lugarNacimiento"
+                        maxlength="100"
                         tabindex="10"
                       >
                       </v-text-field>
@@ -274,6 +280,7 @@
 
                             <v-text-field
                               tabindex="16"
+                              maxlength="100"
                               label="Calle"
                               v-model="nuevo_domicilio.domicilio.calle"
                               :rules="[rules.required]"
@@ -311,7 +318,7 @@
                               tabindex="17"
                               label="N°"
                               v-model="nuevo_domicilio.domicilio.numero"
-                              :rules="[rules.required, rules.integer]"
+                              :rules="[rules.integer]"
                             >
                             </v-text-field>
                           </v-flex>
@@ -573,6 +580,7 @@
                     <v-flex xs6 class="ma-4">
                       <v-text-field
                         tabindex="34"
+                        maxlength="100"
                         label="Empresa" :disabled="!solicitud.entidad.relacionDependencia" v-model="solicitud.entidad.empresa">
                       </v-text-field>
                       <v-text-field
@@ -610,6 +618,7 @@
                     <v-flex xs5>
                       <v-text-field
                         label="Nombre"
+                        maxlength="45"
                         :disabled="!solicitud.entidad.poseeCajaPrevisional"
                         v-model="solicitud.entidad.nombreCajaPrevisional"
                       >
@@ -735,6 +744,7 @@
                         <v-flex xs6 class="ma-4">
                           <v-text-field
                             label="DNI"
+                            maxlength="20"
                             v-model="nuevo_subsidiario.dni"
                             :rules="[rules.required, rules.integer]"
                           >
@@ -742,6 +752,7 @@
 
                           <v-text-field
                             label="Apellido"
+                            maxlength="100"
                             v-model="nuevo_subsidiario.apellido"
                             :rules="[rules.required]"
                           >
@@ -751,6 +762,7 @@
                         <v-flex xs6 class="ma-4">
                           <v-text-field
                             label="Nombre"
+                            maxlength="100"
                             v-model="nuevo_subsidiario.nombre"
                             :rules="[rules.required]"
                           >

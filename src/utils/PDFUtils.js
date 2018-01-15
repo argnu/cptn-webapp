@@ -68,7 +68,7 @@ export function impresionSolicitud(solicitud) {
 
   doc.line(20, 30, 190, 30);
   doc.setFontSize(12);
-  doc.text(20, 35, 'Solicitud de alta de matricula N° ');
+  doc.text(20, 35,  `'Solicitud de alta de matricula N° ${solicitud.numero}` );
   doc.line(20, 37, 190, 37);
   doc.setFontSize(10);
 
@@ -328,7 +328,7 @@ export function impresionSolicitud(solicitud) {
   
   if (domicilioEspecial) {
     eje_y_domicilio += 12;
-    doc.text(57, eje_y_domicilio - 6, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero}`);
+    doc.text(57, eje_y_domicilio - 6, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero ? domicilioEspecial.domicilio.numero: ''} `);
     //eje_y_domicilio += 6;
     doc.text(35, eje_y_domicilio, domicilioEspecial.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioEspecial.domicilio.provincia);
