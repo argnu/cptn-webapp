@@ -46,6 +46,7 @@ export default {
   methods: {
     logout: function() {
       Cookies.remove('CPTNUser');
+      Cookies.remove('CPTNDelegacion');
       Store.removeUser();
       this.$router.push({ path: '/login' });
     },

@@ -7,7 +7,8 @@
           <v-card class="grey lighten-4">
             <v-card-text>
               <v-layout row wrap>
-                <v-flex xs2 class="ml-4">
+
+                <v-flex xs2 class="ml-5">
                   <v-avatar
                     v-if="matricula.entidad.foto"
                     size="100px"
@@ -16,19 +17,22 @@
                     <img :src="matricula.entidad.foto" alt="Foto">
                   </v-avatar>
                 </v-flex>
+
                 <v-flex xs4>
                   N° Matrícula: {{ matricula.numeroMatricula }} <br>
-                  Estado: {{ matricula.estado }}
+                  Estado: {{ matricula.estado }} <br>
+                  <template v-if="matricula.entidad.tipo == 'profesional'">
+                    Apellido: {{ matricula.entidad.apellido }} <br>
+                    Nombre: {{ matricula.entidad.nombre }}         
+                  </template>         
                 </v-flex>
-                <v-flex xs4 v-if="matricula.entidad.tipo == 'profesional'">
-                  Apellido: {{ matricula.entidad.apellido }} <br>
-                  Nombre: {{ matricula.entidad.nombre }}
-                </v-flex>
+                
                 <v-flex xs2>                    
                   <img 
                     v-if="matricula.entidad.firma" 
                     :src="matricula.entidad.firma" 
                     alt="Firma"
+                    style="max-width:200px"
                   >
                 </v-flex>
               </v-layout>

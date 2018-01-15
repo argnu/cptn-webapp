@@ -29,13 +29,13 @@
 
 <script>
 import axios from '@/axios'
+import * as Cookies from 'js-cookie'
 import Store from '@/Store'
 
 export default {
     name: 'DelegacionSeleccion',
     data() {
         return {
-            global_state: Store.state,
             delegaciones: []
         }
     },
@@ -49,6 +49,7 @@ export default {
     methods: {
         select: function(delegacion) {
             Store.setDelegacion(delegacion);
+            Cookies.set('CPTNDelegacion', delegacion);
             this.$router.push({ path: '/matriculas/lista' })
         }
     }

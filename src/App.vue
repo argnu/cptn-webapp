@@ -36,16 +36,13 @@
 </template>
 
 <script>
-import * as Cookies from 'js-cookie'
 import UserMenu from '@/components/UserMenu'
 import MenuLateral from '@/components/MenuLateral'
-import Store from '@/Store'
 
 export default {
   name: 'app',
   data() {
     return {
-      global_state: Store.state
     }
   },
 

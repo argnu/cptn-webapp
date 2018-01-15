@@ -1,16 +1,17 @@
-import { Profesional } from '@/model/Profesional';
-import { Empresa } from '@/model/Empresa';
-import Store from '@/Store'
+import { Profesional } from '@/model/Profesional'
+import { Empresa } from '@/model/Empresa'
+import * as moment from 'moment'
 
 export class Solicitud {
   constructor(tipo) {
-    this.fecha = '';
-    this.delegacion = Store.state.delegacion;
+    this.fecha = moment().format('DD/MM/YYYY');
+    this.delegacion = '';
     if (tipo == 'profesional')
       this.entidad = new Profesional();
     else if (tipo == 'empresa')
       this.entidad = new Empresa();
     this.exencionArt10 = false;
     this.exencionArt6 = false;
+    this.operador = null;
   }
 }

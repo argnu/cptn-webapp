@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import * as axios from 'axios'
+import axios from '@/axios'
 import * as utils from '@/utils';
 
 const headers = [
@@ -93,7 +93,7 @@ export default {
   },
 
   created: function() {
-    axios.get('http://localhost:3400/api/opciones')
+    axios.get('/api/opciones')
     .then(r => {
       this.formas_pago = r.data.formaPago;
     })

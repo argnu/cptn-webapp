@@ -7,7 +7,6 @@
       :append-icon-cb="cbIcon"
       :tabindex="tabindex"
       :rules="rules"
-      :error="error"
       :disabled="disabled"
       @change="updatePicker"
       @input="update($event)"
@@ -27,7 +26,7 @@ import * as moment from 'moment'
 
 export default {
   name: 'input-fecha',
-  props: ['value', 'label', 'rules', 'error', 'tabindex', 'disabled'],
+  props: ['value', 'label', 'rules', 'tabindex', 'disabled'],
   data () {
     return {
       datepicker: null,

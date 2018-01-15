@@ -9,7 +9,7 @@
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
-    <v-layout row>
+    <v-layout row v-if="legajo.id">
       <v-flex xs12>
         <v-btn
           class="blue darken-1 white--text right"
@@ -17,14 +17,16 @@
         >
           <v-icon dark left>print</v-icon>
           Imprimir
-        </v-btn>          
-      </v-flex>  
-    </v-layout>  
+        </v-btn>
+      </v-flex>
+    </v-layout>
 
-    <v-layout row wrap>
+    <v-layout row wrap>     
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-text>
+            <v-form v-model="valid.basicos">
+
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
                 <v-select
@@ -52,96 +54,138 @@
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
                   :disabled="legajo.id > 0"
-                  :rules="validator.fecha"
+                  :rules="[rules.required, rules.fecha]"
                 >
                 </input-fecha>
               </v-flex>
             </v-layout>
 
-
+            </v-form> 
           </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
+
 
     <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-title>
-            <span class="subheading blue--text text--darken-4"><b>Comitente</b></span>
+            <span class="subheading blue--text text--darken-4"><b>Comitentes</b></span>
           </v-card-title>
           <v-card-text>
-              <v-layout row wrap>
-                <template v-if="legajo.comitente.tipo == 'empresa' || legajo.comitente.empresa.length">
-                  <v-flex xs6>
-                    <template v-if="!legajo.id">
-                        <v-text-field
-                          tabindex="3"
-                          label="Empresa:"
-                          v-model="legajo.comitente.empresa"
-                          :disabled="legajo.id > 0"
-                        >
-                        </v-text-field>
-                    </template>
-                  </v-flex>
-                </template>
+              <v-form lazy-validation ref="form_comitente">
 
-                <template v-if="legajo.comitente.tipo == 'persona' || !legajo.comitente.empresa.length">
-                  <v-flex xs5 class="ml-5">
-                    <template>
-                        <v-text-field
-                          tabindex="4"
-                          label="Apellido"
-                          v-model="legajo.comitente.apellido"
-                          :disabled="legajo.id > 0"
-                        >
-                        </v-text-field>
-                    </template>
-                  </v-flex>
+              <v-layout row v-if="!legajo.id">
+                  <v-flex xs6 class="mx-4">
+                    <v-select
+                      label="Tipo"
+                      :items="tipo_persona"
+                      v-model="nuevo_comitente.persona.tipo"
+                      :rules="[rules.required]"
+                      @input="chgTipoComitente"
+                    ></v-select>
 
-                  <v-flex xs5 class="ml-5">
-                      <v-text-field
-                        tabindex="5"
-                        label="Nombre"
-                        v-model="legajo.comitente.nombres"
-                        :disabled="legajo.id > 0"
-                      >
-                      </v-text-field>
-                  </v-flex>
-                </template>
-              </v-layout>
+                    <v-text-field
+                      label="CUIT/CUIL"
+                      v-model="nuevo_comitente.persona.cuit"
+                      :rules="[rules.required, rules.integer]"
+                      @input="chgCuitComitente"
+                    >
+                    </v-text-field>
 
-              <v-layout row wrap
-                class="mt-4"
-                v-if="legajo.comitente.tipo == 'persona' || !legajo.comitente.empresa.length"
-              >
-                <v-flex xs5 class="ml-5">
                     <v-text-field
                       label="DNI"
-                        tabindex="6"
-                      v-model="legajo.comitente.numero_documento"
-                      :disabled="legajo.id > 0"
-                    >
-                    </v-text-field>
+                      v-model="nuevo_comitente.persona.dni"
+                      :rules="[rules.required, rules.integer]"
+                      @input="chgDni"
+                    ></v-text-field>                    
+
+                    <input-numero
+                      label="Porcentaje"
+                      :decimal="true"
+                      v-model="nuevo_comitente.porcentaje"
+                      :rules="[rules.required]"
+                    ></input-numero>
                 </v-flex>
 
-                <v-flex xs5 class="ml-5">
+                <v-flex xs6>
+                  <v-text-field
+                    label="Nombre"
+                    v-model="nuevo_comitente.persona.nombre"
+                    :rules="[rules.required]"
+                  >
+                  </v-text-field>
+
+                  <template v-if="nuevo_comitente.persona.tipo == 'fisica'">
+                      <v-text-field
+                        label="Apellido"
+                        v-model="nuevo_comitente.persona.apellido"
+                        :rules="[rules.required]"
+                      >
+                      </v-text-field>
+
                     <v-text-field
-                      tabindex="7"
                       label="Telefono"
-                      v-model="legajo.comitente.telefono"
-                      :disabled="legajo.id > 0"
+                      v-model="nuevo_comitente.persona.telefono"
                     >
                     </v-text-field>
-                </v-flex>
-              </v-layout>
 
+                  </template>
+
+                  <v-btn @click="addComitente">
+                    Agregar
+                  </v-btn>                  
+                </v-flex>
+            </v-layout>
+
+            </v-form>
+
+
+            <v-layout row class="mt-4">
+              <v-flex xs12 class="mx-4">
+                <v-data-table
+                    :headers="headers.comitentes"
+                    :items="legajo.comitentes"
+                    class="elevation-4"
+                    no-data-text="No hay comitentes"
+                    hide-actions
+                >
+                  <template slot="headers" slot-scope="props">
+                    <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                      <b>{{ header.text }}</b>
+                    </th>
+                    <th></th>
+                  </template>
+                  <template slot="items" slot-scope="props">
+                    <tr>
+                      <td>{{ props.item.persona.cuit }}</td>
+                      <td>{{ props.item.persona.nombre }}</td>
+                      <td>{{ props.item.porcentaje }}</td>
+                      <td>
+                        <v-btn fab small @click="rmComitente(props.item.persona.cuit)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+
+                <br>
+
+                <v-alert color="error" icon="priority_high" :value="!this.legajo.id && !valid_comitentes">
+                  Los porcentajes deben sumar 100%
+                </v-alert>                                  
+              </v-flex>
+            </v-layout>
           </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
 
+    <v-layout>
       <v-flex xs12>
+        <v-form ref="form_ubicacion" v-model="valid.ubicacion">
         <v-card class="ma-2 elevation-4">
           <v-card-title>
             <span class="subheading blue--text text--darken-4"><b>Ubicación del Trabajo</b></span>
@@ -154,7 +198,7 @@
                     label="Nomenclatura"
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
-                    :rules="validator.nomenclatura"
+                    :rules="[rules.required]"
                   >
                   </v-text-field>
               </v-flex>
@@ -234,12 +278,16 @@
             </v-layout>
           </v-card-text>
         </v-card>
+
+        </v-form>
       </v-flex>
     </v-layout>
 
 
     <v-layout row wrap>
       <v-flex xs12>
+        <v-form ref="form_tareas" v-model="valid.tareas">
+
         <v-card class="ma-2 elevation-4">
           <v-card-title>
             <span class="subheading blue--text text--darken-4"><b>Tareas</b></span>
@@ -269,7 +317,7 @@
                     v-model="legajo.subcategoria"
                     :disabled="legajo.id > 0"
                     @input="chgSubcategoria"
-                    :rules="validator.subcategoria"
+                    :rules="[rules.required]"
                   >
                   </v-select>
                 </v-flex>
@@ -315,7 +363,7 @@
             <v-layout row wrap class="mt-3">
               <v-flex xs12>
                 <v-data-table
-                    :headers="headers_items"
+                    :headers="headers.items"
                     :items="legajo.items"
                     class="elevation-4"
                     no-data-text="No hay items"
@@ -336,6 +384,11 @@
                         <td>{{ props.item.item.descripcion }}</td>
                         <td>{{ props.item.valor }}</td>
                       </template>
+                      <td>
+                        <v-btn fab small @click="removeItem(props.index)">
+                          <v-icon>delete</v-icon>
+                        </v-btn>
+                      </td>                      
                     </tr>
                   </template>
                 </v-data-table>
@@ -359,6 +412,8 @@
 
           </v-card-text>
         </v-card>
+
+        </v-form>
       </v-flex>
     </v-layout>
 
@@ -382,14 +437,13 @@
               </v-flex>
 
               <v-flex xs3 class="ml-5">
-                <v-text-field
+                <input-numero
                   tabindex="22"
                   label="Honorarios Presupuestados"
-                  type="number"
                   v-model="legajo.honorarios_presupuestados"
                   :disabled="legajo.id > 0"
-                >
-                </v-text-field>
+                  :decimal="true"
+                ></input-numero>                
               </v-flex>
 
               <v-flex xs3 class="ml-5">
@@ -418,14 +472,13 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="24"
                     label="Honorarios Reales"
-                    type="number"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                    :decimal="true"
+                  ></input-numero>
 
                   <v-checkbox
                     tabindex="27"
@@ -455,14 +508,13 @@
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="26"
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
-                    type="number"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                    :decimal="true"
+                  ></input-numero>
                 </v-flex>
               </v-layout>
             </v-card-text>
@@ -473,6 +525,8 @@
 
       <v-layout row wrap>
         <v-flex xs12>
+          <v-form ref="form_aportes" v-model="valid.aportes"> 
+
           <v-card class="ma-2 elevation-4">
             <v-card-title>
               <span class="subheading blue--text text--darken-4"><b>Aportes</b></span>
@@ -480,46 +534,41 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="29"
                     label="Aporte Neto"
-                    type="number"
+                    :decimal="true"
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
-                    :rules="validator.aporte_neto"
-                  >
-                  </v-text-field>
+                    :rules="[rules.required]"
+                  ></input-numero>
 
-                  <v-text-field
+                  <input-numero
                     tabindex="32"
                     label="Cantidad de Planos"
-                    type="number"
                     v-model="legajo.cantidad_planos"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="30"
                     label="Aporte Bruto"
-                    type="number"
+                    :decimal="true"
                     v-model="legajo.aporte_bruto"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
 
                 <v-flex xs3 class="ml-5">
-                  <v-text-field
+                  <input-numero
                     tabindex="31"
                     label="Aporte Neto Bonificación"
-                    type="number"
+                    :decimal="true"
                     v-model="legajo.aporte_neto_bonificacion"
                     :disabled="legajo.id > 0"
-                  >
-                  </v-text-field>
+                  ></input-numero>
                 </v-flex>
               </v-layout>
 
@@ -538,6 +587,7 @@
               </v-layout>
             </v-card-text>
           </v-card>
+          </v-form>
         </v-flex>
       </v-layout>
     </template>
@@ -558,13 +608,14 @@
 
 <script>
 import axios from '@/axios'
+import * as moment from 'moment'
 import rules from '@/rules'
-import { Header, Domicilio } from '@/model'
+import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import Typeahead from '@/components/base/Typeahead'
 import DatosBasicos from '@/components/matriculas/DatosBasicos'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
-import Store from '@/Store'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
@@ -574,10 +625,23 @@ const tipos = [
   Header('Legajo Técnico', 3)
 ]
 
-const headers_items = [
-  Header('Descripción', 'descripcion'),
-  Header('Valor', 'valor')
+const tipo_persona = [
+  Header('Física', 'fisica'),
+  Header('Jurídica', 'juridica')
 ]
+
+const headers = {
+  items: [
+    Header('Descripción', 'descripcion'),
+    Header('Valor', 'valor')
+  ],
+
+  comitentes: [
+    Header('CUIT/CUIL', 'cuit'),
+    Header('Nombre', 'nombre'),
+    Header('%', 'porcentaje')
+  ]
+}
 
 const Item = () => ({
   id: '',
@@ -585,26 +649,19 @@ const Item = () => ({
   valor: ''
 })
 
-const Comitente = () => ({
-  apellido: '',
-  empresa: '',
-  nombres: '',
-  numero_documento: '',
-  telefono: '',
-  tipo: ''
-})
+
 
 const Legajo = (matricula) => ({
   matricula,
+  comitentes: [],
   aporte_bruto: null,
   aporte_neto: null,
   aporte_neto_bonificacion: null,
   cantidad_planos: null,
-  comitente: Comitente(),
   domicilio: new Domicilio(),
-  delegacion: Store.state.delegacion,
+  delegacion: null,
   dependencia: false,
-  fecha_solicitud: null,
+  fecha_solicitud: moment().format('DD/MM/YYYY'),
   finalizacion_tarea: null,
   forma_pago: '',
   honorarios_presupuestados: null,
@@ -627,24 +684,24 @@ export default {
 
   data () {
     return {
-      global_state: Store.state,
       legajo: Legajo(),
+      valid: {
+        basicos: false,
+        ubicacion: false,
+        tareas: false,
+        aportes: false
+      },
       matricula: null,
       categorias: [],
       paises: [],
       provincias: [],
       departamentos: [],
       localidades: [],
+      nuevo_comitente: new Comitente('fisica'),
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: Item(),
-      validator: {
-        fecha: [ rules.required, rules.fecha ],
-        nomenclatura: [ rules.required ],
-        aporte_neto: [ rules.required ],
-        subcategoria: [ rules.required ]
-      },
+      nuevo_item: Item()
     }
   },
 
@@ -653,8 +710,12 @@ export default {
       return tipos;
     },
 
-    headers_items: function() {
-      return headers_items;
+    tipo_persona: function() {
+      return tipo_persona;
+    },
+
+    headers: function() {
+      return headers;
     },
 
     subcategorias: function() {
@@ -662,12 +723,19 @@ export default {
       return categoria ? categoria.subcategorias : [];
     },
 
+    suma_comitentes: function() {
+      if (!this.legajo.comitentes.length) return 0;
+      return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
+    },    
+
+    valid_comitentes: function() {
+      return this.suma_comitentes === 100;   
+    },
+
     valid_form: function() {
-      return this.validControl(this.validator.fecha, this.legajo.fecha_solicitud)
-        && this.validControl(this.validator.nomenclatura, this.legajo.nomenclatura)
-        && this.validControl(this.validator.subcategoria, this.legajo.subcategoria)
-        && (this.legajo.tipo !=3 || this.validControl(this.validator.aporte_neto, this.legajo.aporte_neto));
-    }
+      return this.valid.basicos && this.valid_comitentes && this.valid.ubicacion && this.valid.tareas
+        && (this.legajo.tipo !=3 || this.valid.aportes);
+    },    
   },
 
   created: function() {
@@ -680,9 +748,8 @@ export default {
       this.categorias = r[1].data;
       if (this.id_legajo) {
         return axios.get(`/legajos/${this.id_legajo}`)
-              .then(r => {                
+              .then(r => {
                   this.legajo = r.data;
-                  this.legajo.comitente.tipo = '';
                   if (this.legajo.domicilio) {
                     this.paises = [this.legajo.domicilio.pais];
                     this.provincias = [this.legajo.domicilio.provincia];
@@ -695,11 +762,13 @@ export default {
                   return axios.get(`/matriculas/${this.legajo.matricula}`);
               })
       }
-      else return axios.get(`/matriculas/${this.id_matricula}`);
+      else { 
+        this.changePais();
+        this.changeProvincia();        
+        return axios.get(`/matriculas/${this.id_matricula}`);
+      }
     })
-    .then(r => {
-        this.matricula = r.data;
-    })
+    .then(r => this.matricula = r.data)
     .catch(e => console.error(e))
   },
 
@@ -730,11 +799,51 @@ export default {
 
     chgItemPredeterminado: function() {
       this.items_valores_predeterminados = [];
+      console.log(this.nuevo_item.id)
       if (typeof this.nuevo_item.id == 'number') {
         axios.get(`/tareas/items/${this.nuevo_item.id}/predeterminados`)
              .then(r => this.items_valores_predeterminados = r.data)
              .catch(e => console.error(e));
       }
+    },
+
+    chgTipoComitente: function() {
+      if (this.nuevo_comitente.persona.tipo == 'fisica') this.nuevo_comitente = new Comitente('fisica');
+      else this.nuevo_comitente = new Comitente('juridica');
+    },
+
+    chgCuitComitente: function() {
+      if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
+        axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
+        .then(r => {
+          if (r.data.length == 1)  {
+            this.nuevo_comitente.persona = r.data[0];
+          }
+        })
+      }
+    },
+
+    chgDni: function() {
+      if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+        axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
+        .then(r => {
+          if (r.data.length == 1)  {
+            this.nuevo_comitente.persona = r.data[0];
+          }
+        })
+      }
+    },
+
+    addComitente: function() {
+      if (this.$refs.form_comitente.validate()) {
+        this.legajo.comitentes.push(this.nuevo_comitente);
+        this.chgTipoComitente();
+        this.$refs.form_comitente.reset()
+      }
+    },
+
+    rmComitente: function(cuit) {
+      this.legajo.comitentes = this.legajo.comitentes.filter(c => c.cuit != cuit);
     },
 
     addItem: function() {
@@ -746,7 +855,14 @@ export default {
       this.nuevo_item = Item();
     },
 
+    removeItem: function(index) {
+      this.legajo.items.splice(index, 1);
+    },
+
     submit: function() {
+      this.legajo.operador = this.user.id;
+      this.legajo.delegacion = this.global_state.delegacion;
+
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              if (r.status != 201) {
@@ -780,6 +896,7 @@ export default {
 
   components: {
     InputFecha,
+    InputNumero,
     Typeahead,
     DatosBasicos
   }

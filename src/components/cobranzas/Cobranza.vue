@@ -19,50 +19,51 @@
 
         <v-layout row>
           <v-flex xs6>
-            <v-layout row wrap class="mt-4 mx-3">
-              <v-flex xs6 class="mx-3">
-                <v-select
-                  autocomplete single-line bottom
-                  item-text="nombre"
-                  item-value="id"
-                  label="Forma de Pago"
-                  :items="tipos_pago"
-                  v-model="nueva_forma_pago.forma_pago"
-                  :rules="submit_forma_pago ? validator.forma_pago : []"
-                  :error="submit_forma_pago && !validControl(validator.forma_pago, nueva_forma_pago.forma_pago)"
-                >
-                </v-select>
-              </v-flex>
+            <v-form lazy-validation ref="form_basico" v-model="valid.form_basico">
 
-              <v-flex xs4 class="ml-3">
-                <v-text-field
-                  type="number"
-                  label="Importe"
-                  v-model="nueva_forma_pago.importe"
-                  prefix="$"
-                  :rules="submit_forma_pago ? validator.importe : []"
-                  :error="submit_forma_pago && !validControl(validator.importe, nueva_forma_pago.importe)"
-                >
-                </v-text-field>
-              </v-flex>
+            <v-layout row wrap class="mt-4 mx-3">
+                <v-flex xs6 class="mx-3">
+                  <v-select
+                    autocomplete single-line bottom
+                    item-text="nombre"
+                    item-value="id"
+                    label="Forma de Pago"
+                    :items="tipos_pago"
+                    v-model="nueva_forma_pago.forma_pago"
+                    :rules="[rules.required]"
+                    @input="chgFormaPago($event)"
+                  >
+                  </v-select>
+                </v-flex>
+
+                <v-flex xs4 class="ml-3">
+                  <input-numero
+                    label="Importe"
+                    prefix="$"
+                    :decimal="true"
+                    v-model="nueva_forma_pago.importe"
+                    :rules="[rules.required]"
+                  ></input-numero>
+                </v-flex>
             </v-layout>
+
+            </v-form>
           </v-flex>
 
           <v-flex xs4 v-show="esCheque" class="mt-4">
+            <v-form lazy-validation ref="form_cheque" v-model="valid.form_cheque">
               <v-layout row wrap>
                 <v-flex xs5>
                   <v-text-field
                     label="N° Cheque"
-                    v-model="nueva_forma_pago.cheque.numero"
-                    :rules="submit_forma_pago ? validator.cheque.numero : []"
-                    :error="submit_forma_pago && !validControl(validator.cheque.numero, nueva_forma_pago.cheque.numero)"
+                    v-model="nueva_forma_pago.numero_cheque"
+                    :rules="[rules.required]"
                   >
                   </v-text-field>
                   <input-fecha
                     label="Fecha Vto"
-                    v-model="nueva_forma_pago.cheque.fecha_vencimiento"
-                    :rules="submit_forma_pago ? validator.cheque.fecha_vencimiento : []"
-                    :error="submit_forma_pago && !validControl(validator.cheque.fecha_vencimiento, nueva_forma_pago.cheque.fecha_vencimiento)"
+                    v-model="nueva_forma_pago.fecha_vto_cheque"
+                    :rules="[rules.required, rules.fecha]"
                   >
                 </input-fecha>
                 </v-flex>
@@ -73,21 +74,20 @@
                     item-text="nombre"
                     item-value="id"
                     label="Banco"
-                    v-model="nueva_forma_pago.cheque.banco"
+                    v-model="nueva_forma_pago.banco"
                     :items="bancos"
-                    :rules="submit_forma_pago ? validator.cheque.banco : []"
-                    :error="submit_forma_pago && !validControl(validator.cheque.banco, nueva_forma_pago.cheque.banco)"
+                    :rules="[rules.required]"
                   >
                 </v-select>
                   <v-text-field
                     label="Titular Cuenta"
-                    v-model="nueva_forma_pago.cheque.titular"
-                    :rules="submit_forma_pago ? validator.cheque.titular : []"
-                    :error="submit_forma_pago && !validControl(validator.cheque.titular, nueva_forma_pago.cheque.titular)"
+                    v-model="nueva_forma_pago.titular_cuenta"
+                    :rules="[rules.required]"
                   >
                   </v-text-field>
                 </v-flex>
               </v-layout>
+            </v-form>
           </v-flex>
 
           <v-flex xs2 class="mt-4">
@@ -118,8 +118,8 @@
                 <tr>
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe | round }}</td>
-                  <td>{{ props.item.cheque.numero }}</td>
-                  <td>{{ getBanco(props.item.cheque.banco) }}</td>
+                  <td>{{ props.item.numero_cheque }}</td>
+                  <td>{{ getBanco(props.item.banco) }}</td>
                   <td>
                     <v-btn fab class="grey" dark small @click="borrarPago(props.index)">
                       <v-icon>delete</v-icon>
@@ -161,6 +161,7 @@
             </v-btn>
           </v-flex>
         </v-layout>
+
       </v-card-text>
     </v-card>
   </v-container>
@@ -168,37 +169,43 @@
 
 <script>
 import axios from '@/axios'
-import * as Model from '@/model'
+import { Header } from '@/model'
 import * as utils from '@/utils'
-import rules from '@/rules'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
-const Cheque = () => ({
-  numero: null,
-  banco: null,
-  titular: '',
-  fecha_vencimiento: null
-})
+class ComprobantePago {
+  constructor(forma_pago) {
+    this.forma_pago = forma_pago;
+    this.importe = '';
+  }
+}
 
-const FormaPago = () => ({
-    forma_pago: '',
-    importe: 0,
-    cheque: Cheque()
-})
+class ComprobantePagoCheque extends ComprobantePago {
+  constructor(forma_pago) {
+    super(forma_pago);
+    this.numero_cheque = '';
+    this.banco = '';
+    this.titular_cuenta = '';
+    this.fecha_vto_cheque = '';
+  }
+}
 
 const header_pagos = [
-  Model.Header('Forma de Pago', 'forma'),
-  Model.Header('Importe', 'importe'),
-  Model.Header('N° Cheque', 'numero'),
-  Model.Header('Banco', 'banco')
+  Header('Forma de Pago', 'forma'),
+  Header('Importe', 'importe'),
+  Header('N° Cheque', 'numero_cheque'),
+  Header('Banco', 'banco')
 ]
 
 const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
   name: 'Cobranza',
+  mixins: [ValidatorMixin],
+
   props: {
     fecha: {
       type: String,
@@ -209,10 +216,8 @@ export default {
     }
   },
 
-  mixins: [ValidatorMixin],
-
   components: {
-    InputFecha
+    InputFecha, InputNumero
   },
 
   data () {
@@ -220,17 +225,10 @@ export default {
       tipos_pago: [],
       bancos: [],
       items_pago: [],
-      nueva_forma_pago: FormaPago(),
-      submit_forma_pago: false,
-      validator: {
-        forma_pago: [rules.required],
-        importe: [rules.required],
-        cheque: {
-          numero: [rules.required],
-          banco: [rules.required],
-          titular: [rules.required],
-          fecha_vencimiento:[rules.required]
-        }
+      nueva_forma_pago: new ComprobantePago(),
+      valid: {
+        form_basico: false,
+        form_cheque: false
       }
     }
   },
@@ -252,7 +250,7 @@ export default {
     },
 
     form_valid: function() {
-      return this.total == this.importe;
+      return this.total === this.importe;
     }
   },
 
@@ -269,14 +267,27 @@ export default {
   },
 
   methods: {
-    addItemPago: function() {
-      this.submit_forma_pago = true;
-      if (this.esCheque && !utils.validObject(this.nueva_forma_pago, this.validator)) return;
-      if (!this.esCheque && !this.nueva_forma_pago.importe.length) return;
+    chgFormaPago: function(tipo) {
+      if (this.esCheque) this.nueva_forma_pago = new ComprobantePagoCheque(tipo);
+      else this.nueva_forma_pago = new ComprobantePago(tipo);
+    },
 
+    addItem: function() {
       this.items_pago.push(this.nueva_forma_pago);
-      this.submit_forma_pago = false;
-      this.nueva_forma_pago = FormaPago();
+      this.nueva_forma_pago = new ComprobantePago();
+      this.$refs.form_basico.reset();
+      this.$refs.form_cheque.reset();
+    },
+
+    addItemPago: function() {
+      if (this.esCheque) {
+        let basico = this.$refs.form_basico.validate();
+        let cheque = this.$refs.form_cheque.validate();
+        if (basico && cheque) this.addItem();
+      }
+      else {
+        if (this.$refs.form_basico.validate()) this.addItem();
+      }
     },
 
     pagar: function() {

@@ -53,8 +53,8 @@
 </template>
 
 <script>
-import axios from '@/axios';
-import * as Cookies from 'js-cookie';
+import axios from '@/axios'
+import * as Cookies from 'js-cookie'
 
 const User = () => ({
   id: '',

@@ -43,8 +43,6 @@
 </template>
 
 <script>
-import * as Cookies from 'js-cookie'
-
 const items = [
   { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
   { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
@@ -56,7 +54,6 @@ export default {
   data () {
     return {
       show_drawer: false,
-      user: null
     }
   },
 
@@ -68,10 +65,6 @@ export default {
     full_name: function() {
       return `${this.user.nombre} ${this.user.apellido}`;
     }
-  },
-
-  created: function() {
-    this.user = JSON.parse(Cookies.get('CPTNUser'));
   },
 
   methods: {

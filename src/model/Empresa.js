@@ -1,19 +1,13 @@
-import { Domicilio } from '@/model/Domicilio';
+import { Entidad } from '@/model/Entidad';
 
-export class Empresa {
+export class Empresa extends Entidad {
   constructor() {
+    super();
     this.tipo = 'empresa';
-    this.nombre = '';
-    this.cuit = '';
-    this.condafip = '';
     this.fechaInicio = '';
     this.fechaConstitucion = '';
     this.tipoEmpresa = '';
     this.tipoSociedad = '';
-    this.domicilioReal = new Domicilio();
-    this.domicilioProfesional = new Domicilio();
-    this.domicilioConstituido = new Domicilio();
-    this.contactos = [];
     this.incumbencias = [];
     this.representantes = [];
   }

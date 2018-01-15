@@ -15,8 +15,12 @@
         <v-container class="white black--text">
           <v-layout row>
             <v-flex xs4 class="ml-4">
-              <v-select :items="select_items.tipo" label="Tipo de Entidad" single-line bottom v-model="filtros.tipoEntidad">
-              </v-select>
+              <v-select 
+                :items="select_items.tipo" 
+                label="Tipo de Entidad" 
+                single-line bottom 
+                v-model="filtros.tipoEntidad"
+              ></v-select>
             </v-flex>
 
             <v-flex xs4 class="mx-4">
@@ -27,6 +31,7 @@
                 label="Estado" 
                 single-line bottom 
                 autocomplete
+                clearable
                 v-model="filtros.estado"
               >
               </v-select>
@@ -305,8 +310,8 @@ export default {
 
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
-        // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 13 })
+        // 13 ES ESTADO 'Habilitado'         
+        axios.patch(`/matriculas/${id}`, { estado: 13, operador: this.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
@@ -315,7 +320,7 @@ export default {
     deshabilitar: function(id) {
       if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
         // 35 ES ESTADO 'DesHabilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 35 })
+        axios.patch(`/matriculas/${id}`, { estado: 35, operador: this.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
