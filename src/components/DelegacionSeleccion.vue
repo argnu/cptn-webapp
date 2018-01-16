@@ -1,7 +1,6 @@
 <template>
     <v-layout class="my-4">
-        <v-flex xs4></v-flex>
-        <v-flex xs4>
+        <v-flex xs10 offset-xs1 md4 offset-md4>
             <v-card>
                 <v-toolbar color="light-blue" dark>
                 <v-toolbar-title>Seleccionar Delegación</v-toolbar-title>

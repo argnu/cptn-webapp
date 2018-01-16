@@ -102,6 +102,12 @@
                 single-line bottom 
                 v-model="filtros.tipoEntidad"
               ></v-select>
+
+              <v-text-field 
+                v-model="filtros.numero" 
+                label="N° Solicitud" 
+                @input="updateList"
+              ></v-text-field>
             </v-flex>
 
             <v-flex xs3 class="ma-4">
@@ -161,6 +167,7 @@
     >
       <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
+          <th><b>N°</b></th>
           <th><b>Fecha</b></th>
           <th><b>Estado</b></th>
           <th><b>Nombre</b></th>
@@ -171,6 +178,7 @@
         </tr>
       </template>
       <template slot="items" slot-scope="props">
+            <td>{{ props.item.numero }}</td>
             <td>{{ props.item.fecha | fecha }}</td>
             <td>{{ props.item.estado | upperFirst }}</td>
             <template v-if="filtros.tipoEntidad == 'profesional'">
@@ -203,10 +211,17 @@
               </v-list-tile-title>
             </v-list-tile>
 
-            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="editSolicitud(props.item.id)">
+            <v-list-tile @click="editSolicitud(props.item.id)">
               <v-list-tile-title>
                 <v-icon class="blue--text text--darken-2">edit</v-icon>
                 <span class="ml-2">Modificar</span>
+              </v-list-tile-title>
+            </v-list-tile>
+
+            <v-list-tile @click="showCambiarImgs(props.item.entidad.id)">
+              <v-list-tile-title>
+                <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
+                <span class="ml-2">Cambiar Foto y/o Firma</span>
               </v-list-tile-title>
             </v-list-tile>
           </v-list>
@@ -216,6 +231,26 @@
     </v-data-table>
   </v-card>
 
+
+    <v-dialog v-model="expand_cambiar_imgs" fullscreen transition="dialog-bottom-transition" :overlay="false">
+      <v-card>
+        <v-toolbar dark class="blue">
+          <v-toolbar-title class="white--text">Cambiar Foto y/o Firma</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="expand_cambiar_imgs = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <cambiar-foto-firma 
+          ref="cambiar_imgs"
+          :id="profesional_selected"
+          @cerrar="cerrarImgs"
+        ></cambiar-foto-firma>        
+      </v-card>
+    </v-dialog>  
+
+
+
 </v-container>
 </template>
 
@@ -223,13 +258,13 @@
 import * as moment from 'moment'
 import axios from '@/axios'
 import * as _ from 'lodash'
-import * as utils from '@/utils'
 import rules from '@/rules'
-import InputFecha from '@/components/base/InputFecha'
 import { Matricula } from '@/model'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
-import Cobranza from '@/components/cobranzas/Cobranza'
+import InputFecha from '@/components/base/InputFecha'
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/Store'
 
 const select_items = {
@@ -272,16 +307,19 @@ export default {
       pagination: {
         rowsPerPage: 5,
       },
+      profesional_selected: '',
 
       expand: {
         filtros: true
       },
+      expand_cambiar_imgs: false,
 
       solicitudes: [],
 
       filtros: {
-        estado: 'todas',
+        estado: null,
         tipoEntidad: 'profesional',
+        numero: '',
         profesional: {
           dni: '',
           apellido: ''
@@ -342,7 +380,8 @@ export default {
         this.loading = true;
         this.solicitudes = [];
         let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
-        if (this.filtros.estado && this.filtros.estado != 'todas') url += `&estado=${this.filtros.estado}`;
+        if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
+        if (this.filtros.numero.length) url += `&numero=${this.filtros.numero}`;
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
@@ -407,11 +446,21 @@ export default {
       let tipo = this.filtros.tipoEntidad == 'profesional' ? 'profesionales' : 'empresas';
       this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
     },
+
+    showCambiarImgs: function(id) {
+      this.profesional_selected = id;
+      this.expand_cambiar_imgs = true;
+    },   
+
+    cerrarImgs: function() {
+      this.expand_cambiar_imgs = false      
+      this.$refs.cambiar_imgs.reset();
+    }
   },
 
   components: {
     InputFecha,
-    Cobranza
+    CambiarFotoFirma
   }
 
 }

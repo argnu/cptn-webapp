@@ -87,7 +87,8 @@ export default {
         this.$router.push({ path: '/seleccionar-delegacion' });
       })
       .catch(e => {
-        if (e.response.status == 500) this.submit_error = true;
+        this.submit_error = true;
+        // if (e.response.status == 500) this.submit_error = true;
         console.error(e);
       });
     }

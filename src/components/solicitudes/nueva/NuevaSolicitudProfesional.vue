@@ -26,6 +26,7 @@
                           v-model="solicitud.fecha"
                           label="Fecha de Solicitud"
                           :rules="[rules.required, rules.fecha]"
+                          :disabled="solicitud.estado != 'pendiente'"
                         >
                         </input-fecha>
                       </v-flex>
@@ -40,6 +41,7 @@
                           v-model="solicitud.delegacion"
                           label="Delegación"
                           :rules="[rules.required]"
+                          :disabled="solicitud.estado != 'pendiente'"
                         >
                         </v-select>
                       </v-flex>
@@ -74,6 +76,7 @@
                         maxlength="10"
                         clearable
                         @blur="chgDni"
+                        @keypress.enter="chgDni"
                       >
                       </v-text-field>
 
@@ -170,7 +173,7 @@
                         item-text="valor"
                         item-value="id"
                         v-model="solicitud.entidad.condafip"
-                        label="Condición AFIP"
+                        label="Condición Impositiva"
                         tabindex="12"
                         :rules="[rules.required]"
                       >
@@ -179,27 +182,18 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs12 class="mx-4">
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td style="padding-right:10px;padding-bottom:20px">
-                              Foto:
-                            </td>
-                            <td style="padding-bottom:20px">
-                              <input type="file" ref="archivo_foto" name="foto" id="foto">
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding-right:10px">
-                              Firma:
-                            </td>
-                            <td>
-                              <input type="file" ref="archivo_firma" name="firma" id="firma">
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <v-flex xs6 class="mx-4">
+                      Foto:
+                      <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
+                      <br><br>
+                      <img ref="img_foto" alt="" style="max-width:180px"/>
+                    </v-flex>
+
+                    <v-flex xs6>
+                      Firma:
+                      <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
+                      <br><br>
+                      <img ref="img_firma" alt="" style="max-width:180px"/>
                     </v-flex>
                   </v-layout>
 
@@ -224,7 +218,7 @@
                 <v-card-text>
                   <v-form ref="form_domicilio" lazy-validation>
                         <v-layout row class="mx-4">
-                          <v-flex xs5>
+                          <v-flex xs8>
                             <v-select
                               :items="tipos_domicilio"
                               label="Tipo"
@@ -235,7 +229,7 @@
                             </v-select>
                           </v-flex>
 
-                          <v-flex xs5 class="mt-2 ml-4">
+                          <v-flex xs3 class="mt-2 ml-4">
                             <v-menu offset-y>
                               <v-btn slot="activator">Copiar de...</v-btn>
                               <v-list>
@@ -571,9 +565,15 @@
                         tabindex="33"
                         label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
                       </v-checkbox>
+
                       <v-checkbox
                         tabindex="35"
-                        label="Autonómo" class="mb-4" v-model="solicitud.entidad.independiente">
+                        label="Profesional Independiente" class="mb-4" v-model="solicitud.entidad.independiente">
+                      </v-checkbox>
+
+                      <v-checkbox
+                        tabindex="37"
+                        label="Jubilado" class="mb-4" v-model="solicitud.entidad.jubilado">
                       </v-checkbox>
                     </v-flex>
 
@@ -591,7 +591,7 @@
                   </v-layout>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="37">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="38">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -623,23 +623,6 @@
                         v-model="solicitud.entidad.nombreCajaPrevisional"
                       >
                       </v-text-field>
-                    </v-flex>
-                  </v-layout>
-
-                  <v-layout row>
-                    <v-flex xs12 class="ml-4">
-                      <v-checkbox
-                        label="Solicitar Caja Previsional de Profesionales"
-                        v-model="solicitud.entidad.solicitaCajaPrevisional"
-                      >
-                      </v-checkbox>
-
-                      <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 10" v-model="solicitud.exencionArt10">
-                      </v-checkbox>
-
-                      <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 6" v-model="solicitud.exencionArt6">
-                      </v-checkbox>
-
                     </v-flex>
                   </v-layout>
 
@@ -826,7 +809,7 @@
 
             <!-- PASO 9: DECLARACION Y EXENCIONES -->
             <v-stepper-step step="9" edit-icon="check" editable :complete="step > 9">
-              Declaración y Exenciones
+              Declaración de Difusión de Datos y Recepción de Información
             </v-stepper-step>
             <v-stepper-content step="9">
               <v-card class="grey lighten-4 elevation-4 mb-2">
@@ -842,16 +825,22 @@
 
                   <h3>Permitir la publicación de los datos:</h3>
 
+                  <v-checkbox
+                    class="mt-4"
+                    label="Todos"
+                    @change="chgPublicarTodos"
+                    v-model="publicar_todos"
+                  >
+                  </v-checkbox>                  
+
                   <v-layout row class="mt-2">
                     <v-flex xs6>
                       <v-checkbox
-                        class="ma-0 pa-0"
                         label="Email"
                         v-model="solicitud.entidad.publicarEmail"
                       >
                       </v-checkbox>
                       <v-checkbox
-                        class="ma-0 pa-0"
                         label="Celular"
                         v-model="solicitud.entidad.publicarCelular"
                       >
@@ -859,13 +848,11 @@
                     </v-flex>
                     <v-flex xs6>
                       <v-checkbox
-                        class="ma-0 pa-0"
                         label="Dirección"
                         v-model="solicitud.entidad.publicarDireccion"
                       >
                       </v-checkbox>
                       <v-checkbox
-                        class="ma-0 pa-0"
                         label="Acervo"
                         v-model="solicitud.entidad.publicarAcervo"
                       >
@@ -958,6 +945,7 @@ export default {
       nueva_formacion: new Formacion(),
       nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
+      publicar_todos: false,
       valid: {
         form_solicitud: false,
         form_profesional: false
@@ -1211,6 +1199,27 @@ export default {
       else if (this.step == 3) next = this.valid_domicilios;
 
       if (next) this.step = +this.step + 1;
+    },
+
+    chgPublicarTodos: function() {
+      this.solicitud.entidad.publicarEmail = this.publicar_todos;
+      this.solicitud.entidad.publicarDireccion = this.publicar_todos;
+      this.solicitud.entidad.publicarAcervo = this.publicar_todos;
+      this.solicitud.entidad.publicarCelular = this.publicar_todos
+    },
+
+    showImage: function(tipo) {
+      let ref = `archivo_${tipo}`;
+      let input = this.$refs[ref];
+      console.log(input, tipo)
+      if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = (e) => {
+            let ref = `img_${tipo}`;
+            this.$refs[ref].setAttribute('src', e.target.result);
+          };
+          reader.readAsDataURL(input.files[0]);
+      }
     }
   },
 

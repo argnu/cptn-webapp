@@ -61,7 +61,7 @@
                       Tipo de Sociedad: {{ matricula.entidad.tipoSociedad }}
                     </div>
                     <div>
-                      Condición AFIP: {{ matricula.entidad.condafip }}
+                      Condición Impositiva: {{ matricula.entidad.condafip }}
                     </div>
                   </v-flex>
                 </v-layout>

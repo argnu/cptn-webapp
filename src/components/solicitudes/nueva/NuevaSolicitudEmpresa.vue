@@ -104,7 +104,7 @@
                             item-value="id"
                             :items="opciones.condicionafip"
                             v-model="solicitud.entidad.condafip"
-                            label="Condición AFIP" single-line bottom
+                            label="Condición Impositiva" single-line bottom
                             :rules="[rules.required]"
                           >
                           </v-select>
@@ -160,7 +160,7 @@
                     <v-card-text>
                       <v-form lazy-validation ref="form_domicilio">
                         <v-layout row class="mx-4">
-                          <v-flex xs5>
+                          <v-flex xs8>
                             <v-select
                               :items="tipos_domicilio"
                               label="Tipo"
@@ -171,7 +171,7 @@
                             </v-select>                          
                           </v-flex>
 
-                          <v-flex xs5 class="mt-2 ml-4">
+                          <v-flex xs3 class="mt-2 ml-4">
                             <v-menu offset-y>
                               <v-btn slot="activator">Copiar de...</v-btn>
                               <v-list>

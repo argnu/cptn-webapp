@@ -10,9 +10,9 @@ const EntidadDomicilio = () => ({
 })
 
 const tipos_domicilio = [
-  Header('Real', 'real'),
-  Header('Legal', 'legal'),
-  Header('Especial', 'especial')
+  Header('Real (Domicilio Declarado en DNI)', 'real'),
+  Header('Legal (Domicilio Profesional)', 'legal'),
+  Header('Especial (Domicilio Constituido)', 'especial')
 ]
 
 
