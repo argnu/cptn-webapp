@@ -1,15 +1,13 @@
 <template>
   <v-container>
-    <br><br>
-    <v-toolbar dark class="primary">
+    <v-toolbar dark class="primary mt-2">
     </v-toolbar>
 
     <v-card class="">
       <v-card-text>
         <form @submit.prevent="autenticar">
           <v-layout row wrap>
-            <v-flex xs3></v-flex>
-            <v-flex xs6>
+            <v-flex md6 offset-md3 xs12>
               <v-text-field
                 label="Nombre de Usuario"
                 prepend-icon="account_box"

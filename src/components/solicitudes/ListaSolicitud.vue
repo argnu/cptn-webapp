@@ -10,7 +10,7 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobacion">
 
-            <v-layout>
+            <v-layout> 
               <v-flex xs12 class="mx-4">
                 <v-select
                   v-show="matricula.tipo != 'EMP'"
@@ -86,16 +86,13 @@
     <v-spacer></v-spacer>
   </v-toolbar>
 
-  <br>
-
-  <v-card>
+  <v-card class="mt-4">
     <v-expansion-panel expand>
       <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
         <div slot="header"></div>
         <v-container class="white black--text">
-          <v-layout row>
-            <v-flex xs3 class="ma-4">
-              Tipo de Entidad:
+          <v-layout row wrap>
+            <v-flex xs12 md3 class="mx-3">
               <v-select 
                 :items="select_items.tipo" 
                 label="Tipo de Entidad" 
@@ -103,26 +100,22 @@
                 v-model="filtros.tipoEntidad"
               ></v-select>
 
-              <v-text-field 
-                v-model="filtros.numero" 
-                label="N° Solicitud" 
-                @input="updateList"
-              ></v-text-field>
-            </v-flex>
-
-            <v-flex xs3 class="ma-4">
-              Estado:
               <v-select 
                 :items="select_items.estado" 
                 label="Estado de Solicitud" 
                 single-line bottom 
                 clearable
                 v-model="filtros.estado"
-              ></v-select>
+              ></v-select>             
             </v-flex>
 
-            <v-flex xs3 class="ma-4">
-              <br>
+            <v-flex xs12 md3 class="mx-3">
+              <v-text-field 
+                v-model="filtros.numero" 
+                label="N° Solicitud" 
+                @input="updateList"
+              ></v-text-field>              
+
               <div v-show="filtros.tipoEntidad == 'profesional'">
                 <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
                 </v-text-field>
@@ -134,8 +127,7 @@
               </div>
             </v-flex>
 
-            <v-flex xs3 class="ma-4">
-              <br>
+            <v-flex xs12 md3 class="mx-3">
               <div v-show="filtros.tipoEntidad == 'profesional'">
                 <v-text-field v-model="filtros.profesional.apellido" label="Apellido" @input="updateList">
                 </v-text-field>

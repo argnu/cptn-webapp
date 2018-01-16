@@ -1,54 +1,51 @@
 <template>
 <v-container>
-    <v-layout row class="mt-4">
-    <v-flex xs6>
-        <span class="subheading blue--text text--darken-4"><b>Foto:</b></span>
-        <br><br>
-        <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
-        <br><br>
-        <img ref="img_foto" alt="" style="max-width:180px"/>
-    </v-flex>
-
-    <v-flex xs6>
-        <span class="subheading blue--text text--darken-4"><b>Firma:</b></span>
-        <br><br>
-
-        <v-radio-group v-model="tipo_firma" row>
-            <v-radio label="Imagen" value="imagen" ></v-radio>
-            <v-radio label="Dibujar" value="dibujar"></v-radio>
-        </v-radio-group>
-
-        <div v-show="tipo_firma == 'imagen'">
-            <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
+    <v-layout row wrap class="mt-4">
+        <v-flex md6 xs12>
+            <span class="subheading blue--text text--darken-4"><b>Foto:</b></span>
             <br><br>
-            <img ref="img_firma" alt="" style="max-width:180px"/>
-        </div>
+            <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
+            <br><br>
+            <img ref="img_foto" alt="" style="max-width:180px"/>
+        </v-flex>
 
-        <div
-            v-show="tipo_firma == 'dibujar'"
-            style="width: 400px; height: 400px; background: #fff;"
-        >
-            <canvas ref="lienzo" width="400" height="400" style="border:1px solid #000000;">
-            </canvas>
-        </div>
-    </v-flex>
+        <v-flex md6 xs12>
+            <span class="subheading blue--text text--darken-4"><b>Firma:</b></span>
+            <br><br>
+
+            <v-radio-group v-model="tipo_firma" row>
+                <v-radio label="Imagen" value="imagen" ></v-radio>
+                <v-radio label="Dibujar" value="dibujar"></v-radio>
+            </v-radio-group>
+
+            <div v-show="tipo_firma == 'imagen'">
+                <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
+                <br><br>
+                <img ref="img_firma" alt="" style="max-width:180px"/>
+            </div>
+
+            <div v-show="tipo_firma == 'dibujar'">
+                <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;">
+                </canvas>
+            </div>
+        </v-flex>
     </v-layout>
 
 
     <v-layout row wrap class="mt-4">
         <v-flex xs12 class="ma-4">
             <v-btn
-            dark
-            class="green right"
-            @click="guardar"
+                dark
+                class="green right"
+                @click="guardar"
             >
-            Guardar Cambios
-            <v-icon dark right>check_circle</v-icon>
+                Guardar Cambios
+                <v-icon dark right>check_circle</v-icon>
             </v-btn>
 
             <v-btn dark class="red right" @click="cerrar">
                 Cancelar
-            <v-icon dark right>block</v-icon>
+                 <v-icon dark right>block</v-icon>
             </v-btn>
         </v-flex>
     </v-layout>
@@ -113,7 +110,7 @@ export default {
         canvas.onmousedown = e => {
           pulsado = true;
           movimientos.push([e.pageX - this.offsetLeft,
-              e.pageY - this.offsetTop,
+              e.pageY - this.offsetTop + 200,
               false]);
           repinta(canvas);
         };
@@ -121,8 +118,9 @@ export default {
         canvas.ontouchstart = function(e) {
           e.preventDefault();
           pulsado = true;
+          console.log(this.scrollTop)
           movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-              e.targetTouches[0].pageY - this.offsetTop,
+              e.targetTouches[0].pageY - this.offsetTop - this.scrollHeight,
               false]);
           repinta(canvas);
         };
@@ -139,7 +137,7 @@ export default {
         canvas.ontouchmove = function(e) {
           if (pulsado) {
               movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-                  e.targetTouches[0].pageY - this.offsetTop,
+                  e.targetTouches[0].pageY - this.offsetTop - this.scrollHeight,
                   true]);
             repinta(canvas);
           }

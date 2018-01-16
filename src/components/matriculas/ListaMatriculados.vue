@@ -5,16 +5,13 @@
     <v-spacer></v-spacer>
   </v-toolbar>
 
-  <br>
-
-  <v-card>
+  <v-card class="mt-4">
     <v-expansion-panel expand title="Filtros de Búsqueda">
       <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
-        <div slot="header">
-        </div>
+        <div slot="header"><b></b></div>
         <v-container class="white black--text">
-          <v-layout row>
-            <v-flex xs4 class="ml-4">
+          <v-layout row wrap>
+            <v-flex xs12 md3 class="mx-2">
               <v-select 
                 :items="select_items.tipo" 
                 label="Tipo de Entidad" 
@@ -23,7 +20,7 @@
               ></v-select>
             </v-flex>
 
-            <v-flex xs4 class="mx-4">
+            <v-flex xs12 md3 class="mx-2">
               <v-select 
                 :items="select_items.estados" 
                 item-value="id"
@@ -35,17 +32,19 @@
                 v-model="filtros.estado"
               >
               </v-select>
+
               <div v-show="filtros.tipoEntidad == 'profesional'">
                 <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
                 </v-text-field>
               </div>
+
               <div v-show="filtros.tipoEntidad == 'empresa'">
                 <v-text-field v-model="filtros.empresa.cuit" label="CUIT" @input="updateList">
                 </v-text-field>
               </div>
             </v-flex>
 
-            <v-flex xs4 class="mx-4">
+            <v-flex xs12 md3 class="mx-2">
               <v-text-field v-model="filtros.numero" label="N° Matrícula" @input="updateList">
               </v-text-field>
               <div v-show="filtros.tipoEntidad == 'profesional'">
@@ -65,7 +64,6 @@
 
   <br>
 
-  <v-card>
     <v-data-table
       :headers="columnas[filtros.tipoEntidad]"
       :items="matriculas"
@@ -80,7 +78,7 @@
       <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
           <th></th>
-          <th v-for="header of props.headers" class="pa-3">
+          <th v-for="header of props.headers" :key="header.value" class="pa-3">
             <b>{{ header.text }}</b>
           </th>
           <th></th>
@@ -130,7 +128,7 @@
         </td>
       </template>
     </v-data-table>
-  </v-card>
+
 </v-container>
 </template>
 
