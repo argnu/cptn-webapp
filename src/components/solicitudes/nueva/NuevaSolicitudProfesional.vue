@@ -26,7 +26,7 @@
                           v-model="solicitud.fecha"
                           label="Fecha de Solicitud"
                           :rules="[rules.required, rules.fecha]"
-                          :disabled="solicitud.estado != 'pendiente'"
+                          :disabled="solicitud.estado && solicitud.estado != 'pendiente'"
                         >
                         </input-fecha>
                       </v-flex>
@@ -41,7 +41,7 @@
                           v-model="solicitud.delegacion"
                           label="Delegación"
                           :rules="[rules.required]"
-                          :disabled="solicitud.estado != 'pendiente'"
+                          :disabled="solicitud.estado && solicitud.estado != 'pendiente'"
                         >
                         </v-select>
                       </v-flex>
@@ -985,6 +985,9 @@ export default {
     },
 
     valid_form: function() {
+      console.log('sol', this.valid.form_solicitud)
+      console.log('subs', this.valid_subsidiarios);
+      console.log('doms', this.valid_domicilios)
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
     }
