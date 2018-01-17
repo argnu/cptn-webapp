@@ -66,13 +66,13 @@ export function impresionSolicitud(solicitud) {
   doc.addImage(img, 'JPG', 10, 10, 60, 13);
   doc.setLineWidth(1);
 
-  doc.line(20, 30, 190, 30);
+  doc.line(20, 25, 190, 25);
   doc.setFontSize(12);
-  doc.text(20, 35,  `Solicitud de alta de matricula N° ${solicitud.numero}` );
-  doc.line(20, 37, 190, 37);
+  doc.text(20, 30,  `Solicitud de alta de matricula N° ${solicitud.numero}` );
+  doc.line(20, 32, 190, 32);
   doc.setFontSize(10);
 
-  let eje_y = 45;
+  let eje_y = 40;
 
   doc.setFontSize(12);
 
@@ -157,7 +157,7 @@ export function impresionSolicitud(solicitud) {
   doc.text(100, eje_y, 'Localidad:');
   eje_y += 6;
 
-  doc.setLineWidth(0.5);
+  doc.setLineWidth(0.2);
   doc.line(20, eje_y, 190, eje_y);
 
   eje_y += 6;
@@ -171,7 +171,7 @@ export function impresionSolicitud(solicitud) {
   doc.text(100, eje_y, 'Localidad:');
   eje_y += 4;
 
-  doc.setLineWidth(0.5);
+  doc.setLineWidth(0.2);
   doc.line(20, eje_y, 190, eje_y);
   eje_y += 6;
 
@@ -182,10 +182,12 @@ export function impresionSolicitud(solicitud) {
   eje_y += 4;
   doc.line(20, eje_y, 190, eje_y);
   eje_y += 4;
+  doc.setFontSize(10);  
   solicitud.entidad.contactos.forEach(contacto => {
     doc.text(20, eje_y, `${contacto.tipo}: ${contacto.valor}`);
     eje_y += 5;
   });
+  doc.setFontSize(12);  
 
 
   if (solicitud.entidad.tipo == 'empresa') {
@@ -232,41 +234,40 @@ export function impresionSolicitud(solicitud) {
     doc.setFontSize(12);
   }
 
-  eje_y += 6;
+  eje_y += 5;
   doc.setFontSize(14);
   doc.text(20, eje_y, 'Declaración Jurada');
   doc.setFontSize(10);
-  eje_y += 6;
+  eje_y += 5;
   doc.text(20, eje_y, 'Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provincia de Neuquén,');
-  eje_y += 5;  
+  eje_y += 3;  
   doc.text(20,eje_y,'previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas');
-  eje_y += 5;  
+  eje_y += 3;  
   doc.text(20, eje_y, 'y recargos impuestos por el Consejo Profesional de Técnicos de Neuquén.')
   // Firmas
   eje_y += 8;
-  doc.text('..............................................', 80, eje_y, 'center');
-  eje_y += 5;
-  doc.text('Firma y aclaración del solicitante', 80, eje_y, 'center');
-  eje_y += 5;
-  doc.text(20, eje_y,'Verificó originales: ');
-  eje_y += 5;
   doc.text(20, eje_y,'A ser completados únicamente por el personal del Colegio Profesional');
   eje_y += 5;
   doc.text(20, eje_y,'Número de Acta: ');
-  doc.text(90, eje_y,'Fecha de Acta: ');
+  doc.text(110, eje_y,'Fecha de Acta: ');
   eje_y += 5;
   doc.text(20, eje_y,'Matricula: ');
-  doc.text(90, eje_y,'Fecha: ');
-
-  doc.text('...................................', 180, eje_y, 'center');
+  doc.text(110, eje_y,'Fecha: ');
+  eje_y += 15;
+  doc.text(20, eje_y, '............................................................',);
+  doc.text(25, eje_y + 6, 'Firma y aclaración del solicitante');
+  doc.text(95, eje_y, '.....................................');
+  doc.text(100, eje_y + 6 ,'Verificó originales');
+  doc.text('..................................', 180, eje_y, 'center');
   doc.text('Firma del autorizante', 180, eje_y + 6, 'center');
+
 
 
   // Completado
   doc.setFont('courier');
-  doc.text(155, 35, moment(solicitud.fecha).format('DD/MM/YYYY'));
+  doc.text(155, 30, moment(solicitud.fecha).format('DD/MM/YYYY'));
 
-  eje_y = 45;
+  eje_y = 40;
 
   if (solicitud.entidad.tipo == 'profesional') {
     doc.text(65, eje_y, `${solicitud.entidad.apellido} ${solicitud.entidad.nombre}`);
