@@ -63,6 +63,10 @@ const headers = {
     Header('Apellido', 'apellido'),
     Header('Nombre', 'nombre'),
     Header('Porcentaje', 'porcentaje')
+  ],
+
+  caja_previsional: [
+    Header('Nombre', 'nombre')
   ]
 }
 

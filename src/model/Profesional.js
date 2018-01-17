@@ -29,6 +29,12 @@ export class Formacion {
   }
 }
 
+export class CajaPrevisional {
+  constructor() {
+    this.nombre = '';
+  }
+}
+
 export class Profesional extends Entidad {
   constructor() {
     super();
@@ -46,9 +52,7 @@ export class Profesional extends Entidad {
     this.independiente = false;
     this.empresa = '';
     this.serviciosPrestados = '';
-    this.poseeCajaPrevisional = false;
-    this.nombreCajaPrevisional = '';
-    this.solicitaCajaPrevisional = false;
+    this.cajas_previsionales = [];
     this.beneficiarios = [];
     this.subsidiarios = [];
     this.publicarEmail = false;

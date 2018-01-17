@@ -330,8 +330,8 @@
                   label="Item"
                   :items="items_predeterminados"
                   v-model="nuevo_item.id"
-                  item_text="descripcion"
-                  item_value="id"
+                  item-text="descripcion"
+                  item-value="id"
                   @change="chgItemPredeterminado"
                 >
                 </typeahead>
@@ -343,8 +343,8 @@
                   label="Valor"
                   :items="items_valores_predeterminados"
                   v-model="nuevo_item.valor"
-                  item_text="valor"
-                  item_value="valor"
+                  item-text="valor"
+                  item-value="valor"
                 >
                 </typeahead>
               </v-flex>

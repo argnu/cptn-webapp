@@ -12,6 +12,7 @@
       :rules="rules"
       :value="input_val"
       :disabled="disabled"
+      :maxlength="maxlength"
     >
     </v-text-field>
 
@@ -23,16 +24,15 @@
         <v-list-tile 
           :class="{ 'grey lighten-2': i == i_active }"
           v-for="(item, i) of items_filter" 
-          :key="item[item_value]"
+          :key="item[itemValue]"
           @click="setText(item)"
           @mouseover="i_active = i"
         >
           <v-list-tile-content>
-              <v-list-tile-title>{{ item[item_text] }}</v-list-tile-title>
+              <v-list-tile-title>{{ item[itemText] }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-    </div>
 
   </div>
 </template>
@@ -41,7 +41,8 @@
 export default {
   name: 'typeahead',
   props: ['value', 'label', 'items', 'tabindex', 'option',
-    'error', 'rules', 'disabled', 'item_text', 'item_value'
+    'error', 'rules', 'disabled', 'itemText', 'itemValue',
+    'maxlength'
   ],
 
   data () {
@@ -56,27 +57,27 @@ export default {
     items_filter: function() {
       if (this.items && this.value && this.show_items) {
         return this.items.filter(item =>
-          item[this.item_text].toLowerCase().includes(this.value.toLowerCase())
+          item[this.itemText].toLowerCase().includes(this.value.toLowerCase())
         );
       }
       else return [];
     },
 
     input_val: function() {
-      let item = this.items ? this.items.find(i => i[this.item_value] == this.value) : null;
-      return item ? item[this.item_text] : this.value;
+      let item = this.items ? this.items.find(i => i[this.itemValue] == this.value) : null;
+      return item ? item[this.itemText] : this.value;
     }
   },
 
   methods: {
     setText: function(item) {
       this.show_items = false;
-      this.$emit('input', item[this.item_value]);
+      this.$emit('input', item[this.itemValue]);
       this.$emit('change');
     },
 
     update: function(e) {
-      this.show_items = e.length > 0;
+      if (e) this.show_items = e.length > 0;
       if (!this.options) this.$emit('input', e);
     },
 
@@ -113,7 +114,7 @@ export default {
       setTimeout(x => {
         if (this.option) {
           if (!this.items.find(i => i.value == this.value)) {
-            this.$emit('input', '');
+            this.$emit('input', null);
           }
         }
         this.$emit('change');
