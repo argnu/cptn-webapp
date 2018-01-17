@@ -226,7 +226,7 @@
 
     <v-dialog v-model="expand_cambiar_imgs" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue">
+        <v-toolbar dark class="blue" ref="toolbar">
           <v-toolbar-title class="white--text">Cambiar Foto y/o Firma</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="expand_cambiar_imgs = false">

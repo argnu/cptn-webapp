@@ -27,6 +27,16 @@
             <div v-show="tipo_firma == 'dibujar'">
                 <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;">
                 </canvas>
+                <br>
+                    <v-btn
+                    outline
+                    color="blue-grey"
+                    dark
+                    @click.native="limpiarCanvas"
+                    >
+                        <v-icon>clear</v-icon>
+                        Limpiar
+                    </v-btn>
             </div>
         </v-flex>
     </v-layout>
@@ -116,11 +126,14 @@ export default {
         };
 
         canvas.ontouchstart = function(e) {
+                        let bounds = this.getBoundingClientRect();
+            let x = e.targetTouches[0].pageX - bounds.left;
+            let y = e.targetTouches[0].pageY - bounds.top;            
           e.preventDefault();
           pulsado = true;
-          console.log(this.scrollTop)
+          
           movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-              e.targetTouches[0].pageY - this.offsetTop - this.scrollHeight,
+              e.targetTouches[0].pageY - this.offsetTop - bounds.top + 56,
               false]);
           repinta(canvas);
         };
@@ -135,9 +148,12 @@ export default {
         };
 
         canvas.ontouchmove = function(e) {
+                        let bounds = this.getBoundingClientRect();
+            let x = e.targetTouches[0].pageX - bounds.left;
+            let y = e.targetTouches[0].pageY - bounds.top;
           if (pulsado) {
               movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-                  e.targetTouches[0].pageY - this.offsetTop - this.scrollHeight,
+                  e.targetTouches[0].pageY - this.offsetTop - bounds.top + 56,
                   true]);
             repinta(canvas);
           }
@@ -149,6 +165,10 @@ export default {
     },
 
     methods: {
+        limpiarCanvas: function() {
+            clearCanvas(this.$refs.lienzo);
+        },
+                
         reset: function() {
             clearCanvas(this.$refs.lienzo);
             this.tipo_firma = 'imagen';
@@ -207,7 +227,7 @@ export default {
                 };
                 reader.readAsDataURL(input.files[0]);
             }
-        }
+        },
     }
 
 }
