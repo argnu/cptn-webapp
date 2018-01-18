@@ -5,7 +5,8 @@ export class Contacto {
         this.valor = '';
         this.whatsapp = false;
         this.celular = {
-            prefijo: '',
+            pais: '54',
+            provincia: '299',
             numero: ''
         };
     }

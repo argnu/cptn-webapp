@@ -26,6 +26,10 @@ export default {
     return true;
   },
 
+  prefijoCelularPais: value => value && value.length ?
+      /^\d{1,3}/.test(value)
+    : true,
+
   numeroCelular: value => {
     if (!(value && value.length)) return true;
     if (value.substring(0,2) == '15') return 'Formato incorrecto. Omitir 15';
@@ -33,7 +37,7 @@ export default {
   },
 
   email: value => value && value.length ? 
-    (/(^$|^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(value) 
+    (/(^$|^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/.test(value) 
       || 'Formato incorrecto'
     ) 
     : true,

@@ -145,7 +145,7 @@ export default {
 
     addContacto: function () {
       if (this.nuevo_contacto.tipo === 2) {
-        this.nuevo_contacto.valor = this.nuevo_contacto.celular.prefijo + this.nuevo_contacto.celular.numero;
+        this.nuevo_contacto.valor = '+' + this.nuevo_contacto.celular.pais + '9' + this.nuevo_contacto.celular.provincia + this.nuevo_contacto.celular.numero;
       }
 
       if (this.$refs.form_contacto.validate()) {
