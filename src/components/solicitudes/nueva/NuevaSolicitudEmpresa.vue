@@ -625,7 +625,6 @@
 import axios from '@/axios'
 import * as moment from 'moment'
 import * as utils from '@/utils'
-import rules from '@/rules'
 import { Solicitud } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputCelular from '@/components/base/InputCelular'

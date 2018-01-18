@@ -394,6 +394,7 @@
                           label="Tipo"
                           v-model="nuevo_contacto.tipo"
                           :rules="[rules.required]"
+                          @change="chgTipoContacto"
                         >
                         </v-select>
                       </v-flex>
@@ -413,7 +414,8 @@
                       <v-flex xs8 class="mx-2" v-else>
                         <v-text-field
                           v-model="nuevo_contacto.valor"
-                          :rules="[rules.required]"
+                          :rules="rules_contacto"
+                          :placeholder="placeholder_contacto"
                         >
                         </v-text-field>
                       </v-flex>
@@ -938,9 +940,9 @@
 
 <script>
 import axios from '@/axios'
+import rules from '@/rules'
 import moment from 'moment'
 import * as utils from '@/utils'
-import rules from '@/rules'
 import {
   Solicitud,
   Formacion,
@@ -973,6 +975,8 @@ export default {
       nuevo_subsidiario: new Subsidiario(),
       nueva_caja: '',
       publicar_todos: false,
+      rules_contacto: [rules.required],
+      placeholder_contacto: '',
       valid: {
         form_solicitud: false,
         form_profesional: false
@@ -1118,6 +1122,17 @@ export default {
         else this.solicitud.entidad.id = null;
       })
       .catch(e => console.error(e));
+    },
+
+    chgTipoContacto: function(e) {
+      if (e == 3) { 
+        this.rules_contacto = [rules.required, rules.email];
+        this.placeholder_contacto = 'Ej. mweingart@argnu.org'
+      }
+      else if (e == 4) { 
+        this.rules_contacto = [rules.required, rules.url];
+        this.placeholder_contacto = 'Ej. http://www.liberascio.org';
+      }
     },
 
     getInstitucion: function(id) {

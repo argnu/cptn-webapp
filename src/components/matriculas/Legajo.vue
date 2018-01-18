@@ -589,7 +589,7 @@
     <v-btn
       class="green darken-1 white--text right"
       @click.native="submit"
-      :disabled="!valid_form"
+      :disabled="!valid_form || legajo.id > 0"
       tabindex="34"
     >
       Guardar Legajo
@@ -603,7 +603,6 @@
 <script>
 import axios from '@/axios'
 import * as moment from 'moment'
-import rules from '@/rules'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'

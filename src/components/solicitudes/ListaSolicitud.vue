@@ -250,7 +250,6 @@
 import * as moment from 'moment'
 import axios from '@/axios'
 import * as _ from 'lodash'
-import rules from '@/rules'
 import { Matricula } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
