@@ -329,7 +329,7 @@
                   tabindex="17"
                   label="Item"
                   :items="items_predeterminados"
-                  v-model="nuevo_item.id"
+                  v-model="nuevo_item.item"
                   item-text="descripcion"
                   item-value="id"
                   @change="chgItemPredeterminado"
@@ -376,14 +376,8 @@
                   </template>
                   <template slot="items" slot-scope="props">
                     <tr>
-                      <template v-if="!legajo.id">
-                        <td>{{ props.item.descripcion }}</td>
-                        <td>{{ props.item.valor }}</td>
-                      </template>
-                      <template v-if="legajo.id > 0">
-                        <td>{{ props.item.item.descripcion }}</td>
-                        <td>{{ props.item.valor }}</td>
-                      </template>
+                      <td>{{ getDescItem(props.item.item) }}</td>
+                      <td>{{ props.item.valor }}</td>
                       <td>
                         <v-btn fab small @click="removeItem(props.index)">
                           <v-icon>delete</v-icon>
@@ -643,9 +637,9 @@ const headers = {
   ]
 }
 
-const Item = () => ({
-  id: '',
-  descripcion: '',
+
+const LegajoItem = () => ({
+  item: '',
   valor: ''
 })
 
@@ -701,7 +695,7 @@ export default {
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: Item()
+      nuevo_item: LegajoItem()
     }
   },
 
@@ -799,9 +793,8 @@ export default {
 
     chgItemPredeterminado: function() {
       this.items_valores_predeterminados = [];
-      console.log(this.nuevo_item.id)
-      if (typeof this.nuevo_item.id == 'number') {
-        axios.get(`/tareas/items/${this.nuevo_item.id}/predeterminados`)
+      if (typeof this.nuevo_item.item == 'number') {
+        axios.get(`/tareas/items/${this.nuevo_item.item}/predeterminados`)
              .then(r => this.items_valores_predeterminados = r.data)
              .catch(e => console.error(e));
       }
@@ -847,16 +840,25 @@ export default {
     },
 
     addItem: function() {
-      if (typeof this.nuevo_item.id == 'number') {
-        this.nuevo_item.descripcion = this.items_predeterminados.find(i => i.id == this.nuevo_item.id).descripcion;
-      }
-      else this.nuevo_item.descripcion = this.nuevo_item.id;
+      if (typeof this.nuevo_item.item == 'string') {
+        this.nuevo_item.item = {
+          descripcion: this.nuevo_item.item 
+        }
+      };
+      
       this.legajo.items.push(this.nuevo_item);
-      this.nuevo_item = Item();
+      this.nuevo_item = LegajoItem();
     },
 
     removeItem: function(index) {
       this.legajo.items.splice(index, 1);
+    },
+
+    getDescItem: function(item) {
+      if (typeof item == 'number')
+        return this.items_predeterminados.find(i => i.id == item).descripcion;
+      else 
+        return item.descripcion;
     },
 
     submit: function() {
