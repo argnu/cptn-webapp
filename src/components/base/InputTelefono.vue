@@ -17,7 +17,7 @@
                 maxlength="5"
                 ref="prefijo"
                 :value="value.provincia"
-                :rules="rules_prefprovincia"
+                :rules="type == 'celular' ? [rules.required, rules.celular.provincia] : [rules.required, rules.telefono.provincia]"
                 @input="updatePrefijo"
             >
             </input-numero>
@@ -26,7 +26,7 @@
             <input-numero
                 ref="numero"
                 :value="value.numero"
-                :rules="[rules.required, rules.telefono.numero]"
+                :rules="type == 'celular' ? [rules.required, rules.celular.numero] : [rules.required]"
                 @input="updateNumero"
             >
             </input-numero>
@@ -44,13 +44,8 @@ export default {
     props: ['value', 'type'],
     data() {
         return {
-            rules_prefprovincia: []
-        }
-    },
-
-    watch: {
-        type: function(new_type) {
-          this.rules_prefprovincia = (new_type == 'celular') ? [rules.required, rules.celular.provincia] : [rules.required, rules.telefono.provincia];
+            rules_prefprovincia: [],
+            rules_numero: []
         }
     },
 

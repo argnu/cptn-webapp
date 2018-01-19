@@ -30,12 +30,6 @@ export default {
       if (!/^0/.test(value)) return 'Formato incorrecto. Debe comenzar con 0';
       return true;
     },
-
-    numero: value => {
-      if (!(value && value.length)) return true;
-      if (value.substring(0,2) == '15') return 'Formato incorrecto. Omitir 15';
-      return true;
-    }
   },
 
   celular: {
@@ -43,7 +37,13 @@ export default {
       if (!(value && value.length)) return true;
       if (value.substring(0, 1) == '0') return 'Formato incorrecto. Omitir 0';
       return true;
-    }
+    },
+
+    numero: value => {
+      if (!(value && value.length)) return true;
+      if (value.substring(0,2) == '15') return 'Formato incorrecto. Omitir 15';
+      return true;
+    }    
   },
 
   email: value => value && value.length ?

@@ -4,10 +4,13 @@ export class Contacto {
         this.tipo = '';
         this.valor = '';
         this.whatsapp = false;
-        this.celular = {
-            pais: '54',
-            provincia: '299',
-            numero: ''
-        };
     }
+}
+
+export class Telefono {
+    constructor(pais, provincia) {
+        this.pais = pais;
+        this.provincia = provincia;
+        this.numero = ''
+    }        
 }

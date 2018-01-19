@@ -336,16 +336,19 @@
                               bottom
                               v-model="nuevo_contacto.tipo"
                               :rules="[rules.required]"
+                              @change="chgTipoContacto"
                             >
                             </v-select>
                           </v-flex>
 
-                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo === 2">
-                            <input-telefono 
-                              v-model="nuevo_contacto.celular"
-                            ></input-telefono>
+                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
+                          <input-telefono
+                            :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
+                            v-model="nuevo_telefono"
+                          ></input-telefono>
 
                             <v-checkbox 
+                              v-show="nuevo_contacto.tipo === 2"
                               label="Whatsapp" 
                               v-model="nuevo_contacto.whatsapp" 
                               light

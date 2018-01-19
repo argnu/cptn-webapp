@@ -399,13 +399,14 @@
                         </v-select>
                       </v-flex>
 
-                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo < 3">
+                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
                         <input-telefono
-                          v-model="nuevo_contacto.celular"
-                          :type="nuevo_contacto.tipo === 2 ? 'celular' : 'fijo'"
+                          :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
+                          v-model="nuevo_telefono"
                         ></input-telefono>
 
                         <v-checkbox
+                          v-show="nuevo_contacto.tipo === 2"
                           label="Whatsapp"
                           v-model="nuevo_contacto.whatsapp"
                           light
@@ -941,8 +942,8 @@
 
 <script>
 import axios from '@/axios'
-import rules from '@/rules'
 import moment from 'moment'
+import rules from '@/rules'
 import * as utils from '@/utils'
 import {
   Solicitud,
@@ -1123,17 +1124,6 @@ export default {
         else this.solicitud.entidad.id = null;
       })
       .catch(e => console.error(e));
-    },
-
-    chgTipoContacto: function(e) {
-      if (e == 3) { 
-        this.rules_contacto = [rules.required, rules.email];
-        this.placeholder_contacto = 'Ej. mweingart@argnu.org'
-      }
-      else if (e == 4) { 
-        this.rules_contacto = [rules.required, rules.url];
-        this.placeholder_contacto = 'Ej. http://www.liberascio.org';
-      }
     },
 
     getInstitucion: function(id) {
