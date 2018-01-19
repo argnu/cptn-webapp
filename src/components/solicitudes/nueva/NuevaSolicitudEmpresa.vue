@@ -341,9 +341,9 @@
                           </v-flex>
 
                           <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo === 2">
-                            <input-celular 
+                            <input-telefono 
                               v-model="nuevo_contacto.celular"
-                            ></input-celular>
+                            ></input-telefono>
 
                             <v-checkbox 
                               label="Whatsapp" 
@@ -627,7 +627,7 @@ import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Solicitud } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
-import InputCelular from '@/components/base/InputCelular'
+import InputTelefono from '@/components/base/InputTelefono'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -863,7 +863,7 @@ export default {
   },
 
   components: {
-    InputFecha, InputCelular
+    InputFecha, InputTelefono
   }
 }
 </script>

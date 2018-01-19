@@ -399,10 +399,11 @@
                         </v-select>
                       </v-flex>
 
-                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
-                        <input-celular
+                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo < 3">
+                        <input-telefono
                           v-model="nuevo_contacto.celular"
-                        ></input-celular>
+                          :type="nuevo_contacto.tipo === 2 ? 'celular' : 'fijo'"
+                        ></input-telefono>
 
                         <v-checkbox
                           label="Whatsapp"
@@ -951,7 +952,7 @@ import {
   Header
 } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
-import InputCelular from '@/components/base/InputCelular';
+import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
@@ -1274,7 +1275,7 @@ export default {
 
   components: {
     InputFecha,
-    InputCelular,
+    InputTelefono,
     InputNumero,
     Typeahead
   }
