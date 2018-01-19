@@ -6,7 +6,7 @@
     * Búsqueda del profesional al apretar tecla `Enter` en DNI.
     * Observaciones en Domicilios para mejorar entendimiento.
     * Validadores de formato para campos de contacto: `Web` y `Email`.
-    * Nuevo Checkbox `Jubildado`.
+    * Nuevo Checkbox `Jubilado`.
     * Posibilidad de agregar una o más Cajas Previsionales.
     * Checkbox `Todos` para selección/deselección de publicación de todos   los datos.
     * Previsualización de las imágenes para la foto y la firma.
