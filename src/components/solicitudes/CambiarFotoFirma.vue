@@ -1,5 +1,5 @@
 <template>
-<v-container>
+<v-container ref="main">
     <v-layout row wrap class="mt-4">
         <v-flex md6 xs12>
             <span class="subheading blue--text text--darken-4"><b>Foto:</b></span>
@@ -25,7 +25,7 @@
             </div>
 
             <div v-show="tipo_firma == 'dibujar'">
-                <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;">
+                <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;padding:0;margin:0">
                 </canvas>
                 <br>
                     <v-btn
@@ -122,20 +122,23 @@ export default {
           movimientos.push([e.pageX - this.offsetLeft,
               e.pageY - this.offsetTop + 200,
               false]);
+
           repinta(canvas);
         };
 
-        canvas.ontouchstart = function(e) {
-                        let bounds = this.getBoundingClientRect();
-            let x = e.targetTouches[0].pageX - bounds.left;
-            let y = e.targetTouches[0].pageY - bounds.top;            
-          e.preventDefault();
-          pulsado = true;
-          
-          movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-              e.targetTouches[0].pageY - this.offsetTop - bounds.top + 56,
-              false]);
-          repinta(canvas);
+        canvas.ontouchstart = e => {
+            let rect = canvas.getBoundingClientRect(), 
+                scaleX = canvas.width / rect.width,    
+                scaleY = canvas.height / rect.height;
+
+            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,   
+                y = (e.targetTouches[0].clientY - rect.top) * scaleY;
+
+            e.preventDefault();
+            pulsado = true;
+
+            movimientos.push([x, y, false]);
+            repinta(canvas);
         };
 
         canvas.onmousemove = function(e) {
@@ -147,16 +150,18 @@ export default {
           }
         };
 
-        canvas.ontouchmove = function(e) {
-                        let bounds = this.getBoundingClientRect();
-            let x = e.targetTouches[0].pageX - bounds.left;
-            let y = e.targetTouches[0].pageY - bounds.top;
-          if (pulsado) {
-              movimientos.push([e.targetTouches[0].pageX - this.offsetLeft,
-                  e.targetTouches[0].pageY - this.offsetTop - bounds.top + 56,
-                  true]);
-            repinta(canvas);
-          }
+        canvas.ontouchmove = e => {
+            let rect = canvas.getBoundingClientRect(), 
+                scaleX = canvas.width / rect.width,    
+                scaleY = canvas.height / rect.height;
+
+            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,   
+                y = (e.targetTouches[0].clientY - rect.top) * scaleY;
+                
+            if (pulsado) {
+                movimientos.push([x, y, true]);
+                repinta(canvas);
+            }
         };
 
         canvas.onmouseup = e => pulsado = false;
@@ -168,7 +173,7 @@ export default {
         limpiarCanvas: function() {
             clearCanvas(this.$refs.lienzo);
         },
-                
+
         reset: function() {
             clearCanvas(this.$refs.lienzo);
             this.tipo_firma = 'imagen';

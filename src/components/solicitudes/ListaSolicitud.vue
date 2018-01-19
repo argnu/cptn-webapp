@@ -160,7 +160,7 @@
       <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
           <th><b>N°</b></th>
-          <th><b>Fecha</b></th>
+          <th ><b>Fecha</b></th>
           <th><b>Estado</b></th>
           <th><b>Nombre</b></th>
           <th v-for="header of props.headers" :key="header.value">
@@ -170,55 +170,55 @@
         </tr>
       </template>
       <template slot="items" slot-scope="props">
-            <td>{{ props.item.numero }}</td>
-            <td>{{ props.item.fecha | fecha }}</td>
-            <td>{{ props.item.estado | upperFirst }}</td>
-            <template v-if="filtros.tipoEntidad == 'profesional'">
-              <td>{{ props.item.entidad.nombre }}</td>
-              <td>{{ props.item.entidad.apellido }}</td>
-              <td>{{ props.item.entidad.dni }}</td>
-            </template>
-            <template v-if="filtros.tipoEntidad == 'empresa'">
-              <td>{{ props.item.entidad.nombre }}</td>
-              <td>{{ props.item.entidad.cuit }}</td>
-            </template>
-      <td>
-        <v-menu>
-          <v-btn fab dark small color="blue" slot="activator">
-            <v-icon>more_vert</v-icon>
-          </v-btn>
-          
-          <v-list>
-            <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
-              <v-list-tile-title>
-                <v-icon class="green--text text--darken-2">check_circle</v-icon>
-                <span class="ml-2">Aprobar</span>
-              </v-list-tile-title>
-            </v-list-tile>
+        <td>{{ props.item.numero }}</td>
+        <td>{{ props.item.fecha | fecha }}</td>
+        <td>{{ props.item.estado | upperFirst }}</td>
+        <template v-if="filtros.tipoEntidad == 'profesional'">
+          <td>{{ props.item.entidad.nombre }}</td>
+          <td>{{ props.item.entidad.apellido }}</td>
+          <td>{{ props.item.entidad.dni }}</td>
+        </template>
+        <template v-if="filtros.tipoEntidad == 'empresa'">
+          <td>{{ props.item.entidad.nombre }}</td>
+          <td>{{ props.item.entidad.cuit }}</td>
+        </template>
+        <td>
+          <v-menu>
+            <v-btn fab dark small color="blue" slot="activator">
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+            
+            <v-list>
+              <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
+                <v-list-tile-title>
+                  <v-icon class="green--text text--darken-2">check_circle</v-icon>
+                  <span class="ml-2">Aprobar</span>
+                </v-list-tile-title>
+              </v-list-tile>
 
-            <v-list-tile @click="imprimirSolicitud(props.item.id)">
-              <v-list-tile-title>
-                <v-icon class="text--darken-2">print</v-icon>
-                <span class="ml-2">Imprimir</span>
-              </v-list-tile-title>
-            </v-list-tile>
+              <v-list-tile @click="imprimirSolicitud(props.item.id)">
+                <v-list-tile-title>
+                  <v-icon class="text--darken-2">print</v-icon>
+                  <span class="ml-2">Imprimir</span>
+                </v-list-tile-title>
+              </v-list-tile>
 
-            <v-list-tile @click="editSolicitud(props.item.id)">
-              <v-list-tile-title>
-                <v-icon class="blue--text text--darken-2">edit</v-icon>
-                <span class="ml-2">Modificar</span>
-              </v-list-tile-title>
-            </v-list-tile>
+              <v-list-tile @click="editSolicitud(props.item.id)">
+                <v-list-tile-title>
+                  <v-icon class="blue--text text--darken-2">edit</v-icon>
+                  <span class="ml-2">Modificar</span>
+                </v-list-tile-title>
+              </v-list-tile>
 
-            <v-list-tile @click="showCambiarImgs(props.item.entidad.id)">
-              <v-list-tile-title>
-                <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
-                <span class="ml-2">Cambiar Foto y/o Firma</span>
-              </v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-      </td>
+              <v-list-tile @click="showCambiarImgs(props.item.entidad.id)">
+                <v-list-tile-title>
+                  <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
+                  <span class="ml-2">Cambiar Foto y/o Firma</span>
+                </v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
+        </td>
       </template>
     </v-data-table>
   </v-card>

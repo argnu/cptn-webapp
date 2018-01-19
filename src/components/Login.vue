@@ -3,7 +3,7 @@
     <v-toolbar dark class="primary mt-2">
     </v-toolbar>
 
-    <v-card class="">
+    <v-card>
       <v-card-text>
         <form @submit.prevent="autenticar">
           <v-layout row wrap>
