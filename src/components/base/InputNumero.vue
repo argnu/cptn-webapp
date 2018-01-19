@@ -3,6 +3,7 @@
         ref="input"
         :tabindex="tabindex"
         :prefix="prefix"
+        :suffix="suffix"
         :label="label"
         :rules="rules"
         :disabled="disabled"
@@ -15,7 +16,7 @@
 <script>
 export default {
     name: 'InputNumero',
-    props: ['label', 'disabled', 'value', 'rules', 'prefix', 'tabindex', 'decimal'],
+    props: ['label', 'disabled', 'value', 'rules', 'prefix', 'suffix', 'tabindex', 'decimal'],
     data() {
         return {
         }

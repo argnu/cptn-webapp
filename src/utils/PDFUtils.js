@@ -7,6 +7,8 @@ import {
 const img = new Image();
 img.src = "/static/logoImpresion.jpg";
 
+const emptyIfNull = x => x ? x : '';
+
 export function impresionVolante(volante) {
   const doc = new jsPDF('p', 'mm', 'a4');
   doc.addImage(img, 'JPG', 10, 10, 60, 13);
@@ -344,7 +346,6 @@ export function impresionSolicitud(solicitud) {
 
 
 
-
 export function impresionLegajo(legajo, categoria) {
   const encabezado = (str) => {
     doc.line(20, eje_y, 190, eje_y);
@@ -361,19 +362,18 @@ export function impresionLegajo(legajo, categoria) {
     doc.text(25, eje_y, `Apellido: ${comitente.persona.apellido}`);
     doc.text(100, eje_y, `Nombre: ${comitente.persona.nombre}`);
     eje_y += 5;
-    doc.text(25, eje_y, `Nombre: ${comitente.persona.nombre}`);
+    doc.text(25, eje_y, `Teléfono: ${emptyIfNull(comitente.persona.telefono)}`);
     doc.text(100, eje_y, `DNI: ${comitente.persona.dni}`);
     eje_y += 5;
-    doc.text(25, eje_y, `Teléfono: ${comitente.persona.telefono}`);
-    doc.text(25, eje_y, `Porcentaje: ${comitente.persona.porcentaje}`);
+    doc.text(25, eje_y, `Porcentaje: ${comitente.porcentaje}`);
   }
 
   const comitenteJuridico = (comitente) => {
     doc.text(25, eje_y, `Nombre: ${comitente.persona.nombre}`);
     doc.text(100, eje_y, `CUIT: ${comitente.persona.cuit}`);
     eje_y += 5;
-    doc.text(25, eje_y, `Teléfono: ${comitente.persona.telefono}`);
-    doc.text(25, eje_y, `Porcentaje: ${comitente.persona.porcentaje}`);
+    doc.text(25, eje_y, `Teléfono: ${emptyIfNull(comitente.persona.telefono)}`);
+    doc.text(100, eje_y, `Porcentaje: ${comitente.porcentaje}`);
   }
 
 
@@ -394,9 +394,10 @@ export function impresionLegajo(legajo, categoria) {
 
   encabezado('Comitentes');
 
+  console.log(legajo.comitentes)
   for (let comitente of legajo.comitentes) {
-    if (comitente.tipo == 'fisica') comitenteFisico(comitente);
-    else if (comitente.tipo == 'juridica') comitenteJuridico(comitente);
+    if (comitente.persona.tipo == 'fisica') comitenteFisico(comitente);
+    else if (comitente.persona.tipo == 'juridica') comitenteJuridico(comitente);
     eje_y += 5;
   }
 

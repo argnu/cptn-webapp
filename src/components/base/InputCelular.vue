@@ -1,10 +1,22 @@
 <template>
     <v-layout>
-        <v-flex xs4>
+        <v-flex xs2>
             <input-numero
+                prefix="+"
+                suffix="9"
+                maxlength="4"
+                ref="pref_pais"
+                :value="value.pais"
+                :rules="[rules.required, rules.prefijoCelularPais]"
+                @input="updatePrefijoPais"
+            >
+            </input-numero>
+        </v-flex>
+        <v-flex xs2 class="ml-2">
+            <input-numero
+                maxlength="5"
                 ref="prefijo"
-                prefix="+54 9"
-                :value="value.prefijo"
+                :value="value.provincia"
                 :rules="[rules.required, rules.prefijoCelular]"
                 @input="updatePrefijo"
             >
@@ -36,12 +48,16 @@ export default {
     },
 
     methods: {
+        updatePrefijoPais: function(e) {
+            this.$emit('input', { pais: e, provincia: this.value.provincia, numero: this.value.numero });
+        },
+
         updatePrefijo: function(e) {
-            this.$emit('input', { prefijo: e, numero: this.value.numero });
+            this.$emit('input', { pais: this.value.pais, provincia: e, numero: this.value.numero });
         },
 
         updateNumero: function(e) {
-            this.$emit('input', { prefijo: this.value.prefijo, numero: e });
+            this.$emit('input', { pais: this.value.pais, provincia: this.value.provincia, numero: e });
         }
     },
 

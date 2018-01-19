@@ -394,13 +394,14 @@
                           label="Tipo"
                           v-model="nuevo_contacto.tipo"
                           :rules="[rules.required]"
+                          @change="chgTipoContacto"
                         >
                         </v-select>
                       </v-flex>
 
                       <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
                         <input-celular
-                          v-model="nuevo_contacto.celular"
+                          v-model="nuevo_celular"
                         ></input-celular>
 
                         <v-checkbox
@@ -413,7 +414,8 @@
                       <v-flex xs8 class="mx-2" v-else>
                         <v-text-field
                           v-model="nuevo_contacto.valor"
-                          :rules="[rules.required]"
+                          :rules="rules_contacto"
+                          :placeholder="placeholder_contacto"
                         >
                         </v-text-field>
                       </v-flex>
@@ -607,24 +609,48 @@
                   <v-form lazy-validation ref="form_beneficiario">
 
                   <v-layout row>
-                    <v-flex xs5 class="ma-4">
-                      <v-checkbox
-                        label="Ya poseo Caja Previsional"
-                        v-model="solicitud.entidad.poseeCajaPrevisional"
-                      >
-                      </v-checkbox>
-                    </v-flex>
-
-                    <v-flex xs5>
-                      <v-text-field
+                     <v-flex xs5 class="mx-4">
+                      <typeahead
                         label="Nombre"
-                        maxlength="45"
-                        :disabled="!solicitud.entidad.poseeCajaPrevisional"
-                        v-model="solicitud.entidad.nombreCajaPrevisional"
-                      >
-                      </v-text-field>
+                        maxlength="100"
+                        :items="cajas_previsionales"
+                        item-text="nombre"
+                        item-value="id"
+                        v-model="nueva_caja"
+                        :rules="[rules.required]"
+                      ></typeahead>
+                    </v-flex>
+                     <v-flex xs3>
+                      <v-btn @click="addCaja">Agregar</v-btn>
                     </v-flex>
                   </v-layout>
+
+                    <v-data-table
+                      :headers="headers.caja_previsional"
+                      :items="solicitud.entidad.cajas_previsionales"
+                      hide-actions
+                      class="elevation-1"
+                      no-data-text="No hay cajas agregadas"
+                      style="margin-top:30px"
+                    >
+                      <template slot="headers" slot-scope="props">
+                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                              <b>{{ header.text }}</b>
+                            </th>
+                            <th></th>
+                          </template>
+                      <template slot="items" slot-scope="props">
+                            <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
+                            <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
+                            <td v-else>{{ getNombreCaja(props.item) }}</td>
+                            
+                            <td style="width:30px">
+                              <v-btn fab dark small color="blue" @click="removeElem('cajas_previsionales', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>
+                            </td>
+                          </template>
+                    </v-data-table>                  
 
                   <!-- <v-layout row>
                     <v-flex xs6 class="ma-4">
@@ -914,9 +940,9 @@
 
 <script>
 import axios from '@/axios'
+import rules from '@/rules'
 import moment from 'moment'
 import * as utils from '@/utils'
-import rules from '@/rules'
 import {
   Solicitud,
   Formacion,
@@ -927,6 +953,7 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import InputCelular from '@/components/base/InputCelular';
 import InputNumero from '@/components/base/InputNumero';
+import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -940,12 +967,16 @@ export default {
     return {
       instituciones: [],
       titulos: [],
+      cajas_previsionales: [],
       deAcuerdo: true,
       solicitud: new Solicitud('profesional'),
       nueva_formacion: new Formacion(),
       nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
+      nueva_caja: '',
       publicar_todos: false,
+      rules_contacto: [rules.required],
+      placeholder_contacto: '',
       valid: {
         form_solicitud: false,
         form_profesional: false
@@ -985,9 +1016,6 @@ export default {
     },
 
     valid_form: function() {
-      console.log('sol', this.valid.form_solicitud)
-      console.log('subs', this.valid_subsidiarios);
-      console.log('doms', this.valid_domicilios)
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
     }
@@ -999,7 +1027,8 @@ export default {
         axios.get('/opciones?sort=valor'),
         axios.get('/delegaciones'),
         axios.get('/instituciones'),
-        axios.get('/titulos')
+        axios.get('/titulos'),
+        axios.get('/cajas-previsionales')
       ])
       .then(r => {
         this.paises = r[0].data;
@@ -1007,6 +1036,7 @@ export default {
         this.delegaciones = r[2].data;
         this.instituciones = r[3].data;
         this.titulos = r[4].data;
+        this.cajas_previsionales = r[5].data;
 
         if (this.id) {
           axios.get(`/solicitudes/${this.id}`)
@@ -1073,17 +1103,7 @@ export default {
       this.solicitud.entidad.poseeCajaPrevisional = entidad.poseeCajaPrevisional;
       this.solicitud.entidad.nombreCajaPrevisional = entidad.nombreCajaPrevisional;
 
-
-      for(let beneficiario of entidad.beneficiarios) {
-        let beneficiario_nuevo = { id: beneficiario.id };
-        beneficiario_nuevo.dni = beneficiario.dni;
-        beneficiario_nuevo.apellido = beneficiario.apellido;
-        beneficiario_nuevo.nombre = beneficiario.nombre;
-        beneficiario_nuevo.vinculo = beneficiario.vinculo;
-        beneficiario_nuevo.invalidez = beneficiario.invalidez;
-        beneficiario_nuevo.fechaNacimiento = moment(beneficiario.fechaNacimiento).format('DD/MM/YYYY');
-        this.solicitud.entidad.beneficiarios.push(beneficiario_nuevo);
-      }
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
 
       for(let subsidiario of entidad.subsidiarios) {
         let subsidiario_nuevo = { id: subsidiario.id };
@@ -1120,6 +1140,10 @@ export default {
       return this.opciones.contacto.find(i => id == i.id).valor;
     },
 
+    getNombreCaja: function(id) {
+      return this.cajas_previsionales.find(i => id == i.id).nombre;
+    },
+
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
         this.solicitud.entidad.formaciones.push(this.nueva_formacion);
@@ -1141,6 +1165,18 @@ export default {
         this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
         this.nuevo_subsidiario = new Subsidiario();
         this.$refs.form_subsidiario.reset();
+      }
+    },
+
+    addCaja: function() {
+      if (this.$refs.form_beneficiario.validate()) {
+        let caja;
+        if (typeof this.nueva_caja == 'number') caja = this.nueva_caja;
+        if (typeof this.nueva_caja == 'string') caja = { nombre: this.nueva_caja };
+
+        this.solicitud.entidad.cajas_previsionales.push(caja);
+        this.nueva_caja = '';
+        this.$refs.form_beneficiario.reset();
       }
     },
 
@@ -1214,7 +1250,6 @@ export default {
     showImage: function(tipo) {
       let ref = `archivo_${tipo}`;
       let input = this.$refs[ref];
-      console.log(input, tipo)
       if (input.files && input.files[0]) {
           var reader = new FileReader();
           reader.onload = (e) => {
@@ -1229,7 +1264,8 @@ export default {
   components: {
     InputFecha,
     InputCelular,
-    InputNumero
+    InputNumero,
+    Typeahead
   }
 }
 </script>
