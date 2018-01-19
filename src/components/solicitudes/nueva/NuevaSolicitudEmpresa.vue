@@ -336,13 +336,14 @@
                               bottom
                               v-model="nuevo_contacto.tipo"
                               :rules="[rules.required]"
+                              @change="chgTipoContacto"
                             >
                             </v-select>
                           </v-flex>
 
                           <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo === 2">
                             <input-celular 
-                              v-model="nuevo_contacto.celular"
+                              v-model="nuevo_celular"
                             ></input-celular>
 
                             <v-checkbox 

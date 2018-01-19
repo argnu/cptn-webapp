@@ -401,7 +401,7 @@
 
                       <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
                         <input-celular
-                          v-model="nuevo_contacto.celular"
+                          v-model="nuevo_celular"
                         ></input-celular>
 
                         <v-checkbox
@@ -1122,17 +1122,6 @@ export default {
         else this.solicitud.entidad.id = null;
       })
       .catch(e => console.error(e));
-    },
-
-    chgTipoContacto: function(e) {
-      if (e == 3) { 
-        this.rules_contacto = [rules.required, rules.email];
-        this.placeholder_contacto = 'Ej. mweingart@argnu.org'
-      }
-      else if (e == 4) { 
-        this.rules_contacto = [rules.required, rules.url];
-        this.placeholder_contacto = 'Ej. http://www.liberascio.org';
-      }
     },
 
     getInstitucion: function(id) {

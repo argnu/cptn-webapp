@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from '@/axios'
 import * as utils from '@/utils'
 import rules from '@/rules'
-import { Contacto, Domicilio, Header } from '@/model'
+import { Contacto, Celular, Domicilio, Header } from '@/model'
 
 const EntidadDomicilio = () => ({
     tipo: 'real',
@@ -75,6 +75,7 @@ export default {
     return {
       step: 1,
       nuevo_contacto: new Contacto(),
+      nuevo_celular: new Celular(),
       nuevo_domicilio: EntidadDomicilio(),
       delegaciones: [],
       opciones: {},
@@ -143,9 +144,22 @@ export default {
       else this.localidades = [];
     },
 
+
+    chgTipoContacto: function(e) {
+      if (e == 3) { 
+        this.rules_contacto = [rules.required, rules.email];
+        this.placeholder_contacto = 'Ej. mweingart@argnu.org'
+      }
+      else if (e == 4) { 
+        this.rules_contacto = [rules.required, rules.url];
+        this.placeholder_contacto = 'Ej. http://www.liberascio.org';
+      }
+      else this.placeholder_contacto = '';
+    },    
+
     addContacto: function () {
       if (this.nuevo_contacto.tipo === 2) {
-        this.nuevo_contacto.valor = '+' + this.nuevo_contacto.celular.pais + '9' + this.nuevo_contacto.celular.provincia + this.nuevo_contacto.celular.numero;
+        this.nuevo_contacto.valor = '+' + this.nuevo_celular.pais + '9' + this.nuevo_celular.provincia + this.nuevo_celular.numero;
       }
 
       if (this.$refs.form_contacto.validate()) {
