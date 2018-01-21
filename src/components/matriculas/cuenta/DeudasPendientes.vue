@@ -142,17 +142,18 @@
 import axios from '@/axios'
 import * as moment from 'moment'
 import * as utils from '@/utils'
+import { Header } from '@/model'
 import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import { impresionVolante } from '@/utils/PDFUtils'
 
 const headers = [
-  { text: 'Fecha' },
-  { text: 'Fecha de Vencimiento' },
-  { text: 'Descripción' },
-  { text: 'Importe' },
-  { text: 'Intereses' }
+  Header('Fecha', 'fecha'),
+  Header('Fecha de Vencimiento', 'fecha_vto'),
+  Header('Descripción', 'descripcion'),
+  Header('Importe', 'importe'),
+  Header('Intereses', 'intereses')
 ]
 
 export default {
