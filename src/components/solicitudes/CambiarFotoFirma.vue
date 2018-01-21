@@ -118,9 +118,10 @@ export default {
         let canvas = this.$refs.lienzo;
 
         canvas.onmousedown = e => {
+          let rect = canvas.getBoundingClientRect();
           pulsado = true;
-          movimientos.push([e.pageX - this.offsetLeft,
-              e.pageY - this.offsetTop + 200,
+          movimientos.push([e.pageX - rect.left,
+              e.pageY - left.top,
               false]);
 
           repinta(canvas);
@@ -141,10 +142,11 @@ export default {
             repinta(canvas);
         };
 
-        canvas.onmousemove = function(e) {
+        canvas.onmousemove = e => {
           if (pulsado) {
-              movimientos.push([e.pageX - this.offsetLeft,
-                  e.pageY - this.offsetTop,
+            let rect = canvas.getBoundingClientRect();
+              movimientos.push([e.pageX - rect.left,
+                  e.pageY - rect.top,
                   true]);
             repinta(canvas);
           }

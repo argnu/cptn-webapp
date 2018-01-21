@@ -1046,6 +1046,7 @@ export default {
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.exencionArt10 = r.data.exencionArt10;
               this.solicitud.exencionArt6 = r.data.exencionArt6;
+              this.solicitud.estado = r.data.estado;
               this.fillProfesional(r.data.entidad);
           });
         }
