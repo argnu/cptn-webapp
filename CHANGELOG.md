@@ -1,5 +1,9 @@
 # UNRELEASED
 
+
+
+# 1.1.0 (2018-01-21)
+
 ## Agregado
 
 - **Nueva Solicitud**:
