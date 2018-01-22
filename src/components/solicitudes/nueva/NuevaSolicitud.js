@@ -159,12 +159,13 @@ export default {
 
     addContacto: function () {
       if (this.nuevo_contacto.tipo === 2) {
-        this.nuevo_contacto.valor = '+' + this.nuevo_celular.pais + '9' + this.nuevo_celular.provincia + this.nuevo_celular.numero;
+        this.nuevo_contacto.valor = `+${this.nuevo_celular.pais}-${this.nuevo_celular.provincia}-${this.nuevo_celular.numero}`
       }
 
       if (this.$refs.form_contacto.validate()) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         this.nuevo_contacto = new Contacto();
+        this.nuevo_celular = new Celular();
         this.$refs.form_contacto.reset();
       }
     },

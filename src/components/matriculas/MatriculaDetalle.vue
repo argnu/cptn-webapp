@@ -94,8 +94,11 @@
                     <div class="mb-3">
                       Relacion Dependencia: {{ matricula.entidad.relacionDependencia | boolean }}
                     </div>
-                    <div>
+                    <div class="mb-3">
                       Autónomo: {{ matricula.entidad.independiente | boolean }}
+                    </div>
+                    <div>
+                      Jubilado: {{ matricula.entidad.jubilado | boolean }}
                     </div>
                   </v-flex>
 
@@ -233,7 +236,7 @@
                   </th>
                 </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.tipoFormacion }}</td>
+                  <td>{{ props.item.tipo }}</td>
                   <td>{{ props.item.titulo }}</td>
                   <td>{{ props.item.institucion }}</td>
                   <td>{{ props.item.fecha | fecha }}</td>
@@ -250,38 +253,23 @@
           <v-expansion-panel-content v-model="expand.caja" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Caja Previsional</b></div>
             <v-card class="white">
-              <v-card-text >
-                <div class="mb-3">
-                  Posee Caja Previsional: {{ matricula.entidad.poseeCajaPrevisional | boolean }}
-                </div>
-                <div v-if="matricula.entidad.poseeCajaPrevisional" class="mb-3">
-                  Nombre Caja Previsional: {{ matricula.entidad.nombreCajaPrevisional }}
-                </div>
-                <div>
-                  Solicitó Caja Previsional: {{ matricula.entidad.solicitaCajaPrevisional | boolean }}
-                </div>
-
-                <!-- <v-data-table
-                  :headers="headers.Beneficiarios"
-                  :items="matricula.entidad.beneficiarios"
+              <v-card-text>
+                <v-data-table
+                  :headers="[ { text: 'Nombre', value: 'nombre', sortable: false } ]"
+                  :items="matricula.entidad.cajas_previsionales"
                   hide-actions
                   class="elevation-1 mt-4"
-                  no-data-text="No hay beneficiarios"
+                  no-data-text="No tiene cajas previsionales"
                 >
                   <template slot="headers" slot-scope="props">
-                  <th v-for="header of props.headers" :key="header.value" class="pa-3">
-                    <b>{{ header.text }}</b>
-                  </th>
-                </template>
+                      <th v-for="header of props.headers" :key="header.value" class="pa-3">
+                        <b>{{ header.text }}</b>
+                      </th>
+                  </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.nombre }}</td>
-                  <td>{{ props.item.apellido }}</td>
-                  <td>{{ props.item.dni }}</td>
-                  <td>{{ props.item.fechaNacimiento | fecha }}</td>
-                  <td>{{ props.item.vinculo }}</td>
-                  <td>{{ props.item.invalidez | boolean }}</td>
+                    <td>{{ props.item.caja.nombre }}</td>
                 </template>
-                </v-data-table> -->
+                </v-data-table>
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>

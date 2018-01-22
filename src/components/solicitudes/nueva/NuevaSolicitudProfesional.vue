@@ -182,20 +182,42 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs6 class="mx-4">
-                      Foto:
-                      <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
-                      <br><br>
-                      <img ref="img_foto" alt="" style="max-width:180px"/>
-                    </v-flex>
-
-                    <v-flex xs6>
-                      Firma:
-                      <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
-                      <br><br>
-                      <img ref="img_firma" alt="" style="max-width:180px"/>
+                    <v-flex xs12 class="mx-4">
+                      <v-card class="pa-4 elevation-1">
+                        <v-icon>photo_camera</v-icon>
+                        <b>Foto:</b>
+                        <br>
+                        <img 
+                          :src="solicitud.entidad.foto ? solicitud.entidad.foto : ''" 
+                          ref="img_foto" alt="" style="max-width:180px"
+                        />                      
+                        <br><br>
+                        <v-icon>add_a_photo</v-icon>
+                        <b>Cambiar:</b> 
+                        <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
+                      </v-card>                      
                     </v-flex>
                   </v-layout>
+
+                  <v-layout row class=" mx-4 mt-4">
+                    <v-flex xs12 class="mt-4">
+                      <v-card class="pa-4 elevation-1">
+                        <v-icon>perm_identity</v-icon>
+                        <b>Firma:</b>
+                        <br>
+                        <img 
+                          ref="img_firma" 
+                          :src="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
+                          alt="" 
+                          style="max-width:180px"
+                        />
+                        <br><br>
+                        <v-icon>person_add</v-icon>
+                        <b>Cambiar:</b> 
+                        <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
+                      </v-card>
+                    </v-flex>
+                  </v-layout> 
 
                   </v-form>
                 </v-card-text>
@@ -439,10 +461,16 @@
                               {{ header.text }}
                             </th>
                             <th></th>
+                            <th></th>
                           </template>
                       <template slot="items" slot-scope="props">
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
+                            <td>
+                              <span v-if="props.item.tipo == 2">
+                                Whatsapp: {{ props.item.whatsapp | boolean }}
+                              </span>
+                            </td>
                             <td style="width:30px">
                               <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
                                 <v-icon>delete</v-icon>
@@ -742,7 +770,10 @@
 
 
             <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
-            <v-stepper-step step="8" edit-icon="check" editable :complete="step > 8">
+            <v-stepper-step step="8" edit-icon="check" editable 
+              :complete="valid_subsidiarios && step > 8" 
+              :rules="[() => step <= 8 || valid_subsidiarios]"
+            >
               Subsidio Por Fallecimiento
             </v-stepper-step>
             <v-stepper-content step="8">
@@ -1046,6 +1077,7 @@ export default {
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.exencionArt10 = r.data.exencionArt10;
               this.solicitud.exencionArt6 = r.data.exencionArt6;
+              this.solicitud.estado = r.data.estado;
               this.fillProfesional(r.data.entidad);
           });
         }
@@ -1061,6 +1093,8 @@ export default {
 
   methods: {
     fillProfesional: function(entidad) {
+      this.solicitud.entidad.foto = entidad.foto;
+      this.solicitud.entidad.firma = entidad.firma;
       this.solicitud.entidad.publicarEmail = entidad.publicarEmail;
       this.solicitud.entidad.publicarDireccion = entidad.publicarDireccion;
       this.solicitud.entidad.publicarAcervo = entidad.publicarAcervo;
@@ -1236,7 +1270,7 @@ export default {
       if (this.step == 1) next = this.$refs.form_solicitud.validate();
       else if (this.step == 2) next = this.$refs.form_profesional.validate();
       else if (this.step == 3) next = this.valid_domicilios;
-
+      else if (this.step == 8) next = this.valid_subsidiarios;
       if (next) this.step = +this.step + 1;
     },
 

@@ -2,42 +2,61 @@
 <v-container ref="main">
     <v-layout row wrap class="mt-4">
         <v-flex md6 xs12>
-            <span class="subheading blue--text text--darken-4"><b>Foto:</b></span>
-            <br><br>
-            <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
-            <br><br>
-            <img ref="img_foto" alt="" style="max-width:180px"/>
+            <v-card class="pa-4 mx-4 elevation-1">
+                <v-icon>photo_camera</v-icon>
+                <b>Foto:</b>
+                <br>
+                <img 
+                    ref="img_foto" 
+                    :src="url_foto" 
+                    alt="" 
+                    style="max-width:180px"
+                />
+                <br><br>
+                <v-icon>add_a_photo</v-icon>
+                <b>Cambiar:</b> 
+                <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
+            </v-card>            
         </v-flex>
 
         <v-flex md6 xs12>
-            <span class="subheading blue--text text--darken-4"><b>Firma:</b></span>
-            <br><br>
+            <v-card class="pa-4 mx-4 elevation-1">
+                <v-icon>perm_identity</v-icon>
+                <b>Firma:</b>                
 
-            <v-radio-group v-model="tipo_firma" row>
-                <v-radio label="Imagen" value="imagen" ></v-radio>
-                <v-radio label="Dibujar" value="dibujar"></v-radio>
-            </v-radio-group>
+                <v-radio-group v-model="tipo_firma" row>
+                    <v-radio label="Imagen" value="imagen" ></v-radio>
+                    <v-radio label="Dibujar" value="dibujar"></v-radio>
+                </v-radio-group>
 
-            <div v-show="tipo_firma == 'imagen'">
-                <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
-                <br><br>
-                <img ref="img_firma" alt="" style="max-width:180px"/>
-            </div>
+                <div v-show="tipo_firma == 'imagen'">
+                        <img
+                            :src="url_firma"  
+                            ref="img_firma" 
+                            alt="" 
+                            style="max-width:180px"
+                        />
+                        <br><br>
+                        <v-icon>person_add</v-icon>
+                        <b>Cambiar:</b> 
+                        <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
+                </div>
 
-            <div v-show="tipo_firma == 'dibujar'">
-                <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;padding:0;margin:0">
-                </canvas>
-                <br>
-                    <v-btn
-                    outline
-                    color="blue-grey"
-                    dark
-                    @click.native="limpiarCanvas"
-                    >
-                        <v-icon>clear</v-icon>
-                        Limpiar
-                    </v-btn>
-            </div>
+                <div v-show="tipo_firma == 'dibujar'">
+                    <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;padding:0;margin:0">
+                    </canvas>
+                    <br>
+                        <v-btn
+                        outline
+                        color="blue-grey"
+                        dark
+                        @click.native="limpiarCanvas"
+                        >
+                            <v-icon>clear</v-icon>
+                            Limpiar
+                        </v-btn>
+                </div>
+            </v-card>
         </v-flex>
     </v-layout>
 
@@ -105,7 +124,7 @@ function isCanvasBlank(canvas) {
 
 export default {
     name: 'CambiarFotoFirma',
-    props: ['id'],
+    props: ['profesional'],
 
     data() {
         return {
@@ -114,13 +133,28 @@ export default {
         }
     },
 
+    computed: {
+        url_foto: function() {
+            return this.profesional.foto ? 
+                this.profesional.foto + '?' + new Date().getTime()
+            : '';
+        },
+
+        url_firma: function() {
+            return this.profesional.firma ? 
+                this.profesional.firma + '?' + new Date().getTime()
+            : '';
+        }
+    },
+
     mounted: function() {
         let canvas = this.$refs.lienzo;
 
         canvas.onmousedown = e => {
+          let rect = canvas.getBoundingClientRect();
           pulsado = true;
-          movimientos.push([e.pageX - this.offsetLeft,
-              e.pageY - this.offsetTop + 200,
+          movimientos.push([e.pageX - rect.left,
+              e.pageY - rect.top,
               false]);
 
           repinta(canvas);
@@ -141,10 +175,11 @@ export default {
             repinta(canvas);
         };
 
-        canvas.onmousemove = function(e) {
+        canvas.onmousemove = e => {
           if (pulsado) {
-              movimientos.push([e.pageX - this.offsetLeft,
-                  e.pageY - this.offsetTop,
+            let rect = canvas.getBoundingClientRect();
+              movimientos.push([e.pageX - rect.left,
+                  e.pageY - rect.top,
                   true]);
             repinta(canvas);
           }
@@ -193,18 +228,18 @@ export default {
             if (this.$refs.archivo_foto.files[0]) {
                 form_data = new FormData();
                 form_data.append('foto', this.$refs.archivo_foto.files[0]);
-                proms.push(axios.put(`/profesionales/${this.id}/foto`, form_data));
+                proms.push(axios.put(`/profesionales/${this.profesional.id}/foto`, form_data));
             }
 
             if (this.tipo_firma == 'imagen' && this.$refs.archivo_firma.files[0]) {
                 form_data = new FormData();
                 form_data.append('firma', this.$refs.archivo_firma.files[0]);
-                proms.push(axios.put(`/profesionales/${this.id}/firma`, form_data));
+                proms.push(axios.put(`/profesionales/${this.profesional.id}/firma`, form_data));
             }
             else if (this.tipo_firma == 'dibujar' && !isCanvasBlank(this.$refs.lienzo)){
                 form_data = new FormData();
                 form_data.append('firma', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()));
-                proms.push(axios.put(`/profesionales/${this.id}/firma`, form_data));
+                proms.push(axios.put(`/profesionales/${this.profesional.id}/firma`, form_data));
             }
 
             Promise.all(proms)

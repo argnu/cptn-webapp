@@ -210,7 +210,7 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="showCambiarImgs(props.item.entidad.id)">
+              <v-list-tile @click="showCambiarImgs(props.item.entidad)">
                 <v-list-tile-title>
                   <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
                   <span class="ml-2">Cambiar Foto y/o Firma</span>
@@ -229,15 +229,17 @@
         <v-toolbar dark class="blue" ref="toolbar">
           <v-toolbar-title class="white--text">Cambiar Foto y/o Firma</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon @click="expand_cambiar_imgs = false">
+          <v-btn icon @click="cerrarImgs">
             <v-icon>close</v-icon>
           </v-btn>
         </v-toolbar>
-        <cambiar-foto-firma 
-          ref="cambiar_imgs"
-          :id="profesional_selected"
-          @cerrar="cerrarImgs"
-        ></cambiar-foto-firma>        
+        <template v-if="profesional_selected">
+          <cambiar-foto-firma 
+            ref="cambiar_imgs"
+            :profesional="profesional_selected"
+            @cerrar="cerrarImgs"
+          ></cambiar-foto-firma>                  
+        </template> 
       </v-card>
     </v-dialog>  
 
@@ -438,14 +440,16 @@ export default {
       this.$router.push(`/solicitudes/${tipo}/modificar/${id}`);
     },
 
-    showCambiarImgs: function(id) {
-      this.profesional_selected = id;
+    showCambiarImgs: function(prof) {
+      this.profesional_selected = prof;
       this.expand_cambiar_imgs = true;
     },   
 
     cerrarImgs: function() {
       this.expand_cambiar_imgs = false      
       this.$refs.cambiar_imgs.reset();
+      this.profesional_selected = null;
+      this.updateSolicitudes();
     }
   },
 

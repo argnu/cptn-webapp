@@ -394,7 +394,6 @@ export function impresionLegajo(legajo, categoria) {
 
   encabezado('Comitentes');
 
-  console.log(legajo.comitentes)
   for (let comitente of legajo.comitentes) {
     if (comitente.persona.tipo == 'fisica') comitenteFisico(comitente);
     else if (comitente.persona.tipo == 'juridica') comitenteJuridico(comitente);

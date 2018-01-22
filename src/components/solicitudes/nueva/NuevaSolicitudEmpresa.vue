@@ -377,10 +377,16 @@
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
+                            <th></th>
                           </template>
                           <template slot="items" slot-scope="props">
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
+                            <td>
+                              <span v-if="props.item.tipo == 2">
+                                Whatsapp: {{ props.item.whatsapp | boolean }}
+                              </span>
+                            </td>
                             <td style="width:30px">
                               <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
                                 <v-icon>delete</v-icon>
