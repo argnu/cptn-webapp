@@ -236,7 +236,7 @@
                   </th>
                 </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.tipoFormacion }}</td>
+                  <td>{{ props.item.tipo }}</td>
                   <td>{{ props.item.titulo }}</td>
                   <td>{{ props.item.institucion }}</td>
                   <td>{{ props.item.fecha | fecha }}</td>
