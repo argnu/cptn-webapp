@@ -507,7 +507,7 @@
                         <v-layout row>
                           <v-flex xs12 class="ma-3">
                             <v-data-table
-                                :rows-per-page-items="[5, 10, 25]"
+                                :rows-per-page-items="[25,30,35]"
                                 :headers="headers.matriculados"
                                 :items="matriculados"
                                 class="elevation-1"
@@ -661,7 +661,8 @@ export default {
       totalItems: 0,
       loading: false,
       pagination: {
-         rowsPerPage: 5,
+        page: 1,
+        rowsPerPage: 25,
       },
       filtros: {
         numero: '',
@@ -675,6 +676,7 @@ export default {
   watch: {
     filtros: {
       handler () {
+        this.pagination.page = 1;
         this.updateMatriculas();
       },
       deep: true

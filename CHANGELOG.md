@@ -1,4 +1,11 @@
-# UNRELEASED
+# 1.1.1 (2018-01-22)
+
+## Modificado
+- **Nueva Solicitud Profesional**:
+    * Autcompletado en selección de Institución.
+- Paginación de tablas: modificación en la cantidad de elementos por página.
+
+# 1.1.0 (2018-01-21)
 
 ## Agregado
 
@@ -20,7 +27,7 @@
 - Funcionalidad para dibujar la firma con el mouse y/o el touchpad de un dispositivo táctil (celular, tablet).
 
 
-## Cambiado
+## Modificado
 - **Nueva Solicitud**:
     * Condición AFIP -> Condición Impositiva.
     * Cambio de títulos en pasos de formulario.

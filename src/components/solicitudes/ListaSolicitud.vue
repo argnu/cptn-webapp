@@ -10,14 +10,14 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobacion">
 
-            <v-layout> 
+            <v-layout>
               <v-flex xs12 class="mx-4">
                 <v-select
                   v-show="matricula.tipo != 'EMP'"
                   label="Tipo:"
                   :items="select_items.tipos_matricula"
                   v-model="matricula.tipo"
-                  @input="chgTipoMatricula"
+                  @change="chgTipoMatricula"
                 >
                 </v-select>
               </v-flex>
@@ -26,14 +26,14 @@
             <v-layout row class="mt-4">
               <v-flex xs6 class="mx-4">
                 N° Matrícula: {{ num_matricula_nueva }}
-              </v-flex>            
+              </v-flex>
             </v-layout>
 
             <v-layout row>
               <v-flex xs6 class="ma-4">
-                <input-fecha 
-                  v-model="matricula.fechaResolucion" 
-                  label="Fecha de Resolución" 
+                <input-fecha
+                  v-model="matricula.fechaResolucion"
+                  label="Fecha de Resolución"
                   :rules="[rules.required, rules.fecha]"
 
                 >
@@ -41,9 +41,9 @@
               </v-flex>
 
               <v-flex xs6 class="ma-4">
-                <v-text-field 
-                  v-model="matricula.numeroActa" 
-                  label="N° Acta" 
+                <v-text-field
+                  v-model="matricula.numeroActa"
+                  label="N° Acta"
                   :rules="[rules.required, rules.integer]"
                 >
                 </v-text-field>
@@ -52,9 +52,9 @@
 
             <v-layout row>
               <v-flex class="ml-4">
-                <v-checkbox 
-                  label="Generar Boleta de Inscripción" 
-                  v-model="matricula.generar_boleta" 
+                <v-checkbox
+                  label="Generar Boleta de Inscripción"
+                  v-model="matricula.generar_boleta"
                   color="primary"
                 >
                 </v-checkbox>
@@ -93,28 +93,28 @@
         <v-container class="white black--text">
           <v-layout row wrap>
             <v-flex xs12 md3 class="mx-3">
-              <v-select 
-                :items="select_items.tipo" 
-                label="Tipo de Entidad" 
-                single-line bottom 
+              <v-select
+                :items="select_items.tipo"
+                label="Tipo de Entidad"
+                single-line bottom
                 v-model="filtros.tipoEntidad"
               ></v-select>
 
-              <v-select 
-                :items="select_items.estado" 
-                label="Estado de Solicitud" 
-                single-line bottom 
+              <v-select
+                :items="select_items.estado"
+                label="Estado de Solicitud"
+                single-line bottom
                 clearable
                 v-model="filtros.estado"
-              ></v-select>             
+              ></v-select>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-3">
-              <v-text-field 
-                v-model="filtros.numero" 
-                label="N° Solicitud" 
+              <v-text-field
+                v-model="filtros.numero"
+                label="N° Solicitud"
                 @input="updateList"
-              ></v-text-field>              
+              ></v-text-field>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
                 <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
@@ -155,7 +155,7 @@
       :pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
-      :rows-per-page-items="[5, 10, 25]"
+      :rows-per-page-items="[25,30,35]"
     >
       <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
@@ -187,7 +187,7 @@
             <v-btn fab dark small color="blue" slot="activator">
               <v-icon>more_vert</v-icon>
             </v-btn>
-            
+
             <v-list>
               <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
                 <v-list-tile-title>
@@ -234,14 +234,14 @@
           </v-btn>
         </v-toolbar>
         <template v-if="profesional_selected">
-          <cambiar-foto-firma 
+          <cambiar-foto-firma
             ref="cambiar_imgs"
             :profesional="profesional_selected"
             @cerrar="cerrarImgs"
-          ></cambiar-foto-firma>                  
-        </template> 
+          ></cambiar-foto-firma>
+        </template>
       </v-card>
-    </v-dialog>  
+    </v-dialog>
 
 
 
@@ -298,7 +298,8 @@ export default {
       totalItems: 0,
       loading: false,
       pagination: {
-        rowsPerPage: 5,
+        page: 1,
+        rowsPerPage: 25,
       },
       profesional_selected: '',
 
@@ -349,6 +350,7 @@ export default {
   watch: {
     filtros: {
       handler() {
+        this.pagination.page = 1;
         this.updateSolicitudes();
       },
       deep: true
@@ -372,7 +374,10 @@ export default {
       if (this.filtros.tipoEntidad.length) {
         this.loading = true;
         this.solicitudes = [];
-        let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}`;
+        let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+        let limit = this.pagination.rowsPerPage;
+        let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
+
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
         if (this.filtros.numero.length) url += `&numero=${this.filtros.numero}`;
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
@@ -398,7 +403,7 @@ export default {
         this.show_validar = true;
         this.matricula.solicitud = solicitud.id;
       })
-      .catch(e => console.error(e));      
+      .catch(e => console.error(e));
     },
 
     chgTipoMatricula: function() {
@@ -429,7 +434,7 @@ export default {
             this.show_validar = false;
             this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
             this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;            
+            this.global_state.snackbar.show = true;
           })
           .catch(e => console.error(e));
       }
@@ -443,10 +448,10 @@ export default {
     showCambiarImgs: function(prof) {
       this.profesional_selected = prof;
       this.expand_cambiar_imgs = true;
-    },   
+    },
 
     cerrarImgs: function() {
-      this.expand_cambiar_imgs = false      
+      this.expand_cambiar_imgs = false
       this.$refs.cambiar_imgs.reset();
       this.profesional_selected = null;
       this.updateSolicitudes();

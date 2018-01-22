@@ -9,7 +9,7 @@
             :headers="headers_resumen"
             :items="boletas"
             class="elevation-1"
-            :rows-per-page-items="[5, 10, 25]"
+            :rows-per-page-items="[25,30,35]"
             no-data-text="No hay deudas pendientes"
         >
           <template slot="headers" slot-scope="props">
