@@ -11,7 +11,8 @@ while [ "$1" != "" ]; do
 done
 
 if [ "$DIR_APP" != "" ]; then
-    git checkout develop;
+    git checkout master;
+    echo "Instalando dependencias \n";
     npm install;
     npm update;
     echo "Construyendo empaquetado de aplicación \n";
