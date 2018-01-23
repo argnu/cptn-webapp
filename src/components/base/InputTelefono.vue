@@ -3,11 +3,11 @@
         <v-flex xs2>
             <input-numero
                 prefix="+"
-                suffix="9"
+                :suffix="type == 'celular' ? '9' : ''"
                 maxlength="4"
                 ref="pref_pais"
                 :value="value.pais"
-                :rules="[rules.required, rules.prefijoCelularPais]"
+                :rules="[rules.required, rules.telefono.pais]"
                 @input="updatePrefijoPais"
             >
             </input-numero>
@@ -17,7 +17,7 @@
                 maxlength="5"
                 ref="prefijo"
                 :value="value.provincia"
-                :rules="[rules.required, rules.prefijoCelular]"
+                :rules="type == 'celular' ? [rules.required, rules.celular.provincia] : [rules.required, rules.telefono.provincia]"
                 @input="updatePrefijo"
             >
             </input-numero>
@@ -26,7 +26,7 @@
             <input-numero
                 ref="numero"
                 :value="value.numero"
-                :rules="[rules.required, rules.numeroCelular]"
+                :rules="type == 'celular' ? [rules.required, rules.celular.numero] : [rules.required]"
                 @input="updateNumero"
             >
             </input-numero>
@@ -39,11 +39,13 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import InputNumero from '@/components/base/InputNumero'
 
 export default {
-    name: 'InputCelular',
+    name: 'InputTelefono',
     mixins: [ValidatorMixin],
-    props: ['value', 'whatsapp'],
+    props: ['value', 'type'],
     data() {
         return {
+            rules_prefprovincia: [],
+            rules_numero: []
         }
     },
 

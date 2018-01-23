@@ -1,5 +1,5 @@
 export { Beneficiario, Subsidiario, Formacion, Profesiona } from '@/model/Profesional';
-export { Contacto, Celular } from '@/model/Contacto';
+export { Contacto, Telefono } from '@/model/Contacto';
 export { Domicilio } from '@/model/Domicilio';
 export { Empresa } from '@/model/Empresa';
 export { Entidad } from '@/model/Entidad';

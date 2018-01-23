@@ -421,12 +421,14 @@
                         </v-select>
                       </v-flex>
 
-                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo === 2">
-                        <input-celular
-                          v-model="nuevo_celular"
-                        ></input-celular>
+                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
+                        <input-telefono
+                          :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
+                          v-model="nuevo_telefono"
+                        ></input-telefono>
 
                         <v-checkbox
+                          v-show="nuevo_contacto.tipo === 2"
                           label="Whatsapp"
                           v-model="nuevo_contacto.whatsapp"
                           light
@@ -972,8 +974,8 @@
 
 <script>
 import axios from '@/axios'
-import rules from '@/rules'
 import moment from 'moment'
+import rules from '@/rules'
 import * as utils from '@/utils'
 import {
   Solicitud,
@@ -983,7 +985,7 @@ import {
   Header
 } from '@/model';
 import InputFecha from '@/components/base/InputFecha';
-import InputCelular from '@/components/base/InputCelular';
+import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
 import Typeahead from '@/components/base/Typeahead';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
@@ -1298,7 +1300,7 @@ export default {
 
   components: {
     InputFecha,
-    InputCelular,
+    InputTelefono,
     InputNumero,
     Typeahead
   }

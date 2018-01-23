@@ -341,12 +341,14 @@
                             </v-select>
                           </v-flex>
 
-                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo === 2">
-                            <input-celular 
-                              v-model="nuevo_celular"
-                            ></input-celular>
+                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
+                          <input-telefono
+                            :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
+                            v-model="nuevo_telefono"
+                          ></input-telefono>
 
                             <v-checkbox 
+                              v-show="nuevo_contacto.tipo === 2"
                               label="Whatsapp" 
                               v-model="nuevo_contacto.whatsapp" 
                               light
@@ -634,7 +636,7 @@ import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Solicitud } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
-import InputCelular from '@/components/base/InputCelular'
+import InputTelefono from '@/components/base/InputTelefono'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -872,7 +874,7 @@ export default {
   },
 
   components: {
-    InputFecha, InputCelular
+    InputFecha, InputTelefono
   }
 }
 </script>

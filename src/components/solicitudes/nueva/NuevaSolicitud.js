@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from '@/axios'
 import * as utils from '@/utils'
 import rules from '@/rules'
-import { Contacto, Celular, Domicilio, Header } from '@/model'
+import { Contacto, Telefono, Domicilio, Header } from '@/model'
 
 const EntidadDomicilio = () => ({
     tipo: 'real',
@@ -75,7 +75,7 @@ export default {
     return {
       step: 1,
       nuevo_contacto: new Contacto(),
-      nuevo_celular: new Celular(),
+      nuevo_telefono: new Telefono(),
       nuevo_domicilio: EntidadDomicilio(),
       delegaciones: [],
       opciones: {},
@@ -158,14 +158,14 @@ export default {
     },    
 
     addContacto: function () {
-      if (this.nuevo_contacto.tipo === 2) {
-        this.nuevo_contacto.valor = `+${this.nuevo_celular.pais}-${this.nuevo_celular.provincia}-${this.nuevo_celular.numero}`
+      if (this.nuevo_contacto.tipo === 1 || this.nuevo_contacto.tipo === 2) {
+        this.nuevo_contacto.valor = `+${this.nuevo_telefono.pais}-${this.nuevo_telefono.provincia}-${this.nuevo_telefono.numero}`;
       }
 
       if (this.$refs.form_contacto.validate()) {
         this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         this.nuevo_contacto = new Contacto();
-        this.nuevo_celular = new Celular();
+        this.nuevo_telefono = new Telefono();
         this.$refs.form_contacto.reset();
       }
     },

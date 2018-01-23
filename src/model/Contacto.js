@@ -7,7 +7,7 @@ export class Contacto {
     }
 }
 
-export class Celular {
+export class Telefono {
     constructor(pais, provincia) {
         this.pais = pais;
         this.provincia = provincia;

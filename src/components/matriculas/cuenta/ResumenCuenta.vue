@@ -75,7 +75,6 @@
 import axios from '@/axios';
 import * as utils from '@/utils';
 import moment from 'moment';
-import rules from '@/rules';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
 import DialogDetalle from '@/components/matriculas/cuenta/detalles/DialogDetalle';
 import InputFecha from '@/components/base/InputFecha';
@@ -134,9 +133,9 @@ export default {
   watch: {
     filtros: {
       handler () {
-        if ( (rules.fecha(this.filtros.fecha_desde) === true
+        if ( (this.rules.fecha(this.filtros.fecha_desde) === true
                 || !this.filtros.fecha_desde.length)
-          && ( rules.fecha(this.filtros.fecha_hasta) === true
+          && ( this.rules.fecha(this.filtros.fecha_hasta) === true
             || !this.filtros.fecha_hasta.length)
           )
           this.updateBoletas();
@@ -154,12 +153,12 @@ export default {
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
 
-      if (rules.fecha(this.filtros.fecha_desde)) {
+      if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
         url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
-      if (rules.fecha(this.filtros.fecha_hasta)) {
+      if (this.rules.fecha(this.filtros.fecha_hasta)) {
         url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
