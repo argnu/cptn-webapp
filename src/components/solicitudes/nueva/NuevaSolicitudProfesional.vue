@@ -532,6 +532,7 @@
                         </input-fecha>
 
                         <v-select
+                          autocomplete
                           :items="instituciones"
                           item-text="nombre"
                           item-value="id"

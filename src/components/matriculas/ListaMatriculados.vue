@@ -73,7 +73,7 @@
       v-bind:pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
-      :rows-per-page-items="[5, 10, 25]"
+      :rows-per-page-items="[25,30,35]"
     >
       <template slot="headers" slot-scope="props">
         <tr class="blue lighten-4 text-xs-left">
@@ -148,7 +148,8 @@ export default {
       totalItems: 0,
       loading: false,
       pagination: {
-        rowsPerPage: 5,
+        page: 1,
+        rowsPerPage: 25,
       },
 
       select_items: {
@@ -235,6 +236,7 @@ export default {
   watch: {
     filtros: {
       handler() {
+        this.pagination.page = 1;
         this.updateMatriculas();
       },
       deep: true

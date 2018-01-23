@@ -14,7 +14,7 @@
               :headers="headers"
               :items="legajos"
               no-data-text=""
-              :rows-per-page-items="[5, 10, 25]"
+              :rows-per-page-items="[25,30,35]"
           >
             <template slot="headers" slot-scope="props">
               <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">

@@ -24,7 +24,7 @@
               class="elevation-1"
               no-data-text="No hay datos"
               no-results-text="No hay datos"
-              :rows-per-page-items="[5, 10, 25]"
+              :rows-per-page-items="[25,30,35]"
           >
             <template slot="headers" slot-scope="props">
               <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
