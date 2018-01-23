@@ -311,7 +311,7 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'         
-        axios.patch(`/matriculas/${id}`, { estado: 13, operador: this.id })
+        axios.patch(`/matriculas/${id}`, { estado: 13, operador: this.user.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
@@ -320,7 +320,7 @@ export default {
     deshabilitar: function(id) {
       if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
         // 35 ES ESTADO 'DesHabilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 35, operador: this.id })
+        axios.patch(`/matriculas/${id}`, { estado: 35, operador: this.user.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }

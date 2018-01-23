@@ -17,7 +17,7 @@
                   label="Tipo:"
                   :items="select_items.tipos_matricula"
                   v-model="matricula.tipo"
-                  @change="chgTipoMatricula"
+                  @input="chgTipoMatricula"
                 >
                 </v-select>
               </v-flex>
@@ -262,9 +262,9 @@ import Store from '@/Store'
 
 const select_items = {
   estado: [
-    { text: 'Pendiente', value: 'pendiente' },
-    { text: 'Aprobada', value: 'aprobada' },
-    { text: 'Rechazada', value: 'rechazada' }
+    { text: 'Pendiente', value: 'Pendiente' },
+    { text: 'Aprobada', value: 'Aprobada' },
+    { text: 'Rechazada', value: 'Rechazada' }
   ],
   tipo: [
     { text: 'Profesionales', value: 'profesional' },
