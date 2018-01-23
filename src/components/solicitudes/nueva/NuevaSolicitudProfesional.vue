@@ -26,7 +26,7 @@
                           v-model="solicitud.fecha"
                           label="Fecha de Solicitud"
                           :rules="[rules.required, rules.fecha]"
-                          :disabled="solicitud.estado && solicitud.estado != 'pendiente'"
+                          :disabled="solicitud.estado && solicitud.estado != 'Pendiente'"
                         >
                         </input-fecha>
                       </v-flex>
@@ -41,7 +41,7 @@
                           v-model="solicitud.delegacion"
                           label="Delegación"
                           :rules="[rules.required]"
-                          :disabled="solicitud.estado && solicitud.estado != 'pendiente'"
+                          :disabled="solicitud.estado && solicitud.estado != 'Pendiente'"
                         >
                         </v-select>
                       </v-flex>
@@ -1155,6 +1155,7 @@ export default {
     chgDni: function() {
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
+        console.log(r.data)
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
       })

@@ -7,6 +7,6 @@ export { Solicitud } from '@/model/Solicitud';
 export { Matricula } from '@/model/Matricula';
 export { Comitente, Persona, PersonaJuridica, PersonaFisica } from '@/model/Persona';
 
-export const Header = (text, value, sortable) => ({
-    text, value, sortable: sortable ? sortable : false
+export const Header = (text, value, sortable, align) => ({
+    text, value, sortable: sortable ? sortable : false, align: align ? align : 'left'
 })

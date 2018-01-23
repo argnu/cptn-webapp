@@ -157,18 +157,6 @@
       :loading="loading"
       :rows-per-page-items="[25,30,35]"
     >
-      <template slot="headers" slot-scope="props">
-        <tr class="blue lighten-4 text-xs-left">
-          <th><b>N°</b></th>
-          <th ><b>Fecha</b></th>
-          <th><b>Estado</b></th>
-          <th><b>Nombre</b></th>
-          <th v-for="header of props.headers" :key="header.value">
-            <b>{{ header.text }}</b>
-          </th>
-          <th><b>Acciones</b></th>
-        </tr>
-      </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.item.numero }}</td>
         <td>{{ props.item.fecha | fecha }}</td>
@@ -252,7 +240,7 @@
 import * as moment from 'moment'
 import axios from '@/axios'
 import * as _ from 'lodash'
-import { Matricula } from '@/model'
+import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 import InputFecha from '@/components/base/InputFecha'
@@ -279,11 +267,22 @@ const select_items = {
 
 const headers = {
   empresa: [
-    { text: 'CUIT', value: 'cuit' },
+    Header('N°', 'numero', true),
+    Header('Fecha', 'fecha', true),
+    Header('Estado', 'estado', true),
+    Header('Nombre', 'nombreEmpresa', true),
+    Header('CUIT', 'cuit', true),
+    Header('', 'acciones')
   ],
+
   profesional: [
-    { text: 'Apellido', value: 'apellido' },
-    { text: 'DNI', value: 'dni' },
+    Header('N°', 'numero', true),
+    Header('Fecha', 'fecha', true),
+    Header('Estado', 'estado', true),
+    Header('Apellido', 'apellido', true),
+    Header('Nombre', 'nombre', true),
+    Header('DNI', 'dni', true),
+    Header('', 'acciones')
   ]
 }
 
@@ -300,7 +299,7 @@ export default {
       loading: false,
       pagination: {
         page: 1,
-        rowsPerPage: 25,
+        rowsPerPage: 25
       },
       profesional_selected: '',
 
@@ -385,6 +384,8 @@ export default {
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        
+        if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
         axios.get(url)
           .then(r => {

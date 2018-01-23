@@ -65,7 +65,7 @@
   <br>
 
     <v-data-table
-      :headers="columnas[filtros.tipoEntidad]"
+      :headers="headers[filtros.tipoEntidad]"
       :items="matriculas"
       class="elevation-1"
       no-data-text="No se encontraron matriculados"
@@ -75,15 +75,7 @@
       :loading="loading"
       :rows-per-page-items="[25,30,35]"
     >
-      <template slot="headers" slot-scope="props">
-        <tr class="blue lighten-4 text-xs-left">
-          <th></th>
-          <th v-for="header of props.headers" :key="header.value" class="pa-3">
-            <b>{{ header.text }}</b>
-          </th>
-          <th></th>
-        </tr>
-      </template>
+
       <template slot="items" slot-scope="props">
         <td>
           <v-btn fab small dark color="blue" slot="activator" @click="verMatricula(props.item.id)">
@@ -92,15 +84,15 @@
         </td>
         <td>{{ props.item.numeroMatricula }}</td>
         <td>{{ props.item.estado }}</td>
-                <template v-if="filtros.tipoEntidad == 'profesional'">
-                  <td>{{ props.item.entidad.nombre }}</td>
-                  <td>{{ props.item.entidad.apellido }}</td>
-                  <td>{{ props.item.entidad.dni }}</td>
-                </template>
-                <template v-if="filtros.tipoEntidad == 'empresa'">
-                  <td>{{ props.item.entidad.nombre }}</td>
-                  <td>{{ props.item.entidad.cuit }}</td>
-                </template>
+          <template v-if="filtros.tipoEntidad == 'profesional'">
+            <td>{{ props.item.entidad.nombre }}</td>
+            <td>{{ props.item.entidad.apellido }}</td>
+            <td>{{ props.item.entidad.dni }}</td>
+          </template>
+          <template v-if="filtros.tipoEntidad == 'empresa'">
+            <td>{{ props.item.entidad.nombre }}</td>
+            <td>{{ props.item.entidad.cuit }}</td>
+          </template>
         <td>
           <v-menu>
             <v-btn icon slot="activator">
@@ -113,16 +105,7 @@
               >
                 <v-icon class="green--text mr-2">check_circle</v-icon>
                 <v-list-tile-title>Habilitar</v-list-tile-title>
-              </v-list-tile>
-
-              <!-- <v-list-tile 
-                v-if="props.item.estado == 'Habilitado'" 
-                @click="deshabilitar(props.item.id)"
-              >
-                <v-icon class="red--text mr-2">thumb_down</v-icon>
-                <v-list-tile-title>Deshabilitar por Res.</v-list-tile-title>
-              </v-list-tile> -->
-              
+              </v-list-tile>             
             </v-list>
           </v-menu>
         </td>
@@ -138,8 +121,31 @@ import axios from '@/axios';
 import * as _ from 'lodash';
 import InputFecha from '@/components/base/InputFecha';
 import {
-  Matricula
+  Matricula,
+  Header
 } from '@/model';
+
+const headers = {
+  emrpesa: [
+    Header('', 'ver'),
+    Header('N° Matrícula', 'numeroMatricula', true),
+    Header('Estado', 'estado', true),
+    Header('Nombre', 'nombreEmpresa', true),
+    Header('CUIT', 'cuit', true),
+    Header('', 'acciones')
+  ],
+
+  profesional: [
+    Header('', 'ver'),
+    Header('N° Matrícula', 'numeroMatricula', true),
+    Header('Estado', 'estado', true),
+    Header('Nombre', 'nombre', true),
+    Header('Apellido', 'apellido', true),
+    Header('DNI', 'dni', true),
+    Header('', 'acciones')
+  ]
+}
+
 
 export default {
   name: 'lista-solicitud',
@@ -150,6 +156,8 @@ export default {
       pagination: {
         page: 1,
         rowsPerPage: 25,
+        sortBy: 'fat',
+        descending: true
       },
 
       select_items: {
@@ -183,51 +191,6 @@ export default {
         }
       },
 
-      columnas: {
-        empresa: [{
-            text: 'N° Matrícula',
-            value: 'numeroMatricula'
-          },
-          {
-            text: 'Estado',
-            value: 'estado'
-          },
-          {
-            text: 'Nombre',
-            value: 'nombre'
-          },
-          {
-            text: 'CUIT',
-            value: 'cuit'
-          },
-          {
-            text: 'Acciones',
-            value: 'acciones'
-          }
-        ],
-        profesional: [{
-            text: 'N° Matrícula',
-            value: 'numeroMatricula'
-          },
-          {
-            text: 'Estado',
-            value: 'estado'
-          },
-          {
-            text: 'Nombre',
-            value: 'nombre'
-          },
-          {
-            text: 'Apellido',
-            value: 'apellido'
-          },
-          {
-            text: 'DNI',
-            value: 'dni'
-          }
-        ]
-      },
-
       matriculas: [],
       debouncedUpdate: null
     }
@@ -247,6 +210,13 @@ export default {
         this.updateMatriculas();
       },
       deep: true
+    }
+  },
+
+
+  computed: {
+    headers: function() {
+      return headers;
     }
   },
 
@@ -281,6 +251,8 @@ export default {
         if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+
+        if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
         axios.get(url)
           .then(r => {
