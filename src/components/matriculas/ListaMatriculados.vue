@@ -116,14 +116,13 @@
 </template>
 
 <script>
-import * as utils from '@/utils';
-import axios from '@/axios';
-import * as _ from 'lodash';
-import InputFecha from '@/components/base/InputFecha';
-import {
-  Matricula,
-  Header
-} from '@/model';
+import * as utils from '@/utils'
+import axios from '@/axios'
+import * as _ from 'lodash'
+import InputFecha from '@/components/base/InputFecha'
+import { Matricula, Header} from '@/model'
+import ListaStore from '@/stores/listados/Matriculas'
+
 
 const headers = {
   emrpesa: [
@@ -149,16 +148,13 @@ const headers = {
 
 export default {
   name: 'lista-solicitud',
+
   data() {
     return {
+      pagination: ListaStore.state.pagination,
+      filtros: ListaStore.state.filtros,
       totalItems: 0,
       loading: false,
-      pagination: {
-        page: 1,
-        rowsPerPage: 25,
-        sortBy: 'fat',
-        descending: true
-      },
 
       select_items: {
         tipo: [{
@@ -178,23 +174,10 @@ export default {
         filtros: true
       },
 
-      filtros: {
-        tipoEntidad: 'profesional',
-        estado: 'Habilitado',
-        numero: '',
-        profesional: {
-          dni: '',
-          apellido: ''
-        },
-        empresa: {
-          nombre: ''
-        }
-      },
-
       matriculas: [],
       debouncedUpdate: null
     }
-  },
+  }, 
 
   watch: {
     filtros: {

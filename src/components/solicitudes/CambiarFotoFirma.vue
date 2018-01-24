@@ -84,7 +84,7 @@
 <script>
 import axios from '@/axios'
 import * as utils from '@/utils'
-import Store from '@/Store'
+import Store from '@/stores/Global'
 
 let pulsado = false;
 let movimientos = [];

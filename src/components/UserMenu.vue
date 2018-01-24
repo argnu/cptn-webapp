@@ -35,7 +35,7 @@
 
 <script>
 import * as Cookies from 'js-cookie';
-import Store from '@/Store'
+import Store from '@/stores/Global'
 
 export default {
   name: 'UserMenu',
