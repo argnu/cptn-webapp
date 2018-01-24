@@ -1,13 +1,15 @@
+# UNRELEASED
+
+## Agregado
+
+- **Aprobar Matrícula**: nuevo tipo de matrícula posible, `IDO`.
+- Posibilidad de ordenar datos por columna en `ListaSolicitud` y `ListaMatriculas`.
+
 # 1.1.1 (2018-01-22)
 
 ## Modificado
-- **Nueva Solicitud Profesional**:
-    * Autcompletado en selección de Institución.
+- **Nueva Solicitud Profesional**: autcompletado en selección de Institución.
 - Paginación de tablas: modificación en la cantidad de elementos por página.
-
-# 1.1.0 (2018-01-21)
-
-
 
 # 1.1.0 (2018-01-21)
 
