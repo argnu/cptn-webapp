@@ -16,7 +16,49 @@
 <script>
 export default {
     name: 'InputNumero',
-    props: ['label', 'disabled', 'value', 'rules', 'prefix', 'suffix', 'tabindex', 'decimal'],
+    props: {
+      label: {
+          type: String,
+          default: ''
+      },
+
+      disabled: {
+          type: Boolean,
+          default: false
+      },
+
+      value: {
+          type: Number,
+          required: true
+      },
+
+      rules: {
+          type: Array,
+          default () {
+            return [];
+          }
+      },
+
+      suffix: {
+          type: String,
+          default: ''
+      },
+
+      prefix: {
+          type: String,
+          default: ''
+      },
+
+      tabindex: {
+          type: String
+      },
+
+      decimal: {
+          type: Boolean,
+          default: false
+      }
+    },
+    
     data() {
         return {
         }

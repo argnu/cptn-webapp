@@ -64,6 +64,7 @@
             <v-stepper-content step="2">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
+
                   <v-form ref="form_profesional" v-model="valid.form_profesional">
 
                   <v-layout row>
@@ -182,40 +183,22 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs12 class="mx-4">
-                      <v-card class="pa-4 elevation-1">
-                        <v-icon>photo_camera</v-icon>
-                        <b>Foto:</b>
-                        <br>
-                        <img 
-                          :src="solicitud.entidad.foto ? solicitud.entidad.foto : ''" 
-                          ref="img_foto" alt="" style="max-width:180px"
-                        />                      
-                        <br><br>
-                        <v-icon>add_a_photo</v-icon>
-                        <b>Cambiar:</b> 
-                        <input type="file" ref="archivo_foto" name="foto" id="foto" @change="showImage('foto')">
-                      </v-card>                      
+                    <v-flex xs12 class="mx-4">                         
+                      <add-foto
+                          edit
+                          :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
+                          @change="chgFoto"
+                      ></add-foto>                                      
                     </v-flex>
                   </v-layout>
 
-                  <v-layout row class=" mx-4 mt-4">
+                  <v-layout row class="mx-4 mt-4">
                     <v-flex xs12 class="mt-4">
-                      <v-card class="pa-4 elevation-1">
-                        <v-icon>perm_identity</v-icon>
-                        <b>Firma:</b>
-                        <br>
-                        <img 
-                          ref="img_firma" 
-                          :src="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
-                          alt="" 
-                          style="max-width:180px"
-                        />
-                        <br><br>
-                        <v-icon>person_add</v-icon>
-                        <b>Cambiar:</b> 
-                        <input type="file" ref="archivo_firma" name="firma" id="firma" @change="showImage('firma')">
-                      </v-card>
+                      <add-firma
+                        edit
+                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
+                        @change="chgFirma"            
+                      ></add-firma>                      
                     </v-flex>
                   </v-layout> 
 
@@ -813,8 +796,8 @@
 
                           <input-numero
                             label="Porcentaje"
-                            :decimal="true"
-                            v-model="nuevo_subsidiario.porcentaje"
+                            decimal
+                            v-model.number="nuevo_subsidiario.porcentaje"
                             :rules="[rules.required]"
                           >
                           </input-numero>
@@ -988,6 +971,8 @@ import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
 import Typeahead from '@/components/base/Typeahead';
+import AddFoto from '@/components/solicitudes/AddFoto';
+import AddFirma from '@/components/solicitudes/AddFirma';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import { impresionSolicitud } from '@/utils/PDFUtils'
@@ -1014,7 +999,9 @@ export default {
       valid: {
         form_solicitud: false,
         form_profesional: false
-      }
+      },
+      foto: null,
+      firma: null
     }
   },
 
@@ -1220,10 +1207,10 @@ export default {
 
     makeFormData: function() {
       let form_data = new FormData();
-      if (this.$refs.archivo_foto.files[0])
-        form_data.append('foto', this.$refs.archivo_foto.files[0]);
-      if (this.$refs.archivo_firma.files[0])
-        form_data.append('firma', this.$refs.archivo_firma.files[0]);
+      if (this.foto)
+        form_data.append('foto', this.foto);
+      if (this.firma)
+        form_data.append('firma', this.firma);
       form_data.append('solicitud', JSON.stringify(this.solicitud));
       return form_data;
     },
@@ -1285,25 +1272,22 @@ export default {
       this.solicitud.entidad.publicarCelular = this.publicar_todos
     },
 
-    showImage: function(tipo) {
-      let ref = `archivo_${tipo}`;
-      let input = this.$refs[ref];
-      if (input.files && input.files[0]) {
-          var reader = new FileReader();
-          reader.onload = (e) => {
-            let ref = `img_${tipo}`;
-            this.$refs[ref].setAttribute('src', e.target.result);
-          };
-          reader.readAsDataURL(input.files[0]);
-      }
-    }
+    chgFoto: function(foto) {
+        this.foto = foto;
+    },
+
+    chgFirma: function(firma) {
+        this.firma = firma;
+    },
   },
 
   components: {
     InputFecha,
     InputTelefono,
     InputNumero,
-    Typeahead
+    Typeahead,
+    AddFoto,
+    AddFirma
   }
 }
 </script>

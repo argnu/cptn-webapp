@@ -78,6 +78,7 @@ import moment from 'moment';
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
 import DialogDetalle from '@/components/matriculas/cuenta/detalles/DialogDetalle';
 import InputFecha from '@/components/base/InputFecha';
+import ValidatorMixin from '@/components/mixins/ValidatorMixin';
 
 const headers = [
   { text: 'Fecha' },
@@ -94,6 +95,8 @@ const orderByFecha = function(a, b) {
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
+  mixins: [ValidatorMixin],
+
   data () {
     return {
       resumen: [],

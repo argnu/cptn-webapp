@@ -103,8 +103,8 @@
 
                     <input-numero
                       label="Porcentaje"
-                      :decimal="true"
-                      v-model="nuevo_comitente.porcentaje"
+                      decimal
+                      v-model.number="nuevo_comitente.porcentaje"
                       :rules="[rules.required]"
                     ></input-numero>
                 </v-flex>
@@ -436,7 +436,7 @@
                   label="Honorarios Presupuestados"
                   v-model="legajo.honorarios_presupuestados"
                   :disabled="legajo.id > 0"
-                  :decimal="true"
+                  decimal
                 ></input-numero>                
               </v-flex>
 
@@ -471,7 +471,7 @@
                     label="Honorarios Reales"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
-                    :decimal="true"
+                    decimal
                   ></input-numero>
 
                   <v-checkbox
@@ -507,7 +507,7 @@
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
                     :disabled="legajo.id > 0"
-                    :decimal="true"
+                    decimal
                   ></input-numero>
                 </v-flex>
               </v-layout>
@@ -531,7 +531,7 @@
                   <input-numero
                     tabindex="29"
                     label="Aporte Neto"
-                    :decimal="true"
+                    decimal
                     v-model="legajo.aporte_neto"
                     :disabled="legajo.id > 0"
                     :rules="[rules.required]"
@@ -549,7 +549,7 @@
                   <input-numero
                     tabindex="30"
                     label="Aporte Bruto"
-                    :decimal="true"
+                    decimal
                     v-model="legajo.aporte_bruto"
                     :disabled="legajo.id > 0"
                   ></input-numero>
@@ -559,7 +559,7 @@
                   <input-numero
                     tabindex="31"
                     label="Aporte Neto Bonificación"
-                    :decimal="true"
+                    decimal
                     v-model="legajo.aporte_neto_bonificacion"
                     :disabled="legajo.id > 0"
                   ></input-numero>
@@ -647,24 +647,24 @@ const LegajoItem = () => ({
 const Legajo = (matricula) => ({
   matricula,
   comitentes: [],
-  aporte_bruto: null,
-  aporte_neto: null,
-  aporte_neto_bonificacion: null,
-  cantidad_planos: null,
+  aporte_bruto: 0,
+  aporte_neto: 0,
+  aporte_neto_bonificacion: 0,
+  cantidad_planos: 0,
   domicilio: new Domicilio(),
   delegacion: null,
   dependencia: false,
   fecha_solicitud: moment().format('DD/MM/YYYY'),
-  finalizacion_tarea: null,
+  finalizacion_tarea: '',
   forma_pago: '',
-  honorarios_presupuestados: null,
-  honorarios_reales: null,
+  honorarios_presupuestados: 0,
+  honorarios_reales: 0,
   informacion_adicional: '',
   items: [],
   nomenclatura: '',
   observaciones: '',
-  plazo_cumplimiento: null,
-  porcentaje_cumplimiento: null,
+  plazo_cumplimiento: '',
+  porcentaje_cumplimiento: 0,
   subcategoria: '',
   tarea_publica: false,
   tipo: 1

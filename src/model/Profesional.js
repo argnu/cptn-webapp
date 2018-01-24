@@ -16,7 +16,7 @@ export class Subsidiario {
     this.dni = '';
     this.apellido = '';
     this.nombre = '';
-    this.porcentaje = '';
+    this.porcentaje = 0;
   }
 }
 
