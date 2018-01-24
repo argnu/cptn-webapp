@@ -40,10 +40,61 @@
 <script>
 export default {
   name: 'typeahead',
-  props: ['value', 'label', 'items', 'tabindex', 'option',
-    'error', 'rules', 'disabled', 'itemText', 'itemValue',
-    'maxlength'
+  props: ['items',     'maxlength'
   ],
+  props: {
+    label: {
+        type: String,
+        default: ''
+    },
+
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+
+    value: {
+        type: String,
+        required: true
+    },
+
+    option: {
+        type: Boolean,
+        default: false
+    },    
+
+    rules: {
+        type: Array,
+        default () {
+          return [];
+        }
+    },
+
+    itemText: {
+        type: String,
+        default: 'text'
+    },
+
+    itemValue: {
+        type: String,
+        default: 'value'
+    },
+
+    tabindex: {
+        type: String
+    },
+
+    maxlength: {
+        type: String
+    },
+
+    items: {
+        type: Array,
+        default () {
+          return [];
+        }
+    }
+  },  
 
   data () {
     return {

@@ -26,7 +26,7 @@ export class PersonaFisica extends Persona {
 
 export class Comitente {
     constructor(tipo) {
-        this.porcentaje = '';
+        this.porcentaje = 0;
         this.id = null;        
         if (tipo == 'fisica') 
             this.persona = new PersonaFisica();

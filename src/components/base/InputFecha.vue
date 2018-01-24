@@ -26,7 +26,34 @@ import * as moment from 'moment'
 
 export default {
   name: 'input-fecha',
-  props: ['value', 'label', 'rules', 'tabindex', 'disabled'],
+  props: {
+    label: {
+        type: String,
+        default: ''
+    },
+
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+
+    value: {
+        type: String,
+        required: true
+    },
+
+    rules: {
+        type: Array,
+        default () {
+          return [];
+        }
+    },
+    
+    tabindex: {
+        type: String
+    },
+  },
+
   data () {
     return {
       datepicker: null,

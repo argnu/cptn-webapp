@@ -40,7 +40,7 @@
                   <input-numero
                     label="Importe"
                     prefix="$"
-                    :decimal="true"
+                    decimal
                     v-model="nueva_forma_pago.importe"
                     :rules="[rules.required]"
                   ></input-numero>
@@ -50,7 +50,7 @@
             </v-form>
           </v-flex>
 
-          <v-flex xs4 v-show="esCheque" class="mt-4">
+          <v-flex xs4 v-if="esCheque" class="mt-4">
             <v-form lazy-validation ref="form_cheque" v-model="valid.form_cheque">
               <v-layout row wrap>
                 <v-flex xs5>
@@ -179,7 +179,7 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 class ComprobantePago {
   constructor(forma_pago) {
     this.forma_pago = forma_pago;
-    this.importe = '';
+    this.importe = 0;
   }
 }
 
