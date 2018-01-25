@@ -2,10 +2,10 @@
 
 ## Agregado
 
+- **Nuevo Profesional**: posibilidad de firmar con canvas.
 - **Aprobar Matrícula**: nuevo tipo de matrícula posible, `IDO`.
 - Posibilidad de ordenar datos por columna en `ListaSolicitud` y `ListaMatriculas`.
-- **Nuevo Profesional**: posibilidad de firmar con canvas.
-
+- Guardo el estado de los filtros y paginación cuando cambio de ruta en `ListaSolicitud` y `ListaMatriculas`.
 
 # 1.1.1 (2018-01-22)
 

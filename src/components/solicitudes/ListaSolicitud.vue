@@ -246,7 +246,8 @@ import { impresionSolicitud } from '@/utils/PDFUtils'
 import InputFecha from '@/components/base/InputFecha'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
-import Store from '@/Store'
+import Store from '@/stores/Global'
+import ListaStore from '@/stores/listados/Matriculas'
 
 const select_items = {
   estado: [
@@ -297,32 +298,14 @@ export default {
       num_matricula_nueva: null,
       totalItems: 0,
       loading: false,
-      pagination: {
-        page: 1,
-        rowsPerPage: 25
-      },
+      pagination: ListaStore.state.pagination,
+      filtros: ListaStore.state.filtros,
       profesional_selected: '',
-
       expand: {
         filtros: true
       },
       expand_cambiar_imgs: false,
-
       solicitudes: [],
-
-      filtros: {
-        estado: null,
-        tipoEntidad: 'profesional',
-        numero: '',
-        profesional: {
-          dni: '',
-          apellido: ''
-        },
-        empresa: {
-          nombre: ''
-        }
-      },
-
       debouncedUpdate: null,
       submitValidacion: false,
     }

@@ -9,7 +9,7 @@ import * as moment from 'moment'
 import * as Cookies from 'js-cookie'
 import * as utils from '@/utils'
 import { getTipoLegajo } from '@/utils/legajo'
-import Store from '@/Store'
+import Store from '@/stores/Global'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false

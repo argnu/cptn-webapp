@@ -43,9 +43,10 @@
 
 <script>
 import axios from '@/axios'
-import Store from '@/Store'
+import Store from '@/stores/Global'
 import AddFoto from '@/components/solicitudes/AddFoto'
 import AddFirma from '@/components/solicitudes/AddFirma'
+
 
 export default {
     name: 'CambiarFotoFirma',
