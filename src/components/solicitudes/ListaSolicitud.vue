@@ -111,33 +111,59 @@
 
             <v-flex xs12 md3 class="mx-3">
               <v-text-field
+                clearable
                 v-model="filtros.numero"
                 label="N° Solicitud"
                 @input="updateList"
               ></v-text-field>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.profesional.dni" 
+                  label="DNI" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field v-model="filtros.empresa.cuit" label="CUIT" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.empresa.cuit" 
+                  label="CUIT" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-3">
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field v-model="filtros.profesional.apellido" label="Apellido" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.profesional.apellido" 
+                  label="Apellido" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
+
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field v-model="filtros.empresa.nombre" label="Nombre" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.empresa.nombre" 
+                  label="Nombre" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
             </v-flex>
           </v-layout>
+
+          <v-layout row wrap>
+            <v-flex xs12>
+              <v-btn                
+                @click="limpiarFiltros"
+              >Limpiar Filtros</v-btn>              
+            </v-flex>            
+          </v-layout>          
         </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -177,10 +203,17 @@
             </v-btn>
 
             <v-list>
-              <v-list-tile v-show="props.item.estado != 'aprobada'" @click="selectSolicitud(props.item)">
+              <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="selectSolicitud(props.item)">
                 <v-list-tile-title>
                   <v-icon class="green--text text--darken-2">check_circle</v-icon>
                   <span class="ml-2">Aprobar</span>
+                </v-list-tile-title>
+              </v-list-tile>
+
+              <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="rechazar(props.item.id)">
+                <v-list-tile-title>
+                  <v-icon class="red--text text--darken-2">thumb_down</v-icon>
+                  <span class="ml-2">Rechazar</span>
                 </v-list-tile-title>
               </v-list-tile>
 
@@ -191,14 +224,14 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="editSolicitud(props.item.id)">
+              <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
                   <v-icon class="blue--text text--darken-2">edit</v-icon>
                   <span class="ml-2">Modificar</span>
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="showCambiarImgs(props.item.entidad)">
+              <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="showCambiarImgs(props.item.entidad)">
                 <v-list-tile-title>
                   <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
                   <span class="ml-2">Cambiar Foto y/o Firma</span>
@@ -247,7 +280,7 @@ import InputFecha from '@/components/base/InputFecha'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/stores/Global'
-import ListaStore from '@/stores/listados/Matriculas'
+import ListaStore from '@/stores/listados/Solicitudes'
 
 const select_items = {
   estado: [
@@ -348,6 +381,9 @@ export default {
   },
 
   methods: {
+    limpiarFiltros: function() {
+      ListaStore.limpiarFiltros();
+    },
 
     updateList: function() {
       this.debouncedUpdate();
@@ -362,7 +398,7 @@ export default {
         let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.numero.length) url += `&numero=${this.filtros.numero}`;
+        if (this.filtros.numero && this.filtros.numero.length) url += `&numero=${this.filtros.numero}`;
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
@@ -440,7 +476,21 @@ export default {
       this.$refs.cambiar_imgs.reset();
       this.profesional_selected = null;
       this.updateSolicitudes();
-    }
+    },
+
+    rechazar: function(id) {
+      if (confirm('Esta segura/o que desea Rechazar la Solicitud de Matriculación seleccionada?')) {
+        // 3 ES ESTADO 'Rechazada'
+        axios.patch(`/solicitudes/${id}`, { estado: 3, updated_by: this.user.id })
+        .then(r => {
+            this.updateSolicitudes();
+            this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;          
+        })
+        .catch(e => console.error(e));
+      }
+    }    
   },
 
   components: {

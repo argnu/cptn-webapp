@@ -4,8 +4,16 @@
 
 - **Nuevo Profesional**: posibilidad de firmar con canvas.
 - **Aprobar Matrícula**: nuevo tipo de matrícula posible, `IDO`.
-- Posibilidad de ordenar datos por columna en `ListaSolicitud` y `ListaMatriculas`.
-- Guardo el estado de los filtros y paginación cuando cambio de ruta en `ListaSolicitud` y `ListaMatriculas`.
+- **ListaSolicitud** y **ListaMatriculas**:
+    - Posibilidad de ordenar datos por columna.
+    - Guardo el estado de los filtros y paginación cuando cambio de ruta.
+    - Posibilidad de limpiar filtros.
+- **Lista Solicitudes**: botón para rechazar solicitud.
+- **Lista Matrículas**: botón para rematricular.
+- **ResumenCuenta**: 
+    - Nuevo botón para *Nueva Boleta*.
+    - Nuevo diálogo para generar *Nueva Boleta*.
+    - Posibilidad de ordenar datos por columna.
 
 # 1.1.1 (2018-01-22)
 

@@ -64,8 +64,7 @@
                     label="Fecha Vto"
                     v-model="nueva_forma_pago.fecha_vto_cheque"
                     :rules="[rules.required, rules.fecha]"
-                  >
-                </input-fecha>
+                  ></input-fecha>
                 </v-flex>
 
                 <v-flex xs5 class="mx-3">
@@ -256,7 +255,7 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('/opciones'),
+      axios.get('/opciones?sort=+valor'),
       axios.get('/bancos')
     ])
     .then(r => {

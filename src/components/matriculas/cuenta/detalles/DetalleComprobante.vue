@@ -93,7 +93,7 @@ export default {
   },
 
   created: function() {
-    axios.get('/api/opciones')
+    axios.get('/opciones?sort=+valor')
     .then(r => {
       this.formas_pago = r.data.formaPago;
     })

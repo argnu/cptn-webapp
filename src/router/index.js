@@ -51,7 +51,8 @@ export default new Router({
         {
           path: '/solicitudes/profesionales/nueva',
           name: 'NuevaSolicitudProfesional',
-          component: NuevaSolicitudProfesional
+          component: NuevaSolicitudProfesional,
+          props: (route) => ({ dni: route.query.dni ? route.query.dni : null })
         },
         {
           path: '/solicitudes/profesionales/modificar/:id',

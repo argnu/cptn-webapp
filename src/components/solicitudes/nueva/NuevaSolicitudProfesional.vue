@@ -980,7 +980,7 @@ import { impresionSolicitud } from '@/utils/PDFUtils'
 export default {
   name: 'nueva-solicitud',
   mixins: [ValidatorMixin, NuevaSolicitud],
-  props: ['id'],
+  props: ['id', 'dni'],
 
   data() {
     return {
@@ -1073,8 +1073,14 @@ export default {
         }
         else {
           this.solicitud.delegacion = +this.global_state.delegacion;
-          this.changePais();
-          this.changeProvincia();
+          if (this.dni) { 
+            this.solicitud.entidad.dni = this.dni;
+            this.chgDni();
+          }
+          else {
+            this.changePais();
+            this.changeProvincia();
+          }
         }
       })
       .catch(e => console.error(e));
@@ -1142,7 +1148,6 @@ export default {
     chgDni: function() {
       axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
-        console.log(r.data)
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
       })

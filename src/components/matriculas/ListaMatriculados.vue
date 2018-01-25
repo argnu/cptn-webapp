@@ -12,21 +12,21 @@
         <v-container class="white black--text">
           <v-layout row wrap>
             <v-flex xs12 md3 class="mx-2">
-              <v-select 
-                :items="select_items.tipo" 
-                label="Tipo de Entidad" 
-                single-line bottom 
+              <v-select
+                :items="select_items.tipo"
+                label="Tipo de Entidad"
+                single-line bottom
                 v-model="filtros.tipoEntidad"
               ></v-select>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-2">
-              <v-select 
-                :items="select_items.estados" 
+              <v-select
+                :items="select_items.estados"
                 item-value="id"
                 item-text="valor"
-                label="Estado" 
-                single-line bottom 
+                label="Estado"
+                single-line bottom
                 autocomplete
                 clearable
                 v-model="filtros.estado"
@@ -34,28 +34,58 @@
               </v-select>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field v-model="filtros.profesional.dni" label="DNI" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  v-model="filtros.profesional.dni" 
+                  label="DNI" 
+                  @input="updateList"
+                  clearable
+                ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field v-model="filtros.empresa.cuit" label="CUIT" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.empresa.cuit" 
+                  label="CUIT" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-2">
-              <v-text-field v-model="filtros.numero" label="N° Matrícula" @input="updateList">
-              </v-text-field>
+              <v-text-field 
+                clearable
+                v-model="filtros.numero" 
+                label="N° Matrícula" 
+                @input="updateList"
+              ></v-text-field>
+
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field v-model="filtros.profesional.apellido" label="Apellido" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.profesional.apellido" 
+                  label="Apellido" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
+
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field v-model="filtros.empresa.nombre" label="Nombre" @input="updateList">
-                </v-text-field>
+                <v-text-field 
+                  clearable
+                  v-model="filtros.empresa.nombre" 
+                  label="Nombre" 
+                  @input="updateList"
+                ></v-text-field>
               </div>
             </v-flex>
+          </v-layout>
+
+          <v-layout row wrap>
+            <v-flex xs12>
+              <v-btn                
+                @click="limpiarFiltros"
+              >Limpiar Filtros</v-btn>              
+            </v-flex>            
           </v-layout>
         </v-container>
       </v-expansion-panel-content>
@@ -83,29 +113,38 @@
           </v-btn>
         </td>
         <td>{{ props.item.numeroMatricula }}</td>
-        <td>{{ props.item.estado }}</td>
           <template v-if="filtros.tipoEntidad == 'profesional'">
-            <td>{{ props.item.entidad.nombre }}</td>
             <td>{{ props.item.entidad.apellido }}</td>
+            <td>{{ props.item.entidad.nombre }}</td>
             <td>{{ props.item.entidad.dni }}</td>
           </template>
           <template v-if="filtros.tipoEntidad == 'empresa'">
             <td>{{ props.item.entidad.nombre }}</td>
             <td>{{ props.item.entidad.cuit }}</td>
           </template>
+        <td>{{ props.item.estado }}</td>
         <td>
           <v-menu>
             <v-btn icon slot="activator">
               <v-icon class="blue--text">more_vert</v-icon>
-            </v-btn>            
+            </v-btn>
+            
             <v-list>
-              <v-list-tile 
-                v-if="props.item.estado != 'Habilitado'" 
+              <v-list-tile
+                v-if="props.item.estado != 'Habilitado'"
                 @click="habilitar(props.item.id)"
               >
                 <v-icon class="green--text mr-2">check_circle</v-icon>
                 <v-list-tile-title>Habilitar</v-list-tile-title>
-              </v-list-tile>             
+              </v-list-tile>
+
+              <v-list-tile
+                v-if="filtros.tipoEntidad == 'profesional' && props.item.numeroMatricula.length < 8"
+                @click="rematricular(props.item.entidad.dni)"
+              >
+                <v-icon class="blue--text mr-2">note_add</v-icon>
+                <v-list-tile-title>Rematricular</v-list-tile-title>
+              </v-list-tile>
             </v-list>
           </v-menu>
         </td>
@@ -128,19 +167,19 @@ const headers = {
   emrpesa: [
     Header('', 'ver'),
     Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Estado', 'estado', true),
     Header('Nombre', 'nombreEmpresa', true),
     Header('CUIT', 'cuit', true),
+    Header('Estado', 'estado', true),
     Header('', 'acciones')
   ],
 
   profesional: [
     Header('', 'ver'),
     Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Estado', 'estado', true),
-    Header('Nombre', 'nombre', true),
     Header('Apellido', 'apellido', true),
+    Header('Nombre', 'nombre', true),
     Header('DNI', 'dni', true),
+    Header('Estado', 'estado', true),
     Header('', 'acciones')
   ]
 }
@@ -177,7 +216,7 @@ export default {
       matriculas: [],
       debouncedUpdate: null
     }
-  }, 
+  },
 
   watch: {
     filtros: {
@@ -207,7 +246,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
-    axios.get('/opciones')
+    axios.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
       })
@@ -215,6 +254,10 @@ export default {
   },
 
   methods: {
+    limpiarFiltros: function() {
+      ListaStore.limpiarFiltros();
+    },
+
     updateList: function() {
       this.debouncedUpdate();
     },
@@ -265,8 +308,8 @@ export default {
 
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
-        // 13 ES ESTADO 'Habilitado'         
-        axios.patch(`/matriculas/${id}`, { estado: 13, operador: this.user.id })
+        // 13 ES ESTADO 'Habilitado'
+        axios.patch(`/matriculas/${id}`, { estado: 13, updated_by: this.user.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
@@ -275,10 +318,14 @@ export default {
     deshabilitar: function(id) {
       if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
         // 35 ES ESTADO 'DesHabilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 35, operador: this.user.id })
+        axios.patch(`/matriculas/${id}`, { estado: 35, updated_by: this.user.id })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
+    },
+
+    rematricular: function(dni) {
+      this.$router.push(`/solicitudes/profesionales/nueva?dni=${dni}`);
     }
 
   },
