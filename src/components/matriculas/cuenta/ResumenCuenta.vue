@@ -3,15 +3,6 @@
       <dialog-detalle :item="item_selected" ref="show_detalle">
       </dialog-detalle>
 
-      <v-layout row class="mt-4">
-        <v-flex xs12>
-          <v-btn class="green right" dark @click="showAddBoleta">
-            <v-icon class="mr-2">add</v-icon>
-            Nueva Boleta
-          </v-btn>
-        </v-flex>
-      </v-layout>
-
       <v-layout row wrap class="mt-4">
         <v-flex xs1 class="mt-5 mx-5">
           <b>Filtrar:</b>
@@ -70,26 +61,7 @@
             </template>
           </v-data-table>
         </v-flex>
-      </v-layout>
-
-      <v-dialog v-model="show_addboleta" fullscreen transition="dialog-bottom-transition" :overlay="false">
-        <v-card>
-          <v-toolbar dark class="blue">
-            <v-toolbar-title class="white--text">Nueva Boleta</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="show_addboleta = false">
-              <v-icon>close</v-icon>
-            </v-btn>
-          </v-toolbar>
-          
-          <nueva-boleta
-            :id-matricula="id"
-            @cancelar="show_addboleta = false"
-            @update="nuevaBoleta"
-          ></nueva-boleta>
-
-        </v-card>
-      </v-dialog>      
+      </v-layout>    
     </v-card>
 </template>
 
@@ -113,18 +85,6 @@ const headers = [
   Header('', 'detalle')
 ]
 
-const sortByFecha = (atributo) => {
-  return (a, b) => moment(a[atributo]).diff(b[atributo], 'days');
-}
-
-const sortByString = (atributo) => {
-  return (a, b) => a[atributo].localeCompare(b[atributo]);
-}
-
-const sortByNumber = (atributo) => {
-  return (a, b) => b[atributo] - a[atributo];
-}
-
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
@@ -136,7 +96,6 @@ export default {
       resumen_original: [],
       boletas: [],
       show_detalle: false,
-      show_addboleta: false,
       item_selected: null,
       pagination: {
         sortBy: 'fecha_vencimiento',
@@ -187,9 +146,9 @@ export default {
 
     'pagination.sortBy': function(sortBy) {
       if (sortBy) {
-        if (sortBy.includes('fecha')) this.resumen = this.resumen.sort(sortByFecha(sortBy));
-        else if (sortBy == 'debe' || sortBy == 'haber') this.resumen = this.resumen.sort(sortByNumber(sortBy));
-        else this.resumen = this.resumen.sort(sortByString(sortBy));
+        if (sortBy.includes('fecha')) this.resumen = this.resumen.sort(utils.sortByFecha(sortBy));
+        else if (sortBy == 'debe' || sortBy == 'haber') this.resumen = this.resumen.sort(utils.sortByNumber(sortBy));
+        else this.resumen = this.resumen.sort(utils.sortByString(sortBy));
       }
       else this.resumen = utils.clone(this.resumen_original);
     }
@@ -232,7 +191,7 @@ export default {
        }));
        this.resumen = resumen;
        this.resumen_original = utils.clone(resumen);
-       this.resumen = this.resumen.sort(sortByFecha('fecha_vencimiento'));
+       this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));
      })
      .catch(e => console.error(e));
     },
@@ -241,23 +200,12 @@ export default {
       this.item_selected = item;
       this.$refs.show_detalle.mostrar();
     },
-
-    showAddBoleta: function() {
-      this.show_addboleta = true;
-    },
-
-    nuevaBoleta: function() {
-      this.updateBoletas();
-      this.show_addboleta = false;
-    }
-
   },
 
   components: {
     DatosBasicos,
     DialogDetalle,
-    InputFecha,
-    NuevaBoleta
+    InputFecha
   }
 
 }

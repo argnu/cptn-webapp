@@ -1,3 +1,9 @@
+import * as moment from 'moment'
+
+export function getNum(str) {
+  return str ? +str.replace(',', '.') : 0;
+}
+
 export function upperFirst(str) {
   return str[0].toUpperCase() + str.substring(1, str.length);
 }
@@ -73,4 +79,16 @@ export function dataURItoBlob(dataURI) {
     }
 
     return new Blob([ia], {type:mimeString});
+}
+
+export const sortByFecha = (atributo) => {
+  return (a, b) => moment(a[atributo]).diff(b[atributo], 'days');
+}
+
+export const sortByString = (atributo) => {
+  return (a, b) => a[atributo].localeCompare(b[atributo]);
+}
+
+ export const sortByNumber = (atributo) => {
+  return (a, b) => b[atributo] - a[atributo];
 }

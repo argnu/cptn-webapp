@@ -96,6 +96,12 @@
           </v-flex>
         </v-layout>
 
+        <div class="mx-5">
+          <v-alert color="warning" icon="priority_high" :value="supera_importe">
+            El importe abonado es superior al importe a pagar
+          </v-alert>
+        </div>        
+
         <br>
 
         <v-layout row>
@@ -130,11 +136,6 @@
 
             <br>
 
-            <div class="mx-5">
-              <v-alert color="warning" icon="priority_high" :value="total > importe">
-                El importe abonado es superior al importe a pagar
-              </v-alert>
-            </div>
             <div class="right mr-5">
               <h4 class="blue--text"> Total: ${{ total | round }}</h4>
             </div>
@@ -178,7 +179,7 @@ import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 class ComprobantePago {
   constructor(forma_pago) {
     this.forma_pago = forma_pago;
-    this.importe = 0;
+    this.importe = '';
   }
 }
 
@@ -245,11 +246,15 @@ export default {
 
     total: function() {
       if (!this.items_pago.length) return 0;
-      return this.items_pago.reduce((prev, act) => prev + +act.importe, 0)
+      return this.items_pago.reduce((prev, act) => prev + utils.getNum(act.importe), 0);
     },
 
     form_valid: function() {
       return this.total === this.importe;
+    },
+
+    supera_importe: function() {
+      return this.total + utils.getNum(this.nueva_forma_pago.importe) > this.importe;
     }
   },
 
@@ -275,7 +280,7 @@ export default {
       this.items_pago.push(this.nueva_forma_pago);
       this.nueva_forma_pago = new ComprobantePago();
       this.$refs.form_basico.reset();
-      this.$refs.form_cheque.reset();
+      if (this.$refs.form_cheque) this.$refs.form_cheque.reset();
     },
 
     addItemPago: function() {

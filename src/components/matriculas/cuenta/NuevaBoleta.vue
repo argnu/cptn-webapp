@@ -7,6 +7,7 @@
                     label="Fecha"
                     v-model="boleta.fecha"
                     :rules="[rules.required, rules.fecha]"
+                    @change="chgFecha"
                 ></input-fecha>
 
                 <v-select
@@ -115,7 +116,7 @@ class Boleta {
         this.fecha_vencimiento = '';
         this.tipo_comprobante = 18,
         this.matricula = '';
-        this.total = 0;
+        this.total = '';
         this.estado = 1;
         this.delegacion = '';
         this.items = [];
@@ -125,7 +126,7 @@ class Boleta {
 class BoletaItem {
     constructor() {
         this.descripcion = '';
-        this.importe = 0;
+        this.importe = '';
     }
 }
 
@@ -177,6 +178,10 @@ export default {
     },
 
     methods: {
+        chgFecha: function(fecha) {
+            this.boleta.fecha_vencimiento = moment(fecha, 'DD/MM/YYYY').add(15, 'days').format('DD/MM/YYYY');
+        },
+
         removeItem: function(index) {
             this.boleta.items.splice(index, 1);
             this.boleta.items.length = this.boleta.items.length;

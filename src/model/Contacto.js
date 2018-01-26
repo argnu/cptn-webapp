@@ -9,8 +9,8 @@ export class Contacto {
 
 export class Telefono {
     constructor(pais, provincia) {
-        this.pais = pais ? pais : 0;
-        this.provincia = provincia ? provincia : 0;
-        this.numero = 0;
+        this.pais = pais ? pais : '';
+        this.provincia = provincia ? provincia : '';
+        this.numero = '';
     }        
 }

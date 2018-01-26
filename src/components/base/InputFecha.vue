@@ -65,7 +65,10 @@ export default {
   watch: {
     datepicker: function(new_date) {
       let fecha = moment(new_date);
-      if (fecha.isValid()) this.$emit('input', fecha.format('DD/MM/YYYY'));
+      if (fecha.isValid()) { 
+        this.$emit('input', fecha.format('DD/MM/YYYY'));
+        this.$emit('change', fecha.format('DD/MM/YYYY'));
+      }
     }
   },
 
@@ -82,6 +85,7 @@ export default {
   methods: {
     update: function(e) {
       this.$emit('input', e);
+      this.$emit('change', e);
     },
 
     updatePicker: function() {

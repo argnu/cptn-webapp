@@ -16,23 +16,19 @@
               no-data-text=""
               :rows-per-page-items="[25,30,35]"
           >
-            <template slot="headers" slot-scope="props">
-              <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                <b>{{ header.text }}</b>
-              </th>
-              <th></th>
-            </template>
             <template slot="items" slot-scope="props">
-              <td>{{ props.item.fecha_solicitud | fecha }}</td>
-              <td>{{ props.item.tipo | tipo_legajo }} - N° {{ props.item.numero_legajo }}</td>
-              <td>
-                <v-btn fab dark small @click="imprimir(props.item.id)" color="blue">
-                  <v-icon>print</v-icon>
-                </v-btn>                
-                <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
-                  <v-icon>launch</v-icon>
-                </v-btn>
-              </td>
+              <tr>
+                <td>{{ props.item.fecha_solicitud | fecha }}</td>
+                <td>{{ props.item.descripcion }}</td>
+                <td>
+                  <v-btn fab dark small @click="imprimir(props.item.id)" color="blue">
+                    <v-icon>print</v-icon>
+                  </v-btn>                
+                  <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
+                    <v-icon>launch</v-icon>
+                  </v-btn>
+                </td>                
+              </tr>
             </template>
           </v-data-table>
         </v-card-text>
@@ -43,17 +39,15 @@
 
 <script>
 import axios from '@/axios';
+import * as utils from '@/utils'
+import { Header } from '@/model'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
-const Header = (text, value) => ({
-  text, value
-})
-
 const headers = [
-  Header('Fecha', 'fecha'),
-  Header('Descripción', 'descripcion'),
-  // Header('Estado', 'estado')
+  Header('Fecha', 'fecha_solicitud', true),
+  Header('Descripción', 'descripcion', true),
+  Header('', 'acciones')
 ]
 
 
@@ -63,7 +57,8 @@ export default {
 
   data () {
     return {
-      legajos: []
+      legajos: [],
+      legajos_original: []
     }
   },
 
@@ -73,10 +68,24 @@ export default {
     }
   },
 
+  watch: {
+    'pagination.sortBy': function(sortBy) {
+      if (sortBy) {
+        if (sortBy.includes('fecha')) this.legajos = this.legajos.sort(utils.sortByFecha(sortBy));
+        else if (sortBy == 'descripcion') this.legajos = this.legajos.sort(utils.sortByString(sortBy));
+      }
+      else this.legajos = utils.clone(this.legajos_original);
+    }
+  },    
+
   created: function() {
     axios.get(`/matriculas/${this.id}/legajos`)
     .then(r => {
-      this.legajos = r.data;
+      this.legajos = r.data.map(l => {
+       l.descripcion = `${getTipoLegajo(l.tipo)} - N° ${l.numero_legajo}`; 
+       return l;
+      });
+      this.legajos_original = utils.clone(this.legajos);
     })
     .catch(e => console.error(e));
   },

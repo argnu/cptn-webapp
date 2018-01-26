@@ -727,8 +727,8 @@ export default {
               this.solicitud.entidad.id = r.data.entidad.id;
               this.solicitud.entidad.nombre = r.data.entidad.nombre;          
               this.solicitud.entidad.cuit = r.data.entidad.cuit;
-              this.solicitud.entidad.fechaInicio = moment(r.data.entidad.fechaInicio).format('DD/MM/YYYY');
-              this.solicitud.entidad.fechaConstitucion = moment(r.data.entidad.fechaConstitucion).format('DD/MM/YYYY');
+              this.solicitud.entidad.fechaInicio = moment(r.data.entidad.fechaInicio).isValid() ?  moment(r.data.entidad.fechaInicio).format('DD/MM/YYYY') : '';
+              this.solicitud.entidad.fechaConstitucion = moment(r.data.entidad.fechaConstitucion).isValid() ? moment(r.data.entidad.fechaConstitucion).format('DD/MM/YYYY') : '';
               this.solicitud.entidad.tipoEmpresa = this.opciones.empresa.find(i => i.valor == r.data.entidad.tipoEmpresa).id;
               this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
               this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;

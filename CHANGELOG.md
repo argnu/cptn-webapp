@@ -10,10 +10,21 @@
     - Posibilidad de limpiar filtros.
 - **Lista Solicitudes**: botón para rechazar solicitud.
 - **Lista Matrículas**: botón para rematricular.
-- **ResumenCuenta**: 
+- **ResumenCuenta**: posibilidad de ordenar datos por columna.
+- **DeudasPendientes**: 
     - Nuevo botón para *Nueva Boleta*.
     - Nuevo diálogo para generar *Nueva Boleta*.
     - Posibilidad de ordenar datos por columna.
+- **Lista Legajos**: Posibilidad de ordenar datos por columna.    
+
+## Modificado
+
+- **Cobranza**: no se permite agregar pago si el importe a ingresar excede el límite.    
+
+## Solucionado
+- Filtro *round* reemplaza la coma por punto en números decimales.
+
+
 
 # 1.1.1 (2018-01-22)
 

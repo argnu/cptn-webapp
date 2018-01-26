@@ -1,7 +1,14 @@
 <template>
   <v-container>
 
-    <br>
+    <v-layout row class="my-4">
+      <v-flex xs12>
+        <v-btn class="green" dark @click="showAddBoleta">
+          <v-icon class="mr-2">add</v-icon>
+          Nueva Boleta
+        </v-btn>
+      </v-flex>
+    </v-layout>    
 
     <v-layout row wrap>
       <v-flex xs9>
@@ -12,12 +19,6 @@
             :rows-per-page-items="[25,30,35]"
             no-data-text="No hay deudas pendientes"
         >
-          <template slot="headers" slot-scope="props">
-            <th></th>
-            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-              <b>{{ header.text }}</b>
-            </th>
-          </template>
           <template slot="items" slot-scope="props">
             <tr>
               <td>
@@ -30,17 +31,9 @@
               </td>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <template v-if="props.item.tipo == 'boleta'">
-                <td>{{ props.item.tipo_comprobante.descripcion }}</td>
-                <td>${{ props.item.total }}</td>
-                <td>${{ props.item.interes | round }}</td>                
-              </template>
-              <template v-if="props.item.tipo == 'volante'">
-                <td>Volante de Pago</td>
-                <td>${{ props.item.subtotal | round }}</td>
-                <td>${{ props.item.interes_total | round }}</td>                
-              </template>
-              <td></td>
+              <td>{{ props.item.descripcion }}</td>
+              <td>${{ props.item.total | round }}</td>
+              <td>${{ props.item.interes | round }}</td>     
               <td>
                 <v-checkbox
                   v-model="props.item.checked"
@@ -135,6 +128,25 @@
       </v-card>
     </v-dialog>
 
+
+    <v-dialog v-model="show_addboleta" fullscreen transition="dialog-bottom-transition" :overlay="false">
+      <v-card>
+        <v-toolbar dark class="blue">
+          <v-toolbar-title class="white--text">Nueva Boleta</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show_addboleta = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        
+        <nueva-boleta
+          :id-matricula="id"
+          @cancelar="show_addboleta = false"
+          @update="nuevaBoleta"
+        ></nueva-boleta>
+      </v-card>
+    </v-dialog>      
+
   </v-container>
 </template>
 
@@ -146,14 +158,17 @@ import { Header } from '@/model'
 import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
+import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
 import { impresionVolante } from '@/utils/PDFUtils'
 
 const headers = [
-  Header('Fecha', 'fecha'),
-  Header('Fecha de Vencimiento', 'fecha_vto'),
-  Header('Descripción', 'descripcion'),
-  Header('Importe', 'importe'),
-  Header('Intereses', 'intereses')
+  Header('', 'imprimir'),
+  Header('Fecha', 'fecha', true),
+  Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+  Header('Descripción', 'descripcion', true),
+  Header('Importe', 'total', true),
+  Header('Intereses', 'interes', true),
+  Header('', 'check')
 ]
 
 export default {
@@ -162,14 +177,21 @@ export default {
 
   components: {
     InputFecha,
-    Cobranza
+    Cobranza,
+    NuevaBoleta
   },
 
   data () {
     return {
       boletas: [],
+      boletas_original: [],
       fecha_pago: moment().format('DD/MM/YYYY'),
-      expand_pago: false
+      expand_pago: false,
+      show_addboleta: false,
+      pagination: {
+        sortBy: 'fecha_vencimiento',
+        descending: false
+      },      
     }
   },
 
@@ -180,6 +202,18 @@ export default {
       return '';
     }
   },
+
+
+  watch: {
+    'pagination.sortBy': function(sortBy) {
+      if (sortBy) {
+        if (sortBy.includes('fecha')) this.boletas = this.boletas.sort(utils.sortByFecha(sortBy));
+        else if (sortBy == 'descripcion') this.boletas = this.boletas.sort(utils.sortByString(sortBy));
+        else this.boletas = this.boletas.sort(utils.sortByNumber(sortBy));
+      }
+      else this.boletas = utils.clone(this.boletas_original);
+    }
+  },  
 
   computed: {
     headers_resumen: function() {
@@ -227,6 +261,7 @@ export default {
         boletas.data.forEach(b => {
           b.tipo = 'boleta';
           b.checked = false;
+          b.descripcion = b.tipo_comprobante.descripcion;
           b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'));
           this.boletas.push(b);
         });
@@ -234,8 +269,14 @@ export default {
         volantes.data.forEach(v => {
           v.tipo = 'volante';
           v.checked = false;
+          v.descripcion = 'Volante de Pago';
+          v.total = v.subtotal;
+          v.interes = v.intereses_total;
           this.boletas.push(v);
         });
+
+        this.boletas_original = utils.clone(this.boletas);
+        this.boletas = this.boletas.sort(utils.sortByFecha('fecha_vto'));
       })
       .catch(e => console.error(e));
     },
@@ -331,7 +372,17 @@ export default {
                 pdf.save(`Volante ${id}.pdf`);             
               })
           });
-    }
+    },
+
+    showAddBoleta: function() {
+      this.show_addboleta = true;
+    },
+
+    nuevaBoleta: function() {
+      this.updateBoletas();
+      this.$emit('update');
+      this.show_addboleta = false;
+    },    
   },
 
 }
