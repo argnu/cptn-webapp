@@ -245,7 +245,7 @@ export function impresionSolicitud(solicitud) {
   eje_y += 3;  
   doc.text(20,eje_y,'previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas');
   eje_y += 3;  
-  doc.text(20, eje_y, 'y recargos impuestos por el Consejo Profesional de Técnicos de Neuquén.')
+  doc.text(20, eje_y, 'y recargos impuestos por el Colegio Profesional de Técnicos de Neuquén.')
   // Firmas
   eje_y += 8;
   doc.text(20, eje_y,'A ser completados únicamente por el personal del Colegio Profesional');
