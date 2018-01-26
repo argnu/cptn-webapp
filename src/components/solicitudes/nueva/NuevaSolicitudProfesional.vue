@@ -1063,7 +1063,7 @@ export default {
           axios.get(`/solicitudes/${this.id}`)
           .then(r => {
               this.solicitud = new Solicitud('profesional');
-              this.solicitud.fecha = moment(r.data.fecha).format('DD/MM/YYYY');
+              this.solicitud.fecha = utils.getFecha(r.data.fecha);
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.exencionArt10 = r.data.exencionArt10;
               this.solicitud.exencionArt6 = r.data.exencionArt6;
@@ -1103,7 +1103,7 @@ export default {
       let sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo);
       this.solicitud.entidad.sexo = sexo ? sexo.id : '';
       this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
-      this.solicitud.entidad.fechaNacimiento = moment(entidad.fechaNacimiento).isValid() ? moment(entidad.fechaNacimiento).format('DD/MM/YYYY') : '';
+      this.solicitud.entidad.fechaNacimiento = utils.getFecha(entidad.fechaNacimiento)
       this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
       this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
       this.solicitud.entidad.observaciones = entidad.observaciones;
@@ -1120,7 +1120,7 @@ export default {
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = { id: formacion.id };
         formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-        formacion_nueva.fecha = moment(formacion.fecha).isValid() ? moment(formacion.fecha).format('DD/MM/YYYY') : '';
+        formacion_nueva.fecha = utils.getFecha(formacion.fecha);
         formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
         formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);

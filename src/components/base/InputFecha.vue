@@ -23,6 +23,7 @@
 
 <script>
 import * as moment from 'moment'
+import * as utils from '@/utils'
 
 export default {
   name: 'input-fecha',
@@ -66,8 +67,8 @@ export default {
     datepicker: function(new_date) {
       let fecha = moment(new_date);
       if (fecha.isValid()) { 
-        this.$emit('input', fecha.format('DD/MM/YYYY'));
-        this.$emit('change', fecha.format('DD/MM/YYYY'));
+        this.$emit('input', utils.getFecha(fecha));
+        this.$emit('change', utils.getFecha(fecha));
       }
     }
   },
@@ -75,9 +76,9 @@ export default {
   computed: {
     formatted: function() {
       let fecha = moment(this.value, 'DD/MM/YYYY', true);
-      if (fecha.isValid()) return fecha.format('DD/MM/YYYY');
+      if (fecha.isValid()) return utils.getFecha(fecha);
       if (this.value && this.value.match(/^\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/))
-        return moment(this.value).format('DD/MM/YYYY');
+        return utils.getFecha(this.value);
       return '';
     }
   },

@@ -262,7 +262,7 @@ export default {
           b.tipo = 'boleta';
           b.checked = false;
           b.descripcion = b.tipo_comprobante.descripcion;
-          b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'));
+          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago));
           this.boletas.push(b);
         });
         
@@ -284,7 +284,7 @@ export default {
     updateIntereses: function() {
       this.boletas.forEach(b => {
         if (b.tipo == 'boleta') {
-          b.interes = calculoIntereses(b, moment(this.fecha_pago, 'DD/MM/YYYY'))
+          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago))
         }
       });
     },

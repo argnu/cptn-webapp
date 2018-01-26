@@ -4,6 +4,10 @@ export function getNum(str) {
   return str ? +str.replace(',', '.') : 0;
 }
 
+export function getFecha(str) {
+  return moment(str).isValid() ? moment(str).startOf('day').format('DD/MM/YYYY') : '';  
+}
+
 export function upperFirst(str) {
   return str[0].toUpperCase() + str.substring(1, str.length);
 }
