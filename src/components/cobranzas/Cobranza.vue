@@ -284,6 +284,8 @@ export default {
     },
 
     addItemPago: function() {
+      if (this.supera_importe) return;
+      
       if (this.esCheque) {
         let basico = this.$refs.form_basico.validate();
         let cheque = this.$refs.form_cheque.validate();

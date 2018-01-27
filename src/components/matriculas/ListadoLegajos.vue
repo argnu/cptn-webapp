@@ -15,6 +15,7 @@
               :items="legajos"
               no-data-text=""
               :rows-per-page-items="[25,30,35]"
+              :loading="loading"
           >
             <template slot="items" slot-scope="props">
               <tr>
@@ -58,7 +59,8 @@ export default {
   data () {
     return {
       legajos: [],
-      legajos_original: []
+      legajos_original: [],
+      loading: false,
     }
   },
 
@@ -79,6 +81,7 @@ export default {
   },    
 
   created: function() {
+    this.loading = true;
     axios.get(`/matriculas/${this.id}/legajos`)
     .then(r => {
       this.legajos = r.data.map(l => {
@@ -86,6 +89,7 @@ export default {
        return l;
       });
       this.legajos_original = utils.clone(this.legajos);
+      this.loading = false;
     })
     .catch(e => console.error(e));
   },

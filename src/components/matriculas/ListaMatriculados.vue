@@ -100,7 +100,7 @@
       class="elevation-1"
       no-data-text="No se encontraron matriculados"
       no-results-text="No se encontraron matriculados"
-      v-bind:pagination.sync="pagination"
+      :pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
       :rows-per-page-items="[25,30,35]"

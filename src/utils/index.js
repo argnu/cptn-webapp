@@ -5,7 +5,7 @@ export function getNum(str) {
 }
 
 export function getFecha(str) {
-  return moment(str).isValid() ? moment(str).startOf('day').format('DD/MM/YYYY') : '';  
+  return moment(str).isValid() ? moment(str).format('DD/MM/YYYY') : '';  
 }
 
 export function upperFirst(str) {

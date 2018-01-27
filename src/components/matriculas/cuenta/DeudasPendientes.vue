@@ -13,6 +13,7 @@
     <v-layout row wrap>
       <v-flex xs9>
         <v-data-table
+            :loading="loading"
             :headers="headers_resumen"
             :items="boletas"
             class="elevation-1"
@@ -188,6 +189,7 @@ export default {
       fecha_pago: moment().format('DD/MM/YYYY'),
       expand_pago: false,
       show_addboleta: false,
+      loading: false,
       pagination: {
         sortBy: 'fecha_vencimiento',
         descending: false
@@ -249,6 +251,7 @@ export default {
 
   methods: {
     updateBoletas: function() {
+      this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
       let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false`;
       
@@ -277,6 +280,7 @@ export default {
 
         this.boletas_original = utils.clone(this.boletas);
         this.boletas = this.boletas.sort(utils.sortByFecha('fecha_vto'));
+        this.loading = false;
       })
       .catch(e => console.error(e));
     },

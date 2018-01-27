@@ -24,7 +24,8 @@
               no-data-text="No hay datos"
               no-results-text="No hay datos"
               :rows-per-page-items="[25,30,35]"
-              v-bind:pagination.sync="pagination"
+              :pagination.sync="pagination"
+              :loading="loading"
           >
             <template slot="items" slot-scope="props">
               <tr>
@@ -97,6 +98,7 @@ export default {
       boletas: [],
       show_detalle: false,
       item_selected: null,
+      loading: false,
       pagination: {
         sortBy: 'fecha_vencimiento',
         descending: false
@@ -160,6 +162,7 @@ export default {
 
   methods: {
     updateBoletas: function() {
+      this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
 
@@ -192,6 +195,7 @@ export default {
        this.resumen = resumen;
        this.resumen_original = utils.clone(resumen);
        this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));
+       this.loading = false;
      })
      .catch(e => console.error(e));
     },
