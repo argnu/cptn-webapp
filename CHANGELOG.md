@@ -1,3 +1,17 @@
+# 1.2.2 (2018-01-29)
+
+## Solucionado
+
+- Impresión de Solicitud sin domicilio real.
+
+# 1.2.1 (2018-01-28)
+
+## Solucionado
+
+- **ListaSolicitud**: 
+    - Orden de columnas.
+    - Paginacion por servidor.
+
 # 1.2.0 (2018-01-28)
 
 ## Agregado
