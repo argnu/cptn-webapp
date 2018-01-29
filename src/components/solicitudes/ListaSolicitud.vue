@@ -174,7 +174,7 @@
   <v-card>
     <v-data-table
       :headers="headers[filtros.tipoEntidad]"
-      :items="solicitudes_filter"
+      :items="solicitudes"
       class="elevation-1"
       no-data-text="No se encontraron solicitudes"
       no-results-text="No se encontraron solicitudes"
@@ -349,11 +349,6 @@ export default {
   },
 
   computed: {
-    solicitudes_filter: function() {
-      let ini = (this.pagination.page - 1) * this.pagination.rowsPerPage;
-      return this.solicitudes.slice(ini, ini + this.pagination.rowsPerPage);
-    },
-
     select_items: function() {
       return select_items;
     },
@@ -408,8 +403,8 @@ export default {
 
         axios.get(url)
           .then(r => {
-            this.solicitudes = r.data;
-            this.totalItems = this.solicitudes.length;
+            this.solicitudes = r.data.resultados;
+            this.totalItems = r.data.totalQuery;
             this.loading = false;
           })
           .catch(e => console.error(e));
