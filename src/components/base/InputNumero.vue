@@ -28,7 +28,7 @@ export default {
       },
 
       value: {
-          type: String,
+        //   type: String,
           required: true
       },
 
