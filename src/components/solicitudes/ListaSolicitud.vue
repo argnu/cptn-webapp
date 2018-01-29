@@ -186,16 +186,17 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.numero }}</td>
         <td>{{ props.item.fecha | fecha }}</td>
-        <td>{{ props.item.estado | upperFirst }}</td>
+        
         <template v-if="filtros.tipoEntidad == 'profesional'">
-          <td>{{ props.item.entidad.nombre }}</td>
           <td>{{ props.item.entidad.apellido }}</td>
+          <td>{{ props.item.entidad.nombre }}</td>
           <td>{{ props.item.entidad.dni }}</td>
         </template>
         <template v-if="filtros.tipoEntidad == 'empresa'">
           <td>{{ props.item.entidad.nombre }}</td>
           <td>{{ props.item.entidad.cuit }}</td>
         </template>
+        <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
             <v-btn fab dark small color="blue" slot="activator">
@@ -303,19 +304,19 @@ const headers = {
   empresa: [
     Header('N°', 'numero', true),
     Header('Fecha', 'fecha', true),
-    Header('Estado', 'estado', true),
     Header('Nombre', 'nombreEmpresa', true),
     Header('CUIT', 'cuit', true),
+    Header('Estado', 'estado', true),
     Header('', 'acciones')
   ],
 
   profesional: [
     Header('N°', 'numero', true),
     Header('Fecha', 'fecha', true),
-    Header('Estado', 'estado', true),
     Header('Apellido', 'apellido', true),
     Header('Nombre', 'nombre', true),
     Header('DNI', 'dni', true),
+    Header('Estado', 'estado', true),
     Header('', 'acciones')
   ]
 }
