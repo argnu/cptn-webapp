@@ -306,21 +306,22 @@ export function impresionSolicitud(solicitud) {
   let domicilioLegal = solicitud.entidad.domicilios.find(d => d.tipo == 'legal');
   let domicilioEspecial = solicitud.entidad.domicilios.find(d => d.tipo == 'especial');
 
-
   doc.setFontSize(12);
-  doc.text(50, eje_y_domicilio - 6, `${domicilioReal.domicilio.calle} ${domicilioReal.domicilio.numero ? domicilioReal.domicilio.numero:'' }`);
-  //eje_y_domicilio += 6;
-  doc.text(35, eje_y_domicilio, domicilioReal.domicilio.pais);
-  doc.text(120, eje_y_domicilio, domicilioReal.domicilio.provincia);
-  eje_y_domicilio += 6;
-  doc.text(50, eje_y_domicilio, domicilioReal.domicilio.departamento);
-  doc.text(120, eje_y_domicilio, domicilioReal.domicilio.localidad);
-  eje_y_domicilio += 6;
+
+  if (domicilioReal) {
+    doc.text(50, eje_y_domicilio - 6, `${domicilioReal.domicilio.calle} ${domicilioReal.domicilio.numero ? domicilioReal.domicilio.numero:'' }`);
+    doc.text(35, eje_y_domicilio, domicilioReal.domicilio.pais);
+    doc.text(120, eje_y_domicilio, domicilioReal.domicilio.provincia);
+    eje_y_domicilio += 6;
+    doc.text(50, eje_y_domicilio, domicilioReal.domicilio.departamento);
+    doc.text(120, eje_y_domicilio, domicilioReal.domicilio.localidad);
+    eje_y_domicilio += 6;
+  }
+  else eje_y_domicilio += 12;
 
   if (domicilioLegal) {
     eje_y_domicilio += 12;
     doc.text(50, eje_y_domicilio - 6, `${domicilioLegal.domicilio.calle} ${domicilioLegal.domicilio.numero ? domicilioLegal.domicilio.numero: ''}`);
-    // eje_y_domicilio += 6;
     doc.text(35, eje_y_domicilio, domicilioLegal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -328,11 +329,11 @@ export function impresionSolicitud(solicitud) {
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.localidad);
     eje_y_domicilio += 6;
   }
+  else eje_y_domicilio += 24;
   
   if (domicilioEspecial) {
     eje_y_domicilio += 12;
     doc.text(57, eje_y_domicilio - 6, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero ? domicilioEspecial.domicilio.numero: ''} `);
-    //eje_y_domicilio += 6;
     doc.text(35, eje_y_domicilio, domicilioEspecial.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioEspecial.domicilio.provincia);
     eje_y_domicilio += 6;
