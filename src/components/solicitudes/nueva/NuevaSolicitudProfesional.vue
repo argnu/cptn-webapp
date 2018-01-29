@@ -198,6 +198,7 @@
                         edit
                         :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
                         @change="chgFirma"            
+                        ref="firma"
                       ></add-firma>                      
                     </v-flex>
                   </v-layout> 
@@ -1229,6 +1230,7 @@ export default {
             if (r.status != 201) {
               this.submitError();
             }
+            this.$refs.firma.reset();
             this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;

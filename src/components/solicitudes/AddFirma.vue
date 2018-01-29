@@ -41,35 +41,6 @@
 <script>
 import * as utils from '@/utils'
 
-let pulsado = false;
-let movimientos = [];
-
-function repinta(canvas) {
-    let context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.strokeStyle = "#000000";
-    context.lineJoin = "round";
-    context.lineWidth = 2;
-
-    for(var i=0; i < movimientos.length; i++) {
-        context.beginPath();
-        if(movimientos[i][2] && i){
-        context.moveTo(movimientos[i-1][0], movimientos[i-1][1]);
-        }else{
-        context.moveTo(movimientos[i][0], movimientos[i][1]);
-        }
-        context.lineTo(movimientos[i][0], movimientos[i][1]);
-        context.closePath();
-        context.stroke();
-    }
-}
-
-function clearCanvas(canvas) {
-    let context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    movimientos = [];
-}
-
 function isCanvasBlank(canvas) {
     let blank = document.createElement('canvas');
     blank.width = canvas.width;
@@ -94,6 +65,8 @@ export default {
     data() {
         return {
             tipo_firma: 'imagen',
+            pulsado: false,
+            movimientos: []
         }
     },
 
@@ -108,9 +81,9 @@ export default {
             let x =  (e.clientX - rect.left) * scaleX,   
                 y = (e.clientY - rect.top) * scaleY;
 
-            pulsado = true;
-            movimientos.push([x, y,false]);
-            repinta(canvas);
+            this.pulsado = true;
+            this.movimientos.push([x, y,false]);
+            pmovimientos(canvas);
         };
 
         canvas.ontouchstart = e => {
@@ -122,14 +95,14 @@ export default {
                 y = (e.targetTouches[0].clientY - rect.top) * scaleY;
 
             e.preventDefault();
-            pulsado = true;
+            this.pulsado = true;
 
-            movimientos.push([x, y, false]);
-            repinta(canvas);
+            this.movimientos.push([x, y, false]);
+            this.repinta(canvas);
         };
 
         canvas.onmousemove = e => {
-          if (pulsado) {
+          if (this.pulsado) {
             let rect = canvas.getBoundingClientRect(), 
                 scaleX = canvas.width / rect.width,    
                 scaleY = canvas.height / rect.height;
@@ -137,8 +110,8 @@ export default {
             let x =  (e.clientX - rect.left) * scaleX,   
                 y = (e.clientY - rect.top) * scaleY;
 
-              movimientos.push([x, y, true]);
-            repinta(canvas);
+              this.movimientos.push([x, y, true]);
+            this.repinta(canvas);
           }
         };
 
@@ -150,31 +123,33 @@ export default {
             let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,   
                 y = (e.targetTouches[0].clientY - rect.top) * scaleY;
                 
-            if (pulsado) {
-                movimientos.push([x, y, true]);
-                repinta(canvas);
+            if (this.pulsado) {
+                this.movimientos.push([x, y, true]);
+                this.repinta(canvas);
             }
         };
 
         canvas.onmouseup = e => {
-            pulsado = false;
+            this.pulsado = false;
             this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
         };
 
         canvas.onmouseleave = e => {
-            pulsado = false;
+            this.pulsado = false;
             this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
         };
 
         canvas.ontouchend = e => {
-            pulsado = false;
+            this.pulsado = false;
             this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
         };
     },        
 
     methods: {
         limpiarCanvas: function() {
-            clearCanvas(this.$refs.lienzo);
+            let context = this.$refs.lienzo.getContext("2d");
+            context.clearRect(0, 0, this.$refs.lienzo.width, this.$refs.lienzo.height);
+            this.movimientos = [];
         },
 
         reset: function() {
@@ -194,7 +169,27 @@ export default {
                 reader.readAsDataURL(input.files[0]);
                 this.$emit('change', input.files[0])
             }
-        },        
+        },  
+
+        repinta: function() {
+            let context = this.$refs.lienzo.getContext("2d");
+            context.clearRect(0, 0, this.$refs.lienzo.width, this.$refs.lienzo.height);
+            context.strokeStyle = "#000000";
+            context.lineJoin = "round";
+            context.lineWidth = 2;
+
+            for(var i=0; i < this.movimientos.length; i++) {
+                context.beginPath();
+                if(this.movimientos[i][2] && i){
+                context.moveTo(this.movimientos[i-1][0], this.movimientos[i-1][1]);
+                }else{
+                context.moveTo(this.movimientos[i][0], this.movimientos[i][1]);
+                }
+                context.lineTo(this.movimientos[i][0], this.movimientos[i][1]);
+                context.closePath();
+                context.stroke();
+            }
+        }              
     }
 
 }
