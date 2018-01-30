@@ -15,8 +15,11 @@
     <v-dialog
       v-model="show_dialog"
       >
-      <v-date-picker autosave v-model="datepicker" style="margin:0 auto">
-      </v-date-picker>
+      <v-date-picker 
+        autosave 
+        v-model="datepicker" 
+        style="margin:0 auto"
+      ></v-date-picker>
     </v-dialog>
   </v-layout>
 </template>
@@ -79,7 +82,7 @@ export default {
       if (fecha.isValid()) return utils.getFecha(fecha);
       if (this.value && this.value.match(/^\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/))
         return utils.getFecha(this.value);
-      return '';
+      return this.value;
     }
   },
 

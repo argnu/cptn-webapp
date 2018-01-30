@@ -15,6 +15,11 @@
       <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isDelegacionSelected">
       </v-toolbar-side-icon>
       <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
+
+      <span class="ml-4" v-if="isDelegacionSelected">
+        <b>Delegación: {{ global_state.delegacion.nombre }}</b>
+      </span>
+
       <v-spacer></v-spacer>
 
       <template v-if="isLogged">

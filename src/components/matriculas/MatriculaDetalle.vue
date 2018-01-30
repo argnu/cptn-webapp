@@ -144,10 +144,7 @@
                       Localidad: {{ domicilioReal ? domicilioReal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ domicilioReal ? domicilioReal.calle : ''}}
-                    </div>
-                    <div class="mb-4">
-                      N°: {{ domicilioReal ? domicilioReal.numero : ''}}
+                      Dirección: {{ domicilioReal ? domicilioReal.calle : ''}}
                     </div>
                   </v-flex>
 
@@ -159,10 +156,7 @@
                       Localidad: {{ domicilioLegal ? domicilioLegal.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ domicilioLegal ? domicilioLegal.calle : '' }}
-                    </div>
-                    <div class="mb-4">
-                      N°: {{ domicilioLegal ? domicilioLegal.numero : ''}}
+                      Dirección: {{ domicilioLegal ? domicilioLegal.calle : '' }}
                     </div>
                   </v-flex>
 
@@ -174,10 +168,7 @@
                       Localidad: {{ domicilioEspecial ? domicilioEspecial.localidad : ''}}
                     </div>
                     <div class="mb-4">
-                      Calle: {{ domicilioEspecial ? domicilioEspecial.calle : '' }}
-                    </div>
-                    <div class="mb-4">
-                      N°: {{ domicilioEspecial ? domicilioEspecial.numero : ''}}
+                      Dirección: {{ domicilioEspecial ? domicilioEspecial.calle : '' }}
                     </div>
                   </v-flex>
                 </v-layout>

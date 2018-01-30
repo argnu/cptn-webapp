@@ -327,7 +327,7 @@ export default {
 
   data() {
     return {
-      matricula: new Matricula(Store.state.delegacion),
+      matricula: new Matricula(Store.state.delegacion.id),
       show_validar: false,
       num_matricula_nueva: null,
       totalItems: 0,

@@ -34,7 +34,7 @@ export default new Router({
         if (!Cookies.get('CPTNUser')) next({ path: '/login' });
         else {
           let user = JSON.parse(Cookies.get('CPTNUser'));
-          let delegacion = Cookies.get('CPTNDelegacion');
+          let delegacion = JSON.parse(Cookies.get('CPTNDelegacion'));
           Store.setUser(user);
           Store.setDelegacion(delegacion);
           axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;          

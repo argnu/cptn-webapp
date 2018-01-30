@@ -83,7 +83,7 @@ export default {
 
             this.pulsado = true;
             this.movimientos.push([x, y,false]);
-            pmovimientos(canvas);
+            this.repinta();
         };
 
         canvas.ontouchstart = e => {
@@ -98,7 +98,7 @@ export default {
             this.pulsado = true;
 
             this.movimientos.push([x, y, false]);
-            this.repinta(canvas);
+            this.repinta();
         };
 
         canvas.onmousemove = e => {
@@ -111,7 +111,7 @@ export default {
                 y = (e.clientY - rect.top) * scaleY;
 
               this.movimientos.push([x, y, true]);
-            this.repinta(canvas);
+            this.repinta();
           }
         };
 
@@ -125,7 +125,7 @@ export default {
                 
             if (this.pulsado) {
                 this.movimientos.push([x, y, true]);
-                this.repinta(canvas);
+                this.repinta();
             }
         };
 

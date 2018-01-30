@@ -1,3 +1,22 @@
+# UNRELEASED
+
+## Solucionado
+
+- **AddFirma**: reseteo de canvas, no reseteaba el array movimientos.
+- **InputFecha**: luego de seleccionar fecha por diálogo no te permitía editar, se borraba toda.
+- **NuevoProfesional**: form de caja previsional, refresecaba la pagina cuando se apreta enter.
+
+## Agregado
+
+- **Modificar Profesional**: habilitación de edición de elementos individuales de contacto, domicilio, formación y subsidiarios.
+- **Delegacion**: mensaje que indica la delegación en la que se encuentra el usuario.
+
+## Modificado
+
+- Script `deploy`, agregado un pull del repositorio antes de empaquetar.
+- Domicilio ya no tiene calle y numero, sino `direccion`.
+
+
 # 1.2.2 (2018-01-29)
 
 ## Solucionado

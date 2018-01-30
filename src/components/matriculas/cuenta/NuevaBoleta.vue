@@ -198,7 +198,7 @@ export default {
         submit: function() {
             this.boleta.matricula = this.idMatricula;
             this.boleta.total = this.boleta.items.reduce((prev, act) => prev + act.importe, 0);
-            this.boleta.delegacion = Store.state.delegacion;
+            this.boleta.delegacion = Store.state.delegacion.id;
             axios.post('/boletas', this.boleta)
             .then(r => {
                 this.global_state.snackbar.msg = 'Nueva boleta creada exitosamente!';

@@ -10,8 +10,6 @@ export class Solicitud {
       this.entidad = new Profesional();
     else if (tipo == 'empresa')
       this.entidad = new Empresa();
-    this.exencionArt10 = false;
-    this.exencionArt6 = false;
     this.operador = null;
   }
 }

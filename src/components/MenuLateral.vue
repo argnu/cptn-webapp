@@ -8,6 +8,7 @@
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ full_name }}</v-list-tile-title>
+            <v-list-tile-sub-title>{{ delegacion ? delegacion.nombre : '' }}</v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>

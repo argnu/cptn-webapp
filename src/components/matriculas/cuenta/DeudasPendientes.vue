@@ -305,7 +305,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion,
+        delegacion: this.global_state.delegacion.id,
         operador: this.user.id 
       }
       
@@ -347,7 +347,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion,
+        delegacion: this.global_state.delegacion.id,
         operador: this.user.id 
       }
       

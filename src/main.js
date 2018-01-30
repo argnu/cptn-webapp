@@ -47,7 +47,11 @@ Vue.mixin({
 
   computed: {
     user: function () {
-      return JSON.parse(Cookies.get('CPTNUser'));
+      return this.global_state.user;
+    },
+
+    delegacion: function () {
+      return this.global_state.delegacion;
     }
   }
 })

@@ -12,6 +12,7 @@ done
 
 if [ "$DIR_APP" != "" ]; then
     git checkout master;
+    git pull;
     echo "Instalando dependencias \n";
     npm install;
     npm update;

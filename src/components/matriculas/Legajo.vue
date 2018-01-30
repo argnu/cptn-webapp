@@ -234,8 +234,8 @@
 
                 <v-text-field
                   tabindex="13"
-                  label="Calle"
-                  v-model="legajo.domicilio.calle"
+                  label="Dirección"
+                  v-model="legajo.domicilio.direccion"
                   :disabled="legajo.id > 0"
                 >
                 </v-text-field>
@@ -266,14 +266,6 @@
                   :disabled="legajo.id > 0"
                 >
                 </v-select>
-
-                <v-text-field
-                  tabindex="14"
-                  label="N°"
-                  v-model="legajo.domicilio.numero"
-                  :disabled="legajo.id > 0"
-                >
-                </v-text-field>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -862,7 +854,7 @@ export default {
 
     submit: function() {
       this.legajo.operador = this.user.id;
-      this.legajo.delegacion = this.global_state.delegacion;
+      this.legajo.delegacion = this.global_state.delegacion.id;
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {

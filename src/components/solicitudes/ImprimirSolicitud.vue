@@ -80,8 +80,7 @@
                 <th>Provincia</th>
                 <th>Departamento</th>
                 <th>Localidad</th>
-                <th>Calle</th>
-                <th>N°</th>
+                <th>Dirección</th>
               </tr>
             </thead>
             <tbody>
@@ -93,8 +92,7 @@
                 <td>{{ solicitud.entidad.domicilioReal.provincia }}</td>
                 <td>{{ solicitud.entidad.domicilioReal.departamento }}</td>
                 <td>{{ solicitud.entidad.domicilioReal.localidad }}</td>
-                <td>{{ solicitud.entidad.domicilioReal.calle }}</td>
-                <td>{{ solicitud.entidad.domicilioReal.numero }}</td>
+                <td>{{ solicitud.entidad.domicilioReal.direccion }}</td>
               </tr>
               <tr v-if="solicitud.entidad.domicilioProfesional">
                 <td>
@@ -104,8 +102,7 @@
                 <td>{{ solicitud.entidad.domicilioProfesional.provincia }}</td>
                 <td>{{ solicitud.entidad.domicilioProfesional.departamento }}</td>
                 <td>{{ solicitud.entidad.domicilioProfesional.localidad }}</td>
-                <td>{{ solicitud.entidad.domicilioProfesional.calle }}</td>
-                <td>{{ solicitud.entidad.domicilioProfesional.numero }}</td>
+                <td>{{ solicitud.entidad.domicilioProfesional.direccion }}</td>
               </tr>
               <tr v-if="solicitud.entidad.domicilioConstituido">
                 <td>
@@ -115,8 +112,7 @@
                 <td>{{ solicitud.entidad.domicilioConstituido.provincia }}</td>
                 <td>{{ solicitud.entidad.domicilioConstituido.departamento }}</td>
                 <td>{{ solicitud.entidad.domicilioConstituido.localidad }}</td>
-                <td>{{ solicitud.entidad.domicilioConstituido.calle }}</td>
-                <td>{{ solicitud.entidad.domicilioConstituido.numero }}</td>
+                <td>{{ solicitud.entidad.domicilioConstituido.direccion }}</td>
               </tr>
             </tbody>
           </table>
@@ -263,12 +259,6 @@
         </blockquote>
 
         <v-checkbox label="De Acuerdo" v-model="deAcuerdo">
-        </v-checkbox>
-
-        <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 10" v-model="solicitud.exencionArt10">
-        </v-checkbox>
-
-        <v-checkbox class="ma-0 pa-0" label="Solicitar Exención Art. 6" v-model="solicitud.exencionArt6">
         </v-checkbox>
 
         <v-checkbox class="ma-0 pa-0" label="Permitir la publicación de los datos" v-model="solicitud.entidad.publicar">

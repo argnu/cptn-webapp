@@ -7,7 +7,7 @@
       @input="update"
       @keyup.down="down"
       @keyup.up="up"
-      @keyup.enter="enter"
+      @keyup.enter.prevent="enter"
       :tabindex="tabindex"
       :rules="rules"
       :value="input_val"
@@ -122,9 +122,11 @@ export default {
 
   methods: {
     setText: function(item) {
-      this.show_items = false;
-      this.$emit('input', item[this.itemValue]);
-      this.$emit('change');
+      if (item) {
+        this.show_items = false;
+        this.$emit('input', item[this.itemValue]);
+        this.$emit('change');
+      }
     },
 
     update: function(e) {
@@ -156,7 +158,7 @@ export default {
       }
     },
 
-    enter: function() {
+    enter: function(e) {
       this.setText(this.items_filter[this.i_active]);
       this.i_active = 0;
     },

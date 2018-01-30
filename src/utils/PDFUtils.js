@@ -309,7 +309,7 @@ export function impresionSolicitud(solicitud) {
   doc.setFontSize(12);
 
   if (domicilioReal) {
-    doc.text(50, eje_y_domicilio - 6, `${domicilioReal.domicilio.calle} ${domicilioReal.domicilio.numero ? domicilioReal.domicilio.numero:'' }`);
+    doc.text(50, eje_y_domicilio - 6, domicilioReal.domicilio.direccion);
     doc.text(35, eje_y_domicilio, domicilioReal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioReal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -321,7 +321,7 @@ export function impresionSolicitud(solicitud) {
 
   if (domicilioLegal) {
     eje_y_domicilio += 12;
-    doc.text(50, eje_y_domicilio - 6, `${domicilioLegal.domicilio.calle} ${domicilioLegal.domicilio.numero ? domicilioLegal.domicilio.numero: ''}`);
+    doc.text(50, eje_y_domicilio - 6, domicilioLegal.domicilio.direccion);
     doc.text(35, eje_y_domicilio, domicilioLegal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -333,7 +333,7 @@ export function impresionSolicitud(solicitud) {
   
   if (domicilioEspecial) {
     eje_y_domicilio += 12;
-    doc.text(57, eje_y_domicilio - 6, `${domicilioEspecial.domicilio.calle} ${domicilioEspecial.domicilio.numero ? domicilioEspecial.domicilio.numero: ''} `);
+    doc.text(57, eje_y_domicilio - 6, domicilioEspecial.domicilio.direccion);
     doc.text(35, eje_y_domicilio, domicilioEspecial.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioEspecial.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -411,8 +411,7 @@ export function impresionLegajo(legajo, categoria) {
   doc.text(25, eje_y, `Departamento: ${legajo.domicilio ? legajo.domicilio.departamento : ''}`);
   doc.text(100, eje_y, `Localidad: ${legajo.domicilio ? legajo.domicilio.localidad : ''}`);
   eje_y += 5;
-  doc.text(25, eje_y, `Calle: ${legajo.domicilio ? legajo.domicilio.calle : ''}`);
-  doc.text(100, eje_y, `N°: ${legajo.domicilio &&  legajo.domicilio.numero ? legajo.domicilio.numero: ''}`);
+  doc.text(25, eje_y, `Dirección: ${legajo.domicilio ? legajo.domicilio.direccion : ''}`);
   eje_y += 5;
 
   let subcategoria = categoria.subcategorias.find(s => s.id == legajo.subcategoria)

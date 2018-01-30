@@ -166,7 +166,7 @@
                               label="Tipo"
                               v-model="nuevo_domicilio.tipo"
                               autocomplete
-                              :rules="[rules.required]"
+                              :rules="domicilio_edit != null ? [] : [rules.required]"
                             >
                             </v-select>                          
                           </v-flex>
@@ -216,8 +216,8 @@
 
                             <v-text-field
                               tabindex="16"
-                              label="Calle"
-                              v-model="nuevo_domicilio.domicilio.calle"
+                              label="Dirección"
+                              v-model="nuevo_domicilio.domicilio.direccion"
                               :rules="[rules.required]"
                             >
                             </v-text-field>
@@ -248,20 +248,22 @@
                               :rules="[rules.required]"
                             >
                             </v-select>
-
-                            <v-text-field
-                              tabindex="17"
-                              label="N°"
-                              v-model="nuevo_domicilio.domicilio.numero"
-                              :rules="[rules.required, rules.integer]"
-                            >
-                            </v-text-field>
                           </v-flex>
                         </v-layout>
 
                         <v-layout class="mb-4">
                           <v-flex xs12>
-                            <v-btn class="right" light @click="addDomicilio">Agregar</v-btn>
+                            <v-btn 
+                              class="right" 
+                              light 
+                              @click="addDomicilio"
+                            >
+                              {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
+                            </v-btn>
+
+                            <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
+                              Cancelar
+                            </v-btn>                             
                           </v-flex>                     
                         </v-layout>
 
@@ -278,28 +280,34 @@
                             <th></th>
                           </template>
                           <template slot="items" slot-scope="props">
-                            <td>{{ props.item.tipo | upperFirst }}</td>
+                            <tr :active="props.index == domicilio_edit">
+                              <td>
+                                <v-btn fab small @click="editDomicilio(props.index)">
+                                  <v-icon>mode_edit</v-icon>
+                                </v-btn>
+                              </td>                              
+                              <td>{{ props.item.tipo | upperFirst }}</td>
 
-                            <template v-if="!props.item.id">
-                              <td>{{ props.item.pais_nombre }}</td>
-                              <td>{{ props.item.provincia_nombre }}</td>
-                              <td>{{ props.item.departamento_nombre }}</td>
-                              <td>{{ props.item.localidad_nombre }}</td>                             
-                            </template>
-                            <template v-else>
-                              <td>{{ props.item.domicilio.pais }}</td>
-                              <td>{{ props.item.domicilio.provincia }}</td>
-                              <td>{{ props.item.domicilio.departamento }}</td>
-                              <td>{{ props.item.domicilio.localidad }}</td>                             
-                            </template>
+                              <template v-if="!props.item.id">
+                                <td>{{ props.item.pais_nombre }}</td>
+                                <td>{{ props.item.provincia_nombre }}</td>
+                                <td>{{ props.item.departamento_nombre }}</td>
+                                <td>{{ props.item.localidad_nombre }}</td>                             
+                              </template>
+                              <template v-else>
+                                <td>{{ props.item.domicilio.pais }}</td>
+                                <td>{{ props.item.domicilio.provincia }}</td>
+                                <td>{{ props.item.domicilio.departamento }}</td>
+                                <td>{{ props.item.domicilio.localidad }}</td>                             
+                              </template>
 
-                            <td>{{ props.item.domicilio.calle }}</td>
-                            <td>{{ props.item.domicilio.numero }}</td>                             
-                            <td style="width:30px">
-                              <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
+                              <td>{{ props.item.domicilio.direccion }}</td>
+                              <td style="width:30px">
+                                <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                  <v-icon>delete</v-icon>
+                                </v-btn>
+                              </td>
+                            </tr>                              
                           </template>
                         </v-data-table>
 
@@ -746,7 +754,7 @@ export default {
         })
       }
       else {
-        this.solicitud.delegacion = +this.global_state.delegacion;
+        this.solicitud.delegacion = +this.global_state.delegacion.id;
         this.changePais();
         this.changeProvincia();
       }      
