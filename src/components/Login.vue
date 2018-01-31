@@ -6,7 +6,8 @@
     <v-card>
       <v-card-text>
         <form @submit.prevent="autenticar">
-          <v-layout row wrap>
+
+          <v-layout row wrap v-if="!delegaciones.length">
             <v-flex md6 offset-md3 xs12>
               <v-text-field
                 label="Nombre de Usuario"
@@ -44,6 +45,27 @@
 
             </v-flex>
           </v-layout>
+
+          <v-layout v-if="delegaciones.length">
+            <v-flex md6 offset-md3 xs12>
+              <span class="subheading blue--text text--darken-4"><b>Seleccionar Delegación</b></span>
+              <v-list>
+                  <v-list-tile avatar v-for="delegacion in delegaciones" :key="delegacion.id" @click="select(delegacion)">
+                      <v-list-tile-avatar>
+                      <v-icon>location_city</v-icon>
+                      </v-list-tile-avatar>
+                      <v-list-tile-content>
+                      <v-list-tile-title>{{ delegacion.nombre }}</v-list-tile-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                      <v-btn icon ripple>
+                          <v-icon color="grey lighten-1">account_circle</v-icon>
+                      </v-btn>
+                      </v-list-tile-action>
+                  </v-list-tile>
+              </v-list>              
+            </v-flex>            
+          </v-layout>
         </form>
       </v-card-text>
     </v-card>
@@ -53,6 +75,8 @@
 <script>
 import axios from '@/axios'
 import * as Cookies from 'js-cookie'
+import Store from '@/stores/Global'
+
 
 const User = () => ({
   id: '',
@@ -65,7 +89,8 @@ export default {
     return {
       usuario: User(),
       submitted: false,
-      submit_error: false
+      submit_error: false,
+      delegaciones: []
     }
   },
 
@@ -75,6 +100,7 @@ export default {
     }
   },
 
+
   methods: {
     autenticar: function() {
       this.submitted = true;
@@ -82,14 +108,23 @@ export default {
       axios.post('/usuarios/auth', this.usuario)
       .then(r => {
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);
-        this.$router.push({ path: '/seleccionar-delegacion' });
+        Store.setUser(r.data);
+        axios.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
+        axios.get(`/usuarios/${r.data.id}/delegaciones`)
+        .then(r => this.delegaciones = r.data)
+        .catch(e => console.error(e));        
       })
       .catch(e => {
         this.submit_error = true;
-        // if (e.response.status == 500) this.submit_error = true;
         console.error(e);
       });
-    }
+    },
+
+    select: function(delegacion) {
+      Store.setDelegacion(delegacion);
+      Cookies.set('CPTNDelegacion', JSON.stringify(delegacion));
+      this.$router.push({ path: '/matriculas/lista' })
+    }    
   },
 
 }

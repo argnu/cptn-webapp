@@ -10,6 +10,7 @@
 
 - **Modificar Profesional**: habilitación de edición de elementos individuales de contacto, domicilio, formación y subsidiarios.
 - **Delegacion**: mensaje que indica la delegación en la que se encuentra el usuario.
+- **AddFoto**: posibilidad de tomar la foto con una webcam.
 
 ## Modificado
 

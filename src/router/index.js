@@ -32,21 +32,22 @@ export default new Router({
       redirect: '/seleccionar-delegacion',
       beforeEnter: (to, from, next) => {
         if (!Cookies.get('CPTNUser')) next({ path: '/login' });
-        else {
+        else if (!Store.state.user || !Store.state.delegacion) {
           let user = JSON.parse(Cookies.get('CPTNUser'));
           let delegacion = JSON.parse(Cookies.get('CPTNDelegacion'));
           Store.setUser(user);
           Store.setDelegacion(delegacion);
-          axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;          
+          axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;
           next();
         }
+        else next();
       },
 
       children: [
         {
           path: '/seleccionar-delegacion',
           name: 'DelegacionSeleccion',
-          component: DelegacionSeleccion
+          component: DelegacionSeleccion,
         },
         {
           path: '/solicitudes/profesionales/nueva',

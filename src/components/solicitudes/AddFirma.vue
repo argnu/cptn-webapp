@@ -15,24 +15,35 @@
                     alt="" 
                     style="max-width:180px"
                 />
-                <br><br>
-                <v-icon>person_add</v-icon>
-                <b>Cambiar:</b> 
-                <input type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">
+                <template v-if="edit">
+                    <br><br>
+                    <v-icon>person_add</v-icon>
+                    <b>Cambiar:</b> 
+                    <input type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">                    
+                </template>
         </div>
 
         <div v-show="tipo_firma == 'dibujar'">
-            <canvas ref="lienzo" width="300" height="200" style="border:1px solid #000000;padding:0;margin:0">
+            <canvas ref="lienzo" width="426" height="320" style="border:1px solid #000000;padding:0;margin:0">
             </canvas>
             <br>
                 <v-btn
-                outline
-                color="blue-grey"
-                dark
-                @click.native="limpiarCanvas"
+                    outline
+                    color="blue-grey"
+                    dark
+                    @click.native="limpiarCanvas"
                 >
                     <v-icon>clear</v-icon>
                     Limpiar
+                </v-btn>
+                <v-btn
+                    outline
+                    color="blue-grey"
+                    dark
+                    @click.native="guardar"
+                >
+                    <v-icon>save</v-icon>
+                    Guardar
                 </v-btn>
         </div>
     </v-card>  
@@ -129,20 +140,9 @@ export default {
             }
         };
 
-        canvas.onmouseup = e => {
-            this.pulsado = false;
-            this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
-        };
-
-        canvas.onmouseleave = e => {
-            this.pulsado = false;
-            this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
-        };
-
-        canvas.ontouchend = e => {
-            this.pulsado = false;
-            this.$emit('change', utils.dataURItoBlob(this.$refs.lienzo.toDataURL()))
-        };
+        canvas.onmouseup = e => this.pulsado = false;
+        canvas.onmouseleave = e => this.pulsado = false;
+        canvas.ontouchend = e => this.pulsado = false;
     },        
 
     methods: {
@@ -189,7 +189,17 @@ export default {
                 context.closePath();
                 context.stroke();
             }
-        }              
+        },
+        
+        guardar: function() {           
+            let dataURI = this.$refs.lienzo.toDataURL('image/png');
+            this.$refs.img.setAttribute('src', dataURI);     
+            this.tipo_firma = 'imagen';
+            this.$emit('change', utils.dataURItoBlob(dataURI));
+            this.limpiarCanvas();
+
+        }
+        
     }
 
 }

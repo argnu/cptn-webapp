@@ -82,7 +82,7 @@ export function dataURItoBlob(dataURI) {
         ia[i] = byteString.charCodeAt(i);
     }
 
-    return new Blob([ia], {type:mimeString});
+    return new Blob([ia], { type:mimeString });
 }
 
 export const sortByFecha = (atributo) => {
