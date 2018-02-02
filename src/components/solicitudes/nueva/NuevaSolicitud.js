@@ -164,7 +164,7 @@ export default {
           this.nuevo_contacto.valor = `+${this.nuevo_telefono.pais}-${this.nuevo_telefono.provincia}-${this.nuevo_telefono.numero}`;
         }
 
-        if (!this.nuevo_contacto.id) {
+        if (!this.contacto_edit) {
           this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         }
         else {
@@ -174,6 +174,7 @@ export default {
         this.nuevo_contacto = new Contacto();
         this.nuevo_telefono = new Telefono();
         this.$refs.form_contacto.reset();
+        this.contacto_edit = null;
       }
     },
 

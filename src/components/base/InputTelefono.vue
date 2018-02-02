@@ -6,7 +6,7 @@
                 :suffix="type == 'celular' ? '9' : ''"
                 maxlength="4"
                 ref="pref_pais"
-                :value="+value.pais"
+                :value="value.pais"
                 :rules="[rules.required, rules.telefono.pais]"
                 @input="updatePrefijoPais"
             >
@@ -16,7 +16,7 @@
             <input-numero
                 maxlength="5"
                 ref="prefijo"
-                :value="+value.provincia"
+                :value="value.provincia"
                 :rules="type == 'celular' ? [rules.required, rules.celular.provincia] : [rules.required, rules.telefono.provincia]"
                 @input="updatePrefijo"
             >
@@ -25,7 +25,7 @@
         <v-flex xs5 class="ml-2">
             <input-numero
                 ref="numero"
-                :value="+value.numero"
+                :value="value.numero"
                 :rules="type == 'celular' ? [rules.required, rules.celular.numero] : [rules.required]"
                 @input="updateNumero"
             >
