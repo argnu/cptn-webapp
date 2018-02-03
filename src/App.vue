@@ -12,19 +12,25 @@
     </v-snackbar>
 
     <v-toolbar dark class="blue darken-1">
-      <v-toolbar-side-icon @click="toggleMenuLateral" v-if="isDelegacionSelected">
-      </v-toolbar-side-icon>
-      <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
+      <v-toolbar-side-icon 
+        v-if="isDelegacionSelected"
+        @click="toggleMenuLateral" 
+      ></v-toolbar-side-icon>
 
-      <span class="ml-4" v-if="isDelegacionSelected">
-        <b>Delegación: {{ global_state.delegacion.nombre }}</b>
-      </span>
+      <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
 
       <v-spacer></v-spacer>
 
-      <template v-if="isLogged">
+      <v-toolbar-items v-if="isLogged">
+        <v-list-tile-content class="mr-4" >
+          <v-list-tile-title>{{ full_name }}</v-list-tile-title>
+          <v-list-tile-sub-title style="font-size:120%">
+            {{ delegacion ? delegacion.nombre : '' }}
+          </v-list-tile-sub-title>
+        </v-list-tile-content> 
+
         <user-menu></user-menu>
-      </template>
+      </v-toolbar-items>
 
     </v-toolbar>
 
@@ -58,6 +64,10 @@ export default {
 
     isDelegacionSelected: function() {
       return !!this.global_state.delegacion;
+    },
+
+    full_name: function() {
+      return `${this.user.nombre} ${this.user.apellido}`;
     }
   },
 

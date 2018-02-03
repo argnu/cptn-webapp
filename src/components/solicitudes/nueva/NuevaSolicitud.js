@@ -164,7 +164,7 @@ export default {
           this.nuevo_contacto.valor = `+${this.nuevo_telefono.pais}-${this.nuevo_telefono.provincia}-${this.nuevo_telefono.numero}`;
         }
 
-        if (!this.contacto_edit) {
+        if (this.contacto_edit == null) {
           this.solicitud.entidad.contactos.push(this.nuevo_contacto);
         }
         else {
