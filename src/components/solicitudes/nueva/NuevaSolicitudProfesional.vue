@@ -1,7 +1,7 @@
 <template>
-<v-container>
+<v-container fluid>
   <v-layout row wrap>
-    <v-flex xs8>
+    <v-flex xs10>
       <form v-on:submit.prevent="submit">
         <v-toolbar class="blue darken-3">
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
@@ -352,6 +352,9 @@
                                 <v-btn fab small @click="editDomicilio(props.index)">
                                   <v-icon>mode_edit</v-icon>
                                 </v-btn>
+                                <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                  <v-icon>delete</v-icon>
+                                </v-btn>                                
                               </td>
 
                               <td>{{ props.item.tipo | upperFirst }}</td>
@@ -370,11 +373,6 @@
                               </template>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
-                              <td>
-                                <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>
-                              </td>
                             </tr>
                           </template>
                         </v-data-table>
@@ -471,6 +469,9 @@
                             <v-btn fab small @click="editContacto(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
+                            <v-btn fab small @click="removeElem('contactos', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>                            
                           </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
                           <td>{{ props.item.valor }}</td>
@@ -478,11 +479,6 @@
                             <span v-if="props.item.tipo == 2">
                               Whatsapp: {{ props.item.whatsapp | boolean }}
                             </span>
-                          </td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
                           </td>
                         </tr>
                       </template>
@@ -585,15 +581,13 @@
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
+                            <v-btn fab small @click="removeElem('formaciones', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>                            
                           </td>
                           <td>{{ getTitulo(props.item.titulo) }}</td>
                           <td>{{ props.item.fecha }}</td>
                           <td>{{ getInstitucion(props.item.institucion) }}</td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('formaciones', props.index)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
-                          </td>
                         </tr>
                       </template>
                     </v-data-table>
@@ -687,104 +681,22 @@
                       style="margin-top:30px"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                              <b>{{ header.text }}</b>
-                            </th>
-                            <th></th>
+                          <th></th>
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                            <b>{{ header.text }}</b>
+                          </th>
                           </template>
                       <template slot="items" slot-scope="props">
+                            <td style="max-width:30px">
+                              <v-btn fab small @click="removeElem('cajas_previsionales', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>
+                            </td>                        
                             <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
                             <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
                             <td v-else>{{ getNombreCaja(props.item) }}</td>
-
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('cajas_previsionales', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </template>
                     </v-data-table>
-
-                  <!-- <v-layout row>
-                    <v-flex xs6 class="ma-4">
-                      <v-text-field
-                        label="DNI"
-                        v-model="nuevo_beneficiario.dni"
-                        :rules="[rules.required, rules.integer]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Apellido"
-                        v-model="nuevo_beneficiario.apellido"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Nombre"
-                        v-model="nuevo_beneficiario.nombre"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-                    </v-flex>
-
-                    <v-flex xs6 class="ma-4">
-                      <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
-                      </input-fecha>
-                      <v-select
-                        autocomplete single-line bottom
-                        label="Vínculo"
-                        :items="opciones.vinculo"
-                        item-text="valor"
-                        item-value="id"
-                        v-model="nuevo_beneficiario.vinculo"
-                        :rules="[rules.required]"
-                      >
-                      </v-select>
-                      <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
-                      </v-checkbox>
-                    </v-flex>
-                  </v-layout> -->
-
-                  <!-- <v-layout row wrap class="mb-4">
-                    <v-flex xs12>
-                      <v-btn class="right" light @click="addBeneficiario">
-                        Agregar
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
-
-                  <div>
-                    <v-data-table
-                      :headers="headers.beneficiarios"
-                      :items="solicitud.entidad.beneficiarios"
-                      hide-actions
-                      class="elevation-1"
-                      no-data-text="No hay beneficiarios"
-                    >
-                      <template slot="headers" slot-scope="props">
-                               <th v-for="header of props.headers" class="pa-3 text-xs-left">
-                                 <b>{{ header.text }}</b>
-                               </th>
-                               <th></th>
-                             </template>
-                      <template slot="items" slot-scope="props">
-                               <td>{{ props.item.dni }}</td>
-                               <td>{{ props.item.apellido }}</td>
-                               <td>{{ props.item.nombre }}</td>
-                               <td>{{ props.item.fechaNacimiento }}</td>
-                               <td>{{ getVinculo(props.item.vinculo) }}</td>
-                               <td>{{ props.item.invalidez | boolean }}</td>
-                               <td style="width:30px">
-                                 <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
-                                   <v-icon>delete</v-icon>
-                                 </v-btn>
-                               </td>
-                             </template>
-                    </v-data-table>
-                  </div> -->
-
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -859,10 +771,10 @@
                       >
                         <template slot="headers" slot-scope="props">
                           <th></th>
+                          <th></th>
                           <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                             <b>{{ header.text }}</b>
                           </th>
-                          <th></th>
                         </template>
                         <template slot="items" slot-scope="props">
                           <tr :active="props.index == subsidiario_edit">
@@ -870,16 +782,14 @@
                               <v-btn fab small @click="editSubsidiario(props.index)">
                                 <v-icon>mode_edit</v-icon>
                               </v-btn>
+                              <v-btn fab small @click="removeElem('subsidiarios', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>                              
                             </td>
                             <td>{{ props.item.dni }}</td>
                             <td>{{ props.item.apellido }}</td>
                             <td>{{ props.item.nombre }}</td>
                             <td>{{ props.item.porcentaje }}</td>
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </tr>
                         </template>
                       </v-data-table>
@@ -981,7 +891,7 @@
 
     <div class="stuck">
       <v-toolbar class="blue darken-3">
-        <v-toolbar-title class="white--text">Datos del Profesional</v-toolbar-title>
+        <v-toolbar-title class="white--text">Profesional</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-container>
@@ -1047,7 +957,6 @@ export default {
       nuevo_subsidiario: new Subsidiario(),
       nueva_caja: '',
       publicar_todos: false,
-      rules_contacto: [rules.required],
       foto: null,
       firma: null,
       valid: {
@@ -1421,7 +1330,7 @@ h6 {
 .stuck {
   position: fixed;
   right: 10px;
-  width: 30%;
+  width: 15%;
   word-wrap: break-word;
 }
 </style>

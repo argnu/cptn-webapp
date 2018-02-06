@@ -34,14 +34,13 @@ const headers = {
   ],
 
   domicilios: [
-    Header('', 'edit'),
+    Header('', 'acciones'),
     Header('Tipo', 'tipo'),
     Header('País', 'pais'),
     Header('Provincia', 'provincia'),
     Header('Departamento', 'departamento'),
     Header('Localidad', 'localidad'),
     Header('Dirección', 'direccion'),
-    Header('', 'borrar'),
   ],
 
   formacion: [
@@ -81,6 +80,7 @@ export default {
       step: 1,
       nuevo_contacto: new Contacto(),
       placeholder_contacto: '',
+      rules_contacto: [rules.required],
       nuevo_telefono: new Telefono(),
       nuevo_domicilio: EntidadDomicilio(),
       delegaciones: [],
