@@ -9,6 +9,8 @@
           </v-toolbar>
 
           <v-container>
+            <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
+
              <v-stepper v-model="step" vertical>
 
                <!-- PASO 1: DATOS DE SOLICITUD -->
@@ -367,6 +369,7 @@
                             <v-text-field 
                               v-model="nuevo_contacto.valor" 
                               :rules="[rules.required]"
+                              :placeholder="placeholder_contacto"
                             >
                             </v-text-field>
                           </v-flex>    
@@ -657,8 +660,6 @@ export default {
 
   data () {
     return {
-      domicilio_edit: null,
-      contacto_edit: null,
       solicitud: new Solicitud('empresa'),
       nuevo_contacto: new Solicitud(),
       nueva_incumbencia: '',
@@ -714,6 +715,12 @@ export default {
     }
   },
 
+  watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.initForm();
+    }
+  },  
+
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     
@@ -726,8 +733,25 @@ export default {
       this.paises = r[0].data;
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
-      
+      this.datos_cargados = true;
+      this.initForm();   
+    })
+    .catch(e => console.error(e));
+  },
+
+  methods: {
+    init: function(reset) {
+      this.changePais().then(() => this.changeProvincia()).then(() => {
+        this.show_cargando = false;
+        if (reset) this.$refs.form_empresa.reset();
+      });
+    },
+
+    initForm: function() {
+      this.step = 1;
+      this.updateMatriculas();
       if (this.id) { 
+        this.show_cargando = true;
         axios.get(`/solicitudes/${this.id}`)
         .then(r => {          
               this.solicitud = new Solicitud('empresa');
@@ -753,18 +777,16 @@ export default {
 
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias;
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
+              this.init(false);
         })
       }
       else {
-        this.solicitud.delegacion = +this.global_state.delegacion.id;
-        this.changePais();
-        this.changeProvincia();
-      }      
-    })
-    .catch(e => console.error(e));
-  },
+        this.solicitud = new Solicitud('empresa');
+        this.solicitud.delegacion = +this.global_state.delegacion.id;        
+        this.init(true);
+      }       
+    },
 
-  methods: {
     getTipoContacto: function(id) {
       return this.opciones.contacto.find(o => o.id == id).valor;
     },

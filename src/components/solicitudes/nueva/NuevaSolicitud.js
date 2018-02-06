@@ -74,8 +74,13 @@ const headers = {
 export default {
   data () {
     return {
+      show_cargando: false,
+      datos_cargados: false,
+      domicilio_edit: null,
+      contacto_edit: null,      
       step: 1,
       nuevo_contacto: new Contacto(),
+      placeholder_contacto: '',
       nuevo_telefono: new Telefono(),
       nuevo_domicilio: EntidadDomicilio(),
       delegaciones: [],

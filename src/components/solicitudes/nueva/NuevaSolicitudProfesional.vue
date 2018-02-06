@@ -1035,10 +1035,6 @@ export default {
 
   data() {
     return {
-      show_cargando: false,
-      datos_cargados: false,
-      domicilio_edit: null,
-      contacto_edit: null,
       formacion_edit: null,
       subsidiario_edit: null,
       instituciones: [],
@@ -1052,7 +1048,6 @@ export default {
       nueva_caja: '',
       publicar_todos: false,
       rules_contacto: [rules.required],
-      placeholder_contacto: '',
       foto: null,
       firma: null,
       valid: {
@@ -1101,7 +1096,7 @@ export default {
 
   watch: {
     '$route' (to, from) {
-      if (this.datos_cargados) this.init(true);
+      if (this.datos_cargados) this.init();
     }
   },
 
