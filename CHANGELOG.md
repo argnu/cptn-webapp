@@ -8,6 +8,7 @@
     - form de caja previsional, refresecaba la pagina cuando se apreta enter.
     - repetición de contactos, formaciones y subsidiarios en edición.
 - **NuevaBoleta**: no se podía cargar un importe decimal.
+- **InputNumero**: cuando es fijo se borraba el cero del prefijo provincial.
 
 ## Agregado
 
