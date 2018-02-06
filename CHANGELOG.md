@@ -2,6 +2,15 @@
 
 ## Solucionado
 
+- **NuevoProfesional**: 
+    - reiniciar form cuando cambio de ruta pero el componente es el mismo.
+    - barra de progreso superior de carga de datos del profesional.
+
+
+# 1.3.0 (2018-02-05)
+
+## Solucionado
+
 - **AddFirma**: reseteo de canvas, no reseteaba el array movimientos.
 - **InputFecha**: luego de seleccionar fecha por diálogo no te permitía editar, se borraba toda.
 - **NuevoProfesional**: 

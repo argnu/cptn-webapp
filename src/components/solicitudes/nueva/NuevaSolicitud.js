@@ -34,14 +34,13 @@ const headers = {
   ],
 
   domicilios: [
-    Header('', 'edit'),
+    Header('', 'acciones'),
     Header('Tipo', 'tipo'),
     Header('País', 'pais'),
     Header('Provincia', 'provincia'),
     Header('Departamento', 'departamento'),
     Header('Localidad', 'localidad'),
     Header('Dirección', 'direccion'),
-    Header('', 'borrar'),
   ],
 
   formacion: [
@@ -74,8 +73,14 @@ const headers = {
 export default {
   data () {
     return {
+      show_cargando: false,
+      datos_cargados: false,
+      domicilio_edit: null,
+      contacto_edit: null,      
       step: 1,
       nuevo_contacto: new Contacto(),
+      placeholder_contacto: '',
+      rules_contacto: [rules.required],
       nuevo_telefono: new Telefono(),
       nuevo_domicilio: EntidadDomicilio(),
       delegaciones: [],
@@ -120,31 +125,48 @@ export default {
   methods: {
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
-        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+        return axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
              .then(r => this.provincias = r.data)
-             .catch(e => console.error(e));
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
-      else this.provincias = [];
+      else { 
+        this.provincias = [];
+        return Promise.resolve();
+      }
     },
 
     changeProvincia: function () {
       if (this.nuevo_domicilio.domicilio.provincia) {
-        axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+        return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
              .then(r => this.departamentos = r.data)
-             .catch(e => console.error(e));
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
-      else this.departamentos = [];
+      else { 
+        this.departamentos = [];
+        return Promise.resolve();
+      }
     },
 
     changeDepartamento: function () {
       if (this.nuevo_domicilio.domicilio.departamento) {
-        axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+        return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
              .then(r => this.localidades = r.data)
-             .catch(e => console.error(e));
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
-      else this.localidades = [];
+      else { 
+        this.localidades = [];
+        return Promise.resolve();
+      }
     },
-
 
     chgTipoContacto: function(e) {
       if (e == 3) { 

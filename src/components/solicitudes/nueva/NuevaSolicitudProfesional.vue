@@ -1,7 +1,7 @@
 <template>
-<v-container>
+<v-container fluid>
   <v-layout row wrap>
-    <v-flex xs8>
+    <v-flex xs10>
       <form v-on:submit.prevent="submit">
         <v-toolbar class="blue darken-3">
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
@@ -9,6 +9,8 @@
         </v-toolbar>
 
         <v-container>
+          <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
+
           <v-stepper v-model="step" vertical>
 
             <!-- PASO 1: DATOS DE SOLICITUD -->
@@ -183,12 +185,12 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs12 class="mx-4">                         
+                    <v-flex xs12 class="mx-4">
                       <add-foto
                           edit
                           :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
                           @change="chgFoto"
-                      ></add-foto>                                      
+                      ></add-foto>
                     </v-flex>
                   </v-layout>
 
@@ -196,12 +198,12 @@
                     <v-flex xs12 class="mt-4">
                       <add-firma
                         edit
-                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
-                        @change="chgFirma"            
+                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''"
+                        @change="chgFirma"
                         ref="firma"
-                      ></add-firma>                      
+                      ></add-firma>
                     </v-flex>
-                  </v-layout> 
+                  </v-layout>
 
                   </v-form>
                 </v-card-text>
@@ -318,9 +320,9 @@
 
                         <v-layout class="mb-4">
                           <v-flex xs12>
-                            <v-btn 
-                              class="right" 
-                              light 
+                            <v-btn
+                              class="right"
+                              light
                               @click="addDomicilio"
                             >
                               {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
@@ -328,7 +330,7 @@
 
                           <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
                             Cancelar
-                          </v-btn>                            
+                          </v-btn>
                           </v-flex>
                         </v-layout>
 
@@ -350,6 +352,9 @@
                                 <v-btn fab small @click="editDomicilio(props.index)">
                                   <v-icon>mode_edit</v-icon>
                                 </v-btn>
+                                <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                  <v-icon>delete</v-icon>
+                                </v-btn>                                
                               </td>
 
                               <td>{{ props.item.tipo | upperFirst }}</td>
@@ -368,11 +373,6 @@
                               </template>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
-                              <td>
-                                <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>
-                              </td>
                             </tr>
                           </template>
                         </v-data-table>
@@ -456,7 +456,7 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
-                      <template slot="headers" slot-scope="props">                        
+                      <template slot="headers" slot-scope="props">
                         <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                           {{ header.text }}
                         </th>
@@ -469,18 +469,16 @@
                             <v-btn fab small @click="editContacto(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
+                            <v-btn fab small @click="removeElem('contactos', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>                            
+                          </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
                           <td>{{ props.item.valor }}</td>
                           <td>
                             <span v-if="props.item.tipo == 2">
                               Whatsapp: {{ props.item.whatsapp | boolean }}
                             </span>
-                          </td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
                           </td>
                         </tr>
                       </template>
@@ -583,15 +581,13 @@
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
+                            <v-btn fab small @click="removeElem('formaciones', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>                            
+                          </td>
                           <td>{{ getTitulo(props.item.titulo) }}</td>
                           <td>{{ props.item.fecha }}</td>
                           <td>{{ getInstitucion(props.item.institucion) }}</td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('formaciones', props.index)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
-                          </td>
                         </tr>
                       </template>
                     </v-data-table>
@@ -685,104 +681,22 @@
                       style="margin-top:30px"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                              <b>{{ header.text }}</b>
-                            </th>
-                            <th></th>
+                          <th></th>
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                            <b>{{ header.text }}</b>
+                          </th>
                           </template>
                       <template slot="items" slot-scope="props">
+                            <td style="max-width:30px">
+                              <v-btn fab small @click="removeElem('cajas_previsionales', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>
+                            </td>                        
                             <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
                             <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
                             <td v-else>{{ getNombreCaja(props.item) }}</td>
-                            
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('cajas_previsionales', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </template>
-                    </v-data-table>                  
-
-                  <!-- <v-layout row>
-                    <v-flex xs6 class="ma-4">
-                      <v-text-field
-                        label="DNI"
-                        v-model="nuevo_beneficiario.dni"
-                        :rules="[rules.required, rules.integer]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Apellido"
-                        v-model="nuevo_beneficiario.apellido"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Nombre"
-                        v-model="nuevo_beneficiario.nombre"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-                    </v-flex>
-
-                    <v-flex xs6 class="ma-4">
-                      <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
-                      </input-fecha>
-                      <v-select
-                        autocomplete single-line bottom
-                        label="Vínculo"
-                        :items="opciones.vinculo"
-                        item-text="valor"
-                        item-value="id"
-                        v-model="nuevo_beneficiario.vinculo"
-                        :rules="[rules.required]"
-                      >
-                      </v-select>
-                      <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
-                      </v-checkbox>
-                    </v-flex>
-                  </v-layout> -->
-
-                  <!-- <v-layout row wrap class="mb-4">
-                    <v-flex xs12>
-                      <v-btn class="right" light @click="addBeneficiario">
-                        Agregar
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
-
-                  <div>
-                    <v-data-table
-                      :headers="headers.beneficiarios"
-                      :items="solicitud.entidad.beneficiarios"
-                      hide-actions
-                      class="elevation-1"
-                      no-data-text="No hay beneficiarios"
-                    >
-                      <template slot="headers" slot-scope="props">
-                               <th v-for="header of props.headers" class="pa-3 text-xs-left">
-                                 <b>{{ header.text }}</b>
-                               </th>
-                               <th></th>
-                             </template>
-                      <template slot="items" slot-scope="props">
-                               <td>{{ props.item.dni }}</td>
-                               <td>{{ props.item.apellido }}</td>
-                               <td>{{ props.item.nombre }}</td>
-                               <td>{{ props.item.fechaNacimiento }}</td>
-                               <td>{{ getVinculo(props.item.vinculo) }}</td>
-                               <td>{{ props.item.invalidez | boolean }}</td>
-                               <td style="width:30px">
-                                 <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
-                                   <v-icon>delete</v-icon>
-                                 </v-btn>
-                               </td>
-                             </template>
                     </v-data-table>
-                  </div> -->
-
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -793,8 +707,8 @@
 
 
             <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
-            <v-stepper-step step="8" edit-icon="check" editable 
-              :complete="valid_subsidiarios && step > 8" 
+            <v-stepper-step step="8" edit-icon="check" editable
+              :complete="valid_subsidiarios && step > 8"
               :rules="[() => step <= 8 || valid_subsidiarios]"
             >
               Subsidio Por Fallecimiento
@@ -857,10 +771,10 @@
                       >
                         <template slot="headers" slot-scope="props">
                           <th></th>
+                          <th></th>
                           <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                             <b>{{ header.text }}</b>
                           </th>
-                          <th></th>
                         </template>
                         <template slot="items" slot-scope="props">
                           <tr :active="props.index == subsidiario_edit">
@@ -868,16 +782,14 @@
                               <v-btn fab small @click="editSubsidiario(props.index)">
                                 <v-icon>mode_edit</v-icon>
                               </v-btn>
-                            </td>                          
+                              <v-btn fab small @click="removeElem('subsidiarios', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>                              
+                            </td>
                             <td>{{ props.item.dni }}</td>
                             <td>{{ props.item.apellido }}</td>
                             <td>{{ props.item.nombre }}</td>
                             <td>{{ props.item.porcentaje }}</td>
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </tr>
                         </template>
                       </v-data-table>
@@ -922,7 +834,7 @@
                     @change="chgPublicarTodos"
                     v-model="publicar_todos"
                   >
-                  </v-checkbox>                  
+                  </v-checkbox>
 
                   <v-layout row class="mt-2">
                     <v-flex xs6>
@@ -979,7 +891,7 @@
 
     <div class="stuck">
       <v-toolbar class="blue darken-3">
-        <v-toolbar-title class="white--text">Datos del Profesional</v-toolbar-title>
+        <v-toolbar-title class="white--text">Profesional</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-container>
@@ -1033,8 +945,6 @@ export default {
 
   data() {
     return {
-      domicilio_edit: null,
-      contacto_edit: null,
       formacion_edit: null,
       subsidiario_edit: null,
       instituciones: [],
@@ -1047,14 +957,12 @@ export default {
       nuevo_subsidiario: new Subsidiario(),
       nueva_caja: '',
       publicar_todos: false,
-      rules_contacto: [rules.required],
-      placeholder_contacto: '',
       foto: null,
       firma: null,
       valid: {
         form_solicitud: false,
         form_profesional: false
-      },      
+      },
     }
   },
 
@@ -1095,6 +1003,12 @@ export default {
     }
   },
 
+  watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.init();
+    }
+  },
+
   created: function() {
     Promise.all([
         axios.get('/paises'),
@@ -1111,34 +1025,53 @@ export default {
         this.instituciones = r[3].data;
         this.titulos = r[4].data;
         this.cajas_previsionales = r[5].data;
-
-        if (this.id) {
-          axios.get(`/solicitudes/${this.id}`)
-          .then(r => {
-              this.solicitud = new Solicitud('profesional');
-              this.solicitud.fecha = utils.getFecha(r.data.fecha);
-              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
-              this.solicitud.estado = r.data.estado;
-              this.fillProfesional(r.data.entidad);
-          });
-        }
-        else {
-          this.solicitud.delegacion = +this.global_state.delegacion.id;
-          if (this.dni) { 
-            this.solicitud.entidad.dni = this.dni;
-            this.chgDni();
-          }
-          else {
-            this.changePais();
-            this.changeProvincia();
-          }
-        }
+        this.datos_cargados = true;
+        this.init();
       })
       .catch(e => console.error(e));
   },
 
 
   methods: {
+    init: function() {
+      this.step = 1;
+      this.initForm().then(reset => {
+        this.show_cargando = false;
+        if (reset) {
+          this.$refs.firma.reset();
+          this.$refs.form_profesional.reset();
+        }
+      });
+    },
+
+    initForm: function() {
+      this.show_cargando = true;
+      this.solicitud = new Solicitud('profesional');
+
+      if (this.id) {
+        return axios.get(`/solicitudes/${this.id}`)
+        .then(r => {
+            this.solicitud.fecha = utils.getFecha(r.data.fecha);
+            this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+            this.solicitud.estado = r.data.estado;
+            this.fillProfesional(r.data.entidad);
+            return false;
+        });
+      }
+      else {
+        this.solicitud.fecha = utils.getFecha();
+        this.solicitud.delegacion = +this.global_state.delegacion.id;
+
+        if (this.dni) {
+          this.solicitud.entidad.dni = this.dni;
+          return this.chgDni().then(() => false)
+        }
+        else {
+          return this.changePais().then(() => this.changeProvincia()).then(() => true)
+        }
+      }
+    },
+
     fillProfesional: function(entidad) {
       this.solicitud.entidad.foto = entidad.foto;
       this.solicitud.entidad.firma = entidad.firma;
@@ -1160,6 +1093,12 @@ export default {
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
 
+      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
+      this.solicitud.entidad.empresa = entidad.empresa;
+      this.solicitud.entidad.independiente = entidad.independiente;
+      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
+
       this.solicitud.entidad.domicilios = entidad.domicilios;
 
       this.solicitud.entidad.contactos = [];
@@ -1178,12 +1117,6 @@ export default {
         formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
-
-      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
-      this.solicitud.entidad.empresa = entidad.empresa;
-      this.solicitud.entidad.independiente = entidad.independiente;
-      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
 
       this.solicitud.entidad.subsidiarios = [];
       for(let subsidiario of entidad.subsidiarios) {
@@ -1214,13 +1147,14 @@ export default {
 
     getNombreCaja: function(id) {
       return this.cajas_previsionales.find(i => id == i.id).nombre;
-    },    
+    },
 
     chgDni: function() {
-      axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
+        return;
       })
       .catch(e => console.error(e));
     },
@@ -1238,11 +1172,11 @@ export default {
 
     chgFirma: function(firma) {
         this.firma = firma;
-    },    
+    },
 
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
-        if (this.formacion_edit == null) { 
+        if (this.formacion_edit == null) {
           this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         }
         else {
@@ -1256,14 +1190,14 @@ export default {
 
     editFormacion: function(index) {
       this.formacion_edit = index;
-      this.nueva_formacion = this.solicitud.entidad.formaciones[index];      
-    },  
-    
+      this.nueva_formacion = this.solicitud.entidad.formaciones[index];
+    },
+
     cancelarEditFormacion: function() {
       this.formacion_edit = null;
       this.nueva_formacion = new Formacion();
       this.$refs.form_formacion.reset();
-    },    
+    },
 
     addBeneficiario: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1271,7 +1205,7 @@ export default {
         this.nuevo_beneficiario = new Beneficiario();
         this.$refs.form_beneficiario.reset();
       }
-    },  
+    },
 
     addSubsidiario: function() {
       if (this.$refs.form_subsidiario.validate()) {
@@ -1281,7 +1215,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.subsidiarios, this.subsidiario_edit, this.nuevo_subsidiario);
         }
-        
+
         this.nuevo_subsidiario = new Subsidiario();
         this.$refs.form_subsidiario.reset();
         this.subsidiario_edit = null;
@@ -1290,14 +1224,14 @@ export default {
 
     editSubsidiario: function(index) {
       this.subsidiario_edit = index;
-      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];      
-    },  
-    
+      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];
+    },
+
     cancelarEditSubsidiario: function() {
       this.subsidiario_edit = null;
       this.nuevo_subsidiario = new Subsidiario();
       this.$refs.form_subsidiario.reset();
-    },     
+    },
 
     addCaja: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1309,7 +1243,7 @@ export default {
         this.nueva_caja = '';
         this.$refs.form_beneficiario.reset();
       }
-    },   
+    },
 
     nextStep: function() {
       let next = true;
@@ -1318,7 +1252,7 @@ export default {
       else if (this.step == 3) next = this.valid_domicilios;
       else if (this.step == 8) next = this.valid_subsidiarios;
       if (next) this.step = +this.step + 1;
-    },    
+    },
 
     makeFormData: function() {
       let form_data = new FormData();
@@ -1396,7 +1330,7 @@ h6 {
 .stuck {
   position: fixed;
   right: 10px;
-  width: 30%;
+  width: 15%;
   word-wrap: break-word;
 }
 </style>
