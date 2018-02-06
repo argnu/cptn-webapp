@@ -185,12 +185,12 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs12 class="mx-4">                         
+                    <v-flex xs12 class="mx-4">
                       <add-foto
                           edit
                           :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
                           @change="chgFoto"
-                      ></add-foto>                                      
+                      ></add-foto>
                     </v-flex>
                   </v-layout>
 
@@ -198,12 +198,12 @@
                     <v-flex xs12 class="mt-4">
                       <add-firma
                         edit
-                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
-                        @change="chgFirma"            
+                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''"
+                        @change="chgFirma"
                         ref="firma"
-                      ></add-firma>                      
+                      ></add-firma>
                     </v-flex>
-                  </v-layout> 
+                  </v-layout>
 
                   </v-form>
                 </v-card-text>
@@ -320,9 +320,9 @@
 
                         <v-layout class="mb-4">
                           <v-flex xs12>
-                            <v-btn 
-                              class="right" 
-                              light 
+                            <v-btn
+                              class="right"
+                              light
                               @click="addDomicilio"
                             >
                               {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
@@ -330,7 +330,7 @@
 
                           <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
                             Cancelar
-                          </v-btn>                            
+                          </v-btn>
                           </v-flex>
                         </v-layout>
 
@@ -458,7 +458,7 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
-                      <template slot="headers" slot-scope="props">                        
+                      <template slot="headers" slot-scope="props">
                         <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                           {{ header.text }}
                         </th>
@@ -471,7 +471,7 @@
                             <v-btn fab small @click="editContacto(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
+                          </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
                           <td>{{ props.item.valor }}</td>
                           <td>
@@ -585,7 +585,7 @@
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
+                          </td>
                           <td>{{ getTitulo(props.item.titulo) }}</td>
                           <td>{{ props.item.fecha }}</td>
                           <td>{{ getInstitucion(props.item.institucion) }}</td>
@@ -696,14 +696,14 @@
                             <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
                             <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
                             <td v-else>{{ getNombreCaja(props.item) }}</td>
-                            
+
                             <td style="width:30px">
                               <v-btn fab dark small color="blue" @click="removeElem('cajas_previsionales', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
                           </template>
-                    </v-data-table>                  
+                    </v-data-table>
 
                   <!-- <v-layout row>
                     <v-flex xs6 class="ma-4">
@@ -795,8 +795,8 @@
 
 
             <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
-            <v-stepper-step step="8" edit-icon="check" editable 
-              :complete="valid_subsidiarios && step > 8" 
+            <v-stepper-step step="8" edit-icon="check" editable
+              :complete="valid_subsidiarios && step > 8"
               :rules="[() => step <= 8 || valid_subsidiarios]"
             >
               Subsidio Por Fallecimiento
@@ -870,7 +870,7 @@
                               <v-btn fab small @click="editSubsidiario(props.index)">
                                 <v-icon>mode_edit</v-icon>
                               </v-btn>
-                            </td>                          
+                            </td>
                             <td>{{ props.item.dni }}</td>
                             <td>{{ props.item.apellido }}</td>
                             <td>{{ props.item.nombre }}</td>
@@ -924,7 +924,7 @@
                     @change="chgPublicarTodos"
                     v-model="publicar_todos"
                   >
-                  </v-checkbox>                  
+                  </v-checkbox>
 
                   <v-layout row class="mt-2">
                     <v-flex xs6>
@@ -1058,7 +1058,7 @@ export default {
       valid: {
         form_solicitud: false,
         form_profesional: false
-      },      
+      },
     }
   },
 
@@ -1101,9 +1101,9 @@ export default {
 
   watch: {
     '$route' (to, from) {
-      if (this.datos_cargados) this.init();
+      if (this.datos_cargados) this.init(true);
     }
-  },  
+  },
 
   created: function() {
     Promise.all([
@@ -1123,7 +1123,6 @@ export default {
         this.cajas_previsionales = r[5].data;
         this.datos_cargados = true;
         this.init();
-
       })
       .catch(e => console.error(e));
   },
@@ -1131,43 +1130,42 @@ export default {
 
   methods: {
     init: function() {
-      this.solicitud = new Solicitud('profesional');
-      this.show_cargando = true;
-
-      this.$refs.firma.reset();
-      this.$refs.form_solicitud.reset();
-      this.$refs.form_profesional.reset();
       this.step = 1;
-      
+      this.initForm().then(reset => {
+        this.show_cargando = false;
+        if (reset) {
+          this.$refs.firma.reset();
+          this.$refs.form_profesional.reset();
+        }
+      });
+    },
+
+    initForm: function() {
+      this.show_cargando = true;
+      this.solicitud = new Solicitud('profesional');
+
       if (this.id) {
-        axios.get(`/solicitudes/${this.id}`)
+        return axios.get(`/solicitudes/${this.id}`)
         .then(r => {
             this.solicitud.fecha = utils.getFecha(r.data.fecha);
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
             this.solicitud.estado = r.data.estado;
             this.fillProfesional(r.data.entidad);
-            this.show_cargando = false;
+            return false;
         });
       }
       else {
         this.solicitud.fecha = utils.getFecha();
         this.solicitud.delegacion = +this.global_state.delegacion.id;
 
-        if (this.dni) { 
+        if (this.dni) {
           this.solicitud.entidad.dni = this.dni;
-          this.chgDni()
-          .then(r => this.show_cargando = false);
+          return this.chgDni().then(() => false)
         }
         else {
-          this.changePais()
-          .then(r => this.changeProvincia())
-          .then(r => { 
-            this.show_cargando = false
-            this.solicitud.entidad.fechaNacimiento = '';
-            this.$refs.form_profesional.reset();
-          });
+          return this.changePais().then(() => this.changeProvincia()).then(() => true)
         }
-      }      
+      }
     },
 
     fillProfesional: function(entidad) {
@@ -1191,6 +1189,12 @@ export default {
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
 
+      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
+      this.solicitud.entidad.empresa = entidad.empresa;
+      this.solicitud.entidad.independiente = entidad.independiente;
+      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
+
       this.solicitud.entidad.domicilios = entidad.domicilios;
 
       this.solicitud.entidad.contactos = [];
@@ -1209,12 +1213,6 @@ export default {
         formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
-
-      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
-      this.solicitud.entidad.empresa = entidad.empresa;
-      this.solicitud.entidad.independiente = entidad.independiente;
-      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
 
       this.solicitud.entidad.subsidiarios = [];
       for(let subsidiario of entidad.subsidiarios) {
@@ -1245,13 +1243,14 @@ export default {
 
     getNombreCaja: function(id) {
       return this.cajas_previsionales.find(i => id == i.id).nombre;
-    },    
+    },
 
     chgDni: function() {
       return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
+        return;
       })
       .catch(e => console.error(e));
     },
@@ -1269,11 +1268,11 @@ export default {
 
     chgFirma: function(firma) {
         this.firma = firma;
-    },    
+    },
 
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
-        if (this.formacion_edit == null) { 
+        if (this.formacion_edit == null) {
           this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         }
         else {
@@ -1287,14 +1286,14 @@ export default {
 
     editFormacion: function(index) {
       this.formacion_edit = index;
-      this.nueva_formacion = this.solicitud.entidad.formaciones[index];      
-    },  
-    
+      this.nueva_formacion = this.solicitud.entidad.formaciones[index];
+    },
+
     cancelarEditFormacion: function() {
       this.formacion_edit = null;
       this.nueva_formacion = new Formacion();
       this.$refs.form_formacion.reset();
-    },    
+    },
 
     addBeneficiario: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1302,7 +1301,7 @@ export default {
         this.nuevo_beneficiario = new Beneficiario();
         this.$refs.form_beneficiario.reset();
       }
-    },  
+    },
 
     addSubsidiario: function() {
       if (this.$refs.form_subsidiario.validate()) {
@@ -1312,7 +1311,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.subsidiarios, this.subsidiario_edit, this.nuevo_subsidiario);
         }
-        
+
         this.nuevo_subsidiario = new Subsidiario();
         this.$refs.form_subsidiario.reset();
         this.subsidiario_edit = null;
@@ -1321,14 +1320,14 @@ export default {
 
     editSubsidiario: function(index) {
       this.subsidiario_edit = index;
-      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];      
-    },  
-    
+      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];
+    },
+
     cancelarEditSubsidiario: function() {
       this.subsidiario_edit = null;
       this.nuevo_subsidiario = new Subsidiario();
       this.$refs.form_subsidiario.reset();
-    },     
+    },
 
     addCaja: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1340,7 +1339,7 @@ export default {
         this.nueva_caja = '';
         this.$refs.form_beneficiario.reset();
       }
-    },   
+    },
 
     nextStep: function() {
       let next = true;
@@ -1349,7 +1348,7 @@ export default {
       else if (this.step == 3) next = this.valid_domicilios;
       else if (this.step == 8) next = this.valid_subsidiarios;
       if (next) this.step = +this.step + 1;
-    },    
+    },
 
     makeFormData: function() {
       let form_data = new FormData();

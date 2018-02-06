@@ -121,11 +121,11 @@ export default {
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
         return axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
-             .then(r => {
-               this.provincias = r.data
-               return r;
-              })
-             .catch(e => console.error(e));
+             .then(r => this.provincias = r.data)
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
       else { 
         this.provincias = [];
@@ -136,11 +136,11 @@ export default {
     changeProvincia: function () {
       if (this.nuevo_domicilio.domicilio.provincia) {
         return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
-             .then(r => { 
-                this.departamentos = r.data
-                return r;
-              })
-             .catch(e => console.error(e));
+             .then(r => this.departamentos = r.data)
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
       else { 
         this.departamentos = [];
@@ -152,14 +152,16 @@ export default {
       if (this.nuevo_domicilio.domicilio.departamento) {
         return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
              .then(r => this.localidades = r.data)
-             .catch(e => console.error(e));
+             .catch(e => {
+               console.error(e);
+               Promise.reject(e);
+              });
       }
       else { 
         this.localidades = [];
         return Promise.resolve();
       }
     },
-
 
     chgTipoContacto: function(e) {
       if (e == 3) { 
