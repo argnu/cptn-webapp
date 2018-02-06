@@ -16,7 +16,7 @@
             <input-numero
                 maxlength="5"
                 ref="prefijo"
-                :value="value.provincia"
+                :value="val_provincia"
                 :rules="type == 'celular' ? [rules.required, rules.celular.provincia] : [rules.required, rules.telefono.provincia]"
                 @input="updatePrefijo"
             >
@@ -65,9 +65,19 @@ export default {
         }
     },
 
+    computed: {
+        val_provincia: function() {
+            if (this.value.provincia) return this.value.provincia;
+            else {
+                if (this.type == 'celular') return '299';
+                else return '0299';
+            }
+        }
+    },
+
     methods: {
         updatePrefijoPais: function(e) {
-            this.$emit('input', { pais: e, provincia: this.value.provincia, numero: this.value.numero });
+            this.$emit('input', { pais: e, provincia: this.val_provincia, numero: this.value.numero });
         },
 
         updatePrefijo: function(e) {
@@ -75,7 +85,7 @@ export default {
         },
 
         updateNumero: function(e) {
-            this.$emit('input', { pais: this.value.pais, provincia: this.value.provincia, numero: e });
+            this.$emit('input', { pais: this.value.pais, provincia: this.val_provincia, numero: e });
         }
     },
 

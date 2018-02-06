@@ -834,7 +834,7 @@
                           <input-numero
                             label="Porcentaje"
                             decimal
-                            v-model.number="nuevo_subsidiario.porcentaje"
+                            v-model="nuevo_subsidiario.porcentaje"
                             :rules="[rules.required]"
                           >
                           </input-numero>
@@ -1162,12 +1162,14 @@ export default {
 
       this.solicitud.entidad.domicilios = entidad.domicilios;
 
+      this.solicitud.entidad.contactos = [];
       for(let contacto of entidad.contactos) {
         let contacto_nuevo = contacto;
         contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
         this.solicitud.entidad.contactos.push(contacto_nuevo);
       }
 
+      this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = { id: formacion.id };
         formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
@@ -1183,6 +1185,7 @@ export default {
       this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
       this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
 
+      this.solicitud.entidad.subsidiarios = [];
       for(let subsidiario of entidad.subsidiarios) {
         let subsidiario_nuevo = { id: subsidiario.id };
         subsidiario_nuevo.dni = subsidiario.dni;

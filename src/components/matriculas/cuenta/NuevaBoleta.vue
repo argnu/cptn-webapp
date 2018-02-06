@@ -49,8 +49,9 @@
             <v-flex xs4>
                 <input-numero
                     label="Importe"
-                    v-model.number="boleta_item.importe"
+                    v-model="boleta_item.importe"
                     :rules = "[rules.required]"
+                    decimal
                 ></input-numero>                 
             </v-flex>    
 

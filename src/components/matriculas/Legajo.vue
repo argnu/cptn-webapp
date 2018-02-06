@@ -104,7 +104,7 @@
                     <input-numero
                       label="Porcentaje"
                       decimal
-                      v-model.number="nuevo_comitente.porcentaje"
+                      v-model="nuevo_comitente.porcentaje"
                       :rules="[rules.required]"
                     ></input-numero>
                 </v-flex>

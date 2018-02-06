@@ -4,13 +4,17 @@
 
 - **AddFirma**: reseteo de canvas, no reseteaba el array movimientos.
 - **InputFecha**: luego de seleccionar fecha por diálogo no te permitía editar, se borraba toda.
-- **NuevoProfesional**: form de caja previsional, refresecaba la pagina cuando se apreta enter.
+- **NuevoProfesional**: 
+    - form de caja previsional, refresecaba la pagina cuando se apreta enter.
+    - repetición de contactos, formaciones y subsidiarios en edición.
+- **NuevaBoleta**: no se podía cargar un importe decimal.
 
 ## Agregado
 
 - **Modificar Profesional**: habilitación de edición de elementos individuales de contacto, domicilio, formación y subsidiarios.
 - **Delegacion**: mensaje que indica la delegación en la que se encuentra el usuario.
 - **AddFoto**: posibilidad de tomar la foto con una webcam.
+- **InputTelefono**: por defecto provincia 0299 (fijo) o 299 (celular).
 
 ## Modificado
 

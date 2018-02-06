@@ -75,7 +75,7 @@ export default {
             if (/\d{1}/.test(e.key)) return true;
             else {
                 if (this.decimal && (e.key == '.' || e.key == ',')) {
-                    if (this.$refs.input.value.indexOf(',') !== -1 || this.$refs.input.value.length === 0) e.preventDefault();
+                    if (e.target.value.indexOf(',') !== -1 || e.target.value.length === 0) e.preventDefault();
                     else return true;
                 }  
                 else if (e.key.length == 1) e.preventDefault();
