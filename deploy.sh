@@ -16,7 +16,7 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [ "$ENV" == "prod" ]; then
+if [ $ENV = "prod" ]; then
     $BRANCH = 'master'
 fi
 
