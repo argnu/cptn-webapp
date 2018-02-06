@@ -657,6 +657,8 @@ export default {
 
   data () {
     return {
+      domicilio_edit: null,
+      contacto_edit: null,
       solicitud: new Solicitud('empresa'),
       nuevo_contacto: new Solicitud(),
       nueva_incumbencia: '',

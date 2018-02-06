@@ -120,29 +120,44 @@ export default {
   methods: {
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
-        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
-             .then(r => this.provincias = r.data)
+        return axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+             .then(r => {
+               this.provincias = r.data
+               return r;
+              })
              .catch(e => console.error(e));
       }
-      else this.provincias = [];
+      else { 
+        this.provincias = [];
+        return Promise.resolve();
+      }
     },
 
     changeProvincia: function () {
       if (this.nuevo_domicilio.domicilio.provincia) {
-        axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
-             .then(r => this.departamentos = r.data)
+        return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+             .then(r => { 
+                this.departamentos = r.data
+                return r;
+              })
              .catch(e => console.error(e));
       }
-      else this.departamentos = [];
+      else { 
+        this.departamentos = [];
+        return Promise.resolve();
+      }
     },
 
     changeDepartamento: function () {
       if (this.nuevo_domicilio.domicilio.departamento) {
-        axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+        return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
              .then(r => this.localidades = r.data)
              .catch(e => console.error(e));
       }
-      else this.localidades = [];
+      else { 
+        this.localidades = [];
+        return Promise.resolve();
+      }
     },
 
 

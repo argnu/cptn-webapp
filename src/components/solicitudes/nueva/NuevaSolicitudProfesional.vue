@@ -9,6 +9,8 @@
         </v-toolbar>
 
         <v-container>
+          <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
+
           <v-stepper v-model="step" vertical>
 
             <!-- PASO 1: DATOS DE SOLICITUD -->
@@ -1033,6 +1035,8 @@ export default {
 
   data() {
     return {
+      show_cargando: false,
+      datos_cargados: false,
       domicilio_edit: null,
       contacto_edit: null,
       formacion_edit: null,
@@ -1095,6 +1099,12 @@ export default {
     }
   },
 
+  watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.init();
+    }
+  },  
+
   created: function() {
     Promise.all([
         axios.get('/paises'),
@@ -1111,34 +1121,55 @@ export default {
         this.instituciones = r[3].data;
         this.titulos = r[4].data;
         this.cajas_previsionales = r[5].data;
+        this.datos_cargados = true;
+        this.init();
 
-        if (this.id) {
-          axios.get(`/solicitudes/${this.id}`)
-          .then(r => {
-              this.solicitud = new Solicitud('profesional');
-              this.solicitud.fecha = utils.getFecha(r.data.fecha);
-              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
-              this.solicitud.estado = r.data.estado;
-              this.fillProfesional(r.data.entidad);
-          });
-        }
-        else {
-          this.solicitud.delegacion = +this.global_state.delegacion.id;
-          if (this.dni) { 
-            this.solicitud.entidad.dni = this.dni;
-            this.chgDni();
-          }
-          else {
-            this.changePais();
-            this.changeProvincia();
-          }
-        }
       })
       .catch(e => console.error(e));
   },
 
 
   methods: {
+    init: function() {
+      this.solicitud = new Solicitud('profesional');
+      this.show_cargando = true;
+
+      this.$refs.firma.reset();
+      this.$refs.form_solicitud.reset();
+      this.$refs.form_profesional.reset();
+      this.step = 1;
+      
+      if (this.id) {
+        axios.get(`/solicitudes/${this.id}`)
+        .then(r => {
+            this.solicitud.fecha = utils.getFecha(r.data.fecha);
+            this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+            this.solicitud.estado = r.data.estado;
+            this.fillProfesional(r.data.entidad);
+            this.show_cargando = false;
+        });
+      }
+      else {
+        this.solicitud.fecha = utils.getFecha();
+        this.solicitud.delegacion = +this.global_state.delegacion.id;
+
+        if (this.dni) { 
+          this.solicitud.entidad.dni = this.dni;
+          this.chgDni()
+          .then(r => this.show_cargando = false);
+        }
+        else {
+          this.changePais()
+          .then(r => this.changeProvincia())
+          .then(r => { 
+            this.show_cargando = false
+            this.solicitud.entidad.fechaNacimiento = '';
+            this.$refs.form_profesional.reset();
+          });
+        }
+      }      
+    },
+
     fillProfesional: function(entidad) {
       this.solicitud.entidad.foto = entidad.foto;
       this.solicitud.entidad.firma = entidad.firma;
@@ -1217,7 +1248,7 @@ export default {
     },    
 
     chgDni: function() {
-      axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
