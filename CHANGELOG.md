@@ -2,9 +2,14 @@
 
 ## Solucionado
 
-- **NuevoProfesional**: 
+- **NuevaSolicitud**: 
     - reiniciar form cuando cambio de ruta pero el componente es el mismo.
-    - barra de progreso superior de carga de datos del profesional.
+    - ajustes de interfaz, mayor ancho a componente principal.
+
+## Agregado
+
+- **NuevaSolicitud**: barra de progreso superior de carga de datos del profesional.
+- **NuevoProfesional**: formaciones, fechaEmision, fechaEgreso y tiempo transcurrido desde fechaEmision.
 
 
 # 1.3.0 (2018-02-05)

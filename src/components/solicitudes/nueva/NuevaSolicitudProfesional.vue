@@ -354,7 +354,7 @@
                                 </v-btn>
                                 <v-btn fab small @click="removeElem('domicilios', props.index)">
                                   <v-icon>delete</v-icon>
-                                </v-btn>                                
+                                </v-btn>
                               </td>
 
                               <td>{{ props.item.tipo | upperFirst }}</td>
@@ -471,7 +471,7 @@
                             </v-btn>
                             <v-btn fab small @click="removeElem('contactos', props.index)">
                               <v-icon>delete</v-icon>
-                            </v-btn>                            
+                            </v-btn>
                           </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
                           <td>{{ props.item.valor }}</td>
@@ -526,15 +526,6 @@
                           :rules="[rules.required]"
                         >
                         </v-select>
-                      </v-flex>
-
-                      <v-flex xs6 class="mx-4">
-                        <input-fecha
-                          v-model="nueva_formacion.fecha"
-                          label="Fecha"
-                          :rules="[rules.required, rules.fecha]"
-                        >
-                        </input-fecha>
 
                         <v-select
                           autocomplete
@@ -546,6 +537,28 @@
                           :rules="[rules.required]"
                         >
                         </v-select>
+                      </v-flex>
+
+                      <v-flex xs6 class="mx-4">
+                        <input-fecha
+                          v-model="nueva_formacion.fechaEmision"
+                          label="Fecha Emisión"
+                          :rules="[rules.required, rules.fecha]"
+                          @change="chgFechaEmision"
+                        >
+                        </input-fecha>
+                        <input-fecha
+                          v-model="nueva_formacion.fechaEgreso"
+                          label="Fecha Egreso"
+                          :rules="[rules.required, rules.fecha]"
+                        >
+                        </input-fecha>
+
+                        <v-text-field
+                          label="Lapso desde Emisión"
+                          readonly
+                          v-model="nueva_formacion.tiempoEmision"
+                        ></v-text-field>
                       </v-flex>
                     </v-layout>
 
@@ -570,6 +583,7 @@
                     >
                       <template slot="headers" slot-scope="props">
                           <th></th>
+                          <th></th>
                           <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                             <b>{{ header.text }}</b>
                           </th>
@@ -581,13 +595,17 @@
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
+                          </td>
+                          <td>
                             <v-btn fab small @click="removeElem('formaciones', props.index)">
                               <v-icon>delete</v-icon>
-                            </v-btn>                            
+                            </v-btn>
                           </td>
                           <td>{{ getTitulo(props.item.titulo) }}</td>
-                          <td>{{ props.item.fecha }}</td>
                           <td>{{ getInstitucion(props.item.institucion) }}</td>
+                          <td>{{ props.item.fechaEgreso }}</td>
+                          <td>{{ props.item.fechaEmision }}</td>
+                          <td>{{ props.item.tiempoEmision }}</td>
                         </tr>
                       </template>
                     </v-data-table>
@@ -691,7 +709,7 @@
                               <v-btn fab small @click="removeElem('cajas_previsionales', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
-                            </td>                        
+                            </td>
                             <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
                             <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
                             <td v-else>{{ getNombreCaja(props.item) }}</td>
@@ -784,7 +802,7 @@
                               </v-btn>
                               <v-btn fab small @click="removeElem('subsidiarios', props.index)">
                                 <v-icon>delete</v-icon>
-                              </v-btn>                              
+                              </v-btn>
                             </td>
                             <td>{{ props.item.dni }}</td>
                             <td>{{ props.item.apellido }}</td>
@@ -988,6 +1006,11 @@ export default {
       return this.titulos.filter(t => t.tipo == getTipo());
     },
 
+    lapso_emision: function() {
+      return '12';
+      if (!this.nueva_formacion.fechaEmision) return '';
+    },
+
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -1112,7 +1135,9 @@ export default {
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = { id: formacion.id };
         formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-        formacion_nueva.fecha = utils.getFecha(formacion.fecha);
+        formacion_nueva.fechaEmision = utils.getFecha(formacion.fechaEmision);
+        formacion_nueva.fechaEgreso = utils.getFecha(formacion.fechaEgreso);
+        formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
         formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
         formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
@@ -1159,6 +1184,14 @@ export default {
       .catch(e => console.error(e));
     },
 
+    chgFechaEmision: function() {
+      this.nueva_formacion.tiempoEmision = '';
+      let fecha = moment(this.nueva_formacion.fechaEmision, 'DD/MM/YYYY', true);
+      if (fecha.isValid()) {
+          this.nueva_formacion.tiempoEmision = utils.diffDatesStr(fecha, moment());
+      }
+    },
+
     chgPublicarTodos: function() {
       this.solicitud.entidad.publicarEmail = this.publicar_todos;
       this.solicitud.entidad.publicarDireccion = this.publicar_todos;
@@ -1182,9 +1215,12 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.formaciones, this.formacion_edit, this.nueva_formacion);
         }
+        
         this.nueva_formacion = new Formacion();
-        this.$refs.form_formacion.reset();
         this.formacion_edit = null;
+        Vue.nextTick().then(() => {
+          this.$refs.form_formacion.reset();
+        });
       }
     },
 

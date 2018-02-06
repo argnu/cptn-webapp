@@ -7,7 +7,8 @@ export const Formaciones = [
       { text: 'Tipo', value: 'tipo' , sortable: false },
       { text: 'Título', value: 'titulo' , sortable: false },
       { text: 'Institución', value: 'institucion' , sortable: false },
-      { text: 'Fecha', value: 'fecha' , sortable: false }
+      { text: 'Fecha Egreso', value: 'fechaEgreso' , sortable: false },
+      { text: 'Fecha Emisión', value: 'fechaEmision' , sortable: false }
   ];
 
 export const Beneficiarios = [

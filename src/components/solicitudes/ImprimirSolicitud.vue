@@ -150,6 +150,7 @@
                 <th>Tipo</th>
                 <th>Título</th>
                 <th>Fecha de Egreso</th>
+                <th>Fecha de Emisión</th>
                 <th>Institución Formadora</th>
               </tr>
             </thead>
@@ -157,7 +158,8 @@
               <tr v-for="formacion of solicitud.entidad.formaciones" :key="formacion.id">
                 <td>{{ formacion.tipo == 1 ? 'Grado' : 'Posgrado' }}</td>
                 <td>{{ formacion.titulo }}</td>
-                <td>{{ formacion.fecha | fecha }}</td>
+                <td>{{ formacion.fechaEgreso | fecha }}</td>
+                <td>{{ formacion.fechaEmision | fecha }}</td>
                 <td>{{ formacion.institucion }}</td>
               </tr>
             </tbody>

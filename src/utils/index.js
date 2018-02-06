@@ -93,6 +93,31 @@ export const sortByString = (atributo) => {
   return (a, b) => a[atributo].localeCompare(b[atributo]);
 }
 
- export const sortByNumber = (atributo) => {
+export const sortByNumber = (atributo) => {
   return (a, b) => b[atributo] - a[atributo];
+}
+
+export function diffDatesStr(d1, d2) {
+  let str = '';
+  let str_meses = '';
+  let str_dias = '';
+
+  let anios = d2.diff(d1, 'years');
+  let fecha_mas_anios = d1.add(anios, 'years');
+  let meses = d2.diff(fecha_mas_anios, 'months');
+  let fecha_mas_meses = fecha_mas_anios.add(meses, 'months');
+  let dias = moment().diff(fecha_mas_meses, 'days');
+
+  if (anios) str += `${anios} año${anios > 1 ? 's' : ''}`;
+  if (meses) str_meses += `${meses} mes${meses > 1 ? 'es' : ''}`;
+  if (dias) str_dias += `${dias} día${dias > 1 ? 's' : ''}`;
+
+  if (meses && !dias) return str + ' y ' + str_meses;
+  if (meses && !anios && !dias) return str_meses;
+  if (meses && !anios && dias) return str_meses + ' y ' + str_dias;
+  if (!meses && anios && dias) return str + ' y ' + str_dias;
+  if (!meses && !anios && dias) return str_dias;
+  if (anios && meses && dias) return str + ', ' + str_meses + ' y ' + str_dias;
+
+  return str;
 }

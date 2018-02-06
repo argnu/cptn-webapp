@@ -45,8 +45,10 @@ const headers = {
 
   formacion: [
     Header('Título', 'titulo'),
-    Header('Fecha', 'fecha'),
-    Header('Institución', 'institucion')
+    Header('Institución', 'institucion'),
+    Header('Fecha de Egreso', 'fechaEgreso'),
+    Header('Fecha de Emisión', 'fechaEmision'),
+    Header('Lapso Emisión', 'tiempoEmision')
   ],
 
   beneficiarios: [

@@ -23,9 +23,11 @@ export class Subsidiario {
 export class Formacion {
   constructor() {
     this.titulo = '';
-    this.fecha = '';
+    this.fechaEmision = '';
+    this.fechaEgreso = '';
     this.institucion = '';
     this.tipo = '';
+    this.tiempoEmision = '';
   }
 }
 
