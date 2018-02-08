@@ -1,5 +1,19 @@
 <template>
 <v-container fluid>
+    <v-dialog v-model="show_imprimir" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Nueva Solicitud</v-card-title>
+        <v-card-text>
+          Desea imprimir la solicitud creada?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat="flat" @click.native="imprimir">Sí</v-btn>
+          <v-btn color="green darken-1" flat="flat" @click.native="cancelarImpresion">No</v-btn>
+        </v-card-actions>
+      </v-card>        
+    </v-dialog>
+
   <v-layout row wrap>
     <v-flex xs10>
       <form v-on:submit.prevent="submit">
@@ -981,6 +995,8 @@ export default {
         form_solicitud: false,
         form_profesional: false
       },
+      show_imprimir: false,
+      id_creada: null
     }
   },
 
@@ -1049,6 +1065,8 @@ export default {
         this.titulos = r[4].data;
         this.cajas_previsionales = r[5].data;
         this.datos_cargados = true;
+        this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+        this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
         this.init();
       })
       .catch(e => console.error(e));
@@ -1090,7 +1108,10 @@ export default {
           return this.chgDni().then(() => false)
         }
         else {
-          return this.changePais().then(() => this.changeProvincia()).then(() => true)
+          return this.changePais()
+          .then(() => this.changeProvincia())
+          .then(() => this.changeDepartamento())
+          .then(() => true)
         }
       }
     },
@@ -1309,11 +1330,12 @@ export default {
             if (r.status != 201) {
               this.submitError();
             }
+            this.id_creada = r.data.id;
+            this.show_imprimir = true;
             this.$refs.firma.reset();
             this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
-            this.$router.replace('/solicitudes/lista');
           })
           .catch(e => this.submitError());
       }
@@ -1333,14 +1355,21 @@ export default {
     },
 
     imprimir: function() {
-      axios.get(`/solicitudes/${this.id}`)
+      let id = this.id_creada;
+      if (!id) id = this.id;
+      axios.get(`/solicitudes/${id}`)
           .then(s => {
             let solicitud = s.data;
             let pdf = impresionSolicitud(solicitud);
             pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+            if (this.id_creada) this.$router.replace('/solicitudes/lista');
           })
           .catch(e => console.error(e));
     },
+
+    cancelarImpresion: function() {
+      this.$router.replace('/solicitudes/lista');
+    }
   },
 
   components: {

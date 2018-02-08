@@ -8,8 +8,13 @@
 
 ## Agregado
 
-- **NuevaSolicitud**: barra de progreso superior de carga de datos del profesional.
-- **NuevoProfesional**: formaciones, fechaEmision, fechaEgreso y tiempo transcurrido desde fechaEmision.
+- **NuevaSolicitud**: 
+    - barra de progreso superior de carga de datos del profesional.
+    - seteo automático de la localidad y departamento en base a la delegación del usuario.
+    
+- **NuevoProfesional**: 
+    - formaciones, fechaEmision, fechaEgreso y tiempo transcurrido desde fechaEmision.
+    - diálogo de impresión de solicitud al guardar una nueva.
 
 
 # 1.3.0 (2018-02-05)

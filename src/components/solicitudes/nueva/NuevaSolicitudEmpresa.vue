@@ -739,6 +739,8 @@ export default {
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
       this.datos_cargados = true;
+      this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+      this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
       this.initForm();   
     })
     .catch(e => console.error(e));
@@ -746,7 +748,10 @@ export default {
 
   methods: {
     init: function(reset) {
-      this.changePais().then(() => this.changeProvincia()).then(() => {
+      this.changePais()
+      .then(() => this.changeProvincia())
+      .then(() => this.changeDepartamento())
+      .then(() => {
         this.show_cargando = false;
         if (reset) this.$refs.form_empresa.reset();
       });
