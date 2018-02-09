@@ -1077,11 +1077,16 @@ export default {
     init: function() {
       this.step = 1;
       this.initForm().then(reset => {
-        this.show_cargando = false;
-        if (reset) {
-          this.$refs.firma.reset();
-          this.$refs.form_profesional.reset();
-        }
+        return this.changePais()
+        .then(() => this.changeProvincia())
+        .then(() => this.changeDepartamento())
+        .then(() => {
+          this.show_cargando = false;
+          if (reset) {
+            this.$refs.firma.reset();
+            this.$refs.form_profesional.reset();
+          }          
+        });        
       });
     },
 
@@ -1108,10 +1113,7 @@ export default {
           return this.chgDni().then(() => false)
         }
         else {
-          return this.changePais()
-          .then(() => this.changeProvincia())
-          .then(() => this.changeDepartamento())
-          .then(() => true)
+          return Promise.resolve(true);
         }
       }
     },
