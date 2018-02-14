@@ -1,3 +1,9 @@
+# 1.3.1 (2018-02-14)
+
+## Modificado
+
+- **NuevoLegajo**: el cuit/cuil deja de ser obligatorio.
+
 # 1.3.0 (2018-02-05)
 
 ## Solucionado
