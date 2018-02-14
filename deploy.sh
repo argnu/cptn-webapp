@@ -17,7 +17,7 @@ while [ "$1" != "" ]; do
 done
 
 if [ $ENV = "prod" ]; then
-    $BRANCH = 'master'
+    BRANCH='master'
 fi
 
 if [ "$DIR_APP" != "" ]; then
