@@ -89,12 +89,12 @@
                     <v-text-field
                       label="CUIT/CUIL"
                       v-model="nuevo_comitente.persona.cuit"
-                      :rules="[rules.required, rules.integer]"
                       @input="chgCuitComitente"
                     >
                     </v-text-field>
 
                     <v-text-field
+                      v-if="nuevo_comitente.persona.tipo == 'fisica'"
                       label="DNI"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer]"
@@ -117,8 +117,8 @@
                   >
                   </v-text-field>
 
-                  <template v-if="nuevo_comitente.persona.tipo == 'fisica'">
                       <v-text-field
+                        v-if="nuevo_comitente.persona.tipo == 'fisica'"
                         label="Apellido"
                         v-model="nuevo_comitente.persona.apellido"
                         :rules="[rules.required]"
@@ -131,7 +131,6 @@
                     >
                     </v-text-field>
 
-                  </template>
 
                   <v-btn @click="addComitente">
                     Agregar
@@ -161,9 +160,11 @@
                     <tr>
                       <td>{{ props.item.persona.cuit }}</td>
                       <td>{{ props.item.persona.nombre }}</td>
+                      <td>{{ props.item.persona.apellido ? props.item.persona.apellido : '' }}</td>
+                      <td>{{ props.item.persona.dni ? props.item.persona.dni : '' }}</td>
                       <td>{{ props.item.porcentaje }}</td>
                       <td>
-                        <v-btn fab small @click="rmComitente(props.item.persona.cuit)">
+                        <v-btn fab small @click="rmComitente(props.index)">
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </td>
@@ -617,14 +618,16 @@ const tipo_persona = [
 
 const headers = {
   items: [
-    Header('Descripción', 'descripcion'),
-    Header('Valor', 'valor')
+    Header('Descripción', 'descripcion', false),
+    Header('Valor', 'valor', false)
   ],
 
   comitentes: [
-    Header('CUIT/CUIL', 'cuit'),
-    Header('Nombre', 'nombre'),
-    Header('%', 'porcentaje')
+    Header('CUIT/CUIL', 'cuit', false),
+    Header('Nombre', 'nombre', false),
+    Header('Apellido', 'apellido', false),
+    Header('DNI', 'dni', false),
+    Header('%', 'porcentaje', false)
   ]
 }
 
@@ -826,8 +829,8 @@ export default {
       }
     },
 
-    rmComitente: function(cuit) {
-      this.legajo.comitentes = this.legajo.comitentes.filter(c => c.cuit != cuit);
+    rmComitente: function(index) {
+      this.legajo.comitentes.splice(index, 1);
     },
 
     addItem: function() {
