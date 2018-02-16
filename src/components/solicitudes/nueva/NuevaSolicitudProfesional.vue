@@ -154,7 +154,7 @@
                       </v-text-field>
 
                       <v-text-field
-                        label="CUIT"
+                        label="CUIT/CUIL"
                         v-model="solicitud.entidad.cuit"
                         :rules="[rules.integer]"
                         tabindex="6"
@@ -635,7 +635,7 @@
 
             <!-- PASO 6: DATOS ADICIONALES -->
             <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
-              Datos Adicionales
+              Relación Laboral
             </v-stepper-step>
             <v-stepper-content step="6">
               <v-card class="grey lighten-4 elevation-4 mb-2">
@@ -932,7 +932,7 @@
             <div><b>Nombre: </b> {{ solicitud.entidad.nombre }} </div>
             <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
             <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
-            <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
+            <div><b>CUIT/CUIL: </b> {{ solicitud.entidad.cuit }} </div>
             <div><b>Sexo: </b> {{ sexo_selected }} </div>
             <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
