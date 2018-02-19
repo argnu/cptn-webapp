@@ -29,13 +29,13 @@ if [ "$DIR_APP" != "" ]; then
 
     echo "Construyendo empaquetado de aplicación \n";
     if [ $ENV = "test" ]; then
-        sed -i 's/Vue.use(Vuetify)/Vue.use(Vuetify, { template: { primary: "#E53935", secondary: "#FFCDD2" } })/g' src/main.js;
+        sed -i 's/Vue.use(Vuetify)/Vue.use(Vuetify, { template: { primary: colors.orange.darken1, secondary: colors.orange.lighten4 } })/g' src/main.js;
     fi
 
     npm run build;
 
     if [ $ENV = "test" ]; then
-        sed -i 's/Vue.use(Vuetify, { template: { primary: "#E53935", secondary: "#FFCDD2" } })/Vue.use(Vuetify)/g' src/main.js;    
+        sed -i 's/Vue.use(Vuetify, { template: { primary: colors.orange.darken1, secondary: colors.orange.lighten4 } })/Vue.use(Vuetify)/g' src/main.js;    
     fi
 
     #sed -i 's,/static/,/'"$DIR_APP"'/static/,g' "dist/index.html";

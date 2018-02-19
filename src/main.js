@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
+import colors from 'vuetify/es5/util/colors'
+
 import 'vuetify/dist/vuetify.min.css'
 import * as moment from 'moment'
 import * as Cookies from 'js-cookie'
