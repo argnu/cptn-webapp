@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <!-- <v-toolbar dark class="blue">
-      <v-toolbar-title class="white--text">Cobranzas</v-toolbar-title>
-    </v-toolbar> -->
-
     <v-card class="elevation-4">
       <v-card-text>
         <v-layout row wrap>
@@ -90,7 +86,7 @@
           </v-flex>
 
           <v-flex xs2 class="mt-4">
-            <v-btn dark class="blue" @click="addItemPago">
+            <v-btn dark color="primary" @click="addItemPago">
               Agregar
             </v-btn>
           </v-flex>

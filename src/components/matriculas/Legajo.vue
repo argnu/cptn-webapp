@@ -5,14 +5,14 @@
 
     <br>
 
-    <v-toolbar class="blue darken-3">
+    <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
     <v-layout row v-if="legajo.id">
       <v-flex xs12>
         <v-btn
-          class="blue darken-1 white--text right"
+          class="darken-1 white--text right" color="primary"
           @click.native="imprimir"
         >
           <v-icon dark left>print</v-icon>
@@ -582,7 +582,7 @@
     <v-btn
       class="green darken-1 white--text right"
       @click.native="submit"
-      :disabled="!valid_form || legajo.id > 0"
+      :disabled="!valid_form || legajo.id > 0 || submitted"
       tabindex="34"
     >
       Guardar Legajo
@@ -689,7 +689,8 @@ export default {
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: LegajoItem()
+      nuevo_item: LegajoItem(),
+      submitted: false
     }
   },
 
@@ -856,11 +857,13 @@ export default {
     },
 
     submit: function() {
+      this.submitted = true;
       this.legajo.operador = this.user.id;
       this.legajo.delegacion = this.global_state.delegacion.id;
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
+             this.submitted = false;
              if (r.status != 201) {
                this.submitError();
              }

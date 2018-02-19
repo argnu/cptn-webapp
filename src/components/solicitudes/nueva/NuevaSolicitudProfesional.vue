@@ -17,7 +17,7 @@
   <v-layout row wrap>
     <v-flex xs10>
       <form v-on:submit.prevent="submit">
-        <v-toolbar class="blue darken-3">
+        <v-toolbar class="darken-3" color="primary">
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -65,7 +65,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
             </v-stepper-content>
             <!-- FIN PASO 1 -->
 
@@ -222,7 +222,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="14">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -398,7 +398,7 @@
                       </v-form>
                     </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="33">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="33">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -502,7 +502,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -628,7 +628,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -672,7 +672,7 @@
                   </v-layout>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="38">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="38">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -732,7 +732,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -836,7 +836,7 @@
 
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -902,12 +902,18 @@
                 </v-card-text>
               </v-card>
 
-              <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!valid_form">
+              <v-btn 
+                color="primary" 
+                class="darken-1 white--text right" 
+                :loading="guardando"
+                :disabled="!valid_form || guardando"
+                @click.native="submit" 
+              >
                 Guardar Solicitud
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
 
-              <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
+              <v-btn color="primary" class="darken-1 white--text right" @click.native="imprimir" v-if="this.id">
                 Imprimir
                 <v-icon dark right>check_circle</v-icon>
               </v-btn>
@@ -922,7 +928,7 @@
     </v-flex>
 
     <div class="stuck">
-      <v-toolbar class="blue darken-3">
+      <v-toolbar color="primary" class="darken-3">
         <v-toolbar-title class="white--text">Profesional</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
@@ -996,7 +1002,8 @@ export default {
         form_profesional: false
       },
       show_imprimir: false,
-      id_creada: null
+      id_creada: null,
+      guardando: false
     }
   },
 
@@ -1324,11 +1331,13 @@ export default {
     },
 
     submit: function() {
+      this.guardando = true;
       this.solicitud.operador = this.user.id;
 
       if (!this.id) {
         axios.post('/solicitudes', this.makeFormData())
           .then(r => {
+            this.guardando = false;
             if (r.status != 201) {
               this.submitError();
             }
@@ -1344,6 +1353,7 @@ export default {
       else {
         axios.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
+            this.guardando = false;
             if (r.status != 200) {
               this.submitError();
             }

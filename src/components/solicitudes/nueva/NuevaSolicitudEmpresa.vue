@@ -3,7 +3,7 @@
       <v-layout row wrap>
         <v-flex xs10>
           <form v-on:submit.prevent="submit">
-          <v-toolbar class="blue darken-3">
+          <v-toolbar class="darken-3" color="primary">
             <v-toolbar-title class="white--text">Solicitud de Matriculación de Empresas</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -54,7 +54,7 @@
                         </v-form>
                       </v-card-text>
                     </v-card>
-                    <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
+                    <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -145,7 +145,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -317,7 +317,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -417,7 +417,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -479,7 +479,7 @@
                       </v-container>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -605,12 +605,18 @@
                   <v-checkbox class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones">
                   </v-checkbox>                  
 
-                  <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
+                  <v-btn color="primary" class="darken-1 white--text right" @click.native="imprimir" v-if="this.id">
                     Imprimir
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>
 
-                  <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!valid_form">
+                  <v-btn 
+                    color="primary" 
+                    class="darken-1 white--text right" 
+                    @click.native="submit" 
+                    :disabled="!valid_form || guardando"
+                    :loading="guardando"
+                  >
                     Guardar Solicitud
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>
@@ -625,7 +631,7 @@
         </v-flex>
 
         <div class="stuck">
-          <v-toolbar class="blue darken-3">
+          <v-toolbar class="darken-3" color="primary">
             <v-toolbar-title class="white--text">Empresa</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -687,7 +693,8 @@ export default {
         dni: '',
         apellido: ''
       },
-      matricula_selected: {}
+      matricula_selected: {},
+      guardando: false
     }
   },
 
@@ -822,11 +829,13 @@ export default {
     },
 
     submit: function() {
+      this.guardando = true;
       this.solicitud.operador = this.user.id;
       
       if (!this.id) {
         axios.post('/solicitudes', this.solicitud)
             .then(r => {
+              this.guardando = false;
               if (r.status != 201) {
                 this.submitError();
               }
@@ -841,6 +850,7 @@ export default {
       else {
         axios.put(`/solicitudes/${this.id}`, this.solicitud)
           .then(r => {
+            this.guardando = false;
             if (r.status != 200) {
               this.submitError();
             }

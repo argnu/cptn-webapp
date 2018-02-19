@@ -25,7 +25,7 @@
               <td>
                 <v-btn 
                   v-if="props.item.tipo == 'volante'"
-                  fab dark small @click="imprimirVolante(props.item.id)" color="blue"
+                  fab dark small @click="imprimirVolante(props.item.id)" color="primary"
                 >
                   <v-icon>print</v-icon>
                 </v-btn>                
@@ -86,7 +86,8 @@
           <v-flex xs6 class="mx-4">
             <v-btn
               dark
-              class="blue darken-1"
+              color="primary"
+              class="darken-1"
               style="width:100%"
               @click="generarVolante"
             >
@@ -96,7 +97,8 @@
           <v-flex xs6 class="mx-1">
             <v-btn
               dark
-              class="blue darken-1"
+              color="primary"
+              class="darken-1"
               style="width:100%"
               @click="expand_pago = true"
             >
@@ -112,7 +114,7 @@
 
     <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue">
+        <v-toolbar dark color="primary">
           <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="expand_pago = false">
@@ -132,7 +134,7 @@
 
     <v-dialog v-model="show_addboleta" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue">
+        <v-toolbar dark color="primary">
           <v-toolbar-title class="white--text">Nueva Boleta</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="show_addboleta = false">

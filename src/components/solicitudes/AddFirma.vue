@@ -29,7 +29,7 @@
             <br>
                 <v-btn
                     outline
-                    color="blue-grey"
+                    color="primary"
                     dark
                     @click.native="limpiarCanvas"
                 >
@@ -38,7 +38,7 @@
                 </v-btn>
                 <v-btn
                     outline
-                    color="blue-grey"
+                    color="primary"
                     dark
                     @click.native="guardar"
                 >

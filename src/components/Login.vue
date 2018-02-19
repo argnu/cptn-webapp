@@ -38,7 +38,14 @@
               </v-alert>
 
               <br>
-              <v-btn dark class="blue" style="width:100%" type="submit">
+              <v-btn 
+                dark 
+                color="primary" 
+                style="width:100%" 
+                type="submit"
+                :loading="submitted"
+                :disabled="submitted"
+              >
                 <v-icon right dark>fingerprint</v-icon>
                 <span class="ml-3">Iniciar Sesión</span>
               </v-btn>

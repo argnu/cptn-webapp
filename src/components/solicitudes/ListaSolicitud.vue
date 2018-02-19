@@ -2,7 +2,7 @@
 <v-container class="grey lighten-3">
 
   <v-dialog v-model="show_validar" persistent max-width="50%">
-    <v-toolbar class="blue darken-3">
+    <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Aprobar Solicitud de Matriculación</v-toolbar-title>
     </v-toolbar>
     <v-card>
@@ -63,7 +63,12 @@
 
             <v-layout row>
               <v-flex xs12>
-                <v-btn class="right green white--text" @click.native="aprobar">
+                <v-btn 
+                  class="right green white--text" 
+                  @click.native="aprobar"
+                  :disabled="submitValidacion"
+                  :loading="submitValidacion"
+                >
                   Aprobar
                   <v-icon dark right>check_circle</v-icon>
                 </v-btn>
@@ -81,14 +86,14 @@
   </v-dialog>
 
 
-  <v-toolbar class="blue darken-3">
+  <v-toolbar class="darken-3" color="primary">
     <v-toolbar-title class="white--text">Solicitudes de Matrículas</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
   <v-card class="mt-4">
     <v-expansion-panel expand>
-      <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
+      <v-expansion-panel-content v-model="expand.filtros" class="lighten-4" color="primary">
         <div slot="header"></div>
         <v-container class="white black--text">
           <v-layout row wrap>
@@ -199,7 +204,7 @@
         <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
-            <v-btn fab dark small color="blue" slot="activator">
+            <v-btn fab dark small color="primary" slot="activator">
               <v-icon>more_vert</v-icon>
             </v-btn>
 
@@ -248,7 +253,7 @@
 
     <v-dialog v-model="expand_cambiar_imgs" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue" ref="toolbar">
+        <v-toolbar dark color="primary" ref="toolbar">
           <v-toolbar-title class="white--text">Cambiar Foto y/o Firma</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="cerrarImgs">
@@ -441,10 +446,12 @@ export default {
 
     aprobar: function() {
       if (this.$refs.form_aprobacion.validate()) {
+        this.submitValidacion = true;
         this.matricula.operador = this.user.id;
 
         axios.post('/matriculas', this.matricula)
           .then(r => {
+            this.submitValidacion = false;
             this.updateSolicitudes();
             this.matricula = new Matricula();
             this.$refs.form_aprobacion.reset();
@@ -453,7 +460,10 @@ export default {
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
           })
-          .catch(e => console.error(e));
+          .catch(e => {
+            this.submitValidacion = false;
+            console.error(e)
+          });
       }
     },
 
