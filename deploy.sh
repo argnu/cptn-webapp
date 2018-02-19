@@ -28,14 +28,14 @@ if [ "$DIR_APP" != "" ]; then
     npm update;
 
     echo "Construyendo empaquetado de aplicación \n";
-    if [ $ENV = "test" ]
+    if [ $ENV == "test" ]
         sed -i 's/Vue.use(Vuetify)/Vue.use(Vuetify, { template: { primary: "#E53935", secondary: "#FFCDD2" } })/g' src/main.js;
     then
     fi
 
     npm run build;
 
-    if [ $ENV = "test" ]
+    if [ $ENV == "test" ]
         sed -i 's/Vue.use(Vuetify, { template: { primary: "#E53935", secondary: "#FFCDD2" } })/Vue.use(Vuetify)/g' src/main.js;
     then    
 
