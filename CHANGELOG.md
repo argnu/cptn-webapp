@@ -1,3 +1,20 @@
+# UNRELEASED
+
+## Modificado
+
+- **NuevoProfesional**: 
+    - Cambios de títulos, CUIT -> CUIT/CUIL, Datos Adicionales -> Relación Laboral.
+    - Nuevo campo de formación: fecha de emisión del titulo.
+    - Lapso desde emisión de título.
+    - Diálogo para imprimir solicitud apenas creada.
+
+# 1.3.1 (2018-02-15)
+
+## Modificado
+
+- **NuevoLegajo**: 
+    - Comitentes: ya no es obligatorio el CUIT/CUIL.
+
 # 1.3.0 (2018-02-05)
 
 ## Solucionado
