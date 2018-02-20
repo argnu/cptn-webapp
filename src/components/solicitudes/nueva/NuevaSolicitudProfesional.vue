@@ -1,7 +1,21 @@
 <template>
-<v-container>
+<v-container fluid>
+    <v-dialog v-model="show_imprimir" max-width="290">
+      <v-card>
+        <v-card-title class="headline">Nueva Solicitud</v-card-title>
+        <v-card-text>
+          Desea imprimir la solicitud creada?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat="flat" @click.native="imprimir">Sí</v-btn>
+          <v-btn color="green darken-1" flat="flat" @click.native="cancelarImpresion">No</v-btn>
+        </v-card-actions>
+      </v-card>        
+    </v-dialog>
+
   <v-layout row wrap>
-    <v-flex xs8>
+    <v-flex xs10>
       <form v-on:submit.prevent="submit">
         <v-toolbar class="blue darken-3">
           <v-toolbar-title class="white--text">Solicitud de Matriculación de Profesionales</v-toolbar-title>
@@ -9,6 +23,8 @@
         </v-toolbar>
 
         <v-container>
+          <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
+
           <v-stepper v-model="step" vertical>
 
             <!-- PASO 1: DATOS DE SOLICITUD -->
@@ -138,7 +154,7 @@
                       </v-text-field>
 
                       <v-text-field
-                        label="CUIT"
+                        label="CUIT/CUIL"
                         v-model="solicitud.entidad.cuit"
                         :rules="[rules.integer]"
                         tabindex="6"
@@ -183,12 +199,12 @@
                   </v-layout>
 
                   <v-layout row>
-                    <v-flex xs12 class="mx-4">                         
+                    <v-flex xs12 class="mx-4">
                       <add-foto
                           edit
                           :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
                           @change="chgFoto"
-                      ></add-foto>                                      
+                      ></add-foto>
                     </v-flex>
                   </v-layout>
 
@@ -196,12 +212,12 @@
                     <v-flex xs12 class="mt-4">
                       <add-firma
                         edit
-                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''" 
-                        @change="chgFirma"            
+                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''"
+                        @change="chgFirma"
                         ref="firma"
-                      ></add-firma>                      
+                      ></add-firma>
                     </v-flex>
-                  </v-layout> 
+                  </v-layout>
 
                   </v-form>
                 </v-card-text>
@@ -318,9 +334,9 @@
 
                         <v-layout class="mb-4">
                           <v-flex xs12>
-                            <v-btn 
-                              class="right" 
-                              light 
+                            <v-btn
+                              class="right"
+                              light
                               @click="addDomicilio"
                             >
                               {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
@@ -328,7 +344,7 @@
 
                           <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
                             Cancelar
-                          </v-btn>                            
+                          </v-btn>
                           </v-flex>
                         </v-layout>
 
@@ -350,6 +366,9 @@
                                 <v-btn fab small @click="editDomicilio(props.index)">
                                   <v-icon>mode_edit</v-icon>
                                 </v-btn>
+                                <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                  <v-icon>delete</v-icon>
+                                </v-btn>
                               </td>
 
                               <td>{{ props.item.tipo | upperFirst }}</td>
@@ -368,11 +387,6 @@
                               </template>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
-                              <td>
-                                <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>
-                              </td>
                             </tr>
                           </template>
                         </v-data-table>
@@ -456,7 +470,7 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
-                      <template slot="headers" slot-scope="props">                        
+                      <template slot="headers" slot-scope="props">
                         <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                           {{ header.text }}
                         </th>
@@ -469,18 +483,16 @@
                             <v-btn fab small @click="editContacto(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
+                            <v-btn fab small @click="removeElem('contactos', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>
+                          </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
                           <td>{{ props.item.valor }}</td>
                           <td>
                             <span v-if="props.item.tipo == 2">
                               Whatsapp: {{ props.item.whatsapp | boolean }}
                             </span>
-                          </td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
-                              <v-icon>delete</v-icon>
-                            </v-btn>
                           </td>
                         </tr>
                       </template>
@@ -528,15 +540,6 @@
                           :rules="[rules.required]"
                         >
                         </v-select>
-                      </v-flex>
-
-                      <v-flex xs6 class="mx-4">
-                        <input-fecha
-                          v-model="nueva_formacion.fecha"
-                          label="Fecha"
-                          :rules="[rules.required, rules.fecha]"
-                        >
-                        </input-fecha>
 
                         <v-select
                           autocomplete
@@ -548,6 +551,28 @@
                           :rules="[rules.required]"
                         >
                         </v-select>
+                      </v-flex>
+
+                      <v-flex xs6 class="mx-4">
+                        <input-fecha
+                          v-model="nueva_formacion.fechaEmision"
+                          label="Fecha Emisión"
+                          :rules="[rules.required, rules.fecha]"
+                          @change="chgFechaEmision"
+                        >
+                        </input-fecha>
+                        <input-fecha
+                          v-model="nueva_formacion.fechaEgreso"
+                          label="Fecha Egreso"
+                          :rules="[rules.required, rules.fecha]"
+                        >
+                        </input-fecha>
+
+                        <v-text-field
+                          label="Lapso desde Emisión"
+                          readonly
+                          v-model="nueva_formacion.tiempoEmision"
+                        ></v-text-field>
                       </v-flex>
                     </v-layout>
 
@@ -572,6 +597,7 @@
                     >
                       <template slot="headers" slot-scope="props">
                           <th></th>
+                          <th></th>
                           <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                             <b>{{ header.text }}</b>
                           </th>
@@ -583,15 +609,17 @@
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
                             </v-btn>
-                          </td>                        
-                          <td>{{ getTitulo(props.item.titulo) }}</td>
-                          <td>{{ props.item.fecha }}</td>
-                          <td>{{ getInstitucion(props.item.institucion) }}</td>
-                          <td style="width:30px">
-                            <v-btn fab dark small color="blue" @click="removeElem('formaciones', props.index)">
+                          </td>
+                          <td>
+                            <v-btn fab small @click="removeElem('formaciones', props.index)">
                               <v-icon>delete</v-icon>
                             </v-btn>
                           </td>
+                          <td>{{ getTitulo(props.item.titulo) }}</td>
+                          <td>{{ getInstitucion(props.item.institucion) }}</td>
+                          <td>{{ props.item.fechaEgreso }}</td>
+                          <td>{{ props.item.fechaEmision }}</td>
+                          <td>{{ props.item.tiempoEmision }}</td>
                         </tr>
                       </template>
                     </v-data-table>
@@ -607,7 +635,7 @@
 
             <!-- PASO 6: DATOS ADICIONALES -->
             <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
-              Datos Adicionales
+              Relación Laboral
             </v-stepper-step>
             <v-stepper-content step="6">
               <v-card class="grey lighten-4 elevation-4 mb-2">
@@ -685,104 +713,22 @@
                       style="margin-top:30px"
                     >
                       <template slot="headers" slot-scope="props">
-                            <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                              <b>{{ header.text }}</b>
-                            </th>
-                            <th></th>
+                          <th></th>
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                            <b>{{ header.text }}</b>
+                          </th>
                           </template>
                       <template slot="items" slot-scope="props">
-                            <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
-                            <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
-                            <td v-else>{{ getNombreCaja(props.item) }}</td>
-                            
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('cajas_previsionales', props.index)">
+                            <td style="max-width:30px">
+                              <v-btn fab small @click="removeElem('cajas_previsionales', props.index)">
                                 <v-icon>delete</v-icon>
                               </v-btn>
                             </td>
+                            <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
+                            <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
+                            <td v-else>{{ getNombreCaja(props.item) }}</td>
                           </template>
-                    </v-data-table>                  
-
-                  <!-- <v-layout row>
-                    <v-flex xs6 class="ma-4">
-                      <v-text-field
-                        label="DNI"
-                        v-model="nuevo_beneficiario.dni"
-                        :rules="[rules.required, rules.integer]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Apellido"
-                        v-model="nuevo_beneficiario.apellido"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-
-                      <v-text-field
-                        label="Nombre"
-                        v-model="nuevo_beneficiario.nombre"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
-                    </v-flex>
-
-                    <v-flex xs6 class="ma-4">
-                      <input-fecha v-model="nuevo_beneficiario.fechaNacimiento" label="Fecha de Nacimiento">
-                      </input-fecha>
-                      <v-select
-                        autocomplete single-line bottom
-                        label="Vínculo"
-                        :items="opciones.vinculo"
-                        item-text="valor"
-                        item-value="id"
-                        v-model="nuevo_beneficiario.vinculo"
-                        :rules="[rules.required]"
-                      >
-                      </v-select>
-                      <v-checkbox label="Invalidez" v-model="nuevo_beneficiario.invalidez">
-                      </v-checkbox>
-                    </v-flex>
-                  </v-layout> -->
-
-                  <!-- <v-layout row wrap class="mb-4">
-                    <v-flex xs12>
-                      <v-btn class="right" light @click="addBeneficiario">
-                        Agregar
-                      </v-btn>
-                    </v-flex>
-                  </v-layout>
-
-                  <div>
-                    <v-data-table
-                      :headers="headers.beneficiarios"
-                      :items="solicitud.entidad.beneficiarios"
-                      hide-actions
-                      class="elevation-1"
-                      no-data-text="No hay beneficiarios"
-                    >
-                      <template slot="headers" slot-scope="props">
-                               <th v-for="header of props.headers" class="pa-3 text-xs-left">
-                                 <b>{{ header.text }}</b>
-                               </th>
-                               <th></th>
-                             </template>
-                      <template slot="items" slot-scope="props">
-                               <td>{{ props.item.dni }}</td>
-                               <td>{{ props.item.apellido }}</td>
-                               <td>{{ props.item.nombre }}</td>
-                               <td>{{ props.item.fechaNacimiento }}</td>
-                               <td>{{ getVinculo(props.item.vinculo) }}</td>
-                               <td>{{ props.item.invalidez | boolean }}</td>
-                               <td style="width:30px">
-                                 <v-btn fab dark small color="blue" @click="removeElem('beneficiarios', props.index)">
-                                   <v-icon>delete</v-icon>
-                                 </v-btn>
-                               </td>
-                             </template>
                     </v-data-table>
-                  </div> -->
-
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -793,8 +739,8 @@
 
 
             <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
-            <v-stepper-step step="8" edit-icon="check" editable 
-              :complete="valid_subsidiarios && step > 8" 
+            <v-stepper-step step="8" edit-icon="check" editable
+              :complete="valid_subsidiarios && step > 8"
               :rules="[() => step <= 8 || valid_subsidiarios]"
             >
               Subsidio Por Fallecimiento
@@ -857,10 +803,10 @@
                       >
                         <template slot="headers" slot-scope="props">
                           <th></th>
+                          <th></th>
                           <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                             <b>{{ header.text }}</b>
                           </th>
-                          <th></th>
                         </template>
                         <template slot="items" slot-scope="props">
                           <tr :active="props.index == subsidiario_edit">
@@ -868,16 +814,14 @@
                               <v-btn fab small @click="editSubsidiario(props.index)">
                                 <v-icon>mode_edit</v-icon>
                               </v-btn>
-                            </td>                          
+                              <v-btn fab small @click="removeElem('subsidiarios', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>
+                            </td>
                             <td>{{ props.item.dni }}</td>
                             <td>{{ props.item.apellido }}</td>
                             <td>{{ props.item.nombre }}</td>
                             <td>{{ props.item.porcentaje }}</td>
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('subsidiarios', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </tr>
                         </template>
                       </v-data-table>
@@ -922,7 +866,7 @@
                     @change="chgPublicarTodos"
                     v-model="publicar_todos"
                   >
-                  </v-checkbox>                  
+                  </v-checkbox>
 
                   <v-layout row class="mt-2">
                     <v-flex xs6>
@@ -979,7 +923,7 @@
 
     <div class="stuck">
       <v-toolbar class="blue darken-3">
-        <v-toolbar-title class="white--text">Datos del Profesional</v-toolbar-title>
+        <v-toolbar-title class="white--text">Profesional</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-container>
@@ -988,7 +932,7 @@
             <div><b>Nombre: </b> {{ solicitud.entidad.nombre }} </div>
             <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
             <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
-            <div><b>CUIT: </b> {{ solicitud.entidad.cuit }} </div>
+            <div><b>CUIT/CUIL: </b> {{ solicitud.entidad.cuit }} </div>
             <div><b>Sexo: </b> {{ sexo_selected }} </div>
             <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
@@ -1033,8 +977,6 @@ export default {
 
   data() {
     return {
-      domicilio_edit: null,
-      contacto_edit: null,
       formacion_edit: null,
       subsidiario_edit: null,
       instituciones: [],
@@ -1047,14 +989,14 @@ export default {
       nuevo_subsidiario: new Subsidiario(),
       nueva_caja: '',
       publicar_todos: false,
-      rules_contacto: [rules.required],
-      placeholder_contacto: '',
       foto: null,
       firma: null,
       valid: {
         form_solicitud: false,
         form_profesional: false
-      },      
+      },
+      show_imprimir: false,
+      id_creada: null
     }
   },
 
@@ -1080,6 +1022,11 @@ export default {
       return this.titulos.filter(t => t.tipo == getTipo());
     },
 
+    lapso_emision: function() {
+      return '12';
+      if (!this.nueva_formacion.fechaEmision) return '';
+    },
+
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -1092,6 +1039,12 @@ export default {
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
+    }
+  },
+
+  watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.init();
     }
   },
 
@@ -1111,34 +1064,60 @@ export default {
         this.instituciones = r[3].data;
         this.titulos = r[4].data;
         this.cajas_previsionales = r[5].data;
-
-        if (this.id) {
-          axios.get(`/solicitudes/${this.id}`)
-          .then(r => {
-              this.solicitud = new Solicitud('profesional');
-              this.solicitud.fecha = utils.getFecha(r.data.fecha);
-              this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
-              this.solicitud.estado = r.data.estado;
-              this.fillProfesional(r.data.entidad);
-          });
-        }
-        else {
-          this.solicitud.delegacion = +this.global_state.delegacion.id;
-          if (this.dni) { 
-            this.solicitud.entidad.dni = this.dni;
-            this.chgDni();
-          }
-          else {
-            this.changePais();
-            this.changeProvincia();
-          }
-        }
+        this.datos_cargados = true;
+        this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+        this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+        this.init();
       })
       .catch(e => console.error(e));
   },
 
 
   methods: {
+    init: function() {
+      this.step = 1;
+      this.initForm().then(reset => {
+        return this.changePais()
+        .then(() => this.changeProvincia())
+        .then(() => this.changeDepartamento())
+        .then(() => {
+          this.show_cargando = false;
+          if (reset) {
+            this.$refs.firma.reset();
+            this.$refs.form_profesional.reset();
+          }          
+        });        
+      });
+    },
+
+    initForm: function() {
+      this.show_cargando = true;
+      this.solicitud = new Solicitud('profesional');
+
+      if (this.id) {
+        return axios.get(`/solicitudes/${this.id}`)
+        .then(r => {
+            this.solicitud.fecha = utils.getFecha(r.data.fecha);
+            this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
+            this.solicitud.estado = r.data.estado;
+            this.fillProfesional(r.data.entidad);
+            return false;
+        });
+      }
+      else {
+        this.solicitud.fecha = utils.getFecha();
+        this.solicitud.delegacion = +this.global_state.delegacion.id;
+
+        if (this.dni) {
+          this.solicitud.entidad.dni = this.dni;
+          return this.chgDni().then(() => false)
+        }
+        else {
+          return Promise.resolve(true);
+        }
+      }
+    },
+
     fillProfesional: function(entidad) {
       this.solicitud.entidad.foto = entidad.foto;
       this.solicitud.entidad.firma = entidad.firma;
@@ -1160,6 +1139,12 @@ export default {
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
 
+      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
+      this.solicitud.entidad.empresa = entidad.empresa;
+      this.solicitud.entidad.independiente = entidad.independiente;
+      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
+
       this.solicitud.entidad.domicilios = entidad.domicilios;
 
       this.solicitud.entidad.contactos = [];
@@ -1173,17 +1158,13 @@ export default {
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = { id: formacion.id };
         formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-        formacion_nueva.fecha = utils.getFecha(formacion.fecha);
+        formacion_nueva.fechaEmision = utils.getFecha(formacion.fechaEmision);
+        formacion_nueva.fechaEgreso = utils.getFecha(formacion.fechaEgreso);
+        formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
         formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
         formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
-
-      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
-      this.solicitud.entidad.empresa = entidad.empresa;
-      this.solicitud.entidad.independiente = entidad.independiente;
-      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
 
       this.solicitud.entidad.subsidiarios = [];
       for(let subsidiario of entidad.subsidiarios) {
@@ -1214,15 +1195,24 @@ export default {
 
     getNombreCaja: function(id) {
       return this.cajas_previsionales.find(i => id == i.id).nombre;
-    },    
+    },
 
     chgDni: function() {
-      axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
+        return;
       })
       .catch(e => console.error(e));
+    },
+
+    chgFechaEmision: function() {
+      this.nueva_formacion.tiempoEmision = '';
+      let fecha = moment(this.nueva_formacion.fechaEmision, 'DD/MM/YYYY', true);
+      if (fecha.isValid()) {
+          this.nueva_formacion.tiempoEmision = utils.diffDatesStr(fecha, moment());
+      }
     },
 
     chgPublicarTodos: function() {
@@ -1238,32 +1228,35 @@ export default {
 
     chgFirma: function(firma) {
         this.firma = firma;
-    },    
+    },
 
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
-        if (this.formacion_edit == null) { 
+        if (this.formacion_edit == null) {
           this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         }
         else {
           Vue.set(this.solicitud.entidad.formaciones, this.formacion_edit, this.nueva_formacion);
         }
+        
         this.nueva_formacion = new Formacion();
-        this.$refs.form_formacion.reset();
         this.formacion_edit = null;
+        Vue.nextTick().then(() => {
+          this.$refs.form_formacion.reset();
+        });
       }
     },
 
     editFormacion: function(index) {
       this.formacion_edit = index;
-      this.nueva_formacion = this.solicitud.entidad.formaciones[index];      
-    },  
-    
+      this.nueva_formacion = this.solicitud.entidad.formaciones[index];
+    },
+
     cancelarEditFormacion: function() {
       this.formacion_edit = null;
       this.nueva_formacion = new Formacion();
       this.$refs.form_formacion.reset();
-    },    
+    },
 
     addBeneficiario: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1271,7 +1264,7 @@ export default {
         this.nuevo_beneficiario = new Beneficiario();
         this.$refs.form_beneficiario.reset();
       }
-    },  
+    },
 
     addSubsidiario: function() {
       if (this.$refs.form_subsidiario.validate()) {
@@ -1281,7 +1274,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.subsidiarios, this.subsidiario_edit, this.nuevo_subsidiario);
         }
-        
+
         this.nuevo_subsidiario = new Subsidiario();
         this.$refs.form_subsidiario.reset();
         this.subsidiario_edit = null;
@@ -1290,14 +1283,14 @@ export default {
 
     editSubsidiario: function(index) {
       this.subsidiario_edit = index;
-      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];      
-    },  
-    
+      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];
+    },
+
     cancelarEditSubsidiario: function() {
       this.subsidiario_edit = null;
       this.nuevo_subsidiario = new Subsidiario();
       this.$refs.form_subsidiario.reset();
-    },     
+    },
 
     addCaja: function() {
       if (this.$refs.form_beneficiario.validate()) {
@@ -1309,7 +1302,7 @@ export default {
         this.nueva_caja = '';
         this.$refs.form_beneficiario.reset();
       }
-    },   
+    },
 
     nextStep: function() {
       let next = true;
@@ -1318,7 +1311,7 @@ export default {
       else if (this.step == 3) next = this.valid_domicilios;
       else if (this.step == 8) next = this.valid_subsidiarios;
       if (next) this.step = +this.step + 1;
-    },    
+    },
 
     makeFormData: function() {
       let form_data = new FormData();
@@ -1339,11 +1332,12 @@ export default {
             if (r.status != 201) {
               this.submitError();
             }
+            this.id_creada = r.data.id;
+            this.show_imprimir = true;
             this.$refs.firma.reset();
             this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
-            this.$router.replace('/solicitudes/lista');
           })
           .catch(e => this.submitError());
       }
@@ -1363,14 +1357,21 @@ export default {
     },
 
     imprimir: function() {
-      axios.get(`/solicitudes/${this.id}`)
+      let id = this.id_creada;
+      if (!id) id = this.id;
+      axios.get(`/solicitudes/${id}`)
           .then(s => {
             let solicitud = s.data;
             let pdf = impresionSolicitud(solicitud);
             pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+            if (this.id_creada) this.$router.replace('/solicitudes/lista');
           })
           .catch(e => console.error(e));
     },
+
+    cancelarImpresion: function() {
+      this.$router.replace('/solicitudes/lista');
+    }
   },
 
   components: {
@@ -1396,7 +1397,7 @@ h6 {
 .stuck {
   position: fixed;
   right: 10px;
-  width: 30%;
+  width: 15%;
   word-wrap: break-word;
 }
 </style>

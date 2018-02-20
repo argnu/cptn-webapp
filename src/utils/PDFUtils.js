@@ -86,7 +86,7 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(20, eje_y, 'Fecha de Nacimiento:');
     eje_y += 6;
-    doc.text(20, eje_y, `Lugar de Nacimiento: ${solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: ''}   Nacionalidad: ${solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : ''}`);
+    doc.text(20, eje_y, `Lugar de Nacimiento: ${emptyIfNull(solicitud.entidad.lugarNacimiento)}   Nacionalidad: ${emptyIfNull(solicitud.entidad.nacionalidad)}`);
     // doc.text(65, eje_y, solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: '');
     // doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
 
@@ -213,7 +213,7 @@ export function impresionSolicitud(solicitud) {
     doc.text(20, eje_y, 'Situación AFIP: ');
     doc.text(50, eje_y, solicitud.entidad.condafip);
     doc.text(120, eje_y, 'CUIT/CUIL: ');
-    doc.text(145, eje_y, solicitud.entidad.cuit);
+    doc.text(145, eje_y, emptyIfNull(solicitud.entidad.cuit));
     //Se muestran los datos de los subsidiarios
     eje_y += 3;
     doc.line(20, eje_y, 190, eje_y);
@@ -279,9 +279,6 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, moment(solicitud.entidad.fechaNacimiento).format('DD/MM/YYYY'));
     eje_y += 6;
-    //doc.text(65, eje_y, solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: '');
-    //doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
-    // eje_y += 6;
   }
 
   if (solicitud.entidad.tipo == 'empresa') {
@@ -309,7 +306,7 @@ export function impresionSolicitud(solicitud) {
   doc.setFontSize(12);
 
   if (domicilioReal) {
-    doc.text(50, eje_y_domicilio - 6, domicilioReal.domicilio.direccion);
+    doc.text(50, eje_y_domicilio - 6, emptyIfNull(domicilioReal.domicilio.direccion));
     doc.text(35, eje_y_domicilio, domicilioReal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioReal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -321,7 +318,7 @@ export function impresionSolicitud(solicitud) {
 
   if (domicilioLegal) {
     eje_y_domicilio += 12;
-    doc.text(50, eje_y_domicilio - 6, domicilioLegal.domicilio.direccion);
+    doc.text(50, eje_y_domicilio - 6, emptyIfNull(domicilioLegal.domicilio.direccion));
     doc.text(35, eje_y_domicilio, domicilioLegal.domicilio.pais);
     doc.text(120, eje_y_domicilio, domicilioLegal.domicilio.provincia);
     eje_y_domicilio += 6;
@@ -350,7 +347,7 @@ export function impresionSolicitud(solicitud) {
 export function impresionLegajo(legajo, categoria) {
   const encabezado = (str) => {
     doc.line(20, eje_y, 190, eje_y);
-    eje_y += 5;
+     eje_y += 5;
     doc.setFontSize(12);
     doc.text(25, eje_y, str);
     eje_y += 3;

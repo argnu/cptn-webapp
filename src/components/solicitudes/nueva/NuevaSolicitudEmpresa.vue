@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container fluid>
       <v-layout row wrap>
-        <v-flex xs8>
+        <v-flex xs10>
           <form v-on:submit.prevent="submit">
           <v-toolbar class="blue darken-3">
             <v-toolbar-title class="white--text">Solicitud de Matriculación de Empresas</v-toolbar-title>
@@ -9,6 +9,8 @@
           </v-toolbar>
 
           <v-container>
+            <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
+
              <v-stepper v-model="step" vertical>
 
                <!-- PASO 1: DATOS DE SOLICITUD -->
@@ -277,7 +279,6 @@
                             <th v-for="(header, i) of props.headers" :key="i" class="pa-3">
                               <b>{{ header.text }}</b>
                             </th>
-                            <th></th>
                           </template>
                           <template slot="items" slot-scope="props">
                             <tr :active="props.index == domicilio_edit">
@@ -285,6 +286,9 @@
                                 <v-btn fab small @click="editDomicilio(props.index)">
                                   <v-icon>mode_edit</v-icon>
                                 </v-btn>
+                                <v-btn fab small @click="removeElem('domicilios', props.index)">
+                                    <v-icon>delete</v-icon>
+                                  </v-btn>                                
                               </td>                              
                               <td>{{ props.item.tipo | upperFirst }}</td>
 
@@ -302,11 +306,6 @@
                               </template>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
-                              <td style="width:30px">
-                                <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>
-                              </td>
                             </tr>                              
                           </template>
                         </v-data-table>
@@ -330,51 +329,58 @@
                 <v-stepper-content step="4">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
+                      <v-form lazy-validation ref="form_contacto">
+
                       <v-container>
-                        <v-form lazy-validation ref="form_contacto">
+                          <v-layout row>
+                            <v-flex xs3 class="mx-2">
+                              <v-select
+                                single-line bottom
+                                :items="opciones.contacto"
+                                item-text="valor"
+                                item-value="id"
+                                label="Tipo"
+                                v-model="nuevo_contacto.tipo"
+                                :rules="[rules.required]"
+                                @change="chgTipoContacto"
+                              >
+                              </v-select>
+                            </v-flex>
 
-                        <v-layout row>
-                          <v-flex xs6>
-                            <v-select
-                              item-text="valor"
-                              item-value="id"
-                              :items="opciones.contacto"
-                              label="Tipo de Contacto"
-                              single-line
-                              bottom
-                              v-model="nuevo_contacto.tipo"
-                              :rules="[rules.required]"
-                              @change="chgTipoContacto"
-                            >
-                            </v-select>
-                          </v-flex>
+                            <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
+                              <input-telefono
+                                :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
+                                v-model="nuevo_telefono"
+                              ></input-telefono>
 
-                          <v-flex xs6 class="mx-4" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
-                          <input-telefono
-                            :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
-                            v-model="nuevo_telefono"
-                          ></input-telefono>
+                              <v-checkbox
+                                v-show="nuevo_contacto.tipo === 2"
+                                label="Whatsapp"
+                                v-model="nuevo_contacto.whatsapp"
+                                light
+                              ></v-checkbox>
+                            </v-flex>
 
-                            <v-checkbox 
-                              v-show="nuevo_contacto.tipo === 2"
-                              label="Whatsapp" 
-                              v-model="nuevo_contacto.whatsapp" 
-                              light
-                            ></v-checkbox>
-                          </v-flex>
+                            <v-flex xs8 class="mx-2" v-else>
+                              <v-text-field
+                                v-model="nuevo_contacto.valor"
+                                :rules="rules_contacto"
+                                :placeholder="placeholder_contacto"
+                              >
+                              </v-text-field>
+                            </v-flex>
+                          </v-layout>
 
-                          <v-flex xs6 class="mx-4" v-else>
-                            <v-text-field 
-                              v-model="nuevo_contacto.valor" 
-                              :rules="[rules.required]"
-                            >
-                            </v-text-field>
-                          </v-flex>    
-
-                          <v-flex xs2>
-                            <v-btn class="right" light @click="addContacto">Agregar</v-btn>
-                          </v-flex>                                                
-                      </v-layout>
+                          <v-layout row wrap>
+                            <v-flex xs12>
+                              <v-btn class="right" light @click="addContacto">
+                                {{ contacto_edit != null ? 'Guardar' : 'Agregar' }}
+                              </v-btn>
+                              <v-btn class="right" light v-show="contacto_edit != null" @click="cancelarEditContacto">
+                                Cancelar
+                              </v-btn>
+                            </v-flex>
+                          </v-layout>
 
                         <v-data-table
                             :headers="headers.contactos"
@@ -383,13 +389,21 @@
                             class="elevation-1 mt-4"
                             no-data-text="No hay contactos">
                           <template slot="headers" slot-scope="props">
+                            <th></th>
                             <th v-for="(header, i) of props.headers" :key="i" class="pa-3">
                               <b>{{ header.text }}</b>
                             </th>
                             <th></th>
-                            <th></th>
                           </template>
                           <template slot="items" slot-scope="props">
+                            <td>
+                              <v-btn fab small @click="editContacto(props.index)">
+                                <v-icon>mode_edit</v-icon>
+                              </v-btn>                              
+                              <v-btn fab small @click="removeElem('contactos', props.index)">
+                                <v-icon>delete</v-icon>
+                              </v-btn>                              
+                            </td>
                             <td>{{ getTipoContacto(props.item.tipo) }}</td>
                             <td>{{ props.item.valor }}</td>
                             <td>
@@ -397,16 +411,10 @@
                                 Whatsapp: {{ props.item.whatsapp | boolean }}
                               </span>
                             </td>
-                            <td style="width:30px">
-                              <v-btn fab dark small color="blue" @click="removeElem('contactos', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
                           </template>
                         </v-data-table>
-
-                        </v-form>
                       </v-container>
+                      </v-form>
                     </v-card-text>
                   </v-card>
                   <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
@@ -451,19 +459,19 @@
                               class="elevation-1"
                               no-data-text="No hay incumbencias">
                             <template slot="headers" slot-scope="props">
+                              <th></th>
                               <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
                                 <b>{{ header.text }}</b>
                               </th>
-                              <th></th>
                             </template>
                             <template slot="items" slot-scope="props">
-                              <td v-if="props.item.id">{{ props.item.valor }}</td>
-                              <td v-else>{{ getTipoIncumbencia(props.item) }}</td>
-                              <td style="width:30px">
+                              <td>
                                 <v-btn icon small @click="removeElem('incumbencias', props.index)">
                                   <v-icon>delete</v-icon>
-                                </v-btn>
+                                </v-btn>                                
                               </td>
+                              <td v-if="props.item.id">{{ props.item.valor }}</td>
+                              <td v-else>{{ getTipoIncumbencia(props.item) }}</td>
                             </template>
                           </v-data-table>
 
@@ -540,7 +548,7 @@
                                   <td>{{ props.item.entidad.apellido }}</td>
                                   <td>{{ props.item.entidad.dni }}</td>
                                   <td>
-                                    <v-btn fab dark small color="blue" @click="selectRepresentantePrimario(props.item)">
+                                    <v-btn fab dark small color="primary" @click="selectRepresentantePrimario(props.item)">
                                       <v-icon>check</v-icon>
                                     </v-btn>
                                   </td>
@@ -618,7 +626,7 @@
 
         <div class="stuck">
           <v-toolbar class="blue darken-3">
-            <v-toolbar-title class="white--text">Datos de la Empresa</v-toolbar-title>
+            <v-toolbar-title class="white--text">Empresa</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
           <v-container>
@@ -712,6 +720,12 @@ export default {
     }
   },
 
+  watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.initForm();
+    }
+  },  
+
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     
@@ -724,8 +738,30 @@ export default {
       this.paises = r[0].data;
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
-      
+      this.datos_cargados = true;
+      this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+      this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+      this.initForm();   
+    })
+    .catch(e => console.error(e));
+  },
+
+  methods: {
+    init: function(reset) {
+      this.changePais()
+      .then(() => this.changeProvincia())
+      .then(() => this.changeDepartamento())
+      .then(() => {
+        this.show_cargando = false;
+        if (reset) this.$refs.form_empresa.reset();
+      });
+    },
+
+    initForm: function() {
+      this.step = 1;
+      this.updateMatriculas();
       if (this.id) { 
+        this.show_cargando = true;
         axios.get(`/solicitudes/${this.id}`)
         .then(r => {          
               this.solicitud = new Solicitud('empresa');
@@ -751,18 +787,16 @@ export default {
 
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias;
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
+              this.init(false);
         })
       }
       else {
-        this.solicitud.delegacion = +this.global_state.delegacion.id;
-        this.changePais();
-        this.changeProvincia();
-      }      
-    })
-    .catch(e => console.error(e));
-  },
+        this.solicitud = new Solicitud('empresa');
+        this.solicitud.delegacion = +this.global_state.delegacion.id;        
+        this.init(true);
+      }       
+    },
 
-  methods: {
     getTipoContacto: function(id) {
       return this.opciones.contacto.find(o => o.id == id).valor;
     },
@@ -899,7 +933,7 @@ h6 {
 .stuck {
     position: fixed;
     right: 10px;
-    width: 30%;
+    width: 15%;
     word-wrap: break-word;
 }
 </style>

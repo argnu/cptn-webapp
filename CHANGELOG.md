@@ -1,8 +1,38 @@
-# 1.3.1 (2018-02-14)
+# 1.3.2 (2018-02-19)
 
 ## Modificado
 
-- **NuevoLegajo**: el cuit/cuil deja de ser obligatorio.
+- **NuevoProfesional**: 
+    - Cambios de títulos, CUIT -> CUIT/CUIL, Datos Adicionales -> Relación Laboral.
+    - Nuevo campo de formación: fecha de emisión del titulo.
+    - Lapso desde emisión de título.
+    - Diálogo para imprimir solicitud apenas creada.
+
+# 1.3.1 (2018-02-15)
+
+## Modificado
+
+- **NuevoLegajo**: 
+    - Comitentes: ya no es obligatorio el CUIT/CUIL.
+
+# 1.3.0 (2018-02-05)
+
+## Solucionado
+
+- **NuevaSolicitud**: 
+    - reiniciar form cuando cambio de ruta pero el componente es el mismo.
+    - ajustes de interfaz, mayor ancho a componente principal.
+
+## Agregado
+
+- **NuevaSolicitud**: 
+    - barra de progreso superior de carga de datos del profesional.
+    - seteo automático de la localidad y departamento en base a la delegación del usuario.
+    
+- **NuevoProfesional**: 
+    - formaciones, fechaEmision, fechaEgreso y tiempo transcurrido desde fechaEmision.
+    - diálogo de impresión de solicitud al guardar una nueva.
+
 
 # 1.3.0 (2018-02-05)
 

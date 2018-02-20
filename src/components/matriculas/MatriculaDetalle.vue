@@ -230,7 +230,8 @@
                   <td>{{ props.item.tipo }}</td>
                   <td>{{ props.item.titulo }}</td>
                   <td>{{ props.item.institucion }}</td>
-                  <td>{{ props.item.fecha | fecha }}</td>
+                  <td>{{ props.item.fechaEgreso | fecha }}</td>
+                  <td>{{ props.item.fechaEmision | fecha }}</td>
                 </template>
                 </v-data-table>
               </v-card-text>
