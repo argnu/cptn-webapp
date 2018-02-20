@@ -295,7 +295,7 @@ const select_items = {
   ],
   tipos_matricula: [
     { text: 'TECA', value: 'TECA' },
-    { text: 'TECB', value: 'TECB' },
+    { text: 'TEC-', value: 'TEC-' },
     { text: 'IDO', value: 'IDO' }
   ]
 }
