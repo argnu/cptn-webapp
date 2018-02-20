@@ -36,7 +36,6 @@ if [ "$DIR_APP" != "" ]; then
 
     if [ $ENV = "test" ]; then
         sed -i 's/Vue.use(Vuetify, { theme: { primary: colors.orange.darken1, secondary: colors.orange.lighten4 } })/Vue.use(Vuetify)/g' src/main.js;    
-    fi
 
     #sed -i 's,/static/,/'"$DIR_APP"'/static/,g' "dist/index.html";
 
@@ -44,6 +43,9 @@ if [ "$DIR_APP" != "" ]; then
       echo "Reemplazando URL de la API por $URL_API";
       find dist/static/js -type f -exec sed -i 's,localhost:3400,'"$URL_API"',g' {} \;
     fi
+
+    echo "Limpio archivos viejos"
+    rm -r /var/www/html/$DIR_APP/.
 
     echo "Deploy en /var/www/html/$DIR_APP";
     cp -r dist/. /var/www/html/$DIR_APP/.;
