@@ -60,9 +60,6 @@
                     <div class="mb-3">
                       Tipo de Sociedad: {{ matricula.entidad.tipoSociedad }}
                     </div>
-                    <div>
-                      Condición Impositiva: {{ matricula.entidad.condafip }}
-                    </div>
                   </v-flex>
                 </v-layout>
               </v-card-text>

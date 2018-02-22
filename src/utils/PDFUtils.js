@@ -210,8 +210,8 @@ export function impresionSolicitud(solicitud) {
   if (solicitud.entidad.tipo == 'profesional') {
     doc.line(20, eje_y, 190, eje_y);
     eje_y += 6;
-    doc.text(20, eje_y, 'Situación AFIP: ');
-    doc.text(50, eje_y, solicitud.entidad.condafip);
+    // doc.text(20, eje_y, 'Situación AFIP: ');
+    // doc.text(50, eje_y, solicitud.entidad.condafip);
     doc.text(120, eje_y, 'CUIT/CUIL: ');
     doc.text(145, eje_y, emptyIfNull(solicitud.entidad.cuit));
     //Se muestran los datos de los subsidiarios
@@ -294,7 +294,7 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.fechaInicio ? moment(solicitud.entidad.fechaInicio).format('DD/MM/YYYY') : '');
     eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.condafip);
+    // doc.text(65, eje_y, solicitud.entidad.condafip);
     eje_y += 6;
   }
 

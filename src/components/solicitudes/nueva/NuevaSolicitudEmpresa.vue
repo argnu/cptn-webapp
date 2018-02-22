@@ -98,18 +98,6 @@
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
-
-                          <v-select
-                            autocomplete
-                            tabindex="7"
-                            item-text="valor"
-                            item-value="id"
-                            :items="opciones.condicionafip"
-                            v-model="solicitud.entidad.condafip"
-                            label="Condición Impositiva" single-line bottom
-                            :rules="[rules.required]"
-                          >
-                          </v-select>
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
@@ -775,7 +763,6 @@ export default {
               this.solicitud.entidad.fechaConstitucion = utils.getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.tipoEmpresa = this.opciones.empresa.find(i => i.valor == r.data.entidad.tipoEmpresa).id;
               this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
-              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
 
               this.solicitud.entidad.domicilios = r.data.entidad.domicilios;
 

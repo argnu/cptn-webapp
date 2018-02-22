@@ -134,13 +134,6 @@
                         tabindex="11"
                       >
                       </v-text-field>
-
-                      <v-text-field
-                        label="Observaciones"
-                        v-model="solicitud.entidad.observaciones"
-                        tabindex="13"
-                      >
-                      </v-text-field>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
@@ -183,18 +176,12 @@
                       >
                       </v-text-field>
 
-                      <v-select
-                        autocomplete
-                        single-line bottom
-                        :items="opciones.condicionafip"
-                        item-text="valor"
-                        item-value="id"
-                        v-model="solicitud.entidad.condafip"
-                        label="Condición Impositiva"
-                        tabindex="12"
-                        :rules="[rules.required]"
+                      <v-text-field
+                        label="Observaciones"
+                        v-model="solicitud.entidad.observaciones"
+                        tabindex="13"
                       >
-                      </v-select>
+                      </v-text-field>                      
                     </v-flex>
                   </v-layout>
 
@@ -471,10 +458,10 @@
                       no-data-text="No hay contactos"
                     >
                       <template slot="headers" slot-scope="props">
+                        <th></th>
                         <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
                           {{ header.text }}
                         </th>
-                        <th></th>
                         <th></th>
                       </template>
                       <template slot="items" slot-scope="props">
@@ -507,11 +494,97 @@
             </v-stepper-content>
 
 
-            <!-- PASO 5: FORMACIONES -->
+            <!-- PASO 5: CONDICION IMPOSITIVA -->
             <v-stepper-step step="5" edit-icon="check" editable :complete="step > 5">
-              Datos de Formación Académica
+              Condición Impositiva
             </v-stepper-step>
             <v-stepper-content step="5">
+              <v-card class="grey lighten-4 elevation-4 mb-2">
+                <v-card-text>
+                  <v-form ref="form_condafip" lazy-validation>
+
+                  <v-container>
+                    <v-layout row>
+                      <v-flex xs4 class="mx-2">
+                        <v-select
+                          autocomplete
+                          single-line bottom
+                          :items="opciones.condicionafip"
+                          item-text="valor"
+                          item-value="id"
+                          v-model="nueva_condafip.condicion_afip"
+                          label="Condición Impositiva"
+                          :rules="[rules.required]"
+                        >
+                        </v-select>
+                      </v-flex>
+
+                      <v-flex xs7 class="mx-2">
+                        <v-text-field
+                          label="Descripción"
+                          v-model="nueva_condafip.descripcion"
+                        >
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <v-btn class="right" light @click="addCondAfip">
+                          {{ condafip_edit != null ? 'Guardar' : 'Agregar' }}
+                        </v-btn>
+                        <v-btn class="right" light v-show="condafip_edit != null" @click="cancelarEditCondAfip">
+                          Cancelar
+                        </v-btn>
+                      </v-flex>
+                    </v-layout>
+
+                    <v-data-table
+                      :headers="headers.condafip"
+                      :items="solicitud.entidad.condiciones_afip"
+                      hide-actions
+                      class="elevation-1 mt-4"
+                      no-data-text="No hay datos"
+                    >
+                      <template slot="headers" slot-scope="props">
+                        <th></th>
+                        <th></th>
+                        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                          {{ header.text }}
+                        </th>
+                      </template>
+                      <template slot="items" slot-scope="props">
+                        <tr :active="props.index == condafip_edit">
+                          <td style="max-width:10px">
+                            <v-btn fab small @click="editCondAfip(props.index)">
+                              <v-icon>mode_edit</v-icon>
+                            </v-btn>
+                          </td>
+                          <td>
+                            <v-btn fab small @click="removeElem('condiciones_afip', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>
+                          </td>
+                          <td>{{ getCondicionAfip(props.item.condicion_afip) }}</td>
+                          <td>{{ props.item.descripcion }}</td>
+                        </tr>
+                      </template>
+                    </v-data-table>
+                  </v-container>
+
+                  </v-form>
+                </v-card-text>
+              </v-card>
+              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
+            </v-stepper-content>
+
+
+            <!-- PASO 6: FORMACIONES -->
+            <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
+              Datos de Formación Académica
+            </v-stepper-step>
+            <v-stepper-content step="6">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <v-form ref="form_formacion" lazy-validation>
@@ -633,11 +706,11 @@
             </v-stepper-content>
 
 
-            <!-- PASO 6: DATOS ADICIONALES -->
-            <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
+            <!-- PASO 7: DATOS ADICIONALES -->
+            <v-stepper-step step="7" edit-icon="check" editable :complete="step > 7">
               Relación Laboral
             </v-stepper-step>
-            <v-stepper-content step="6">
+            <v-stepper-content step="7">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <v-layout row>
@@ -678,11 +751,11 @@
 
 
 
-            <!-- PASO 7: CAJA PREVISIONAL -->
-            <v-stepper-step step="7" edit-icon="check" editable :complete="step > 7">
+            <!-- PASO 8: CAJA PREVISIONAL -->
+            <v-stepper-step step="8" edit-icon="check" editable :complete="step > 8">
               Caja Previsional
             </v-stepper-step>
-            <v-stepper-content step="7">
+            <v-stepper-content step="8">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <v-form lazy-validation ref="form_beneficiario" @submit.prevent>
@@ -738,14 +811,14 @@
 
 
 
-            <!-- PASO 8: SUBSIDIO POR FALLECIMIENTO -->
-            <v-stepper-step step="8" edit-icon="check" editable
-              :complete="valid_subsidiarios && step > 8"
-              :rules="[() => step <= 8 || valid_subsidiarios]"
+            <!-- PASO 9: SUBSIDIO POR FALLECIMIENTO -->
+            <v-stepper-step step="9" edit-icon="check" editable
+              :complete="valid_subsidiarios && step > 9"
+              :rules="[() => step <= 9 || valid_subsidiarios]"
             >
               Subsidio Por Fallecimiento
             </v-stepper-step>
-            <v-stepper-content step="8">
+            <v-stepper-content step="9">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <v-form ref="form_subsidiario" lazy-validation>
@@ -843,10 +916,10 @@
 
 
             <!-- PASO 9: DECLARACION Y EXENCIONES -->
-            <v-stepper-step step="9" edit-icon="check" editable :complete="step > 9">
+            <v-stepper-step step="10" edit-icon="check" editable :complete="step > 10">
               Declaración de Difusión de Datos y Recepción de Información
             </v-stepper-step>
-            <v-stepper-content step="9">
+            <v-stepper-content step="10">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
                   <!-- <blockquote>
@@ -1135,7 +1208,6 @@ export default {
       this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
       this.solicitud.entidad.fechaNacimiento = utils.getFecha(entidad.fechaNacimiento)
       this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
-      this.solicitud.entidad.condafip = this.opciones.condicionafip.find(c => c.valor == entidad.condafip).id;
       this.solicitud.entidad.observaciones = entidad.observaciones;
       this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
 
@@ -1153,6 +1225,8 @@ export default {
         contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
         this.solicitud.entidad.contactos.push(contacto_nuevo);
       }
+
+      this.solicitud.entidad.condiciones_afip = entidad.condiciones_afip;
 
       this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
@@ -1187,10 +1261,6 @@ export default {
 
     getTitulo: function(id) {
       return this.titulos.find(i => id == i.id).nombre;
-    },
-
-    getTipoContacto: function(id) {
-      return this.opciones.contacto.find(i => id == i.id).valor;
     },
 
     getNombreCaja: function(id) {
@@ -1309,7 +1379,7 @@ export default {
       if (this.step == 1) next = this.$refs.form_solicitud.validate();
       else if (this.step == 2) next = this.$refs.form_profesional.validate();
       else if (this.step == 3) next = this.valid_domicilios;
-      else if (this.step == 8) next = this.valid_subsidiarios;
+      else if (this.step == 9) next = this.valid_subsidiarios;
       if (next) this.step = +this.step + 1;
     },
 

@@ -4,8 +4,8 @@ export class Entidad {
         this.recibirActualizaciones = true;
         this.nombre = '';
         this.cuit = '';
-        this.condafip = '';
         this.domicilios = [];
         this.contactos = [];
+        this.condiciones_afip = [];
     }
 }
