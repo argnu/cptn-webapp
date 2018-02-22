@@ -11,7 +11,7 @@
       <v-btn flat class="white--text" @click.native="global_state.snackbar.show = false">Cerrar</v-btn>
     </v-snackbar>
 
-    <v-toolbar dark class="blue darken-1">
+    <v-toolbar dark class="darken-1" color="primary">
       <v-toolbar-side-icon 
         v-if="isDelegacionSelected"
         @click="toggleMenuLateral" 
@@ -36,7 +36,7 @@
 
     <router-view></router-view>
 
-    <v-footer class="blue darken-4">
+    <v-footer class="darken-4" color="primary">
       <span class="white--text"></span>
     </v-footer>
 

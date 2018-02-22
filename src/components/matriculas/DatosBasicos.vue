@@ -1,6 +1,6 @@
 <template>
     <v-layout row wrap v-if="matricula && matricula.entidad">
-      <v-toolbar class="blue darken-3">
+      <v-toolbar class="darken-3" color="primary">
         <v-toolbar-title class="white--text">Matrícula</v-toolbar-title>
       </v-toolbar>
       <v-flex xs12>

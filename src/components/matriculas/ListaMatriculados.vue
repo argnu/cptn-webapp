@@ -1,13 +1,13 @@
 <template>
 <v-container class="grey lighten-3">
-  <v-toolbar class="blue darken-3">
+  <v-toolbar class="darken-3" color="primary">
     <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
   <v-card class="mt-4">
     <v-expansion-panel expand title="Filtros de Búsqueda">
-      <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
+      <v-expansion-panel-content v-model="expand.filtros" class="lighten-4" color="primary">
         <div slot="header"><b></b></div>
         <v-container class="white black--text">
           <v-layout row wrap>
@@ -108,7 +108,7 @@
 
       <template slot="items" slot-scope="props">
         <td>
-          <v-btn fab small dark color="blue" slot="activator" @click="verMatricula(props.item.id)">
+          <v-btn fab small dark color="primary" slot="activator" @click="verMatricula(props.item.id)">
             <v-icon>assignment_ind</v-icon>
           </v-btn>
         </td>

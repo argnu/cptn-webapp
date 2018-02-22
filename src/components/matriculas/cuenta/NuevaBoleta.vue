@@ -89,8 +89,9 @@
         <v-btn
             class="green darken-1 white--text right"
             @click.native="submit"
-            :disabled="!valid_form"
-            >
+            :disabled="!valid_form || submitted"
+            :loading="submitted"
+        >
             Guardar Boleta
             <v-icon dark right>check_circle</v-icon>
         </v-btn>        
@@ -157,7 +158,8 @@ export default {
             },
             boleta: new Boleta(),
             boleta_item: new BoletaItem(1),
-            tipos_comprobante: []
+            tipos_comprobante: [],
+            submitted: false
         }
     },
 
@@ -197,11 +199,13 @@ export default {
         },
 
         submit: function() {
+            this.submitted = true;
             this.boleta.matricula = this.idMatricula;
             this.boleta.total = this.boleta.items.reduce((prev, act) => prev + act.importe, 0);
             this.boleta.delegacion = Store.state.delegacion.id;
             axios.post('/boletas', this.boleta)
             .then(r => {
+                this.submitted = false;
                 this.global_state.snackbar.msg = 'Nueva boleta creada exitosamente!';
                 this.global_state.snackbar.color = 'success';
                 this.global_state.snackbar.show = true;
@@ -211,6 +215,7 @@ export default {
         },
 
         submitError: function() {
+            this.submitted = false;
             this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
             this.global_state.snackbar.color = 'error';
             this.global_state.snackbar.show = true;

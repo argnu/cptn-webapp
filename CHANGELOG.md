@@ -1,3 +1,9 @@
+# UNRELEASED
+
+## Modificado
+ - Cambio de color 'blue' por 'primary' para modificar colores en ambiente develop.
+ - Botón loading al cargar nuevo objeto (solicitud, legajo, etc).
+
 # 1.4.1 (2018-02-19)
 
 ## Solucionado
