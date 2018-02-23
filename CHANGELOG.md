@@ -4,6 +4,10 @@
  - Cambio de color 'blue' por 'primary' para modificar colores en ambiente develop.
  - Botón loading al cargar nuevo objeto (solicitud, legajo, etc).
 
+## Agregado
+
+- **NuevoProfesional**: lista de condiciones impositivas.
+
 # 1.4.1 (2018-02-19)
 
 ## Solucionado

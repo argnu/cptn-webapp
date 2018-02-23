@@ -7,9 +7,10 @@ import Login from '@/components/Login'
 import MainContainer from '@/components/MainContainer'
 import DelegacionSeleccion from '@/components/DelegacionSeleccion'
 import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud, ImprimirSolicitud} from '@/components/solicitudes'
-import { MainMatriculas, ListaMatriculados, Matricula,
+import { MainMatriculas, Matricula,
   MatriculaProfesional, ResumenCuenta,
   DeudasPendientes } from '@/components/matriculas'
+import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import Legajo from '@/components/matriculas/Legajo'
 
@@ -89,8 +90,8 @@ export default new Router({
           children: [
             {
               path: 'lista',
-              name: 'ListaMatriculados',
-              component: ListaMatriculados,
+              name: 'MatriculaLista',
+              component: MatriculaLista,
             },
             {
               path: ':id_matricula',

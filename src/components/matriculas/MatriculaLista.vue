@@ -1,5 +1,84 @@
 <template>
 <v-container class="grey lighten-3">
+  <v-dialog v-model="show_cambio" persistent max-width="70%">
+    <v-toolbar class="darken-3" color="primary">
+      <v-toolbar-title class="white--text">Cambio de Estado de Matrícula</v-toolbar-title>
+    </v-toolbar>
+    <v-card>
+      <v-card-text class="grey lighten-4">
+        <v-container>
+          <v-form lazy-validation ref="form_cambioestado">
+
+            <v-layout row>
+              <v-flex xs4 class="mx-4">
+                <v-select
+                  label="Estado:"
+                  :items="select_items.estados"
+                  v-model="cambio_estado.estado"
+                  item-text="valor"
+                  item-value="id"
+                >
+                </v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row>
+              <v-flex xs3 class="mx-4">
+                <v-select
+                  label="Tipo de Documento:"
+                  :items="select_items.estados"
+                  v-model="cambio_estado.estado"
+                  item-text="valor"
+                  item-value="id"
+                >
+                </v-select>
+              </v-flex>
+
+              <v-flex xs4 class="mx-4">
+                <input-fecha
+                  v-model="cambio_estado.documento.fecha"
+                  label="Fecha de Resolución/Acta"
+                  :rules="[rules.required, rules.fecha]"
+
+                >
+                </input-fecha>
+              </v-flex>
+
+              <v-flex xs3 class="mx-4">
+                <v-text-field
+                  v-model="cambio_estado.documento.numero"
+                  label="N° Resolución/Acta"
+                  :rules="[rules.required, rules.integer]"
+                >
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row>
+              <v-flex xs12>
+                <!-- <v-btn 
+                  class="right green white--text" 
+                  @click.native="aprobar"
+                  :disabled="submitValidacion"
+                  :loading="submitValidacion"
+                >
+                  Aprobar
+                  <v-icon dark right>check_circle</v-icon>
+                </v-btn> -->
+                <v-btn class="right red white--text" @click.native="show_cambio = false">
+                  Cancelar
+                  <v-icon dark right>block</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+
+          </v-form>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+
   <v-toolbar class="darken-3" color="primary">
     <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
     <v-spacer></v-spacer>
@@ -95,7 +174,7 @@
   <br>
 
     <v-data-table
-      :headers="headers[filtros.tipoEntidad]"
+      :headers="$options.headers[filtros.tipoEntidad]"
       :items="matriculas"
       class="elevation-1"
       no-data-text="No se encontraron matriculados"
@@ -131,11 +210,10 @@
             
             <v-list>
               <v-list-tile
-                v-if="props.item.estado != 'Habilitado'"
-                @click="habilitar(props.item.id)"
+                @click="showCambioEstado(props.item.id)"
               >
-                <v-icon class="green--text mr-2">check_circle</v-icon>
-                <v-list-tile-title>Habilitar</v-list-tile-title>
+                <v-icon class="secondary--text mr-2">gavel</v-icon>
+                <v-list-tile-title>Cambiar Estado</v-list-tile-title>
               </v-list-tile>
 
               <v-list-tile
@@ -161,32 +239,33 @@ import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
-
-
-const headers = {
-  emrpesa: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Nombre', 'nombreEmpresa', true),
-    Header('CUIT', 'cuit', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ],
-
-  profesional: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Apellido', 'apellido', true),
-    Header('Nombre', 'nombre', true),
-    Header('DNI', 'dni', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ]
-}
+import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
 
 export default {
-  name: 'lista-solicitud',
+  name: 'MatriculaLista',
+  mixins: [ValidatorMixin],
+
+  headers: {
+    empresa: [
+      Header('', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Nombre', 'nombreEmpresa', true),
+      Header('CUIT', 'cuit', true),
+      Header('Estado', 'estado', true),
+      Header('', 'acciones')
+    ],
+
+    profesional: [
+      Header('', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Apellido', 'apellido', true),
+      Header('Nombre', 'nombre', true),
+      Header('DNI', 'dni', true),
+      Header('Estado', 'estado', true),
+      Header('', 'acciones')
+    ]
+  },
 
   data() {
     return {
@@ -214,7 +293,17 @@ export default {
       },
 
       matriculas: [],
-      debouncedUpdate: null
+      debouncedUpdate: null,
+
+      show_cambio: false,
+      cambio_estado: {
+        estado: '',
+        documento: {
+          tipo: '',
+          numero: '',
+          fecha: ''
+        }
+      }
     }
   },
 
@@ -235,12 +324,6 @@ export default {
     }
   },
 
-
-  computed: {
-    headers: function() {
-      return headers;
-    }
-  },
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
@@ -315,13 +398,8 @@ export default {
       }
     },
 
-    deshabilitar: function(id) {
-      if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
-        // 35 ES ESTADO 'DesHabilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 35, updated_by: this.user.id })
-        .then(r => this.updateMatriculas())
-        .catch(e => console.error(e));
-      }
+    showCambioEstado: function(id) {
+      this.show_cambio = true;
     },
 
     rematricular: function(dni) {
