@@ -450,20 +450,20 @@ export default {
         this.matricula.operador = this.user.id;
 
         axios.post('/matriculas', this.matricula)
-          .then(r => {
-            this.submitValidacion = false;
-            this.updateSolicitudes();
-            this.matricula = new Matricula();
-            this.$refs.form_aprobacion.reset();
-            this.show_validar = false;
-            this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
-          })
-          .catch(e => {
-            this.submitValidacion = false;
-            console.error(e)
-          });
+        .then(r => {
+          this.submitValidacion = false;
+          this.updateSolicitudes();
+          this.matricula = new Matricula();
+          this.$refs.form_aprobacion.reset();
+          this.show_validar = false;
+          this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+        })
+        .catch(e => {
+          this.submitValidacion = false;
+          console.error(e)
+        });
       }
     },
 

@@ -22,12 +22,12 @@
               </v-flex>
             </v-layout>
 
-            <v-layout row>
+            <v-layout row class="mt-4">
               <v-flex xs3 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
-                  :items="select_items.estados"
-                  v-model="cambio_estado.estado"
+                  :items="select_items.t_documento"
+                  v-model="cambio_estado.documento.tipo"
                   item-text="valor"
                   item-value="id"
                 >
@@ -54,17 +54,17 @@
               </v-flex>
             </v-layout>
 
-            <v-layout row>
+            <v-layout row class="mt-5">
               <v-flex xs12>
-                <!-- <v-btn 
+                <v-btn 
                   class="right green white--text" 
-                  @click.native="aprobar"
-                  :disabled="submitValidacion"
-                  :loading="submitValidacion"
+                  @click.native="cambiarEstado"
+                  :disabled="submit_cambio"
+                  :loading="submit_cambio"
                 >
-                  Aprobar
+                  Guardar
                   <v-icon dark right>check_circle</v-icon>
-                </v-btn> -->
+                </v-btn>
                 <v-btn class="right red white--text" @click.native="show_cambio = false">
                   Cancelar
                   <v-icon dark right>block</v-icon>
@@ -241,6 +241,18 @@ import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
 import ValidatorMixin from '@/components/mixins/ValidatorMixin'
 
+class CambioEstado {
+  constructor() {
+    this.estado = '';
+    this.matricula = '';
+    this.operador = '';
+    this.documento = {
+      tipo: '',
+      numero: '',
+      fecha: ''
+    }
+  }
+}
 
 export default {
   name: 'MatriculaLista',
@@ -285,7 +297,8 @@ export default {
           }
         ],
 
-        estados: []
+        estados: [],
+        t_documento: []
       },
 
       expand: {
@@ -296,14 +309,8 @@ export default {
       debouncedUpdate: null,
 
       show_cambio: false,
-      cambio_estado: {
-        estado: '',
-        documento: {
-          tipo: '',
-          numero: '',
-          fecha: ''
-        }
-      }
+      submit_cambio: false,
+      cambio_estado: new CambioEstado()
     }
   },
 
@@ -332,6 +339,7 @@ export default {
     axios.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
+        this.select_items.t_documento = r.data.documento;
       })
       .catch(e => console.error(e));
   },
@@ -399,7 +407,34 @@ export default {
     },
 
     showCambioEstado: function(id) {
+      this.cambio_estado.matricula = id;
       this.show_cambio = true;
+    },
+
+    cambiarEstado: function() {
+      if (this.$refs.form_cambioestado.validate()) {
+        this.submit_cambio = true;
+        this.cambio_estado.operador = this.user.id;
+
+        axios.post('/matriculas/cambiar-estado', this.cambio_estado)
+        .then(r => {
+          this.submit_cambio = false;
+          this.updateMatriculas();
+          this.cambio_estado = new CambioEstado();
+          this.$refs.form_cambioestado.reset();
+          this.show_cambio = false;
+          this.global_state.snackbar.msg = 'Estado de matrícula modificado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+        })
+        .catch(e => {
+          this.submit_cambio = false;
+          this.global_state.snackbar.msg = 'Error al cambiar estado de matrícula';
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          console.error(e)
+        });        
+      }
     },
 
     rematricular: function(dni) {
