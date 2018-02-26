@@ -1,3 +1,14 @@
+# 1.4.3 (2018-02-26)
+
+## Solucionado
+    - Impresión de fechaEgreso en PDF Solicitud.
+    - Fix en validación de fechas.
+
+# 1.4.2 (2018-02-20)
+
+## Modificado
+    - Reemplazo de TECB por TEC-.
+
 # 1.4.1 (2018-02-19)
 
 ## Solucionado
