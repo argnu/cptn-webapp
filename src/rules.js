@@ -9,7 +9,6 @@ export default {
 
   fecha: value => {
     if (!(value && value.length)) return true;
-    console.log(value,moment(value, 'DD/MM/YYYY').isValid())
     return moment(value, 'DD/MM/YYYY', true).isValid() ? true : 'Fecha inválida';
   },
 
