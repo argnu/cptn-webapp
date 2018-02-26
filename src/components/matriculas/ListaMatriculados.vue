@@ -1,7 +1,7 @@
 <template>
 <v-container class="grey lighten-3">
   <v-toolbar class="darken-3" color="primary">
-    <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
+    <v-toolbar-title class="white--text">Matriculados</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
@@ -95,7 +95,7 @@
   <br>
 
     <v-data-table
-      :headers="headers[filtros.tipoEntidad]"
+      :headers="$options.headers[filtros.tipoEntidad]"
       :items="matriculas"
       class="elevation-1"
       no-data-text="No se encontraron matriculados"
@@ -163,30 +163,29 @@ import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
 
 
-const headers = {
-  emrpesa: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Nombre', 'nombreEmpresa', true),
-    Header('CUIT', 'cuit', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ],
-
-  profesional: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Apellido', 'apellido', true),
-    Header('Nombre', 'nombre', true),
-    Header('DNI', 'dni', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ]
-}
-
-
 export default {
   name: 'lista-solicitud',
+
+  headers: {
+    empresa: [
+      Header('', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Nombre', 'nombreEmpresa', true),
+      Header('CUIT', 'cuit', true),
+      Header('Estado', 'estado', true),
+      Header('', 'acciones')
+    ],
+
+    profesional: [
+      Header('', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Apellido', 'apellido', true),
+      Header('Nombre', 'nombre', true),
+      Header('DNI', 'dni', true),
+      Header('Estado', 'estado', true),
+      Header('', 'acciones')
+    ]
+  },
 
   data() {
     return {
@@ -232,13 +231,6 @@ export default {
         this.updateMatriculas();
       },
       deep: true
-    }
-  },
-
-
-  computed: {
-    headers: function() {
-      return headers;
     }
   },
 
