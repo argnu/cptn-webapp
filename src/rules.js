@@ -1,3 +1,5 @@
+import * as moment from 'moment'
+
 export default {
   required: value => !!value || 'Dato Obligatorio',
 
@@ -7,11 +9,7 @@ export default {
 
   fecha: value => {
     if (!(value && value.length)) return true;
-    let [dia, mes, anio] = value.split('/');
-    if (isNaN(dia) || dia < 1 || dia > 31) return 'Formato incorrecto';
-    if (isNaN(mes) || mes < 1 || mes > 12) return 'Formato incorrecto';
-    if (isNaN(anio) || anio.length != 4) return 'Formato incorrecto';
-    return true;
+    return moment(value, 'DD/MM/YYYY', true).isValid() ? true : 'Fecha inválida';
   },
 
   codpostal: value => {

@@ -104,7 +104,7 @@ export function impresionSolicitud(solicitud) {
       // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
       doc.text(60, eje_y, formacion_grado.titulo);
       doc.text(60, eje_y + 6, formacion_grado.institucion);
-      doc.text(60, eje_y + 12, formacion_grado.fecha ? moment(formacion_grado.fecha).format('DD/MM/YYYY') : '');
+      doc.text(60, eje_y + 12, formacion_grado.fechaEgreso ? moment(formacion_grado.fechaEgreso).format('DD/MM/YYYY') : '');
     }
     eje_y += 18;
   }
