@@ -30,6 +30,10 @@
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-legajo' }">work</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-legajo' }">Legajo Técnico</span>
         </v-tabs-item>
+        <v-tabs-item href="#tab-historial">
+          <v-icon  :class="{ 'black--text': tab_selected == 'tab-historial' }">history</v-icon>
+          <span  :class="{ 'black--text': tab_selected == 'tab-historial' }">Historial</span>
+        </v-tabs-item>
       </v-tabs-bar>
 
       <v-tabs-items>
@@ -57,6 +61,11 @@
           <listado-legajos :id="matricula.id"></listado-legajos>
         </v-tabs-content>
       </v-tabs-items>
+
+        <v-tabs-content id="tab-historial">
+          <matricula-historial :id="matricula.id"></matricula-historial>
+        </v-tabs-content>
+      </v-tabs-items>
     </v-tabs>
   </v-container>
 </template>
@@ -68,10 +77,20 @@ import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import MatriculaDetalle from '@/components/matriculas/MatriculaDetalle'
 import ListadoLegajos from '@/components/matriculas/ListadoLegajos'
+import MatriculaHistorial from '@/components/matriculas/MatriculaHistorial'
 
 export default {
   name: 'Matricula',
   props: ['id_matricula'],
+
+  components: {
+    DatosBasicos,
+    ResumenCuenta,
+    MatriculaDetalle,
+    ListadoLegajos,
+    DeudasPendientes,
+    MatriculaHistorial
+  },  
 
   data () {
     return {
@@ -103,14 +122,6 @@ export default {
     updateDeudas: function() {
       this.$refs.resumen.updateBoletas();
     }
-  },
-
-  components: {
-    DatosBasicos,
-    ResumenCuenta,
-    MatriculaDetalle,
-    ListadoLegajos,
-    DeudasPendientes
   }
 
 }

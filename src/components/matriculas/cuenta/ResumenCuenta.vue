@@ -1,7 +1,7 @@
 <template>
     <v-card>
-      <dialog-detalle :item="item_selected" ref="show_detalle">
-      </dialog-detalle>
+      <detalle-dialog :item="item_selected" ref="show_detalle">
+      </detalle-dialog>
 
       <v-layout row wrap class="mt-4">
         <v-flex xs1 class="mt-5 mx-5">
@@ -72,7 +72,7 @@ import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
 import DatosBasicos from '@/components/matriculas/DatosBasicos';
-import DialogDetalle from '@/components/matriculas/cuenta/detalles/DialogDetalle';
+import DetalleDialog from '@/components/matriculas/cuenta/detalles/DetalleDialog';
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
 import ValidatorMixin from '@/components/mixins/ValidatorMixin';
@@ -208,7 +208,7 @@ export default {
 
   components: {
     DatosBasicos,
-    DialogDetalle,
+    DetalleDialog,
     InputFecha
   }
 

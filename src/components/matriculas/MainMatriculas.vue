@@ -6,18 +6,7 @@
 
 <script>
 export default {
-  name: 'MainMatriculas',
-  data () {
-    return {
-    }
-  },
-
-  created: function() {
-  },
-
-  methods: {
-  },
-
+  name: 'MainMatriculas'
 }
 </script>
 
