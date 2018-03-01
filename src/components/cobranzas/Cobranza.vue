@@ -169,7 +169,7 @@ import { Header } from '@/model'
 import * as utils from '@/utils'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 
 
 class ComprobantePago {
@@ -200,7 +200,7 @@ const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
   name: 'Cobranza',
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   props: {
     fecha: {

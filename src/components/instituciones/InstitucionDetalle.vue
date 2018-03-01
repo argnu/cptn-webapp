@@ -5,42 +5,30 @@
       </v-toolbar>
       <v-card>
           <v-layout>
-              <v-flex xs3 class="ma-4">
-                  <div>
-                      <v-layout>
-                          <v-flex xs8>
-                            <template v-if="edit.nombre">
-                                <v-text-field
-                                    label="Nombre"
-                                    v-model="institucion.nombre"
-                                ></v-text-field>     
-                            </template>                    
-                            <template v-else>
-                                <b>Nombre:</b>
-                                <span class="ml-2">{{ institucion.nombre }}</span>
-                            </template>
-                          </v-flex>
+            <v-flex xs5 class="ma-4">
+                    <template v-if="edit.nombre">
+                        <v-text-field
+                            label="Nombre"
+                            v-model="institucion.nombre"
+                        ></v-text-field>     
+                    </template>                    
+                    <template v-else>
+                        <b>Nombre:</b>
+                        <span class="ml-2">{{ institucion.nombre }}</span>
+                    </template>
 
-                          <v-flex xs2>
-                            <v-btn fab small light @click="edit.nombre = true" v-show="!edit.nombre">
-                                <v-icon>edit</v-icon>
-                            </v-btn>                    
-                            <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre">
-                                <v-icon>cancel</v-icon>
-                            </v-btn> 
-                          </v-flex>
-                          
-                          <v-flex xs2>
-                            <v-btn fab small light v-show="edit.nombre" @click="guardar('nombre')">
-                                <v-icon>save</v-icon>
-                            </v-btn> 
-                          </v-flex>
-                      </v-layout>                     
-                  </div>
-
-                  <div class="mt-4">
-                      <v-layout>
-                          <v-flex xs8>
+                    <v-btn fab small light @click="edit.nombre = true" v-show="!edit.nombre">
+                        <v-icon>edit</v-icon>
+                    </v-btn>                    
+                    <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre">
+                        <v-icon>cancel</v-icon>
+                    </v-btn> 
+                    <v-btn fab small light v-show="edit.nombre" @click="guardar('nombre')">
+                        <v-icon>save</v-icon>
+                    </v-btn>   
+            </v-flex>
+              
+              <v-flex xs5 class="ma-4">                         
                             <template v-if="edit.cue">
                                 <v-text-field
                                     label="CUE"
@@ -51,34 +39,30 @@
                                 <b>CUE:</b>
                                 <span class="ml-2">{{ institucion.cue }}</span>
                             </template>
-                          </v-flex>
 
-                          <v-flex xs2>
                             <v-btn fab small light @click="edit.cue = true" v-show="!edit.cue">
                                 <v-icon>edit</v-icon>
                             </v-btn>                    
                             <v-btn fab small light @click="cancelarEdit('cue')" v-show="edit.cue">
                                 <v-icon>cancel</v-icon>
                             </v-btn> 
-                          </v-flex>
-                          
-                          <v-flex xs2>
+
                             <v-btn fab small light v-show="edit.cue" @click="guardar('cue')">
                                 <v-icon>save</v-icon>
                             </v-btn> 
-                          </v-flex>
-                      </v-layout>                   
-                  </div>
-
               </v-flex>
+          </v-layout>
 
-              <v-flex xs8 class="ma-4">
+        <span class="subheading blue--text text--darken-4 ma-4"><b>Títulos</b></span>
+
+        <v-layout row>
+            <v-flex xs12 class="ma-4">
                 <v-card class="elevation-0">
                     <div>
                         <v-btn
                             absolute dark fab top right small
                             color="green"
-                            @click="expand_nuevotitulo = true"
+                            @click="show_formtitulo = true"
                         >
                             <v-icon>add</v-icon>
                         </v-btn>
@@ -105,91 +89,95 @@
                                 <td>{{ props.item.nombre }}</td>
                                 <td>{{ props.item.nivel.valor }}</td>
                                 <td>{{ props.item.tipo_matricula }}</td>
-                                <td>{{ props.item.valido | boolean }}</td>
+                                <td>{{ props.item.validez_fecha_inicio | fecha }}</td>
+                                <td>{{ props.item.validez_fecha_fin | fecha }}</td>
                             </template>
                         </v-data-table>
                     </div>
                 </v-card>
-              </v-flex>
-          </v-layout>
+            </v-flex>    
+        </v-layout>          
+      </v-card>      
 
-          <br>
 
-        <v-expansion-panel expand>
-          <v-expansion-panel-content v-model="expand_nuevotitulo" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Agregar/Modificar Título</b></div>
-            <v-card class="white">
-                <v-container>
-                    <v-form ref="form_titulo" lazy-validation>
-                        <v-layout>
-                            <v-flex xs12 md3 class="mx-4">
-                                <v-text-field
-                                    label="Nombre"
-                                    v-model="nuevo_titulo.nombre"
-                                    :rules="[rules.required]"
-                                >
-                                </v-text-field>
-
-                                <input-fecha
-                                    v-model="nuevo_titulo.validez_fecha_inicio"
-                                    label="Fecha Inicio de Validez"
-                                    :rules="[rules.fecha]"
-                                ></input-fecha>
-                            </v-flex>
-
-                            <v-flex xs12 md3 class="mx-4">
-                                <v-select
-                                    label="Nivel"
-                                    :items="opciones.niveles_titulos"
-                                    item-value="id"
-                                    item-text="valor"
-                                    v-model="nuevo_titulo.nivel"
-                                    :rules="[rules.required]"
-                                >
-                                </v-select>
-
-                                <input-fecha
-                                    v-model="nuevo_titulo.validez_fecha_fin"
-                                    label="Fecha Fin de Validez"
-                                    :rules="[rules.fecha]"
-                                ></input-fecha>
-                            </v-flex>
-
-                            <v-flex xs12 md3 class="mx-4">
-                                <v-select
-                                    label="Tipo de Matrícula"
-                                    :items="$options.tipos_matricula"
-                                    v-model="nuevo_titulo.tipo_matricula"
-                                    :rules="[rules.required]"
-                                >
-                                </v-select>
-                            </v-flex>
-                        </v-layout>
-
-                        <v-layout class="mb-4">
-                          <v-flex xs12>
-                            <v-btn
-                              class="green right"
-                              dark
-                              @click="addTitulo"
+        <v-dialog v-model="show_formtitulo" fullscreen transition="dialog-bottom-transition" :overlay="false">
+        <v-card>
+            <v-toolbar dark color="primary">
+            <v-toolbar-title class="white--text">{{ titulo_edit != null ? 'Modificar' : 'Agregar' }} Título</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="show_formtitulo = false">
+                <v-icon>close</v-icon>
+            </v-btn>
+            </v-toolbar>
+            <v-container>
+                <v-form ref="form_titulo" lazy-validation>
+                    <v-layout>
+                        <v-flex xs12 md3 class="mx-4">
+                            <v-text-field
+                                label="Nombre"
+                                v-model="nuevo_titulo.nombre"
+                                :rules="[rules.required]"
                             >
-                              {{ titulo_edit != null ? 'Guardar' : 'Agregar' }}
-                              <v-icon dark right>check_circle</v-icon>
-                            </v-btn>
+                            </v-text-field>
 
-                            <v-btn dark class="red right" @click="cancelar">
-                                Cancelar
-                                <v-icon dark right>block</v-icon>
-                            </v-btn>
-                          </v-flex>
-                        </v-layout>
-                    </v-form>
-                </v-container>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
+                            <input-fecha
+                                v-model="nuevo_titulo.validez_fecha_inicio"
+                                label="Fecha Inicio de Validez"
+                                :rules="[rules.fecha]"
+                            ></input-fecha>
+                        </v-flex>
 
-      </v-card>
+                        <v-flex xs12 md3 class="mx-4">
+                            <v-select
+                                label="Nivel"
+                                :items="opciones.niveles_titulos"
+                                item-value="id"
+                                item-text="valor"
+                                v-model="nuevo_titulo.nivel"
+                                :rules="[rules.required]"
+                            >
+                            </v-select>
+
+                            <input-fecha
+                                v-model="nuevo_titulo.validez_fecha_fin"
+                                label="Fecha Fin de Validez"
+                                :rules="[rules.fecha]"
+                            ></input-fecha>
+                        </v-flex>
+
+                        <v-flex xs12 md3 class="mx-4">
+                            <v-select
+                                label="Tipo de Matrícula"
+                                :items="$options.tipos_matricula"
+                                v-model="nuevo_titulo.tipo_matricula"
+                                :rules="[rules.required]"
+                            >
+                            </v-select>
+                        </v-flex>
+                    </v-layout>
+
+                    <v-layout class="mb-4">
+                        <v-flex xs12>
+                        <v-btn
+                            class="green right"
+                            dark
+                            @click="addTitulo"
+                        >
+                            {{ titulo_edit != null ? 'Guardar' : 'Agregar' }}
+                            <v-icon dark right>check_circle</v-icon>
+                        </v-btn>
+
+                        <v-btn dark class="red right" @click="cancelar">
+                            Cancelar
+                            <v-icon dark right>block</v-icon>
+                        </v-btn>
+                        </v-flex>
+                    </v-layout>
+                </v-form>
+            </v-container>           
+        
+        </v-card>
+        </v-dialog>            
     </v-container>
 </template>
 
@@ -197,7 +185,7 @@
 import axios from '@/axios'
 import * as utils from '@/utils'
 import { Header } from '@/model'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import InputFecha from '@/components/base/InputFecha'
 
 class Institucion {
@@ -221,7 +209,7 @@ class Titulo {
 export default {
     name: 'InstitucionDetalle',
     props: ['id'],
-    mixins: [ValidatorMixin],
+    mixins: [MixinValidator],
     components: {
         InputFecha
     },
@@ -232,7 +220,8 @@ export default {
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Valido', 'valido')
+        Header('Fecha Inicio de Validez', 'validez_fecha_inicio'),
+        Header('Fecha Fin de Validez', 'validez_fecha_inicio')
     ],
 
     tipos_matricula: [
@@ -245,7 +234,7 @@ export default {
         return {
             institucion: new Institucion(),
             institucion_original: null,
-            expand_nuevotitulo: false,
+            show_formtitulo: false,
             nuevo_titulo: new Titulo(),
             titulo_edit: null,
             edit: {
@@ -301,7 +290,7 @@ export default {
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.validez_fecha_inicio = titulo.validez_fecha_inicio;
             this.nuevo_titulo.validez_fecha_fin = titulo.validez_fecha_fin;
-            this.expand_nuevotitulo = true;
+            this.show_formtitulo = true;
         },
 
         borrarTitulo: function(id) {
@@ -317,7 +306,7 @@ export default {
 
         resetNuevoTitulo: function() {
             this.nuevo_titulo = new Titulo();
-            this.expand_nuevotitulo = false;
+            this.show_formtitulo = false;
             this.titulo_edit = null;    
             this.$refs.form_titulo.reset();        
         },

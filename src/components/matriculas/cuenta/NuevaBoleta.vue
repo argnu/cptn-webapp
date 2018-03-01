@@ -109,7 +109,7 @@ import * as moment from 'moment'
 import { Header } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import Store from '@/stores/Global'
 
 class Boleta {
@@ -142,7 +142,7 @@ const headers_items = [
 export default {
     name: 'NuevaBoleta',
     props: ['idMatricula'],
-    mixins: [ValidatorMixin],
+    mixins: [MixinValidator],
 
     components: {
         InputFecha,

@@ -1,7 +1,7 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
-    <datos-basicos :matricula="matricula">
-    </datos-basicos>
+    <matricula-datos-basicos :matricula="matricula">
+    </matricula-datos-basicos>
 
     <br>
 
@@ -600,8 +600,8 @@ import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import Typeahead from '@/components/base/Typeahead'
-import DatosBasicos from '@/components/matriculas/DatosBasicos'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
@@ -666,9 +666,12 @@ const Legajo = (matricula) => ({
 })
 
 export default {
+  
   name: 'Legajo',
+
   props: ['id_legajo', 'id_matricula'],
-  mixins: [ValidatorMixin],
+
+  mixins: [MixinValidator],
 
   data () {
     return {
@@ -897,7 +900,7 @@ export default {
     InputFecha,
     InputNumero,
     Typeahead,
-    DatosBasicos
+    MatriculaDatosBasicos
   }
 
 }

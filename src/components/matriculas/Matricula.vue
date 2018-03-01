@@ -1,11 +1,11 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
 
-    <datos-basicos 
+    <matricula-datos-basicos 
       :matricula="matricula"
       @habilitar="habilitar"
     >
-    </datos-basicos>
+    </matricula-datos-basicos>
 
     <br>
 
@@ -54,7 +54,7 @@
         </v-tabs-content>
 
         <v-tabs-content id="tab-legajo">
-          <listado-legajos :id="matricula.id"></listado-legajos>
+          <legajo-lista :id="matricula.id"></legajo-lista>
         </v-tabs-content>
       </v-tabs-items>
     </v-tabs>
@@ -63,11 +63,11 @@
 
 <script>
 import axios from '@/axios';
-import DatosBasicos from '@/components/matriculas/DatosBasicos'
+import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import MatriculaDetalle from '@/components/matriculas/MatriculaDetalle'
-import ListadoLegajos from '@/components/matriculas/ListadoLegajos'
+import LegajoLista from '@/components/matriculas/legajos/LegajoLista'
 
 export default {
   name: 'Matricula',
@@ -106,10 +106,10 @@ export default {
   },
 
   components: {
-    DatosBasicos,
+    MatriculaDatosBasicos,
     ResumenCuenta,
     MatriculaDetalle,
-    ListadoLegajos,
+    LegajoLista,
     DeudasPendientes
   }
 

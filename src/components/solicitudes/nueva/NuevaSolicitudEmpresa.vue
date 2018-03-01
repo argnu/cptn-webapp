@@ -647,14 +647,14 @@ import * as utils from '@/utils'
 import { Solicitud } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputTelefono from '@/components/base/InputTelefono'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [ValidatorMixin, NuevaSolicitud],
+  mixins: [MixinValidator, NuevaSolicitud],
   props: ['id'],
 
   data () {

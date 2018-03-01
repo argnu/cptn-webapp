@@ -164,7 +164,7 @@ import ListaStore from '@/stores/listados/Matriculas'
 
 
 export default {
-  name: 'lista-solicitud',
+  name: 'MatriculaLista',
 
   headers: {
     empresa: [

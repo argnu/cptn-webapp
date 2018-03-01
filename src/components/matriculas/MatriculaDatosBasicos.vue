@@ -53,8 +53,11 @@
 
 <script>
 export default {
-  name: 'DatosBasicos',
+
+  name: 'MatriculaDatosBasicos',
+
   props: ['matricula'],
+  
   methods: {
     habilitar: function() {
       this.$emit('habilitar');

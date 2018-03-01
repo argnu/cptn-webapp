@@ -1045,13 +1045,13 @@ import InputNumero from '@/components/base/InputNumero';
 import Typeahead from '@/components/base/Typeahead';
 import AddFoto from '@/components/solicitudes/AddFoto';
 import AddFirma from '@/components/solicitudes/AddFirma';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import MixinValidator from '@/components/mixins/MixinValidator';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import { impresionSolicitud } from '@/utils/PDFUtils'
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [ValidatorMixin, NuevaSolicitud],
+  mixins: [MixinValidator, NuevaSolicitud],
   props: ['id', 'dni'],
 
   data() {

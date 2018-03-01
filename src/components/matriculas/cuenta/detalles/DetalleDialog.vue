@@ -28,7 +28,7 @@ import DetalleBoleta from './DetalleBoleta';
 import DetalleComprobante from './DetalleComprobante';
 
 export default {
-  name: 'DialogDetalle',
+  name: 'DetalleDialog',
   props: ['item'],
   data () {
     return {

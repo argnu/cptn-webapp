@@ -11,12 +11,14 @@ import NuevaSolicitudEmpresa from '@/components/solicitudes/nueva/NuevaSolicitud
 import NuevaSolicitudProfesional from '@/components/solicitudes/nueva/NuevaSolicitudProfesional'
 import ListaSolicitud from '@/components/solicitudes/ListaSolicitud'
 
-import { MainMatriculas, ListaMatriculados, Matricula,
-  MatriculaProfesional, ResumenCuenta,
-  DeudasPendientes } from '@/components/matriculas'
+import MatriculaMain from '@/components/matriculas/MatriculaMain'
+import Matricula from '@/components/matriculas/Matricula'
+import MatriculaLista from '@/components/matriculas/MatriculaLista'
+import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
+import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 
 import Cobranza from '@/components/cobranzas/Cobranza'
-import Legajo from '@/components/matriculas/Legajo'
+import Legajo from '@/components/matriculas/legajos/Legajo'
 
 import InstitucionLista from '@/components/instituciones/InstitucionLista'
 import InstitucionDetalle from '@/components/instituciones/InstitucionDetalle'
@@ -88,12 +90,12 @@ export default new Router({
         },        
         {
           path: '/matriculas',
-          component: MainMatriculas,
+          component: MatriculaMain,
           children: [
             {
               path: 'lista',
-              name: 'ListaMatriculados',
-              component: ListaMatriculados,
+              name: 'MatriculaLista',
+              component: MatriculaLista,
             },
             {
               path: ':id_matricula',
