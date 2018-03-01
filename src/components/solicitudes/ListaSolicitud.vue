@@ -283,7 +283,7 @@ import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 import InputFecha from '@/components/base/InputFecha'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/stores/Global'
 import ListaStore from '@/stores/listados/Solicitudes'
@@ -328,7 +328,7 @@ const headers = {
 
 export default {
   name: 'lista-solicitud',
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   data() {
     return {

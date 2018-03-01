@@ -53,7 +53,9 @@ const headers = [
 
 
 export default {
-  name: 'ListadoLegajos',
+  
+  name: 'LegajoLista',
+
   props: ['id'],
 
   data () {

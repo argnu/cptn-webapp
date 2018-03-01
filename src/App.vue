@@ -29,7 +29,7 @@
           </v-list-tile-sub-title>
         </v-list-tile-content> 
 
-        <user-menu></user-menu>
+        <menu-user></menu-user>
       </v-toolbar-items>
 
     </v-toolbar>
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import UserMenu from '@/components/UserMenu'
+import MenuUser from '@/components/MenuUser'
 import MenuLateral from '@/components/MenuLateral'
 
 export default {
@@ -78,7 +78,7 @@ export default {
   },
 
   components: {
-    UserMenu,
+    MenuUser,
     MenuLateral
   }
 }

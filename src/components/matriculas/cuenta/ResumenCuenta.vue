@@ -71,11 +71,11 @@ import axios from '@/axios'
 import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
-import DatosBasicos from '@/components/matriculas/DatosBasicos';
+import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
 import DetalleDialog from '@/components/matriculas/cuenta/detalles/DetalleDialog';
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import MixinValidator from '@/components/mixins/MixinValidator';
 
 const headers = [
   Header('Fecha', 'fecha', true),
@@ -89,7 +89,7 @@ const headers = [
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   data () {
     return {
@@ -207,7 +207,7 @@ export default {
   },
 
   components: {
-    DatosBasicos,
+    MatriculaDatosBasicos,
     DetalleDialog,
     InputFecha
   }

@@ -19,12 +19,12 @@
                 </v-flex>
 
                 <v-flex xs4>
-                  N° Matrícula: {{ matricula.numeroMatricula }} <br>
-                  Estado: {{ matricula.estado }} <br>
+                  <div class="mb-2">N° Matrícula: {{ matricula.numeroMatricula }}</div>
                   <template v-if="matricula.entidad.tipo == 'profesional'">
-                    Apellido: {{ matricula.entidad.apellido }} <br>
-                    Nombre: {{ matricula.entidad.nombre }}         
+                    <div class="mb-2">Apellido: {{ matricula.entidad.apellido }}</div>
+                    <div class="mb-2">Nombre: {{ matricula.entidad.nombre }}</div>
                   </template>         
+                  <div class="mb-2">Estado: {{ matricula.estado }}</div>
                 </v-flex>
                 
                 <v-flex xs2>                    
@@ -36,15 +36,6 @@
                   >
                 </v-flex>
               </v-layout>
-
-              <!-- <v-layout row class="mt-4">
-                <v-flex xs12>
-                  <v-btn class="right green white--text" @click.native="habilitar">
-                    Hablilitar
-                    <v-icon dark right>check_circle</v-icon>
-                  </v-btn>                  
-                </v-flex>
-              </v-layout> -->
             </v-card-text>
           </v-card>
       </v-flex>
@@ -53,8 +44,11 @@
 
 <script>
 export default {
-  name: 'DatosBasicos',
+
+  name: 'MatriculaDatosBasicos',
+
   props: ['matricula'],
+  
   methods: {
     habilitar: function() {
       this.$emit('habilitar');

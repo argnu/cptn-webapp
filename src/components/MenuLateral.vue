@@ -4,7 +4,7 @@
       <v-list class="pa-0">
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <img src="http://www.coordinadora.com/wp-content/uploads/sidebar_usuario-corporativo.png" />
+            <img src="/static/sidebar_usuario-corporativo.png" />
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ full_name }}</v-list-tile-title>
@@ -29,6 +29,17 @@
       <v-divider class="mb-3"></v-divider>
       <v-subheader class="bold" v-text="'Matriculados'"></v-subheader>
       <v-list-tile @click="goto('/matriculas/lista')">
+        <v-list-tile-action>
+          <v-icon>view_list</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Listar</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <v-divider class="mb-3"></v-divider>
+      <v-subheader class="bold" v-text="'Instituciones'"></v-subheader>
+      <v-list-tile @click="goto('/instituciones/lista')">
         <v-list-tile-action>
           <v-icon>view_list</v-icon>
         </v-list-tile-action>

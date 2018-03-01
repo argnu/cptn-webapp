@@ -1,7 +1,9 @@
+import { Header } from './index'
+
 export const Contactos = [
-      { text: 'Tipo', value: 'tipo' , sortable: false },
-      { text: 'Valor', value: 'valor' , sortable: false }
-  ];
+    Header('Tipo', 'tipo'),
+    Header('Valor', 'valor'),
+];
 
 export const Formaciones = [
       { text: 'Tipo', value: 'tipo' , sortable: false },
@@ -38,4 +40,9 @@ export const Representantes = [
     { text: 'Nombre', value: 'nombre' , sortable: false },
     { text: 'Fecha Inicio', value: 'fecha_inicio' , sortable: false },
     { text: 'Fecha Fin', value: 'fecha_fin' , sortable: false }
+  ];
+
+export const CondicionesAfip = [
+    Header('Tipo', 'tipo'),
+    Header('Descripción', 'descripcion')
   ];

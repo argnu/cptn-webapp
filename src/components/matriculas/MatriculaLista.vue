@@ -80,7 +80,7 @@
 
 
   <v-toolbar class="darken-3" color="primary">
-    <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
+    <v-toolbar-title class="white--text">Matriculados</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
@@ -239,7 +239,7 @@ import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 
 class CambioEstado {
   constructor() {
@@ -256,7 +256,7 @@ class CambioEstado {
 
 export default {
   name: 'MatriculaLista',
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   headers: {
     empresa: [
@@ -330,7 +330,6 @@ export default {
       deep: true
     }
   },
-
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {

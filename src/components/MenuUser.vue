@@ -38,7 +38,7 @@ import * as Cookies from 'js-cookie';
 import Store from '@/stores/Global'
 
 export default {
-  name: 'UserMenu',
+  name: 'MenuUser',
   data() {
     return {}
   },

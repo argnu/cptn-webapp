@@ -6,13 +6,23 @@ import Store from '@/stores/Global'
 import Login from '@/components/Login'
 import MainContainer from '@/components/MainContainer'
 import DelegacionSeleccion from '@/components/DelegacionSeleccion'
-import { NuevaSolicitudEmpresa, NuevaSolicitudProfesional, ListaSolicitud, ImprimirSolicitud} from '@/components/solicitudes'
-import { MainMatriculas, Matricula,
-  MatriculaProfesional, ResumenCuenta,
-  DeudasPendientes } from '@/components/matriculas'
+
+import NuevaSolicitudEmpresa from '@/components/solicitudes/nueva/NuevaSolicitudEmpresa'
+import NuevaSolicitudProfesional from '@/components/solicitudes/nueva/NuevaSolicitudProfesional'
+import ListaSolicitud from '@/components/solicitudes/ListaSolicitud'
+
+import MatriculaMain from '@/components/matriculas/MatriculaMain'
+import Matricula from '@/components/matriculas/Matricula'
 import MatriculaLista from '@/components/matriculas/MatriculaLista'
+import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
+import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
+
 import Cobranza from '@/components/cobranzas/Cobranza'
-import Legajo from '@/components/matriculas/Legajo'
+import Legajo from '@/components/matriculas/legajos/Legajo'
+
+import InstitucionLista from '@/components/instituciones/InstitucionLista'
+import InstitucionDetalle from '@/components/instituciones/InstitucionDetalle'
+import InstitucionNueva from '@/components/instituciones/InstitucionNueva'
 
 
 Vue.use(Router)
@@ -73,12 +83,6 @@ export default new Router({
           component: NuevaSolicitudEmpresa
         },
         {
-          path: '/solicitudes/profesionales/:id/imprimir',
-          name: 'ImprimirSolicitud',
-          component: ImprimirSolicitud,
-          props: true
-        },
-        {
           path: '/solicitudes/empresas/modificar/:id',
           name: 'ModificarSolicitudEmpresa',
           component: NuevaSolicitudEmpresa,
@@ -86,7 +90,7 @@ export default new Router({
         },        
         {
           path: '/matriculas',
-          component: MainMatriculas,
+          component: MatriculaMain,
           children: [
             {
               path: 'lista',
@@ -118,6 +122,23 @@ export default new Router({
           component: Legajo,
           props: true
         },
+
+        {
+          path: '/instituciones/lista',
+          name: 'InstitucionLista',
+          component: InstitucionLista
+        },
+        {
+          path: '/instituciones/nueva',
+          name: 'InstitucionNueva',
+          component: InstitucionNueva
+        },
+        {
+          path: '/instituciones/:id',
+          name: 'InstitucionDetalle',
+          component: InstitucionDetalle,
+          props: true
+        }
       ]
     },
   ]
