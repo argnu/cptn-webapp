@@ -26,7 +26,7 @@ export class Formacion {
     this.fechaEmision = '';
     this.fechaEgreso = '';
     this.institucion = '';
-    this.tipo = '';
+    this.nivel = '';
     this.tiempoEmision = '';
   }
 }

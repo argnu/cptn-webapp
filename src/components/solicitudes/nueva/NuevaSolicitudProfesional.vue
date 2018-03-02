@@ -593,13 +593,26 @@
                     <v-layout row>
                       <v-flex xs6 class="mx-4">
                         <v-select
-                          :items="opciones.formacion"
+                          autocomplete
+                          :items="instituciones"
+                          item-text="nombre"
+                          item-value="id"
+                          label="Institución"
+                          v-model="nueva_formacion.institucion"
+                          :rules="[rules.required]"
+                          @input="updateTitulos"
+                        >
+                        </v-select>
+
+                         <v-select
+                          :items="opciones.niveles_titulos"
                           item-text="valor"
                           item-value="id"
-                          label="Tipo de Formación"
+                          label="Nivel Educativo"
                           single-line bottom
-                          v-model="nueva_formacion.tipo"
+                          v-model="nueva_formacion.nivel"
                           :rules="[rules.required]"
+                          @input="updateTitulos"
                         >
                         </v-select>
 
@@ -607,20 +620,9 @@
                           autocomplete single-line bottom
                           item-text="nombre"
                           item-value="id"
-                          :items="titulos_grado"
+                          :items="titulos"
                           label="Título"
                           v-model="nueva_formacion.titulo"
-                          :rules="[rules.required]"
-                        >
-                        </v-select>
-
-                        <v-select
-                          autocomplete
-                          :items="instituciones"
-                          item-text="nombre"
-                          item-value="id"
-                          label="Institución"
-                          v-model="nueva_formacion.institucion"
                           :rules="[rules.required]"
                         >
                         </v-select>
@@ -677,7 +679,7 @@
                           <th></th>
                       </template>
                       <template slot="items" slot-scope="props">
-                        <tr :active="props.index == domicilio_edit">
+                        <tr :active="props.index == formacion_edit">
                           <td>
                             <v-btn fab small @click="editFormacion(props.index)">
                               <v-icon>mode_edit</v-icon>
@@ -688,10 +690,10 @@
                               <v-icon>delete</v-icon>
                             </v-btn>
                           </td>
-                          <td>{{ getTitulo(props.item.titulo) }}</td>
-                          <td>{{ getInstitucion(props.item.institucion) }}</td>
-                          <td>{{ props.item.fechaEgreso }}</td>
-                          <td>{{ props.item.fechaEmision }}</td>
+                          <td>{{ getTitulo(props.item) }}</td>
+                          <td>{{ getInstitucion(props.item) }}</td>
+                          <td>{{ props.item.fechaEgreso | fecha }}</td>
+                          <td>{{ props.item.fechaEmision | fecha }}</td>
                           <td>{{ props.item.tiempoEmision }}</td>
                         </tr>
                       </template>
@@ -1091,17 +1093,6 @@ export default {
       return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
     },
 
-    titulos_grado: function() {
-      const getTipo = () => {
-        if (this.nueva_formacion.tipo == 1) return 'Grado';
-        if (this.nueva_formacion.tipo == 2) return 'Posgrado';
-        else return null;
-      }
-
-      if (!this.nueva_formacion.tipo) return [];
-      return this.titulos.filter(t => t.tipo == getTipo());
-    },
-
     lapso_emision: function() {
       return '12';
       if (!this.nueva_formacion.fechaEmision) return '';
@@ -1134,16 +1125,14 @@ export default {
         axios.get('/opciones?sort=valor'),
         axios.get('/delegaciones'),
         axios.get('/instituciones'),
-        axios.get('/titulos'),
         axios.get('/cajas-previsionales')
       ])
       .then(r => {
         this.paises = r[0].data;
         this.opciones = r[1].data;
         this.delegaciones = r[2].data;
-        this.instituciones = r[3].data;
-        this.titulos = r[4].data;
-        this.cajas_previsionales = r[5].data;
+        this.instituciones = r[3].data.resultados;
+        this.cajas_previsionales = r[4].data;
         this.datos_cargados = true;
         this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
         this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
@@ -1181,7 +1170,7 @@ export default {
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
             this.solicitud.estado = r.data.estado;
             this.fillProfesional(r.data.entidad);
-            return false;
+            return Promise.resolve(false);
         });
       }
       else {
@@ -1235,15 +1224,9 @@ export default {
 
       this.solicitud.entidad.condiciones_afip = entidad.condiciones_afip;
 
-      this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
-        let formacion_nueva = { id: formacion.id };
-        formacion_nueva.tipo = this.opciones.formacion.find(i => i.valor == formacion.tipo).id;
-        formacion_nueva.fechaEmision = utils.getFecha(formacion.fechaEmision);
-        formacion_nueva.fechaEgreso = utils.getFecha(formacion.fechaEgreso);
+        let formacion_nueva = formacion;
         formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
-        formacion_nueva.titulo = this.titulos.find(i => i.tipo == formacion.tipo && i.nombre == formacion.titulo).id;
-        formacion_nueva.institucion = this.instituciones.find(i => i.nombre == formacion.institucion).id;
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
 
@@ -1258,17 +1241,19 @@ export default {
       }
     },
 
-    getInstitucion: function(id) {
-      return this.instituciones.find(i => id == i.id).nombre;
+    getInstitucion: function(item) {
+      if (item.titulo.institucion) return item.titulo.institucion.nombre;
+      return this.instituciones.find(i => item.institucion == i.id).nombre;
+    },
+
+    getTitulo: function(item) {
+      if (item.titulo.nombre) return item.titulo.nombre;
+      return this.titulos.find(i => item.titulo == i.id).nombre;
     },
 
     getVinculo: function(id) {
       return this.opciones.vinculo.find(i => id == i.id).valor;
-    },
-
-    getTitulo: function(id) {
-      return this.titulos.find(i => id == i.id).nombre;
-    },
+    },    
 
     getNombreCaja: function(id) {
       return this.cajas_previsionales.find(i => id == i.id).nombre;
@@ -1307,6 +1292,18 @@ export default {
         this.firma = firma;
     },
 
+    updateTitulos: function() {
+      if (this.nueva_formacion.institucion) {
+        let url = `/instituciones/${this.nueva_formacion.institucion}/titulos`;
+        if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.length)
+          url += `?nivel=${this.nueva_formacion.nivel}`;
+
+        return axios.get(url)
+        .then(r => this.titulos = r.data)
+        .catch(e => console.error(e));
+      }
+    },
+
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
         if (this.formacion_edit == null) {
@@ -1327,6 +1324,13 @@ export default {
     editFormacion: function(index) {
       this.formacion_edit = index;
       this.nueva_formacion = this.solicitud.entidad.formaciones[index];
+      if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
+      if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
+     
+      this.updateTitulos()
+      .then(r => {
+        if (this.nueva_formacion.titulo.id) this.nueva_formacion.titulo = this.nueva_formacion.titulo.id;
+      })
     },
 
     cancelarEditFormacion: function() {
