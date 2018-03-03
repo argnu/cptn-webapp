@@ -245,9 +245,9 @@
                   </th>
                 </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.tipo }}</td>
-                  <td>{{ props.item.titulo }}</td>
-                  <td>{{ props.item.institucion }}</td>
+                  <td>{{ props.item.titulo.nivel.valor }}</td>
+                  <td>{{ props.item.titulo.nombre }}</td>
+                  <td>{{ props.item.titulo.institucion.nombre }}</td>
                   <td>{{ props.item.fechaEgreso | fecha }}</td>
                   <td>{{ props.item.fechaEmision | fecha }}</td>
                 </template>
