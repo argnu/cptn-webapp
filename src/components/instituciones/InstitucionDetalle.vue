@@ -298,6 +298,11 @@ export default {
             .then(r => {
                 this.update();
             })
+            .catch(e => {
+                if (e.response.status == 400) 
+                    alert('No es posible eliminar el título. Existen profesionales relacionados al mismo');
+                else console.error(e);
+            })
         },
 
         cancelar: function() {
