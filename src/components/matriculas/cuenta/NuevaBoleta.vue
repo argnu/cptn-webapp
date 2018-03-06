@@ -43,8 +43,8 @@
                     v-model="boleta_item.descripcion"
                     :rules = "[rules.required]"
                 ></v-text-field>
-                 
-            </v-flex>    
+
+            </v-flex>
 
             <v-flex xs4>
                 <input-numero
@@ -52,14 +52,14 @@
                     v-model="boleta_item.importe"
                     :rules = "[rules.required]"
                     decimal
-                ></input-numero>                 
-            </v-flex>    
+                ></input-numero>
+            </v-flex>
 
             <v-flex xs3>
                 <v-btn
                     @click="addItem"
-                >Agregar</v-btn>                 
-            </v-flex>          
+                >Agregar</v-btn>
+            </v-flex>
         </v-layout>
         </v-form>
 
@@ -81,8 +81,8 @@
                             </v-btn>
                         </td>
                     </template>
-                </v-data-table>  
-            </v-flex>          
+                </v-data-table>
+            </v-flex>
         </v-layout>
 
         <br>
@@ -94,17 +94,18 @@
         >
             Guardar Boleta
             <v-icon dark right>check_circle</v-icon>
-        </v-btn>        
+        </v-btn>
 
         <v-btn dark class="red right" @click="$emit('cancelar')">
             Cancelar
             <v-icon dark right>block</v-icon>
-        </v-btn>        
+        </v-btn>
   </v-container>
 </template>
 
 <script>
 import axios from '@/axios'
+import * as utils from '@/utils'
 import * as moment from 'moment'
 import { Header } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
@@ -114,9 +115,9 @@ import Store from '@/stores/Global'
 
 class Boleta {
     constructor() {
-        this.fecha = '';
-        this.fecha_vencimiento = '';
-        this.tipo_comprobante = 18,
+        this.fecha = moment();
+        this.fecha_vencimiento = moment(this.fecha).add(15, 'days');
+        this.tipo_comprobante = '';
         this.matricula = '';
         this.total = '';
         this.estado = 1;
@@ -200,18 +201,22 @@ export default {
 
         submit: function() {
             this.submitted = true;
-            this.boleta.matricula = this.idMatricula;
-            this.boleta.total = this.boleta.items.reduce((prev, act) => prev + act.importe, 0);
-            this.boleta.delegacion = Store.state.delegacion.id;
-            axios.post('/boletas', this.boleta)
-            .then(r => {
-                this.submitted = false;
-                this.global_state.snackbar.msg = 'Nueva boleta creada exitosamente!';
-                this.global_state.snackbar.color = 'success';
-                this.global_state.snackbar.show = true;
-                this.$emit('update');
-            })
-            .catch(e => this.submitError());
+            if (this.$refs.form_boleta.validate()) {
+                this.boleta.matricula = this.idMatricula;
+                this.boleta.total = this.boleta.items.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
+                this.boleta.delegacion = Store.state.delegacion.id;
+                axios.post('/boletas', this.boleta)
+                .then(r => {
+                    this.submitted = false;
+                    this.boleta = new Boleta();
+                    this.global_state.snackbar.msg = 'Nueva boleta creada exitosamente!';
+                    this.global_state.snackbar.color = 'success';
+                    this.global_state.snackbar.show = true;
+                    this.$emit('update');
+                    setTimeout(() => this.$refs.form_boleta.reset(), 10);
+                })
+                .catch(e => this.submitError());
+            }
         },
 
         submitError: function() {
@@ -219,7 +224,7 @@ export default {
             this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
             this.global_state.snackbar.color = 'error';
             this.global_state.snackbar.show = true;
-        },        
+        },
     }
 
 }

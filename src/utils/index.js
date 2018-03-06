@@ -1,12 +1,14 @@
 import * as moment from 'moment'
 
-export function getNum(str) {
-  return str ? +str.replace(',', '.') : 0;
+export function getFloat(value) {
+  if (typeof value == 'number') return value;
+  return value && value.length ? parseFloat(value.replace(',', '.')) : null;
 }
 
 export function getFecha(str) {
   return moment(str).isValid() ? moment(str).format('DD/MM/YYYY') : '';  
 }
+
 
 export function upperFirst(str) {
   return str[0].toUpperCase() + str.substring(1, str.length);

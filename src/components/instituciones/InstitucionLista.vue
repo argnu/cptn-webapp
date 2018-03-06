@@ -154,7 +154,6 @@ export default {
 
       axios.get(url)
         .then(r => {
-          console.log(r.data)
           this.instituciones = r.data.resultados;
           this.totalItems = r.data.totalQuery;
           this.loading = false;

@@ -39,6 +39,14 @@
 
       <v-divider class="mb-3"></v-divider>
       <v-subheader class="bold" v-text="'Instituciones'"></v-subheader>
+      <v-list-tile @click="goto('/instituciones/nueva')">
+        <v-list-tile-action>
+          <v-icon>school</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Nueva</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <v-list-tile @click="goto('/instituciones/lista')">
         <v-list-tile-action>
           <v-icon>view_list</v-icon>

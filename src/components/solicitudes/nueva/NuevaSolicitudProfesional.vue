@@ -605,6 +605,7 @@
                         </v-select>
 
                          <v-select
+                          autocomplete                         
                           :items="opciones.niveles_titulos"
                           item-text="valor"
                           item-value="id"
@@ -1248,7 +1249,7 @@ export default {
 
     getTitulo: function(item) {
       if (item.titulo.nombre) return item.titulo.nombre;
-      return this.titulos.find(i => item.titulo == i.id).nombre;
+      return item.titulo_nombre;
     },
 
     getVinculo: function(id) {
@@ -1307,6 +1308,7 @@ export default {
     addFormacion: function() {
       if (this.$refs.form_formacion.validate()) {
         if (this.formacion_edit == null) {
+          this.nueva_formacion.titulo_nombre = this.titulos.find(t => t.id == this.nueva_formacion.titulo).nombre;
           this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         }
         else {
@@ -1436,7 +1438,10 @@ export default {
             this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => this.submitError());
+          .catch(e => {
+            this.submitError();
+            this.guardando = false;
+          });
       }
     },
 

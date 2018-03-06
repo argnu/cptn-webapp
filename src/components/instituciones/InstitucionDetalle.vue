@@ -130,6 +130,7 @@
                         <v-flex xs12 md3 class="mx-4">
                             <v-select
                                 label="Nivel"
+                                autocomplete
                                 :items="opciones.niveles_titulos"
                                 item-value="id"
                                 item-text="valor"
@@ -148,6 +149,7 @@
                         <v-flex xs12 md3 class="mx-4">
                             <v-select
                                 label="Tipo de Matrícula"
+                                autocomplete
                                 :items="$options.tipos_matricula"
                                 v-model="nuevo_titulo.tipo_matricula"
                                 :rules="[rules.required]"
@@ -185,26 +187,10 @@
 import axios from '@/axios'
 import * as utils from '@/utils'
 import { Header } from '@/model'
+import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputFecha from '@/components/base/InputFecha'
 
-class Institucion {
-    constructor() {
-        this.nombre = '';
-        this.cue = '';
-        this.titulos = [];
-    }
-}
-
-class Titulo {
-    constructor() {
-        this.nombre = '';
-        this.nivel = '';
-        this.tipo_matricula = '';
-        this.validez_fecha_inicio = null;
-        this.validez_fecha_fin = null;
-    }
-}
 
 export default {
     name: 'InstitucionDetalle',

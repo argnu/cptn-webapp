@@ -32,7 +32,7 @@ Vue.filter('fecha', function (str) {
 Vue.filter('round', function (number) {
   if (!number) return 0;
   if (typeof number == 'number') return utils.round(number, 2);
-  else if (typeof number == 'string') return utils.round(utils.getNum(number), 2);
+  else if (typeof number == 'string') return utils.round(utils.getFloat(number), 2);
 });
 
 Vue.filter('upperFirst', function (str) {

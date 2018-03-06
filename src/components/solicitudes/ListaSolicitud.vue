@@ -10,36 +10,7 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobacion">
 
-            <v-layout>
-              <v-flex xs12 class="mx-4">
-                <v-select
-                  v-show="matricula.tipo != 'EMP'"
-                  label="Tipo:"
-                  :items="select_items.tipos_matricula"
-                  v-model="matricula.tipo"
-                  @input="chgTipoMatricula"
-                >
-                </v-select>
-              </v-flex>
-            </v-layout>
-
-            <v-layout row class="mt-4">
-              <v-flex xs6 class="mx-4">
-                N° Matrícula: {{ num_matricula_nueva }}
-              </v-flex>
-            </v-layout>
-
             <v-layout row>
-              <v-flex xs6 class="ma-4">
-                <input-fecha
-                  v-model="matricula.fechaResolucion"
-                  label="Fecha de Resolución"
-                  :rules="[rules.required, rules.fecha]"
-
-                >
-                </input-fecha>
-              </v-flex>
-
               <v-flex xs6 class="ma-4">
                 <v-text-field
                   v-model="matricula.numeroActa"
@@ -47,6 +18,16 @@
                   :rules="[rules.required, rules.integer]"
                 >
                 </v-text-field>
+              </v-flex>
+                            
+              <v-flex xs6 class="ma-4">
+                <input-fecha
+                  v-model="matricula.fechaResolucion"
+                  label="Fecha de Acta"
+                  :rules="[rules.required, rules.fecha]"
+
+                >
+                </input-fecha>
               </v-flex>
             </v-layout>
 
@@ -418,14 +399,8 @@ export default {
     },
 
     selectSolicitud: function(solicitud) {
-      if (solicitud.entidad.tipo == 'empresa') this.matricula.tipo = 'EMP';
-      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
-      .then(r => {
-        this.num_matricula_nueva = r.data
-        this.show_validar = true;
-        this.matricula.solicitud = solicitud.id;
-      })
-      .catch(e => console.error(e));
+      this.matricula.solicitud = solicitud.id;
+      this.show_validar = true;
     },
 
     chgTipoMatricula: function() {

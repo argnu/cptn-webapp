@@ -242,7 +242,7 @@ export default {
 
     total: function() {
       if (!this.items_pago.length) return 0;
-      return this.items_pago.reduce((prev, act) => prev + utils.getNum(act.importe), 0);
+      return this.items_pago.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
     },
 
     form_valid: function() {
@@ -250,7 +250,7 @@ export default {
     },
 
     supera_importe: function() {
-      return this.total + utils.getNum(this.nueva_forma_pago.importe) > this.importe;
+      return this.total + utils.getFloat(this.nueva_forma_pago.importe) > this.importe;
     }
   },
 
