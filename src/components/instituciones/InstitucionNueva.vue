@@ -95,7 +95,7 @@
         </v-layout>
 
         <br>
-       
+
         <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Títulos</b></span>
 
         <v-form ref="form_titulo" lazy-validation>
@@ -144,7 +144,7 @@
                 ></input-fecha>
             </v-flex>
         </v-layout>
-        
+
         </v-form>
 
         <v-layout row>
@@ -184,8 +184,8 @@
                         <td>{{ props.item.validez_fecha_inicio | fecha }}</td>
                         <td>{{ props.item.validez_fecha_fin | fecha }}</td>
                     </template>
-                </v-data-table>                          
-            </v-flex>            
+                </v-data-table>
+            </v-flex>
         </v-layout>
 
 
@@ -199,12 +199,12 @@
                 >
                     Guardar
                     <v-icon dark right>check_circle</v-icon>
-                </v-btn>      
+                </v-btn>
 
                 <v-btn dark class="red right" @click="$router.go(-1)">
                     Cancelar
                     <v-icon dark right>block</v-icon>
-                </v-btn>                          
+                </v-btn>
             </v-flex>
         </v-layout>
     </v-card>
@@ -237,7 +237,7 @@ export default {
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
         Header('Fecha Inicio de Validez', 'validez_fecha_inicio'),
-        Header('Fecha Fin de Validez', 'validez_fecha_inicio')
+        Header('Fecha Fin de Validez', 'validez_fecha_fin')
     ],
 
     tipos_matricula: [
@@ -266,9 +266,10 @@ export default {
             axios.get('/paises'),
             axios.get('/opciones')
         ])
-        .then(r => { 
+        .then(r => {
             this.paises = r[0].data;
             this.opciones = r[1].data;
+            this.changePais().then(() => this.changeProvincia());
         })
         .catch(e => console.error(e));
     },
@@ -331,7 +332,7 @@ export default {
                 else {
                     Vue.set(this.institucion.titulos, this.titulo_edit, this.nuevo_titulo);
                 }
-                
+
                 this.nuevo_titulo = new Titulo();
                 setTimeout(() => this.$refs.form_titulo.reset(), 10);
             }
@@ -353,8 +354,21 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
-
-
+                axios.post('/instituciones', this.institucion)
+                .then(r => {
+                    this.submitted = false;
+                    this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';
+                    this.global_state.snackbar.color = 'success';
+                    this.global_state.snackbar.show = true;
+                    this.$router.replace('/instituciones/lista');
+                })
+                .catch(e => {
+                    this.submitted = false;
+                    this.global_state.snackbar.msg = 'Ha ocurrido un error en la conexión';
+                    this.global_state.snackbar.color = 'error';
+                    this.global_state.snackbar.show = true;                    
+                    console.error(e);
+                })
             }
         }
     }

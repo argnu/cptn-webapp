@@ -25,6 +25,7 @@ Vue.filter('boolean', function (str) {
 
 Vue.filter('fecha', function (str) {
   if (!str || !str.length) return '';
+  if (/\d{2}\/\d{2}\/\d{4}/.test(str)) return str;
   let moment_date = moment(str);
   return moment_date.isValid() ? moment_date.format('DD/MM/YYYY') : '';
 });
