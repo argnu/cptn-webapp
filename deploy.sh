@@ -58,6 +58,6 @@ if [ "$dir_webapp" != "" ]; then
 
     echo -e "\e[1;32m Aplicación Web Desplegada Exitosamente :D"
 else
-   echo "\e[1;31m Es necesario al menos el parámetro de directorio de despliegue"
-   echo "\e[1;33m Por ejemplo: 'webapp' para deploy en '/var/www/html/webapp'"
+   echo -e "\e[1;31m Es necesario al menos el parámetro de directorio de despliegue"
+   echo -e "\e[1;33m Por ejemplo: 'webapp' para deploy en '/var/www/html/webapp'"
 fi
