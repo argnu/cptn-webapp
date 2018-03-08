@@ -56,8 +56,8 @@ if [ "$dir_webapp" != "" ]; then
     cp -r dist/. /var/www/html/$dir_webapp/.;
     cp src/.htaccess /var/www/html/$dir_webapp/.htaccess;
 
-    echo -e "\e[1;32m Aplicación Web Desplegada Exitosamente :D"
+    echo -e "\e[1;32m Aplicación Web Desplegada Exitosamente :D \e[1;0m"
 else
-   echo -e "\e[1;31m Es necesario al menos el parámetro de directorio de despliegue"
-   echo -e "\e[1;33m Por ejemplo: 'webapp' para deploy en '/var/www/html/webapp'"
+   echo -e "\e[1;31m Es necesario al menos el parámetro de directorio de despliegue \e[1;0m"
+   echo -e "\e[1;33m Por ejemplo: 'webapp' para deploy en '/var/www/html/webapp' \e[1;0m"
 fi
