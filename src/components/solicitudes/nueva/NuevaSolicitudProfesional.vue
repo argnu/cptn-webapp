@@ -1414,9 +1414,6 @@ export default {
         axios.post('/solicitudes', this.makeFormData())
           .then(r => {
             this.guardando = false;
-            if (r.status != 201) {
-              this.submitError();
-            }
             this.id_creada = r.data.id;
             this.show_imprimir = true;
             this.$refs.firma.reset();
@@ -1424,22 +1421,19 @@ export default {
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
           })
-          .catch(e => this.submitError());
+          .catch(e => this.submitError(e));
       }
       else {
         axios.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
             this.guardando = false;
-            if (r.status != 200) {
-              this.submitError();
-            }
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
           .catch(e => {
-            this.submitError();
+            this.submitError(e);
             this.guardando = false;
           });
       }

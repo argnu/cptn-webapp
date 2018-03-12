@@ -868,7 +868,7 @@ export default {
            .then(r => {
              this.submitted = false;
              if (r.status != 201) {
-               this.submitError();
+               this.submitError(e);
              }
              this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
              this.global_state.snackbar.color = 'success';
@@ -876,12 +876,13 @@ export default {
              this.$router.go(-1);
 
            })
-           .catch(e => this.submitError());
+           .catch(e => this.submitError(e));
     },
 
-    submitError: function() {
-      this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.global_state.snackbar.color = 'error';
+    submitError: function(e) {
+      let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+      this.global_state.snackbar.msg = msg;
+      this.global_state.snackbar.color = 'error';this.global_state.snackbar.color = 'error';
       this.global_state.snackbar.show = true;
     },
 

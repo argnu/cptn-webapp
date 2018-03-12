@@ -215,13 +215,14 @@ export default {
                     this.$emit('update');
                     setTimeout(() => this.$refs.form_boleta.reset(), 10);
                 })
-                .catch(e => this.submitError());
+                .catch(e => this.submitError(e));
             }
         },
 
-        submitError: function() {
+        submitError: function(e) {
             this.submitted = false;
-            this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
             this.global_state.snackbar.color = 'error';
             this.global_state.snackbar.show = true;
         },
