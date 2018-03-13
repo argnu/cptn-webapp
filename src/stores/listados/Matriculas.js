@@ -1,42 +1,25 @@
-export default {
-  state: {
-      pagination: {
-        page: 1,
-        rowsPerPage: 25,
-        descending: null,
-        sortBy: null
-      },
+import { StoreLista } from './Lista'
 
-      filtros: {
-        tipoEntidad: 'profesional',
-        estado: 'Habilitado',
-        numero: '',
-        profesional: {
-          dni: '',
-          apellido: ''
-        },
-        empresa: {
-          nombre: ''
-        }
-      }
-  },
-
-  setPagination(pagination){
-    this.state.pagination = pagination;
-  },
-
-  setFiltros(filtros) {
-    this.state.filtros = filtros;
-  },
+class StoreListaMatricula extends StoreLista {
+  constructor(filtros) {
+    super(filtros);
+  }
 
   limpiarFiltros() {
+    super.limpiarFiltros();
     this.state.filtros.tipoEntidad = 'profesional';
-    this.state.filtros.estado = 'Habilitado';
-    this.state.filtros.numero = '';
-    this.state.filtros.profesional.dni = '';
-    this.state.filtros.profesional.apellido = '';
-    this.state.filtros.empresa.nombre = '';
-  }
+  }  
 }
 
-
+export default new StoreListaMatricula({
+  tipoEntidad: 'profesional',
+  estado: '',
+  numero: '',
+  profesional: {
+    dni: '',
+    apellido: ''
+  },
+  empresa: {
+    nombre: ''
+  }
+});

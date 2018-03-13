@@ -24,6 +24,10 @@ import InstitucionLista from '@/components/instituciones/InstitucionLista'
 import InstitucionDetalle from '@/components/instituciones/InstitucionDetalle'
 import InstitucionNueva from '@/components/instituciones/InstitucionNueva'
 
+import UsuarioLista from '@/components/usuarios/UsuarioLista'
+import UsuarioNuevo from '@/components/usuarios/UsuarioNuevo'
+import UsuarioDetalle from '@/components/usuarios/UsuarioDetalle'
+
 
 Vue.use(Router)
 
@@ -137,6 +141,23 @@ export default new Router({
           path: '/instituciones/:id',
           name: 'InstitucionDetalle',
           component: InstitucionDetalle,
+          props: true
+        },
+
+        {
+          path: '/usuarios/lista',
+          name: 'UsuarioLista',
+          component: UsuarioLista
+        },
+        {
+          path: '/usuarios/nuevo',
+          name: 'UsuarioNuevo',
+          component: UsuarioNuevo
+        },
+        {
+          path: '/usuarios/:id',
+          name: 'UsuarioDetalle',
+          component: UsuarioDetalle,
           props: true
         }
       ]

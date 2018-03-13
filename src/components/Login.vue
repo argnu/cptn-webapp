@@ -12,7 +12,7 @@
               <v-text-field
                 label="Nombre de Usuario"
                 prepend-icon="account_box"
-                v-model="usuario.id"
+                v-model="usuario.username"
                 @input="submitted = false"
               >
               </v-text-field>
@@ -86,7 +86,7 @@ import Store from '@/stores/Global'
 
 
 const User = () => ({
-  id: '',
+  username: '',
   password: ''
 })
 
