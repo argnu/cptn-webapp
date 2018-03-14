@@ -12,58 +12,103 @@
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <div class="my-3">
-                    <b>Usuario:</b> {{ usuario.username }}
-                    <v-btn fab small light>
-                        <v-icon>edit</v-icon>
-                    </v-btn> 
-                </div>
+                    <template v-if="edit.username.active">
+                        <v-form ref="form_username">
+                        <v-text-field
+                            label="Usuario"
+                            v-model="usuario.username"
+                            :rules="[rules.required]"
+                        ></v-text-field>
+                        </v-form>
+                    </template>
+                    <template v-else>
+                        <b>Usuario:</b> {{ usuario.username }}
+                    </template>
 
-                <div class="my-3">
-                    <b>Email:</b> {{ usuario.email }}
-                    <v-btn fab small light>
+                    <v-btn fab small light @click="startEdit('username')" v-show="!edit.username.active">
                         <v-icon>edit</v-icon>
-                    </v-btn>                     
-                </div>
-                <!-- <v-text-field
-                    label="Usuario"
-                    v-model="usuario.username"
-                    :rules="[rules.required]"
-                ></v-text-field> -->
+                    </v-btn>
+                    <v-btn fab small light @click="cancelarEdit('username')" v-show="edit.username.active">
+                        <v-icon>cancel</v-icon>
+                    </v-btn>
+                    <v-btn fab small light v-show="edit.username.active" @click="guardar('username')">
+                        <v-icon>save</v-icon>
+                    </v-btn>
 
-                <!-- <v-text-field
-                    label="Email"
-                    v-model="usuario.email"
-                    :rules="[rules.email]"
-                ></v-text-field>                   -->
+                    <br>
+
+                    <template v-if="edit.email.active">
+                        <v-form ref="form_email">
+                            <v-text-field
+                                label="Email"
+                                v-model="usuario.email"
+                                :rules="[rules.email]"
+                            ></v-text-field>
+                        </v-form>
+                    </template>
+                    <template v-else>
+                        <b>Email:</b> {{ usuario.email }}
+                    </template>
+
+                    <v-btn fab small light @click="startEdit('email')" v-show="!edit.email.active">
+                        <v-icon>edit</v-icon>
+                    </v-btn>
+                    <v-btn fab small light @click="cancelarEdit('email')" v-show="edit.email.active">
+                        <v-icon>cancel</v-icon>
+                    </v-btn>
+                    <v-btn fab small light v-show="edit.email.active" @click="guardar('email')">
+                        <v-icon>save</v-icon>
+                    </v-btn>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <div class="my-3">
-                    <b>Nombre:</b> {{ usuario.nombre }}
-                    <v-btn fab small light>
+                    <template v-if="edit.nombre.active">
+                        <v-form ref="form_nombre">
+                        <v-text-field
+                            label="Nombre"
+                            v-model="usuario.nombre"
+                            :rules="[rules.required]"
+                        ></v-text-field>
+                        </v-form>
+                    </template>
+                    <template v-else>
+                        <b>Nombre:</b> {{ usuario.nombre }}
+                    </template>
+
+                    <v-btn fab small light @click="startEdit('nombre')" v-show="!edit.nombre.active">
                         <v-icon>edit</v-icon>
-                    </v-btn>                     
-                </div>                
-                <!-- <v-text-field
-                    label="Nombre"
-                    v-model="usuario.nombre"
-                    :rules="[rules.required]"
-                ></v-text-field> -->
+                    </v-btn>
+                    <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre.active">
+                        <v-icon>cancel</v-icon>
+                    </v-btn>
+                    <v-btn fab small light v-show="edit.nombre.active" @click="guardar('nombre')">
+                        <v-icon>save</v-icon>
+                    </v-btn>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <div class="my-3">
-                    <b>Apellido:</b> {{ usuario.apellido }}
-                    <v-btn fab small light>
+                    <template v-if="edit.apellido.active">
+                        <v-form ref="form_apellido">
+                        <v-text-field
+                            label="Apellido"
+                            v-model="usuario.apellido"
+                            :rules="[rules.required]"
+                        ></v-text-field>
+                        </v-form>
+                    </template>
+                    <template v-else>
+                        <b>Apellido:</b> {{ usuario.apellido }}
+                    </template>
+
+                    <v-btn fab small light @click="startEdit('apellido')" v-show="!edit.apellido.active">
                         <v-icon>edit</v-icon>
-                    </v-btn>                     
-                </div>                 
-                <!-- <v-text-field
-                    label="Apellido"
-                    v-model="usuario.apellido"
-                    :rules="[rules.required]"
-                ></v-text-field>               -->
+                    </v-btn>
+                    <v-btn fab small light @click="cancelarEdit('apellido')" v-show="edit.apellido.active">
+                        <v-icon>cancel</v-icon>
+                    </v-btn>
+                    <v-btn fab small light v-show="edit.apellido.active" @click="guardar('apellido')">
+                        <v-icon>save</v-icon>
+                    </v-btn>
             </v-flex>
         </v-layout>
         </v-form>
@@ -72,6 +117,7 @@
 
         <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Cambiar Contraseña</b></span>
 
+        <v-form ref="form_pass">
         <v-layout row>
             <v-flex xs12 md4 class="mx-5 mb-3">
                 <v-text-field
@@ -79,7 +125,11 @@
                     type="password"
                     v-model="password"
                     :rules="[rules.required]"
-                ></v-text-field>                
+                ></v-text-field>
+
+                <v-alert type="error" :value="!valid_pass && submitted_pass">
+                    Las contraseñas no coinciden!
+                </v-alert>
             </v-flex>
 
             <v-flex xs12 md4 class="mx-5 mb-3">
@@ -88,10 +138,7 @@
                     type="password"
                     v-model="password_re"
                     :rules="[rules.required]"
-                ></v-text-field>  
-                <v-alert type="error" :value="(usuario.length > 0 || usuario.length > 0) && !valid_pass">
-                    Las contraseñas no coinciden!
-                </v-alert>
+                ></v-text-field>
             </v-flex>
 
             <v-flex xs12 md1 class="mx-5 mb-3">
@@ -99,8 +146,8 @@
                     Cambiar
                 </v-btn>
             </v-flex>
-
         </v-layout>
+        </v-form>
 
         <br>
 
@@ -111,7 +158,7 @@
                 <v-select
                     label="Delegación"
                     autocomplete
-                    :items="delegaciones"
+                    :items="opciones_delegacion"
                     item-value="id"
                     item-text="nombre"
                     v-model="nueva_delegacion"
@@ -125,7 +172,7 @@
                 <v-btn class="right mb-4" light @click="addDelegacion">
                     Agregar
                 </v-btn>
-            </v-flex>            
+            </v-flex>
         </v-layout>
 
 
@@ -161,6 +208,10 @@ import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
+const EditField = () => ({
+  previous: '',
+  active: false
+})
 
 export default {
     name: 'UsuarioDetalle',
@@ -181,14 +232,25 @@ export default {
             nueva_delegacion: {},
             delegaciones: [],
             valid_basico: false,
-            submitted: false
+            submitted: false,
+            submitted_pass: false,
+            edit: {
+                username: EditField(),
+                nombre: EditField(),
+                apellido: EditField(),
+                email: EditField()
+            }
         }
     },
 
     computed: {
+        opciones_delegacion: function() {
+            return this.delegaciones.filter(d => !this.usuario.delegaciones.find(u => u.id == d.id));
+        },
+
         valid_pass: function() {
             return this.password === this.password_re;
-        }
+        },
     },
 
     created: function() {
@@ -196,11 +258,11 @@ export default {
             axios.get('/delegaciones'),
             axios.get(`/usuarios/${this.id}`),
             axios.get(`/usuarios/${this.id}/delegaciones`)
-        ])        
-        .then(r => { 
+        ])
+        .then(r => {
             this.delegaciones = r[0].data;
             this.usuario = r[1].data;
-            this.usuario.delegaciones = r[2].data;
+            Vue.set(this.usuario, 'delegaciones', r[2].data);
         })
         .catch(e => console.error(e));
     },
@@ -208,18 +270,27 @@ export default {
     methods: {
         addDelegacion: function() {
             if (this.nueva_delegacion.id) {
-                this.usuario.delegaciones.push(this.nueva_delegacion);
-                this.nueva_delegacion = {};
+                axios.post(`/usuarios/${this.id}/delegaciones`, this.nueva_delegacion)
+                .then(r => {
+                    this.usuario.delegaciones.push(this.nueva_delegacion);
+                    this.nueva_delegacion = {};
+                })
+                .catch(this.showError);                
             }
         },
 
         borrarDelegacion: function(index) {
-            this.usuario.delegaciones.splice(index, 1);
+            axios.delete(`/usuarios/${this.id}/delegaciones/${this.usuario.delegaciones[index].id}`)
+            .then(r => {
+                this.usuario.delegaciones.splice(index, 1);
+            })
+            .catch(this.showError);
         },
 
 
         submit: function() {
             this.submitted = true;
+            this.usuario.operador = this.user.id;
             if (this.valid_basico && this.valid_pass) {
                 axios.post('/usuarios', this.usuario)
                 .then(r => {
@@ -229,15 +300,61 @@ export default {
                     this.global_state.snackbar.show = true;
                     this.$router.replace('/usuarios/lista');
                 })
-                .catch(e => {
-                    this.submitted = false;
-                    let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                    this.global_state.snackbar.msg = msg;
-                    this.global_state.snackbar.color = 'error';
-                    this.global_state.snackbar.show = true;                    
-                    console.error(e);
-                })
+                .catch(this.showError)
             }
+        },
+
+        startEdit: function(atributo) {
+            this.edit[atributo].previous = this.usuario[atributo];
+            this.edit[atributo].active = true;
+        },
+
+        cancelarEdit: function(atributo) {
+            this.usuario[atributo] = this.edit[atributo].previous;
+            this.edit[atributo].active = false;
+        },
+
+        guardar: function(atributo) {
+            let ref_name = `form_${atributo}`;
+            if (this.$refs[ref_name].validate()) {
+                let patch = {};
+                patch[atributo] = this.usuario[atributo];
+                patch.operador = this.user.id;
+                axios.patch(`/usuarios/${this.id}`, patch)
+                .then(r => this.edit[atributo].active = false)
+                .catch(this.showError)
+            }
+        },
+
+        cambiarPass: function() {
+            this.submitted_pass = true;
+            if (this.$refs.form_pass.validate()) {
+                let patch = {
+                    password: this.password,
+                    operador: this.user.id
+                };
+
+                axios.patch(`/usuarios/${this.id}`, patch)
+                .then(r => {
+                    this.submitted_pass = false;
+                    this.password = '';
+                    this.password_re = '';
+                    this.$refs.form_pass.reset();
+                    this.global_state.snackbar.msg = 'Contraseña modificada exitosamente!';
+                    this.global_state.snackbar.color = 'success';
+                    this.global_state.snackbar.show = true;
+                })
+                .catch(this.showError)
+            }
+        },
+
+        showError: function(e) {
+            this.submitted = false;
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
+            console.error(e);
         }
     }
 
