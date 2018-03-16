@@ -245,7 +245,6 @@ class CambioEstado {
   constructor() {
     this.estado = '';
     this.matricula = '';
-    this.operador = '';
     this.documento = {
       tipo: '',
       numero: '',
@@ -413,7 +412,6 @@ export default {
     cambiarEstado: function() {
       if (this.$refs.form_cambioestado.validate()) {
         this.submit_cambio = true;
-        this.cambio_estado.operador = this.user.id;
 
         axios.post('/matriculas/cambiar-estado', this.cambio_estado)
         .then(r => {

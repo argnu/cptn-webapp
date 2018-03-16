@@ -113,7 +113,7 @@ export default {
 
     habilitar: function() {
       // 13 ES ESTADO 'Habilitado'
-      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13, operador: this.user.id })
+      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
       .then(r => this.update())
       .catch(e => console.error(e));
     },

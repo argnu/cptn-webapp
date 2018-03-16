@@ -10,6 +10,5 @@ export class Solicitud {
       this.entidad = new Profesional();
     else if (tipo == 'empresa')
       this.entidad = new Empresa();
-    this.operador = null;
   }
 }

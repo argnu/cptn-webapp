@@ -174,7 +174,7 @@ export default {
 
     desactivar: function(id) {
         if (confirm("Está seguro/a que desea desactivar al usuario?")) {
-            axios.patch(`/usuarios/${id}`, { operador: this.user.id, activo: false })
+            axios.patch(`/usuarios/${id}`, { activo: false })
             .then(r => {
                 this.udpateUsuarios();
             })

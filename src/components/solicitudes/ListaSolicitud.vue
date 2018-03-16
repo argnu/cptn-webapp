@@ -422,7 +422,6 @@ export default {
     aprobar: function() {
       if (this.$refs.form_aprobacion.validate()) {
         this.submitValidacion = true;
-        this.matricula.operador = this.user.id;
 
         axios.post('/matriculas', this.matricula)
         .then(r => {

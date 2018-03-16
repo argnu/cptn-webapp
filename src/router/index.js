@@ -158,7 +158,11 @@ export default new Router({
           path: '/usuarios/:id',
           name: 'UsuarioDetalle',
           component: UsuarioDetalle,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (to.params.id == Store.state.user.id || Store.state.user.admin) next();
+            else next(false);
+          },          
         }
       ]
     },

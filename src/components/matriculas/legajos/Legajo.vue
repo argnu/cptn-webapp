@@ -861,7 +861,6 @@ export default {
 
     submit: function() {
       this.submitted = true;
-      this.legajo.operador = this.user.id;
       this.legajo.delegacion = this.global_state.delegacion.id;
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)

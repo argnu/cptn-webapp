@@ -290,7 +290,6 @@ export default {
 
         submit: function() {
             this.submitted = true;
-            this.usuario.operador = this.user.id;
             if (this.valid_basico && this.valid_pass) {
                 axios.post('/usuarios', this.usuario)
                 .then(r => {
@@ -319,7 +318,6 @@ export default {
             if (this.$refs[ref_name].validate()) {
                 let patch = {};
                 patch[atributo] = this.usuario[atributo];
-                patch.operador = this.user.id;
                 axios.patch(`/usuarios/${this.id}`, patch)
                 .then(r => this.edit[atributo].active = false)
                 .catch(this.showError)
@@ -329,10 +327,7 @@ export default {
         cambiarPass: function() {
             this.submitted_pass = true;
             if (this.$refs.form_pass.validate()) {
-                let patch = {
-                    password: this.password,
-                    operador: this.user.id
-                };
+                let patch = { password: this.password };
 
                 axios.patch(`/usuarios/${this.id}`, patch)
                 .then(r => {

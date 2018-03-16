@@ -817,7 +817,6 @@ export default {
 
     submit: function() {
       this.guardando = true;
-      this.solicitud.operador = this.user.id;
       
       if (!this.id) {
         axios.post('/solicitudes', this.solicitud)
