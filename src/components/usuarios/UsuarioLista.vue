@@ -60,13 +60,17 @@
 
       <template slot="items" slot-scope="props">
         <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="verDetalle(props.item.id)">
+          <v-btn fab small dark color="primary" slot="activator" @click="verDetalle(props.item.id)"
+            title="Ver Detalle"
+          >
             <v-icon>assignment</v-icon>
           </v-btn>
         </td>
         <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="desactivar(props.item.id)">
-            <v-icon>do_not_disturb_off</v-icon>
+          <v-btn fab small dark color="primary" slot="activator" @click="desactivar(props.item.id)"
+            title="Desactivar"
+          >
+            <v-icon>visibility_off</v-icon>
           </v-btn>
         </td>
         <td>{{ props.item.username }}</td>

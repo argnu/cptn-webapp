@@ -34,7 +34,7 @@
                 :value="login_error"
                 transition="scale-transition"
               >
-                Error de autenticación!
+                {{ auth_error }}
               </v-alert>
 
               <br>
@@ -97,6 +97,7 @@ export default {
       usuario: User(),
       submitted: false,
       submit_error: false,
+      auth_error: '',
       delegaciones: []
     }
   },
@@ -111,6 +112,7 @@ export default {
   methods: {
     autenticar: function() {
       this.submitted = true;
+      this.auth_error = 'Usuario/contraseña inválidos'
       this.submit_error = false;
       axios.post('/usuarios/auth', this.usuario)
       .then(r => {
@@ -118,7 +120,13 @@ export default {
         Store.setUser(r.data);
         axios.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
         axios.get(`/usuarios/${r.data.id}/delegaciones`)
-        .then(r => this.delegaciones = r.data)
+        .then(r => { 
+          if (!r.data.length) {
+            this.submit_error = true;
+            this.auth_error = 'El usuario no tiene delegaciones asociadas';
+          }
+          else this.delegaciones = r.data
+        })
         .catch(e => console.error(e));        
       })
       .catch(e => {

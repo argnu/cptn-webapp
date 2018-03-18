@@ -6,112 +6,100 @@
     </v-toolbar>
 
     <v-card>
-        <br>
-        <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>
+        <v-layout class="mt-4">
+            <v-flex xs10>
+                <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>
+            </v-flex>
+            <v-flex xs2>
+                <v-switch
+                    label="Editar Datos"
+                    v-model="edit"
+                ></v-switch>
+            </v-flex>
+        </v-layout>        
 
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
             <v-flex xs12 md3 class="mx-5 mb-3">
-                    <template v-if="edit.username.active">
-                        <v-form ref="form_username">
-                        <v-text-field
-                            label="Usuario"
-                            v-model="usuario.username"
-                            :rules="[rules.required]"
-                        ></v-text-field>
-                        </v-form>
-                    </template>
-                    <template v-else>
+                <template v-if="edit">
+                    <v-text-field
+                        label="Usuario"
+                        v-model="usuario.username"
+                        :rules="[rules.required]"
+                    ></v-text-field>
+                </template>
+                <template v-else>
+                    <div class="mb-3">
                         <b>Usuario:</b> {{ usuario.username }}
-                    </template>
+                    </div>
+                </template>
 
-                    <v-btn fab small light @click="startEdit('username')" v-show="!edit.username.active">
-                        <v-icon>edit</v-icon>
-                    </v-btn>
-                    <v-btn fab small light @click="cancelarEdit('username')" v-show="edit.username.active">
-                        <v-icon>cancel</v-icon>
-                    </v-btn>
-                    <v-btn fab small light v-show="edit.username.active" @click="guardar('username')">
-                        <v-icon>save</v-icon>
-                    </v-btn>
-
-                    <br>
-
-                    <template v-if="edit.email.active">
-                        <v-form ref="form_email">
-                            <v-text-field
-                                label="Email"
-                                v-model="usuario.email"
-                                :rules="[rules.email]"
-                            ></v-text-field>
-                        </v-form>
-                    </template>
-                    <template v-else>
+                <template v-if="edit">
+                    <v-text-field
+                        label="Email"
+                        v-model="usuario.email"
+                        :rules="[rules.email]"
+                    ></v-text-field>
+                </template>
+                <template v-else>
+                    <div>
                         <b>Email:</b> {{ usuario.email }}
-                    </template>
+                    </div>
+                </template>                   
 
-                    <v-btn fab small light @click="startEdit('email')" v-show="!edit.email.active">
-                        <v-icon>edit</v-icon>
-                    </v-btn>
-                    <v-btn fab small light @click="cancelarEdit('email')" v-show="edit.email.active">
-                        <v-icon>cancel</v-icon>
-                    </v-btn>
-                    <v-btn fab small light v-show="edit.email.active" @click="guardar('email')">
-                        <v-icon>save</v-icon>
-                    </v-btn>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                    <template v-if="edit.nombre.active">
-                        <v-form ref="form_nombre">
+                    <template v-if="edit">
                         <v-text-field
                             label="Nombre"
                             v-model="usuario.nombre"
                             :rules="[rules.required]"
                         ></v-text-field>
-                        </v-form>
                     </template>
                     <template v-else>
-                        <b>Nombre:</b> {{ usuario.nombre }}
+                        <div>
+                            <b>Nombre:</b> {{ usuario.nombre }}
+                        </div>
                     </template>
-
-                    <v-btn fab small light @click="startEdit('nombre')" v-show="!edit.nombre.active">
-                        <v-icon>edit</v-icon>
-                    </v-btn>
-                    <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre.active">
-                        <v-icon>cancel</v-icon>
-                    </v-btn>
-                    <v-btn fab small light v-show="edit.nombre.active" @click="guardar('nombre')">
-                        <v-icon>save</v-icon>
-                    </v-btn>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                    <template v-if="edit.apellido.active">
-                        <v-form ref="form_apellido">
+                    <template v-if="edit">
                         <v-text-field
                             label="Apellido"
                             v-model="usuario.apellido"
                             :rules="[rules.required]"
                         ></v-text-field>
-                        </v-form>
                     </template>
                     <template v-else>
-                        <b>Apellido:</b> {{ usuario.apellido }}
+                        <div>
+                            <b>Apellido:</b> {{ usuario.apellido }}
+                        </div> 
                     </template>
-
-                    <v-btn fab small light @click="startEdit('apellido')" v-show="!edit.apellido.active">
-                        <v-icon>edit</v-icon>
-                    </v-btn>
-                    <v-btn fab small light @click="cancelarEdit('apellido')" v-show="edit.apellido.active">
-                        <v-icon>cancel</v-icon>
-                    </v-btn>
-                    <v-btn fab small light v-show="edit.apellido.active" @click="guardar('apellido')">
-                        <v-icon>save</v-icon>
-                    </v-btn>
             </v-flex>
         </v-layout>
         </v-form>
+
+
+        <v-layout v-show="edit" class="mb-4">
+            <v-flex xs12>
+                <v-btn
+                    class="green darken-1 white--text right"
+                    @click.native="guardar"
+                    :disabled="!valid_basico || submitted"
+                    :loading="submitted"
+                >
+                    Guardar
+                    <v-icon dark right>check_circle</v-icon>
+                </v-btn>
+
+                <v-btn dark class="red right" @click="cancelEdit">
+                    Cancelar
+                    <v-icon dark right>block</v-icon>
+                </v-btn>
+            </v-flex>
+        </v-layout>        
 
         <br>
 
@@ -149,53 +137,55 @@
         </v-layout>
         </v-form>
 
-        <br>
+        <template v-if="user.admin">
+            <br>
 
-        <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Delegaciones</b></span>
+            <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Delegaciones</b></span>
 
-        <v-layout row class="mt-3">
-            <v-flex xs12 md7 class="mx-5">
-                <v-select
-                    label="Delegación"
-                    autocomplete
-                    :items="opciones_delegacion"
-                    item-value="id"
-                    item-text="nombre"
-                    v-model="nueva_delegacion"
-                    :rules="[rules.required]"
-                    return-object
-                >
-                </v-select>
-            </v-flex>
+            <v-layout row class="mt-3">
+                <v-flex xs12 md7 class="mx-5">
+                    <v-select
+                        label="Delegación"
+                        autocomplete
+                        :items="opciones_delegacion"
+                        item-value="id"
+                        item-text="nombre"
+                        v-model="nueva_delegacion"
+                        :rules="[rules.required]"
+                        return-object
+                    >
+                    </v-select>
+                </v-flex>
 
-            <v-flex xs12 md1>
-                <v-btn class="right mb-4" light @click="addDelegacion">
-                    Agregar
-                </v-btn>
-            </v-flex>
-        </v-layout>
+                <v-flex xs12 md1>
+                    <v-btn class="right mb-4" light @click="addDelegacion">
+                        Agregar
+                    </v-btn>
+                </v-flex>
+            </v-layout>
 
 
-        <v-layout row class="mt-4">
-            <v-flex xs11>
-                <v-data-table
-                    :headers="$options.headers"
-                    :items="usuario.delegaciones"
-                    hide-actions
-                    class="elevation-1 mx-5"
-                    no-data-text="No hay delegaciones"
-                >
-                    <template slot="items" slot-scope="props">
-                        <td>
-                            <v-btn fab small dark color="primary"  @click="borrarDelegacion(props.index)">
-                                <v-icon>delete</v-icon>
-                            </v-btn>
-                        </td>
-                        <td>{{ props.item.nombre }}</td>
-                    </template>
-                </v-data-table>
-            </v-flex>
-        </v-layout>
+            <v-layout row class="mt-4">
+                <v-flex xs11>
+                    <v-data-table
+                        :headers="$options.headers"
+                        :items="usuario.delegaciones"
+                        hide-actions
+                        class="elevation-1 mx-5"
+                        no-data-text="No hay delegaciones"
+                    >
+                        <template slot="items" slot-scope="props">
+                            <td>
+                                <v-btn fab small dark color="primary"  @click="borrarDelegacion(props.index)">
+                                    <v-icon>delete</v-icon>
+                                </v-btn>
+                            </td>
+                            <td>{{ props.item.nombre }}</td>
+                        </template>
+                    </v-data-table>
+                </v-flex>
+            </v-layout>
+        </template>
     </v-card>
 
   </v-container>
@@ -204,14 +194,11 @@
 <script>
 import Vue from 'vue'
 import axios from '@/axios'
+import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
-const EditField = () => ({
-  previous: '',
-  active: false
-})
 
 export default {
     name: 'UsuarioDetalle',
@@ -227,6 +214,7 @@ export default {
     data() {
         return {
             usuario: new Usuario(),
+            usuario_original: new Usuario(),
             password: '',
             password_re: '',
             nueva_delegacion: {},
@@ -234,12 +222,7 @@ export default {
             valid_basico: false,
             submitted: false,
             submitted_pass: false,
-            edit: {
-                username: EditField(),
-                nombre: EditField(),
-                apellido: EditField(),
-                email: EditField()
-            }
+            edit: false
         }
     },
 
@@ -253,21 +236,30 @@ export default {
         },
     },
 
+    beforeRouteUpdate() {
+        this.update();
+    },
+
     created: function() {
-        Promise.all([
-            axios.get('/delegaciones'),
-            axios.get(`/usuarios/${this.id}`),
-            axios.get(`/usuarios/${this.id}/delegaciones`)
-        ])
-        .then(r => {
-            this.delegaciones = r[0].data;
-            this.usuario = r[1].data;
-            Vue.set(this.usuario, 'delegaciones', r[2].data);
-        })
-        .catch(e => console.error(e));
+        this.update();
     },
 
     methods: {
+        update: function() {
+            return Promise.all([
+                axios.get('/delegaciones'),
+                axios.get(`/usuarios/${this.id}`),
+                axios.get(`/usuarios/${this.id}/delegaciones`)
+            ])
+            .then(r => {
+                this.delegaciones = r[0].data;
+                this.usuario = r[1].data;
+                Vue.set(this.usuario, 'delegaciones', r[2].data);
+                this.usuario_original = utils.clone(this.usuario);
+            })
+            .catch(e => console.error(e));
+        },
+
         addDelegacion: function() {
             if (this.nueva_delegacion.id) {
                 axios.post(`/usuarios/${this.id}/delegaciones`, this.nueva_delegacion)
@@ -275,7 +267,7 @@ export default {
                     this.usuario.delegaciones.push(this.nueva_delegacion);
                     this.nueva_delegacion = {};
                 })
-                .catch(this.showError);                
+                .catch(this.showError);
             }
         },
 
@@ -303,30 +295,31 @@ export default {
             }
         },
 
-        startEdit: function(atributo) {
-            this.edit[atributo].previous = this.usuario[atributo];
-            this.edit[atributo].active = true;
-        },
+        guardar: function() {
+            if (this.$refs.form_basico.validate()) {
+                let patch_usuario = utils.clone(this.usuario);
+                delete(patch_usuario.delegaciones);
 
-        cancelarEdit: function(atributo) {
-            this.usuario[atributo] = this.edit[atributo].previous;
-            this.edit[atributo].active = false;
-        },
-
-        guardar: function(atributo) {
-            let ref_name = `form_${atributo}`;
-            if (this.$refs[ref_name].validate()) {
-                let patch = {};
-                patch[atributo] = this.usuario[atributo];
-                axios.patch(`/usuarios/${this.id}`, patch)
-                .then(r => this.edit[atributo].active = false)
+                axios.patch(`/usuarios/${this.id}`, patch_usuario)
+                .then(r => {
+                    this.edit = false;
+                    this.global_state.snackbar.msg = 'Datos modificados exitosamente!';
+                    this.global_state.snackbar.color = 'success';
+                    this.global_state.snackbar.show = true;      
+                    this.update();              
+                })
                 .catch(this.showError)
             }
         },
 
+        cancelEdit: function() {
+            this.usuario = utils.clone(this.usuario_original);
+            this.edit = false;
+        },
+
         cambiarPass: function() {
             this.submitted_pass = true;
-            if (this.$refs.form_pass.validate()) {
+            if (this.$refs.form_pass.validate() && this.valid_pass) {
                 let patch = { password: this.password };
 
                 axios.patch(`/usuarios/${this.id}`, patch)
