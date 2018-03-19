@@ -334,6 +334,7 @@ export default {
                 }
 
                 this.nuevo_titulo = new Titulo();
+                this.titulo_edit = null;
                 setTimeout(() => this.$refs.form_titulo.reset(), 10);
             }
         },

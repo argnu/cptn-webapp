@@ -83,13 +83,13 @@
                       :items="tipo_persona"
                       v-model="nuevo_comitente.persona.tipo"
                       :rules="[rules.required]"
-                      @input="chgTipoComitente"
+                      @change="chgTipoComitente"
                     ></v-select>
 
                     <v-text-field
                       label="CUIT/CUIL"
                       v-model="nuevo_comitente.persona.cuit"
-                      @input="chgCuitComitente"
+                      @change="chgCuitComitente"
                     >
                     </v-text-field>
 
@@ -98,7 +98,7 @@
                       label="DNI"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer]"
-                      @input="chgDni"
+                      @change="chgDni"
                     ></v-text-field>                    
 
                     <input-numero
@@ -347,6 +347,7 @@
                   tabindex="19"
                   light
                   @click="addItem"
+                  :disabled="item_invalid"
                 >
                   Agregar
                 </v-btn>
@@ -728,6 +729,20 @@ export default {
       return this.valid.basicos && this.valid_comitentes && this.valid.ubicacion && this.valid.tareas
         && (this.legajo.tipo !=3 || this.valid.aportes);
     },    
+
+    item_item_invalid: function() {
+      if (typeof this.nuevo_item.item == 'number') return false;
+      return !this.nuevo_item.item.length;
+    },
+
+    item_valor_invalid: function() {
+      if (typeof this.nuevo_item.valor == 'number') return false;
+      return !this.nuevo_item.valor.length;
+    },
+
+    item_invalid: function() {
+      return this.item_item_invalid || this.item_valor_invalid;
+    }
   },
 
   created: function() {
@@ -807,9 +822,7 @@ export default {
       if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
         axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
-          if (r.data.length == 1)  {
-            this.nuevo_comitente.persona = r.data[0];
-          }
+          if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
         })
       }
     },
@@ -818,9 +831,7 @@ export default {
       if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
         axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
         .then(r => {
-          if (r.data.length == 1)  {
-            this.nuevo_comitente.persona = r.data[0];
-          }
+          if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
         })
       }
     },
@@ -866,22 +877,20 @@ export default {
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              this.submitted = false;
-             if (r.status != 201) {
-               this.submitError(e);
-             }
              this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
              this.global_state.snackbar.color = 'success';
              this.global_state.snackbar.show = true;
              this.$router.go(-1);
 
            })
-           .catch(e => this.submitError(e));
+           .catch(this.submitError(e));
     },
 
     submitError: function(e) {
+      this.submitted = false;
       let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
       this.global_state.snackbar.msg = msg;
-      this.global_state.snackbar.color = 'error';this.global_state.snackbar.color = 'error';
+      this.global_state.snackbar.color = 'error';
       this.global_state.snackbar.show = true;
     },
 
