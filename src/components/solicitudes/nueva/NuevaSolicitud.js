@@ -34,10 +34,6 @@ const headers = {
     Header('Descripción', 'descripcion'),
   ],
 
-  incumbencias: [
-    Header('Nombre', 'nombre'),
-  ],
-
   matriculados: [
     Header('N°', 'numero'),
     Header('Nombre', 'nombre'),

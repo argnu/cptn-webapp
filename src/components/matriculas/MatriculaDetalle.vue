@@ -315,35 +315,7 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-
-
-        <br>
-
-        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
-          <v-expansion-panel-content v-model="expand.incumbencias" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Incumbencias</b></div>
-            <v-card class="white">
-              <v-card-text >
-                <v-data-table
-                  :headers="headers.Incumbencias"
-                  :items="matricula.entidad.incumbencias"
-                  hide-actions
-                  class="elevation-1 mt-4"
-                  no-data-text="No hay incumbencias"
-                >
-                  <template slot="headers" slot-scope="props">
-                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
-                            <b>{{ header.text }}</b>
-                          </th>
-                        </template>
-                  <template slot="items" slot-scope="props">
-                          <td>{{ props.item.valor }}</td>
-                        </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>        
+   
 
         <br>
 
@@ -398,7 +370,6 @@ export default {
         formaciones: false,
         caja: false,
         subsidiarios: false,
-        incumbencias: false,
         representantes: false
       },
     }

@@ -142,6 +142,18 @@
                     label="Fecha Fin de Validez"
                     :rules="[rules.fecha]"
                 ></input-fecha>
+
+                <v-select
+                    label="Incumbencias"
+                    :items="opciones.incumbencia"
+                    item-text="valor"
+                    item-value="id"
+                    v-model="nuevo_titulo.incumbencias"
+                    multiple
+                    max-height="400"
+                    hint="Seleccione las incumbencias"
+                    persistent-hint
+                ></v-select>                
             </v-flex>
         </v-layout>
 

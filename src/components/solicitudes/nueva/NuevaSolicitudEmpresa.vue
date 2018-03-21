@@ -410,76 +410,14 @@
                 </v-stepper-content>
 
 
-                <!-- PASO 5: INCUMBENCIAS -->
-                <v-stepper-step step="5" edit-icon="check" editable :complete="step > 5">
-                  Incumbencias
-                </v-stepper-step>
-                <v-stepper-content step="5">
-                  <v-card class="grey lighten-4 elevation-4 mb-2">
-                    <v-card-text>
-                      <v-container>
-                        <v-form lazy-validation ref="form_incumbencia">
-
-                        <v-layout row>
-                          <v-flex xs8 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="valor"
-                              item-value="id"
-                              :items="opciones.incumbencia"
-                              v-model="nueva_incumbencia"
-                              label="Incumbencias"
-                              :rules="[rules.required]"
-                            >
-                            </v-select>
-                          </v-flex>
-
-                          <v-flex xs4 class="ma-4">
-                            <v-btn light @click="addIncumbencia">Agregar</v-btn>
-                          </v-flex>
-                        </v-layout>
-
-
-                          <v-data-table
-                              :headers="headers.incumbencias"
-                              :items="solicitud.entidad.incumbencias"
-                              hide-actions
-                              class="elevation-1"
-                              no-data-text="No hay incumbencias">
-                            <template slot="headers" slot-scope="props">
-                              <th></th>
-                              <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
-                                <b>{{ header.text }}</b>
-                              </th>
-                            </template>
-                            <template slot="items" slot-scope="props">
-                              <td>
-                                <v-btn icon small @click="removeElem('incumbencias', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>                                
-                              </td>
-                              <td v-if="props.item.id">{{ props.item.valor }}</td>
-                              <td v-else>{{ getTipoIncumbencia(props.item) }}</td>
-                            </template>
-                          </v-data-table>
-
-                        </v-form>
-                      </v-container>
-                    </v-card-text>
-                  </v-card>
-                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
-                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
-                </v-stepper-content>
-
-
-                <!-- PASO 6: REPRESENTANTE -->
-                <v-stepper-step step="6" edit-icon="check" editable 
-                  :complete="valid_representante && step > 6" 
-                  :rules="[() => step <= 6 || valid_representante]"
+                <!-- PASO 5: REPRESENTANTE -->
+                <v-stepper-step step="5" edit-icon="check" editable 
+                  :complete="valid_representante && step > 5" 
+                  :rules="[() => step <= 5 || valid_representante]"
                 >
                   Representante Técnico
                 </v-stepper-step>
-                <v-stepper-content step="6">
+                <v-stepper-content step="5">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
                         <span class="ml-3"><b>Buscar:</b></span>
@@ -513,7 +451,7 @@
                         <v-layout row>
                           <v-flex xs12 class="ma-3">
                             <v-data-table
-                                :rows-per-page-items="[25,30,35]"
+                                :rows-per-page-items="[10, 15, 20]"
                                 :headers="headers.matriculados"
                                 :items="matriculados"
                                 class="elevation-1"
@@ -661,7 +599,6 @@ export default {
     return {
       solicitud: new Solicitud('empresa'),
       nuevo_contacto: new Solicitud(),
-      nueva_incumbencia: '',
 
       valid: {
         form_solicitud: false,
@@ -674,7 +611,7 @@ export default {
       loading: false,
       pagination: {
         page: 1,
-        rowsPerPage: 25,
+        rowsPerPage: 10,
       },
       filtros: {
         numero: '',
@@ -779,7 +716,6 @@ export default {
                 this.solicitud.entidad.contactos.push(contacto_nuevo);
               }
 
-              this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias;
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
               this.init(false);
         })
@@ -801,18 +737,6 @@ export default {
 
     getTipoSociedad: function(id) {
       return this.opciones.sociedad.find(s => s.id == id).valor;
-    },
-
-    getTipoIncumbencia: function(id) {
-      return this.opciones.incumbencia.find(o => o.id == id).valor;
-    },
-
-    addIncumbencia: function() {
-      if (this.$refs.form_incumbencia.validate()) {
-        this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
-        this.nueva_incumbencia = '';
-        this.$refs.form_incumbencia.reset();
-      }
     },
 
     submit: function() {

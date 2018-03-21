@@ -28,29 +28,29 @@
                     </v-btn>   
             </v-flex>
               
-              <v-flex xs5 class="ma-4">                         
-                            <template v-if="edit.cue">
-                                <v-text-field
-                                    label="CUE"
-                                    v-model="institucion.cue"
-                                ></v-text-field>     
-                            </template>                    
-                            <template v-else>
-                                <b>CUE:</b>
-                                <span class="ml-2">{{ institucion.cue }}</span>
-                            </template>
+            <v-flex xs5 class="ma-4">                         
+                        <template v-if="edit.cue">
+                            <v-text-field
+                                label="CUE"
+                                v-model="institucion.cue"
+                            ></v-text-field>     
+                        </template>                    
+                        <template v-else>
+                            <b>CUE:</b>
+                            <span class="ml-2">{{ institucion.cue }}</span>
+                        </template>
 
-                            <v-btn fab small light @click="edit.cue = true" v-show="!edit.cue">
-                                <v-icon>edit</v-icon>
-                            </v-btn>                    
-                            <v-btn fab small light @click="cancelarEdit('cue')" v-show="edit.cue">
-                                <v-icon>cancel</v-icon>
-                            </v-btn> 
+                        <v-btn fab small light @click="edit.cue = true" v-show="!edit.cue">
+                            <v-icon>edit</v-icon>
+                        </v-btn>                    
+                        <v-btn fab small light @click="cancelarEdit('cue')" v-show="edit.cue">
+                            <v-icon>cancel</v-icon>
+                        </v-btn> 
 
-                            <v-btn fab small light v-show="edit.cue" @click="guardar('cue')">
-                                <v-icon>save</v-icon>
-                            </v-btn> 
-              </v-flex>
+                        <v-btn fab small light v-show="edit.cue" @click="guardar('cue')">
+                            <v-icon>save</v-icon>
+                        </v-btn> 
+            </v-flex>
           </v-layout>
 
         <span class="subheading blue--text text--darken-4 ma-4"><b>Títulos</b></span>
@@ -89,6 +89,7 @@
                                 <td>{{ props.item.nombre }}</td>
                                 <td>{{ props.item.nivel.valor }}</td>
                                 <td>{{ props.item.tipo_matricula }}</td>
+                                <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
                                 <td>{{ props.item.validez_fecha_inicio | fecha }}</td>
                                 <td>{{ props.item.validez_fecha_fin | fecha }}</td>
                             </template>
@@ -155,6 +156,18 @@
                                 :rules="[rules.required]"
                             >
                             </v-select>
+
+                            <v-select
+                                label="Incumbencias"
+                                :items="opciones.incumbencia"
+                                item-text="valor"
+                                item-value="id"
+                                v-model="nuevo_titulo.incumbencias"
+                                multiple
+                                max-height="400"
+                                hint="Seleccione las incumbencias"
+                                persistent-hint
+                            ></v-select>                               
                         </v-flex>
                     </v-layout>
 
@@ -206,6 +219,7 @@ export default {
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
+        Header('Incumbencias', 'incumbencias'),
         Header('Fecha Inicio de Validez', 'validez_fecha_inicio'),
         Header('Fecha Fin de Validez', 'validez_fecha_inicio')
     ],
@@ -215,6 +229,12 @@ export default {
         { text: 'TEC-', value: 'TEC-' },
         { text: 'IDO', value: 'IDO' }
     ],
+
+    filters: {
+        lista_incumbencias: function(lista) {
+            return lista.map(i => i.incumbencia.valor).join(', ');
+        }
+    },    
 
     data() {
         return {
@@ -274,6 +294,7 @@ export default {
             this.nuevo_titulo.nombre = titulo.nombre;
             this.nuevo_titulo.nivel = titulo.nivel.id;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
+            this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
             this.nuevo_titulo.validez_fecha_inicio = titulo.validez_fecha_inicio;
             this.nuevo_titulo.validez_fecha_fin = titulo.validez_fecha_fin;
             this.show_formtitulo = true;
