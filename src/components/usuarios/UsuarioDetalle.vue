@@ -267,7 +267,10 @@ export default {
                     this.usuario.delegaciones.push(this.nueva_delegacion);
                     this.nueva_delegacion = {};
                 })
-                .catch(this.showError);
+                .catch(e => {
+                    this.submitted = false;
+                    this.showError(e)
+                });
             }
         },
 
@@ -276,7 +279,10 @@ export default {
             .then(r => {
                 this.usuario.delegaciones.splice(index, 1);
             })
-            .catch(this.showError);
+            .catch(e => {
+                this.submitted = false;
+                this.showError(e)
+            });
         },
 
 
@@ -291,7 +297,10 @@ export default {
                     this.global_state.snackbar.show = true;
                     this.$router.replace('/usuarios/lista');
                 })
-                .catch(this.showError)
+                .catch(e => {
+                    this.submitted = false;
+                    this.showError(e)
+                });
             }
         },
 
@@ -308,7 +317,10 @@ export default {
                     this.global_state.snackbar.show = true;      
                     this.update();              
                 })
-                .catch(this.showError)
+                .catch(e => {
+                    this.submitted = false;
+                    this.showError(e)
+                });
             }
         },
 
@@ -332,17 +344,11 @@ export default {
                     this.global_state.snackbar.color = 'success';
                     this.global_state.snackbar.show = true;
                 })
-                .catch(this.showError)
+                .catch(e => {
+                    this.submitted = false;
+                    this.showError(e)
+                });
             }
-        },
-
-        showError: function(e) {
-            this.submitted = false;
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e);
         }
     }
 

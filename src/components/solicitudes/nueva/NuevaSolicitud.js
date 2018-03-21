@@ -35,6 +35,7 @@ const headers = {
   ],
 
   matriculados: [
+    Header('', 'borrar'),
     Header('N°', 'numero'),
     Header('Nombre', 'nombre'),
     Header('Apellido', 'nombre'),

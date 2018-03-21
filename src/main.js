@@ -57,6 +57,17 @@ Vue.mixin({
     delegacion: function () {
       return this.global_state.delegacion;
     }
+  },
+
+  methods: {
+    showError: function(e) {
+      console.log(e.response)
+        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.message;
+        this.global_state.snackbar.msg = msg;
+        this.global_state.snackbar.color = 'error';
+        this.global_state.snackbar.show = true;
+        console.error(e);
+    }    
   }
 })
 
