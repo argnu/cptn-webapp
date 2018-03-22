@@ -11,21 +11,32 @@
           <v-form lazy-validation ref="form_aprobacion">
 
             <v-layout row>
-              <v-flex xs6 class="ma-4">
+              <v-flex xs4 class="mx-2">
+                <v-select
+                  label="Tipo de Documento:"
+                  :items="opciones.documento"
+                  v-model="matricula.documento.tipo"
+                  item-text="valor"
+                  item-value="id"
+                  :rules="[rules.required]"
+                >
+                </v-select>
+              </v-flex>
+
+              <v-flex xs4 class="mx-2">
                 <v-text-field
-                  v-model="matricula.numeroActa"
+                  v-model="matricula.documento.numero"
                   label="N° Acta"
                   :rules="[rules.required, rules.integer]"
                 >
                 </v-text-field>
               </v-flex>
                             
-              <v-flex xs6 class="ma-4">
+              <v-flex xs4 class="mx-2">
                 <input-fecha
-                  v-model="matricula.fechaResolucion"
+                  v-model="matricula.documento.fecha"
                   label="Fecha de Acta"
                   :rules="[rules.required, rules.fecha]"
-
                 >
                 </input-fecha>
               </v-flex>
@@ -328,11 +339,16 @@ export default {
       solicitudes: [],
       debouncedUpdate: null,
       submitValidacion: false,
+      opciones: []
     }
   },
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
+    axios.get('/opciones')
+    .then(r => {
+      this.opciones = r.data;
+    })
   },
 
   computed: {

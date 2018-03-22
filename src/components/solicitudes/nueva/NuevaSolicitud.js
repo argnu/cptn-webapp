@@ -354,14 +354,6 @@ export default {
 
     prevStep: function() {
       this.step = this.step - 1;
-    },
-
-    submitError: function(e) {
-      console.log(e)
-      let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-      this.global_state.snackbar.msg = msg;
-      this.global_state.snackbar.color = 'error';
-      this.global_state.snackbar.show = true;
-    },
+    }
   }
 }

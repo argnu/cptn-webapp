@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" persistent max-width="600" scrollable>
     <v-card v-if="item">
-      <v-card-title class="headline white--text" color="primary">
+      <v-card-title class="headline" color="primary">
         Detalle de {{ titulo_tipo }}
       </v-card-title>
       <v-card-text class="grey lighten-5">

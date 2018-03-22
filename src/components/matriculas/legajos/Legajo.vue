@@ -881,17 +881,11 @@ export default {
              this.global_state.snackbar.color = 'success';
              this.global_state.snackbar.show = true;
              this.$router.go(-1);
-
            })
-           .catch(this.submitError(e));
-    },
-
-    submitError: function(e) {
-      this.submitted = false;
-      let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-      this.global_state.snackbar.msg = msg;
-      this.global_state.snackbar.color = 'error';
-      this.global_state.snackbar.show = true;
+           .catch(e => {
+             this.submitted = false;
+             this.submitError(e);
+           });
     },
 
     imprimir: function() {
