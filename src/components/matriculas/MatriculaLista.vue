@@ -259,22 +259,22 @@ export default {
 
   headers: {
     empresa: [
-      Header('', 'ver'),
+      Header('Detalle', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
       Header('Nombre', 'nombreEmpresa', true),
       Header('CUIT', 'cuit', true),
       Header('Estado', 'estado', true),
-      Header('', 'acciones')
+      Header('Acciones', 'acciones')
     ],
 
     profesional: [
-      Header('', 'ver'),
+      Header('Detalle', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
       Header('Apellido', 'apellido', true),
       Header('Nombre', 'nombre', true),
       Header('DNI', 'dni', true),
       Header('Estado', 'estado', true),
-      Header('', 'acciones')
+      Header('Acciones', 'acciones')
     ]
   },
 
