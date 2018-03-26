@@ -95,8 +95,8 @@ export default {
   name: 'UsuarioLista',
 
   headers: [
-    Header('', 'detalle'),
-    Header('', 'desactivar'),
+    Header('Ver', 'detalle'),
+    Header('Desactivar', 'desactivar'),
     Header('Usuario', 'username', true),
     Header('Nombre', 'nombre', true),
     Header('Apellido', 'apellido', true),

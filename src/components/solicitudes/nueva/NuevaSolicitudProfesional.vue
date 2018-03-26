@@ -1296,8 +1296,7 @@ export default {
     updateTitulos: function() {
       if (this.nueva_formacion.institucion) {
         let url = `/instituciones/${this.nueva_formacion.institucion}/titulos`;
-        if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.length)
-          url += `?nivel=${this.nueva_formacion.nivel}`;
+        if (this.nueva_formacion.nivel) url += `?nivel=${this.nueva_formacion.nivel}`;
 
         return axios.get(url)
         .then(r => this.titulos = r.data)
