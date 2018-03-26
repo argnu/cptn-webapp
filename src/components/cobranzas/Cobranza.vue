@@ -151,7 +151,7 @@
               <v-icon dark right>check_circle</v-icon>
             </v-btn>
 
-            <v-btn dark class="red right" @click="$emit('cancelar')">
+            <v-btn dark class="red right" @click="cancelar">
               Cancelar
               <v-icon dark right>block</v-icon>
             </v-btn>
@@ -294,8 +294,9 @@ export default {
 
     pagar: function() {
       if (this.form_valid) {
-        this.$emit('aceptar', utils.clone(this.items_pago));
+        let pagos = utils.clone(this.items_pago)
         this.items_pago = [];
+        this.$emit('aceptar', pagos);
       }
     },
 
@@ -311,6 +312,11 @@ export default {
 
     borrarPago: function(index) {
       this.items_pago.splice(index, 1);
+    },
+
+    cancelar: function() {
+      this.items_pago = [];
+      this.$emit('cancelar');
     }
   },
 

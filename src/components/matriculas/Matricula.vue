@@ -10,61 +10,58 @@
     <br>
 
     <v-tabs fixed icons v-model="tab_selected">
-      <v-tabs-bar>
         <v-tabs-slider color="black"></v-tabs-slider>
-        <v-tabs-item href="#tab-detalle">
+        <v-tab href="#tab-detalle">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-detalle' }">account_box</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-detalle' }">Detalle</span>
-        </v-tabs-item>
-        <v-tabs-item href="#tab-cuenta">
+        </v-tab>
+        <v-tab href="#tab-cuenta">
           <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">
             account_balance
           </v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
-        </v-tabs-item>
-        <v-tabs-item href="#tab-pendientes">
+        </v-tab>
+        <v-tab href="#tab-pendientes">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">attach_money</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">Deudas Pendientes</span>
-        </v-tabs-item>
-        <v-tabs-item href="#tab-legajo">
+        </v-tab>
+        <v-tab href="#tab-legajo">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-legajo' }">work</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-legajo' }">Legajo Técnico</span>
-        </v-tabs-item>
-        <v-tabs-item href="#tab-historial">
+        </v-tab>
+        <v-tab href="#tab-historial">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-historial' }">history</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-historial' }">Historial</span>
-        </v-tabs-item>
-      </v-tabs-bar>
+        </v-tab>
 
-      <v-tabs-items>
-        <v-tabs-content id="tab-detalle">
+        <v-tab-item id="tab-detalle">
           <matricula-detalle :matricula="matricula"></matricula-detalle>
-        </v-tabs-content>
+        </v-tab-item>
 
-        <v-tabs-content id="tab-cuenta">
+        <v-tab-item id="tab-cuenta">
           <resumen-cuenta 
             :id="matricula.id"
             ref="resumen"
           >
           </resumen-cuenta>
-        </v-tabs-content>
+        </v-tab-item>
 
-        <v-tabs-content id="tab-pendientes">
+        <v-tab-item id="tab-pendientes">
           <deudas-pendientes 
             :id="matricula.id" 
             @update="updateDeudas"
           >            
           </deudas-pendientes>
-        </v-tabs-content>
+        </v-tab-item>
 
-        <v-tabs-content id="tab-legajo">
+        <v-tab-item id="tab-legajo">
           <legajo-lista :id="matricula.id"></legajo-lista>
-        </v-tabs-content>
+        </v-tab-item>
 
-        <v-tabs-content id="tab-historial">
+        <v-tab-item id="tab-historial">
           <matricula-historial :id="matricula.id"></matricula-historial>
-        </v-tabs-content>
-      </v-tabs-items>
+        </v-tab-item>
+
     </v-tabs>
   </v-container>
 </template>

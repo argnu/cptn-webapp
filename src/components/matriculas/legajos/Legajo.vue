@@ -828,11 +828,13 @@ export default {
     },
 
     chgDni: function() {
-      if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
-        axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
-        .then(r => {
-          if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
-        })
+      if (this.nuevo_comitente.persona.dni) {
+        if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+          axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
+          .then(r => {
+            if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
+          })
+        }
       }
     },
 

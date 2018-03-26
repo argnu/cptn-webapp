@@ -98,7 +98,6 @@ export function impresionSolicitud(solicitud) {
     doc.text(20, eje_y + 12, 'Fecha:');
     let formacion = solicitud.entidad.formaciones[0];
     if (formacion) {
-      console.log(formacion)
       doc.text(60, eje_y, formacion.titulo.nombre);
       doc.text(60, eje_y + 6, formacion.titulo.institucion.nombre);
       doc.text(60, eje_y + 12, formacion.fechaEgreso ? moment(formacion.fechaEgreso).format('DD/MM/YYYY') : '');

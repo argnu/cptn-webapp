@@ -14,7 +14,7 @@
       <v-flex xs9>
         <v-data-table
             :loading="loading"
-            :headers="headers_resumen"
+            :headers="$options.headers"
             :items="boletas"
             class="elevation-1"
             :rows-per-page-items="[25,30,35]"
@@ -164,15 +164,6 @@ import Cobranza from '@/components/cobranzas/Cobranza'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
 import { impresionVolante } from '@/utils/PDFUtils'
 
-const headers = [
-  Header('', 'imprimir'),
-  Header('Fecha', 'fecha', true),
-  Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
-  Header('Descripción', 'descripcion', true),
-  Header('Importe', 'total', true),
-  Header('Intereses', 'interes', true),
-  Header('', 'check')
-]
 
 export default {
   name: 'DeudasPendientes',
@@ -183,6 +174,16 @@ export default {
     Cobranza,
     NuevaBoleta
   },
+
+  headers: [
+    Header('Imprimir', 'imprimir'),
+    Header('Fecha', 'fecha', true),
+    Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+    Header('Descripción', 'descripcion', true),
+    Header('Importe', 'total', true),
+    Header('Intereses', 'interes', true),
+    Header('Seleccionar', 'check')
+  ],
 
   data () {
     return {
@@ -220,10 +221,6 @@ export default {
   },  
 
   computed: {
-    headers_resumen: function() {
-      return headers;
-    },
-
     subtotal: function() {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
