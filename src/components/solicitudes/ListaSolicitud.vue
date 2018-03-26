@@ -477,7 +477,7 @@ export default {
     rechazar: function(id) {
       if (confirm('Esta segura/o que desea Rechazar la Solicitud de Matriculación seleccionada?')) {
         // 3 ES ESTADO 'Rechazada'
-        axios.patch(`/solicitudes/${id}`, { estado: 3, updated_by: this.user.id })
+        axios.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
             this.updateSolicitudes();
             this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';

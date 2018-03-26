@@ -89,7 +89,7 @@ export default {
   name: 'lista-solicitud',
 
   headers: [
-    Header('', 'detalle'),
+    Header('Ver', 'detalle'),
     // Header('', 'editar'),
     Header('CUE', 'cue', true),
     Header('Nombre', 'nombre', true)

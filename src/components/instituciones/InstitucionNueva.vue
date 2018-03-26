@@ -243,8 +243,8 @@ export default {
     },
 
     headers: [
-        Header('', 'edit'),
-        Header('', 'borrar'),
+        Header('Modificar', 'edit'),
+        Header('Borrar', 'borrar'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),

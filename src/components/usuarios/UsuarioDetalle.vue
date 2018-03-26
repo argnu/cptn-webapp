@@ -207,7 +207,7 @@ export default {
     mixins: [MixinValidator],
 
     headers: [
-        Header('', 'borrar'),
+        Header('Borrar', 'borrar'),
         Header('Nombre', 'nombre')
     ],
 

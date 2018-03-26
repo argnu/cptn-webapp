@@ -398,7 +398,7 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 13, updated_by: this.user.id })
+        axios.patch(`/matriculas/${id}`, { estado: 13 })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }

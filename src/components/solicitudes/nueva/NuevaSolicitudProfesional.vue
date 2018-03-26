@@ -633,7 +633,7 @@
                         <input-fecha
                           v-model="nueva_formacion.fechaEmision"
                           label="Fecha Emisión"
-                          :rules="[rules.required, rules.fecha]"
+                          :rules="[rules.fecha]"
                           @change="chgFechaEmision"
                         >
                         </input-fecha>
@@ -1305,9 +1305,14 @@ export default {
     },
 
     addFormacion: function() {
+      if (!this.nueva_formacion.titulo.id) {
+        let titulo = this.titulos.find(t => t.id == this.nueva_formacion.titulo)
+        if (!titulo) this.nueva_formacion.titulo = '';
+        else this.nueva_formacion.titulo_nombre = titulo.nombre;
+      }
+
       if (this.$refs.form_formacion.validate()) {
         if (this.formacion_edit == null) {
-          this.nueva_formacion.titulo_nombre = this.titulos.find(t => t.id == this.nueva_formacion.titulo).nombre;
           this.solicitud.entidad.formaciones.push(this.nueva_formacion);
         }
         else {
@@ -1328,10 +1333,7 @@ export default {
       if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
       if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
      
-      this.updateTitulos()
-      .then(r => {
-        if (this.nueva_formacion.titulo.id) this.nueva_formacion.titulo = this.nueva_formacion.titulo.id;
-      })
+      this.updateTitulos();
     },
 
     cancelarEditFormacion: function() {
