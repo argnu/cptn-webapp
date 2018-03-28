@@ -1444,9 +1444,12 @@ export default {
       if (!id) id = this.id;
       axios.get(`/solicitudes/${id}`)
           .then(s => {
-            let solicitud = s.data;
-            let pdf = impresionSolicitud(solicitud);
-            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido}.pdf`)
+            let solicitud = s.data; 
+            let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
+            window.open(url, '_blank');            
+            url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
+            window.open(url, '_blank');                 
+            
             if (this.id_creada) this.$router.replace('/solicitudes/lista');
           })
           .catch(e => console.error(e));
