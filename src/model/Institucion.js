@@ -14,8 +14,6 @@ export class Titulo {
         this.nombre = '';
         this.nivel = '';
         this.tipo_matricula = '';
-        this.validez_fecha_inicio = null;
-        this.validez_fecha_fin = null;
         this.incumbencias = [];
     }
 }

@@ -90,7 +90,6 @@ export default {
 
   headers: [
     Header('Ver', 'detalle'),
-    // Header('', 'editar'),
     Header('CUE', 'cue', true),
     Header('Nombre', 'nombre', true)
   ],

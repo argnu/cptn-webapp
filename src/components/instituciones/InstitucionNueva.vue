@@ -117,7 +117,9 @@
                     :rules="[rules.required]"
                 >
                 </v-select>
+            </v-flex>
 
+            <v-flex xs5 class="mx-5">
                 <v-select
                     label="Nivel"
                     autocomplete
@@ -128,21 +130,7 @@
                     :rules="[rules.required]"
                 >
                 </v-select>
-            </v-flex>
-
-            <v-flex xs5 class="mx-5">
-                <input-fecha
-                    v-model="nuevo_titulo.validez_fecha_inicio"
-                    label="Fecha Inicio de Validez"
-                    :rules="[rules.fecha]"
-                ></input-fecha>
-
-                <input-fecha
-                    v-model="nuevo_titulo.validez_fecha_fin"
-                    label="Fecha Fin de Validez"
-                    :rules="[rules.fecha]"
-                ></input-fecha>
-
+                                
                 <v-select
                     label="Incumbencias"
                     :items="opciones.incumbencia"
@@ -193,8 +181,6 @@
                         <td>{{ props.item.nombre }}</td>
                         <td>{{ getNivelTitulo(props.item.nivel) }}</td>
                         <td>{{ props.item.tipo_matricula }}</td>
-                        <td>{{ props.item.validez_fecha_inicio | fecha }}</td>
-                        <td>{{ props.item.validez_fecha_fin | fecha }}</td>
                     </template>
                 </v-data-table>
             </v-flex>
@@ -230,7 +216,6 @@ import axios from '@/axios'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import InputFecha from '@/components/base/InputFecha'
 
 
 export default {
@@ -238,18 +223,12 @@ export default {
 
     mixins: [MixinValidator],
 
-    components: {
-        InputFecha
-    },
-
     headers: [
         Header('Modificar', 'edit'),
         Header('Borrar', 'borrar'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Fecha Inicio de Validez', 'validez_fecha_inicio'),
-        Header('Fecha Fin de Validez', 'validez_fecha_fin')
     ],
 
     tipos_matricula: [

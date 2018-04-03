@@ -10,8 +10,8 @@
                         <v-text-field
                             label="Nombre"
                             v-model="institucion.nombre"
-                        ></v-text-field>     
-                    </template>                    
+                        ></v-text-field>
+                    </template>
                     <template v-else>
                         <b>Nombre:</b>
                         <span class="ml-2">{{ institucion.nombre }}</span>
@@ -19,22 +19,22 @@
 
                     <v-btn fab small light @click="edit.nombre = true" v-show="!edit.nombre">
                         <v-icon>edit</v-icon>
-                    </v-btn>                    
+                    </v-btn>
                     <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre">
                         <v-icon>cancel</v-icon>
-                    </v-btn> 
+                    </v-btn>
                     <v-btn fab small light v-show="edit.nombre" @click="guardar('nombre')">
                         <v-icon>save</v-icon>
-                    </v-btn>   
+                    </v-btn>
             </v-flex>
-              
-            <v-flex xs5 class="ma-4">                         
+
+            <v-flex xs5 class="ma-4">
                         <template v-if="edit.cue">
                             <v-text-field
                                 label="CUE"
                                 v-model="institucion.cue"
-                            ></v-text-field>     
-                        </template>                    
+                            ></v-text-field>
+                        </template>
                         <template v-else>
                             <b>CUE:</b>
                             <span class="ml-2">{{ institucion.cue }}</span>
@@ -42,14 +42,14 @@
 
                         <v-btn fab small light @click="edit.cue = true" v-show="!edit.cue">
                             <v-icon>edit</v-icon>
-                        </v-btn>                    
+                        </v-btn>
                         <v-btn fab small light @click="cancelarEdit('cue')" v-show="edit.cue">
                             <v-icon>cancel</v-icon>
-                        </v-btn> 
+                        </v-btn>
 
                         <v-btn fab small light v-show="edit.cue" @click="guardar('cue')">
                             <v-icon>save</v-icon>
-                        </v-btn> 
+                        </v-btn>
             </v-flex>
           </v-layout>
 
@@ -90,15 +90,13 @@
                                 <td>{{ props.item.nivel.valor }}</td>
                                 <td>{{ props.item.tipo_matricula }}</td>
                                 <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
-                                <td>{{ props.item.validez_fecha_inicio | fecha }}</td>
-                                <td>{{ props.item.validez_fecha_fin | fecha }}</td>
                             </template>
                         </v-data-table>
                     </div>
                 </v-card>
-            </v-flex>    
-        </v-layout>          
-      </v-card>      
+            </v-flex>
+        </v-layout>
+      </v-card>
 
 
         <v-dialog v-model="show_formtitulo" fullscreen transition="dialog-bottom-transition" :overlay="false">
@@ -121,11 +119,17 @@
                             >
                             </v-text-field>
 
-                            <input-fecha
-                                v-model="nuevo_titulo.validez_fecha_inicio"
-                                label="Fecha Inicio de Validez"
-                                :rules="[rules.fecha]"
-                            ></input-fecha>
+                            <v-select
+                                label="Incumbencias"
+                                :items="opciones.incumbencia"
+                                item-text="valor"
+                                item-value="id"
+                                v-model="nuevo_titulo.incumbencias"
+                                multiple
+                                max-height="400"
+                                hint="Seleccione las incumbencias"
+                                persistent-hint
+                            ></v-select>
                         </v-flex>
 
                         <v-flex xs12 md3 class="mx-4">
@@ -139,12 +143,6 @@
                                 :rules="[rules.required]"
                             >
                             </v-select>
-
-                            <input-fecha
-                                v-model="nuevo_titulo.validez_fecha_fin"
-                                label="Fecha Fin de Validez"
-                                :rules="[rules.fecha]"
-                            ></input-fecha>
                         </v-flex>
 
                         <v-flex xs12 md3 class="mx-4">
@@ -156,18 +154,6 @@
                                 :rules="[rules.required]"
                             >
                             </v-select>
-
-                            <v-select
-                                label="Incumbencias"
-                                :items="opciones.incumbencia"
-                                item-text="valor"
-                                item-value="id"
-                                v-model="nuevo_titulo.incumbencias"
-                                multiple
-                                max-height="400"
-                                hint="Seleccione las incumbencias"
-                                persistent-hint
-                            ></v-select>                               
                         </v-flex>
                     </v-layout>
 
@@ -189,10 +175,10 @@
                         </v-flex>
                     </v-layout>
                 </v-form>
-            </v-container>           
-        
+            </v-container>
+
         </v-card>
-        </v-dialog>            
+        </v-dialog>
     </v-container>
 </template>
 
@@ -202,16 +188,12 @@ import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import InputFecha from '@/components/base/InputFecha'
 
 
 export default {
     name: 'InstitucionDetalle',
     props: ['id'],
     mixins: [MixinValidator],
-    components: {
-        InputFecha
-    },
 
     headers: [
         Header('Modificar', 'edit'),
@@ -219,9 +201,7 @@ export default {
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Incumbencias', 'incumbencias'),
-        Header('Fecha Inicio de Validez', 'validez_fecha_inicio'),
-        Header('Fecha Fin de Validez', 'validez_fecha_inicio')
+        Header('Incumbencias', 'incumbencias')
     ],
 
     tipos_matricula: [
@@ -234,7 +214,7 @@ export default {
         lista_incumbencias: function(lista) {
             return lista.map(i => i.incumbencia.valor).join(', ');
         }
-    },    
+    },
 
     data() {
         return {
@@ -295,8 +275,6 @@ export default {
             this.nuevo_titulo.nivel = titulo.nivel.id;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
-            this.nuevo_titulo.validez_fecha_inicio = titulo.validez_fecha_inicio;
-            this.nuevo_titulo.validez_fecha_fin = titulo.validez_fecha_fin;
             this.show_formtitulo = true;
         },
 
@@ -306,7 +284,7 @@ export default {
                 this.update();
             })
             .catch(e => {
-                if (e.response.status == 400) 
+                if (e.response.status == 400)
                     alert('No es posible eliminar el título. Existen profesionales relacionados al mismo');
                 else console.error(e);
             })
@@ -319,8 +297,8 @@ export default {
         resetNuevoTitulo: function() {
             this.nuevo_titulo = new Titulo();
             this.show_formtitulo = false;
-            this.titulo_edit = null;    
-            this.$refs.form_titulo.reset();        
+            this.titulo_edit = null;
+            this.$refs.form_titulo.reset();
         },
 
         guardar: function(atributo) {
@@ -331,7 +309,7 @@ export default {
                 this.edit.nombre = false;
                 this.edit.cue = false;
                 this.update();
-            })            
+            })
         },
 
         cancelarEdit: function(atributo) {
