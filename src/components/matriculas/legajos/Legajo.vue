@@ -1,18 +1,18 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
-    <datos-basicos :matricula="matricula">
-    </datos-basicos>
+    <matricula-datos-basicos :matricula="matricula">
+    </matricula-datos-basicos>
 
     <br>
 
-    <v-toolbar class="blue darken-3">
+    <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
     <v-layout row v-if="legajo.id">
       <v-flex xs12>
         <v-btn
-          class="blue darken-1 white--text right"
+          class="darken-1 white--text right" color="primary"
           @click.native="imprimir"
         >
           <v-icon dark left>print</v-icon>
@@ -83,13 +83,13 @@
                       :items="tipo_persona"
                       v-model="nuevo_comitente.persona.tipo"
                       :rules="[rules.required]"
-                      @input="chgTipoComitente"
+                      @change="chgTipoComitente"
                     ></v-select>
 
                     <v-text-field
                       label="CUIT/CUIL"
                       v-model="nuevo_comitente.persona.cuit"
-                      @input="chgCuitComitente"
+                      @change="chgCuitComitente"
                     >
                     </v-text-field>
 
@@ -98,7 +98,7 @@
                       label="DNI"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer]"
-                      @input="chgDni"
+                      @change="chgDni"
                     ></v-text-field>                    
 
                     <input-numero
@@ -347,6 +347,7 @@
                   tabindex="19"
                   light
                   @click="addItem"
+                  :disabled="item_invalid"
                 >
                   Agregar
                 </v-btn>
@@ -582,7 +583,7 @@
     <v-btn
       class="green darken-1 white--text right"
       @click.native="submit"
-      :disabled="!valid_form || legajo.id > 0"
+      :disabled="!valid_form || legajo.id > 0 || submitted"
       tabindex="34"
     >
       Guardar Legajo
@@ -600,8 +601,8 @@ import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import Typeahead from '@/components/base/Typeahead'
-import DatosBasicos from '@/components/matriculas/DatosBasicos'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
@@ -666,9 +667,12 @@ const Legajo = (matricula) => ({
 })
 
 export default {
+  
   name: 'Legajo',
+
   props: ['id_legajo', 'id_matricula'],
-  mixins: [ValidatorMixin],
+
+  mixins: [MixinValidator],
 
   data () {
     return {
@@ -689,7 +693,8 @@ export default {
       categoria_selected: '',
       items_predeterminados: [],
       items_valores_predeterminados: [],
-      nuevo_item: LegajoItem()
+      nuevo_item: LegajoItem(),
+      submitted: false
     }
   },
 
@@ -724,6 +729,20 @@ export default {
       return this.valid.basicos && this.valid_comitentes && this.valid.ubicacion && this.valid.tareas
         && (this.legajo.tipo !=3 || this.valid.aportes);
     },    
+
+    item_item_invalid: function() {
+      if (typeof this.nuevo_item.item == 'number') return false;
+      return !this.nuevo_item.item.length;
+    },
+
+    item_valor_invalid: function() {
+      if (typeof this.nuevo_item.valor == 'number') return false;
+      return !this.nuevo_item.valor.length;
+    },
+
+    item_invalid: function() {
+      return this.item_item_invalid || this.item_valor_invalid;
+    }
   },
 
   created: function() {
@@ -803,21 +822,19 @@ export default {
       if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
         axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
-          if (r.data.length == 1)  {
-            this.nuevo_comitente.persona = r.data[0];
-          }
+          if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
         })
       }
     },
 
     chgDni: function() {
-      if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
-        axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
-        .then(r => {
-          if (r.data.length == 1)  {
-            this.nuevo_comitente.persona = r.data[0];
-          }
-        })
+      if (this.nuevo_comitente.persona.dni) {
+        if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+          axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
+          .then(r => {
+            if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
+          })
+        }
       }
     },
 
@@ -856,27 +873,21 @@ export default {
     },
 
     submit: function() {
-      this.legajo.operador = this.user.id;
+      this.submitted = true;
       this.legajo.delegacion = this.global_state.delegacion.id;
 
       axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
-             if (r.status != 201) {
-               this.submitError();
-             }
+             this.submitted = false;
              this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
              this.global_state.snackbar.color = 'success';
              this.global_state.snackbar.show = true;
              this.$router.go(-1);
-
            })
-           .catch(e => this.submitError());
-    },
-
-    submitError: function() {
-      this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.global_state.snackbar.color = 'error';
-      this.global_state.snackbar.show = true;
+           .catch(e => {
+             this.submitted = false;
+             this.submitError(e);
+           });
     },
 
     imprimir: function() {
@@ -894,7 +905,7 @@ export default {
     InputFecha,
     InputNumero,
     Typeahead,
-    DatosBasicos
+    MatriculaDatosBasicos
   }
 
 }

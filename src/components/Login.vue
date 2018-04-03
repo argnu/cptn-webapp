@@ -12,7 +12,7 @@
               <v-text-field
                 label="Nombre de Usuario"
                 prepend-icon="account_box"
-                v-model="usuario.id"
+                v-model="usuario.username"
                 @input="submitted = false"
               >
               </v-text-field>
@@ -34,11 +34,18 @@
                 :value="login_error"
                 transition="scale-transition"
               >
-                Error de autenticación!
+                {{ auth_error }}
               </v-alert>
 
               <br>
-              <v-btn dark class="blue" style="width:100%" type="submit">
+              <v-btn 
+                dark 
+                color="primary" 
+                style="width:100%" 
+                type="submit"
+                :loading="submitted"
+                :disabled="submitted"
+              >
                 <v-icon right dark>fingerprint</v-icon>
                 <span class="ml-3">Iniciar Sesión</span>
               </v-btn>
@@ -79,7 +86,7 @@ import Store from '@/stores/Global'
 
 
 const User = () => ({
-  id: '',
+  username: '',
   password: ''
 })
 
@@ -90,6 +97,7 @@ export default {
       usuario: User(),
       submitted: false,
       submit_error: false,
+      auth_error: '',
       delegaciones: []
     }
   },
@@ -104,6 +112,7 @@ export default {
   methods: {
     autenticar: function() {
       this.submitted = true;
+      this.auth_error = 'Usuario/contraseña inválidos'
       this.submit_error = false;
       axios.post('/usuarios/auth', this.usuario)
       .then(r => {
@@ -111,12 +120,18 @@ export default {
         Store.setUser(r.data);
         axios.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
         axios.get(`/usuarios/${r.data.id}/delegaciones`)
-        .then(r => this.delegaciones = r.data)
+        .then(r => { 
+          if (!r.data.length) {
+            this.submit_error = true;
+            this.auth_error = 'El usuario no tiene delegaciones asociadas';
+          }
+          else this.delegaciones = r.data
+        })
         .catch(e => console.error(e));        
       })
       .catch(e => {
         this.submit_error = true;
-        console.error(e);
+        if (e.response.status != 403) console.error(e);
       });
     },
 

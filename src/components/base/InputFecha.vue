@@ -1,6 +1,7 @@
 <template>
   <v-layout row>
     <v-text-field
+    slot="activator"
       :label="label"
       :value="formatted"
       append-icon="event"
@@ -8,18 +9,15 @@
       :tabindex="tabindex"
       :rules="rules"
       :disabled="disabled"
-      @change="updatePicker"
-      @input="update($event)"
+      @input="updatePicker($event)"
     >
     </v-text-field>
-    <v-dialog
-      v-model="show_dialog"
-      >
-      <v-date-picker 
-        autosave 
-        v-model="datepicker" 
-        style="margin:0 auto"
-      ></v-date-picker>
+
+    <v-dialog :value="show_dialog" width="290px" persistent>
+      <v-date-picker v-model="datepicker" @input="update()" locale="es-ar">
+          <v-spacer></v-spacer>
+          <v-btn flat color="primary" @click="show_dialog = false">Cancelar</v-btn>
+      </v-date-picker>
     </v-dialog>
   </v-layout>
 </template>
@@ -66,16 +64,6 @@ export default {
     }
   },
 
-  watch: {
-    datepicker: function(new_date) {
-      let fecha = moment(new_date);
-      if (fecha.isValid()) { 
-        this.$emit('input', utils.getFecha(fecha));
-        this.$emit('change', utils.getFecha(fecha));
-      }
-    }
-  },
-
   computed: {
     formatted: function() {
       let fecha = moment(this.value, 'DD/MM/YYYY', true);
@@ -88,18 +76,26 @@ export default {
 
   methods: {
     update: function(e) {
-      this.$emit('input', e);
-      this.$emit('change', e);
+      this.show_dialog = false;
+      let fecha = moment(this.datepicker);
+      if (fecha.isValid()) { 
+        this.$emit('input', utils.getFecha(fecha));
+        this.$emit('change', utils.getFecha(fecha));
+      }
     },
 
-    updatePicker: function() {
-      let fecha = moment(this.value, 'DD/MM/YYYY', true);
-      if (fecha.isValid()) this.datepicker = fecha.toISOString();
+    updatePicker: function(e) {
+      let fecha = moment(e, 'DD/MM/YYYY', true);
+      if (fecha.isValid()) { 
+        this.$emit('input', utils.getFecha(fecha));
+        this.$emit('change', utils.getFecha(fecha));   
+        this.datepicker = fecha.toISOString().substring(0,10);
+      }
     },
 
     cbIcon: function() {
-      this.updatePicker();
       this.show_dialog = true;
+      this.updatePicker();
     }
   },
 

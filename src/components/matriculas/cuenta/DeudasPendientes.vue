@@ -14,7 +14,7 @@
       <v-flex xs9>
         <v-data-table
             :loading="loading"
-            :headers="headers_resumen"
+            :headers="$options.headers"
             :items="boletas"
             class="elevation-1"
             :rows-per-page-items="[25,30,35]"
@@ -25,7 +25,7 @@
               <td>
                 <v-btn 
                   v-if="props.item.tipo == 'volante'"
-                  fab dark small @click="imprimirVolante(props.item.id)" color="blue"
+                  fab dark small @click="imprimirVolante(props.item.id)" color="primary"
                 >
                   <v-icon>print</v-icon>
                 </v-btn>                
@@ -86,7 +86,8 @@
           <v-flex xs6 class="mx-4">
             <v-btn
               dark
-              class="blue darken-1"
+              color="primary"
+              class="darken-1"
               style="width:100%"
               @click="generarVolante"
             >
@@ -96,7 +97,8 @@
           <v-flex xs6 class="mx-1">
             <v-btn
               dark
-              class="blue darken-1"
+              color="primary"
+              class="darken-1"
               style="width:100%"
               @click="expand_pago = true"
             >
@@ -112,7 +114,7 @@
 
     <v-dialog v-model="expand_pago" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue">
+        <v-toolbar dark color="primary">
           <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="expand_pago = false">
@@ -132,7 +134,7 @@
 
     <v-dialog v-model="show_addboleta" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue">
+        <v-toolbar dark color="primary">
           <v-toolbar-title class="white--text">Nueva Boleta</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="show_addboleta = false">
@@ -162,15 +164,6 @@ import Cobranza from '@/components/cobranzas/Cobranza'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
 import { impresionVolante } from '@/utils/PDFUtils'
 
-const headers = [
-  Header('', 'imprimir'),
-  Header('Fecha', 'fecha', true),
-  Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
-  Header('Descripción', 'descripcion', true),
-  Header('Importe', 'total', true),
-  Header('Intereses', 'interes', true),
-  Header('', 'check')
-]
 
 export default {
   name: 'DeudasPendientes',
@@ -181,6 +174,16 @@ export default {
     Cobranza,
     NuevaBoleta
   },
+
+  headers: [
+    Header('Imprimir', 'imprimir'),
+    Header('Fecha', 'fecha', true),
+    Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+    Header('Descripción', 'descripcion', true),
+    Header('Importe', 'total', true),
+    Header('Intereses', 'interes', true),
+    Header('Seleccionar', 'check')
+  ],
 
   data () {
     return {
@@ -218,10 +221,6 @@ export default {
   },  
 
   computed: {
-    headers_resumen: function() {
-      return headers;
-    },
-
     subtotal: function() {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
@@ -305,8 +304,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion.id,
-        operador: this.user.id 
+        delegacion: this.global_state.delegacion.id
       }
       
       axios.post('comprobantes', comprobante)
@@ -347,8 +345,7 @@ export default {
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
-        delegacion: this.global_state.delegacion.id,
-        operador: this.user.id 
+        delegacion: this.global_state.delegacion.id
       }
       
       axios.post('volantespago', volante)

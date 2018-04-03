@@ -87,24 +87,20 @@ export function impresionSolicitud(solicitud) {
     doc.text(20, eje_y, 'Fecha de Nacimiento:');
     eje_y += 6;
     doc.text(20, eje_y, `Lugar de Nacimiento: ${emptyIfNull(solicitud.entidad.lugarNacimiento)}   Nacionalidad: ${emptyIfNull(solicitud.entidad.nacionalidad)}`);
-    // doc.text(65, eje_y, solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento: '');
-    // doc.text(65, eje_y, solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad : '');
 
-    //doc.text(20, eje_y, 'Nacionalidad:');
     eje_y += 6;
 
     doc.line(20, eje_y, 190, eje_y);
     eje_y += 6;
-    // doc.text(20, 111, 'Profesión:');
+    
     doc.text(20, eje_y, 'Título:');
     doc.text(20, eje_y + 6, 'Expedido por:');
     doc.text(20, eje_y + 12, 'Fecha:');
-    let formacion_grado = solicitud.entidad.formaciones.find(f => f.tipo == 'Grado');
-    if (formacion_grado) {
-      // doc.text(65, 111, solicitud.entidad.formaciones[0].profesion);
-      doc.text(60, eje_y, formacion_grado.titulo);
-      doc.text(60, eje_y + 6, formacion_grado.institucion);
-      doc.text(60, eje_y + 12, formacion_grado.fechaEgreso ? moment(formacion_grado.fechaEgreso).format('DD/MM/YYYY') : '');
+    let formacion = solicitud.entidad.formaciones[0];
+    if (formacion) {
+      doc.text(60, eje_y, formacion.titulo.nombre);
+      doc.text(60, eje_y + 6, formacion.titulo.institucion.nombre);
+      doc.text(60, eje_y + 12, formacion.fechaEgreso ? moment(formacion.fechaEgreso).format('DD/MM/YYYY') : '');
     }
     eje_y += 18;
   }
@@ -210,8 +206,8 @@ export function impresionSolicitud(solicitud) {
   if (solicitud.entidad.tipo == 'profesional') {
     doc.line(20, eje_y, 190, eje_y);
     eje_y += 6;
-    doc.text(20, eje_y, 'Situación AFIP: ');
-    doc.text(50, eje_y, solicitud.entidad.condafip);
+    // doc.text(20, eje_y, 'Situación AFIP: ');
+    // doc.text(50, eje_y, solicitud.entidad.condafip);
     doc.text(120, eje_y, 'CUIT/CUIL: ');
     doc.text(145, eje_y, emptyIfNull(solicitud.entidad.cuit));
     //Se muestran los datos de los subsidiarios
@@ -294,7 +290,7 @@ export function impresionSolicitud(solicitud) {
     eje_y += 6;
     doc.text(65, eje_y, solicitud.entidad.fechaInicio ? moment(solicitud.entidad.fechaInicio).format('DD/MM/YYYY') : '');
     eje_y += 6;
-    doc.text(65, eje_y, solicitud.entidad.condafip);
+    // doc.text(65, eje_y, solicitud.entidad.condafip);
     eje_y += 6;
   }
 

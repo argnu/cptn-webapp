@@ -1,13 +1,92 @@
 <template>
 <v-container class="grey lighten-3">
-  <v-toolbar class="blue darken-3">
-    <v-toolbar-title class="white--text">Listado de Matriculados</v-toolbar-title>
+  <v-dialog v-model="show_cambio" persistent max-width="70%">
+    <v-toolbar class="darken-3" color="primary">
+      <v-toolbar-title class="white--text">Cambio de Estado de Matrícula</v-toolbar-title>
+    </v-toolbar>
+    <v-card>
+      <v-card-text class="grey lighten-4">
+        <v-container>
+          <v-form lazy-validation ref="form_cambioestado">
+
+            <v-layout row>
+              <v-flex xs4 class="mx-4">
+                <v-select
+                  label="Estado:"
+                  :items="select_items.estados"
+                  v-model="cambio_estado.estado"
+                  item-text="valor"
+                  item-value="id"
+                >
+                </v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row class="mt-4">
+              <v-flex xs3 class="mx-4">
+                <v-select
+                  label="Tipo de Documento:"
+                  :items="select_items.t_documento"
+                  v-model="cambio_estado.documento.tipo"
+                  item-text="valor"
+                  item-value="id"
+                >
+                </v-select>
+              </v-flex>
+
+              <v-flex xs4 class="mx-4">
+                <input-fecha
+                  v-model="cambio_estado.documento.fecha"
+                  label="Fecha de Resolución/Acta"
+                  :rules="[rules.required, rules.fecha]"
+
+                >
+                </input-fecha>
+              </v-flex>
+
+              <v-flex xs3 class="mx-4">
+                <v-text-field
+                  v-model="cambio_estado.documento.numero"
+                  label="N° Resolución/Acta"
+                  :rules="[rules.required, rules.integer]"
+                >
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row class="mt-5">
+              <v-flex xs12>
+                <v-btn 
+                  class="right green white--text" 
+                  @click.native="cambiarEstado"
+                  :disabled="submit_cambio"
+                  :loading="submit_cambio"
+                >
+                  Guardar
+                  <v-icon dark right>check_circle</v-icon>
+                </v-btn>
+                <v-btn class="right red white--text" @click.native="show_cambio = false">
+                  Cancelar
+                  <v-icon dark right>block</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+
+          </v-form>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+
+  <v-toolbar class="darken-3" color="primary">
+    <v-toolbar-title class="white--text">Matriculados</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
   <v-card class="mt-4">
     <v-expansion-panel expand title="Filtros de Búsqueda">
-      <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
+      <v-expansion-panel-content v-model="expand.filtros" class="lighten-4" color="primary">
         <div slot="header"><b></b></div>
         <v-container class="white black--text">
           <v-layout row wrap>
@@ -95,7 +174,7 @@
   <br>
 
     <v-data-table
-      :headers="headers[filtros.tipoEntidad]"
+      :headers="$options.headers[filtros.tipoEntidad]"
       :items="matriculas"
       class="elevation-1"
       no-data-text="No se encontraron matriculados"
@@ -108,7 +187,7 @@
 
       <template slot="items" slot-scope="props">
         <td>
-          <v-btn fab small dark color="blue" slot="activator" @click="verMatricula(props.item.id)">
+          <v-btn fab small dark color="primary" slot="activator" @click="verMatricula(props.item.id)">
             <v-icon>assignment_ind</v-icon>
           </v-btn>
         </td>
@@ -131,11 +210,10 @@
             
             <v-list>
               <v-list-tile
-                v-if="props.item.estado != 'Habilitado'"
-                @click="habilitar(props.item.id)"
+                @click="showCambioEstado(props.item.id)"
               >
-                <v-icon class="green--text mr-2">check_circle</v-icon>
-                <v-list-tile-title>Habilitar</v-list-tile-title>
+                <v-icon class="secondary--text mr-2">gavel</v-icon>
+                <v-list-tile-title>Cambiar Estado</v-list-tile-title>
               </v-list-tile>
 
               <v-list-tile
@@ -161,32 +239,44 @@ import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
+import MixinValidator from '@/components/mixins/MixinValidator'
 
-
-const headers = {
-  emrpesa: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Nombre', 'nombreEmpresa', true),
-    Header('CUIT', 'cuit', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ],
-
-  profesional: [
-    Header('', 'ver'),
-    Header('N° Matrícula', 'numeroMatricula', true),
-    Header('Apellido', 'apellido', true),
-    Header('Nombre', 'nombre', true),
-    Header('DNI', 'dni', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ]
+class CambioEstado {
+  constructor() {
+    this.estado = '';
+    this.matricula = '';
+    this.documento = {
+      tipo: '',
+      numero: '',
+      fecha: ''
+    }
+  }
 }
 
-
 export default {
-  name: 'lista-solicitud',
+  name: 'MatriculaLista',
+  mixins: [MixinValidator],
+
+  headers: {
+    empresa: [
+      Header('Detalle', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Nombre', 'nombreEmpresa', true),
+      Header('CUIT', 'cuit', true),
+      Header('Estado', 'estado', true),
+      Header('Acciones', 'acciones')
+    ],
+
+    profesional: [
+      Header('Detalle', 'ver'),
+      Header('N° Matrícula', 'numeroMatricula', true),
+      Header('Apellido', 'apellido', true),
+      Header('Nombre', 'nombre', true),
+      Header('DNI', 'dni', true),
+      Header('Estado', 'estado', true),
+      Header('Acciones', 'acciones')
+    ]
+  },
 
   data() {
     return {
@@ -206,7 +296,8 @@ export default {
           }
         ],
 
-        estados: []
+        estados: [],
+        t_documento: []
       },
 
       expand: {
@@ -214,7 +305,11 @@ export default {
       },
 
       matriculas: [],
-      debouncedUpdate: null
+      debouncedUpdate: null,
+
+      show_cambio: false,
+      submit_cambio: false,
+      cambio_estado: new CambioEstado()
     }
   },
 
@@ -235,13 +330,6 @@ export default {
     }
   },
 
-
-  computed: {
-    headers: function() {
-      return headers;
-    }
-  },
-
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
@@ -249,6 +337,7 @@ export default {
     axios.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
+        this.select_items.t_documento = r.data.documento;
       })
       .catch(e => console.error(e));
   },
@@ -309,18 +398,40 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 13, updated_by: this.user.id })
+        axios.patch(`/matriculas/${id}`, { estado: 13 })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
     },
 
-    deshabilitar: function(id) {
-      if (confirm('Esta segura/o que desea Deshabilitar la Matrícula seleccionada?')) {
-        // 35 ES ESTADO 'DesHabilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 35, updated_by: this.user.id })
-        .then(r => this.updateMatriculas())
-        .catch(e => console.error(e));
+    showCambioEstado: function(id) {
+      this.cambio_estado.matricula = id;
+      this.show_cambio = true;
+    },
+
+    cambiarEstado: function() {
+      if (this.$refs.form_cambioestado.validate()) {
+        this.submit_cambio = true;
+
+        axios.post('/matriculas/cambiar-estado', this.cambio_estado)
+        .then(r => {
+          this.submit_cambio = false;
+          this.updateMatriculas();
+          this.cambio_estado = new CambioEstado();
+          this.$refs.form_cambioestado.reset();
+          this.show_cambio = false;
+          this.global_state.snackbar.msg = 'Estado de matrícula modificado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+        })
+        .catch(e => {
+          this.submit_cambio = false;
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          console.error(e)
+        });        
       }
     },
 

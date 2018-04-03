@@ -3,7 +3,7 @@
       <v-layout row wrap>
         <v-flex xs10>
           <form v-on:submit.prevent="submit">
-          <v-toolbar class="blue darken-3">
+          <v-toolbar class="darken-3" color="primary">
             <v-toolbar-title class="white--text">Solicitud de Matriculación de Empresas</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -54,7 +54,7 @@
                         </v-form>
                       </v-card-text>
                     </v-card>
-                    <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
+                    <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="3">Continuar</v-btn>
                 </v-stepper-content>
 
 
@@ -98,18 +98,6 @@
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
-
-                          <v-select
-                            autocomplete
-                            tabindex="7"
-                            item-text="valor"
-                            item-value="id"
-                            :items="opciones.condicionafip"
-                            v-model="solicitud.entidad.condafip"
-                            label="Condición Impositiva" single-line bottom
-                            :rules="[rules.required]"
-                          >
-                          </v-select>
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
@@ -145,7 +133,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="11">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -317,7 +305,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -417,71 +405,94 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
+            <!-- PASO 5: CONDICION IMPOSITIVA -->
+            <v-stepper-step step="5" edit-icon="check" editable :complete="step > 5">
+              Condición Impositiva
+            </v-stepper-step>
+            <v-stepper-content step="5">
+              <v-card class="grey lighten-4 elevation-4 mb-2">
+                <v-card-text>
+                  <v-form ref="form_condafip" lazy-validation>
 
-                <!-- PASO 5: INCUMBENCIAS -->
-                <v-stepper-step step="5" edit-icon="check" editable :complete="step > 5">
-                  Incumbencias
-                </v-stepper-step>
-                <v-stepper-content step="5">
-                  <v-card class="grey lighten-4 elevation-4 mb-2">
-                    <v-card-text>
-                      <v-container>
-                        <v-form lazy-validation ref="form_incumbencia">
+                  <v-container>
+                    <v-layout row>
+                      <v-flex xs4 class="mx-2">
+                        <v-select
+                          autocomplete
+                          single-line bottom
+                          :items="opciones.condicionafip"
+                          item-text="valor"
+                          item-value="id"
+                          v-model="nueva_condafip.condicion_afip"
+                          label="Condición Impositiva"
+                          :rules="[rules.required]"
+                        >
+                        </v-select>
+                      </v-flex>
 
-                        <v-layout row>
-                          <v-flex xs8 class="ma-4">
-                            <v-select
-                              autocomplete single-line bottom
-                              item-text="valor"
-                              item-value="id"
-                              :items="opciones.incumbencia"
-                              v-model="nueva_incumbencia"
-                              label="Incumbencias"
-                              :rules="[rules.required]"
-                            >
-                            </v-select>
-                          </v-flex>
+                      <v-flex xs7 class="mx-2">
+                        <v-text-field
+                          label="Descripción"
+                          v-model="nueva_condafip.descripcion"
+                        >
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
 
-                          <v-flex xs4 class="ma-4">
-                            <v-btn light @click="addIncumbencia">Agregar</v-btn>
-                          </v-flex>
-                        </v-layout>
+                    <v-layout row wrap>
+                      <v-flex xs12>
+                        <v-btn class="right" light @click="addCondAfip">
+                          {{ condafip_edit != null ? 'Guardar' : 'Agregar' }}
+                        </v-btn>
+                        <v-btn class="right" light v-show="condafip_edit != null" @click="cancelarEditCondAfip">
+                          Cancelar
+                        </v-btn>
+                      </v-flex>
+                    </v-layout>
 
+                    <v-data-table
+                      :headers="headers.condafip"
+                      :items="solicitud.entidad.condiciones_afip"
+                      hide-actions
+                      class="elevation-1 mt-4"
+                      no-data-text="No hay datos"
+                    >
+                      <template slot="headers" slot-scope="props">
+                        <th></th>
+                        <th></th>
+                        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
+                          {{ header.text }}
+                        </th>
+                      </template>
+                      <template slot="items" slot-scope="props">
+                        <tr :active="props.index == condafip_edit">
+                          <td style="max-width:10px">
+                            <v-btn fab small @click="editCondAfip(props.index)">
+                              <v-icon>mode_edit</v-icon>
+                            </v-btn>
+                          </td>
+                          <td>
+                            <v-btn fab small @click="removeElem('condiciones_afip', props.index)">
+                              <v-icon>delete</v-icon>
+                            </v-btn>
+                          </td>
+                          <td>{{ getCondicionAfip(props.item.condicion_afip) }}</td>
+                          <td>{{ props.item.descripcion }}</td>
+                        </tr>
+                      </template>
+                    </v-data-table>
+                  </v-container>
 
-                          <v-data-table
-                              :headers="headers.incumbencias"
-                              :items="solicitud.entidad.incumbencias"
-                              hide-actions
-                              class="elevation-1"
-                              no-data-text="No hay incumbencias">
-                            <template slot="headers" slot-scope="props">
-                              <th></th>
-                              <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
-                                <b>{{ header.text }}</b>
-                              </th>
-                            </template>
-                            <template slot="items" slot-scope="props">
-                              <td>
-                                <v-btn icon small @click="removeElem('incumbencias', props.index)">
-                                  <v-icon>delete</v-icon>
-                                </v-btn>                                
-                              </td>
-                              <td v-if="props.item.id">{{ props.item.valor }}</td>
-                              <td v-else>{{ getTipoIncumbencia(props.item) }}</td>
-                            </template>
-                          </v-data-table>
-
-                        </v-form>
-                      </v-container>
-                    </v-card-text>
-                  </v-card>
-                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
-                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
-                </v-stepper-content>
+                  </v-form>
+                </v-card-text>
+              </v-card>
+              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
+            </v-stepper-content>                
 
 
                 <!-- PASO 6: REPRESENTANTE -->
@@ -525,7 +536,7 @@
                         <v-layout row>
                           <v-flex xs12 class="ma-3">
                             <v-data-table
-                                :rows-per-page-items="[25,30,35]"
+                                :rows-per-page-items="[10, 15, 20]"
                                 :headers="headers.matriculados"
                                 :items="matriculados"
                                 class="elevation-1"
@@ -559,14 +570,14 @@
                         </v-layout>
 
                         <br>
-                        <span class="ml-3"><b>Representantes:</b></span>
+                        <span class="ml-3"><b>Representante:</b></span>
 
                         <v-layout row wrap>
                           <v-flex xs12 class="mx-3">
                             <v-data-table
                                 hide-actions
                                 :headers="headers.matriculados"
-                                :items="solicitud.entidad.representantes"
+                                :items="representante"
                                 class="elevation-1"                                
                                 no-data-text="No se agregaron representates"
                                 no-results-text="No se agregaron representates"
@@ -593,6 +604,143 @@
                             </v-data-table>
                           </v-flex>
                         </v-layout>
+                    </v-card-text>
+                  </v-card>
+
+                  <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
+                </v-stepper-content>
+
+
+                <!-- PASO 7: REPRESENTANTES SECUNDARIOS -->
+                <v-stepper-step step="7" edit-icon="check" editable>
+                  Representantes Legales
+                </v-stepper-step>
+                <v-stepper-content step="7">
+                  <v-card class="grey lighten-4 elevation-4 mb-2">
+                    <v-card-text>
+
+                        <v-radio-group v-model="tipo_representante" row @change="updateListSec"> 
+                          <v-radio label="Matriculado TEC" value="tec" ></v-radio>
+                          <v-radio label="Matriculado Externo" value="ext"></v-radio>
+                        </v-radio-group>
+                        
+                        <v-layout row wrap>
+                          <v-flex xs1  class="mx-3">
+                            <div class="ma-4">Filtrar:</div>
+                          </v-flex>
+                          <v-flex xs3  class="mx-3">
+                            <v-text-field
+                              label="N° Matrícula"
+                              @input="updateListSec"
+                              v-model="table_rep_sec.filtros.numero"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                          <v-flex xs3>
+                            <v-text-field
+                              label="Apellido"
+                              @input="updateListSec"
+                              v-model="table_rep_sec.filtros.apellido"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                          <v-flex xs3  class="mx-3">
+                            <v-text-field
+                              label="DNI"
+                              @input="updateListSec"
+                              v-model="table_rep_sec.filtros.dni"
+                            >
+                            </v-text-field>
+                          </v-flex>
+                        </v-layout>
+
+                        <v-layout row>
+                          <v-flex xs12 class="ma-3">
+                            <v-card class="elevation-1" >
+                              <v-card-text>
+                                <v-btn
+                                  v-show="tipo_representante == 'ext'"
+                                  absolute dark fab top right small
+                                  color="green"
+                                  @click="expand_add = true"
+                                >
+                                  <v-icon>add</v-icon>
+                                </v-btn>     
+
+                                <v-data-table
+                                    :rows-per-page-items="[5, 10, 25]"
+                                    :headers="headers.matriculados"
+                                    :items="table_rep_sec.matriculas"
+                                    no-data-text="No se encontraron matriculados"
+                                    no-results-text="No se encontraron matriculados"
+                                    :pagination.sync="table_rep_sec.pagination"
+                                    :total-items="table_rep_sec.total"
+                                    :loading="table_rep_sec.loading"
+                                    >
+                                  <template slot="headers" slot-scope="props">
+                                    <th v-for="(header, i) of props.headers" :key="i" class="pa-3 text-xs-left">
+                                      <b>{{ header.text }}</b>
+                                    </th>
+                                    <th></th>
+                                  </template>
+                                  <template slot="items" slot-scope="props">
+                                    <tr>
+                                      <td>{{ props.item.numeroMatricula }}</td>
+                                      <template v-if="props.item.entidad">
+                                        <td>{{ props.item.entidad.nombre }}</td>
+                                        <td>{{ props.item.entidad.apellido }}</td>
+                                        <td>{{ props.item.entidad.dni }}</td>                                        
+                                      </template>
+                                      <template v-else>
+                                        <td>{{ props.item.nombre }}</td>
+                                        <td>{{ props.item.apellido }}</td>
+                                        <td>{{ props.item.dni }}</td>                                        
+                                      </template>                                      
+                                      <td>
+                                        <v-btn fab dark small color="primary" @click="addRepresentanteSecundario(props.item)">
+                                          <v-icon>playlist_add</v-icon>
+                                        </v-btn>
+                                      </td>
+                                    </tr>
+                                  </template>
+                                </v-data-table>                                 
+                              </v-card-text>
+                                  
+                             </v-card>
+
+                          </v-flex>
+                        </v-layout>
+
+                        <br>
+                        <span class="ml-3"><b>Representantes Legales:</b></span>
+
+                        <v-layout row wrap>
+                          <v-flex xs12 class="mx-3">
+                            <v-data-table
+                                hide-actions
+                                :headers="headers.matriculados"
+                                :items="representantes_legales"
+                                class="elevation-1"                                
+                                no-data-text="No se agregaron representates"
+                                no-results-text="No se agregaron representates"
+                              >
+                              <template slot="items" slot-scope="props">
+                                <tr>
+                                  <td>
+                                    <v-btn icon fab dark small color="primary" @click="borrarRepresentante(props.item.numeroMatricula)">
+                                      <v-icon>delete</v-icon>
+                                    </v-btn>
+                                  </td>                                  
+                                  <td>{{ props.item.numeroMatricula }}</td>
+                                  <td>{{ props.item.nombre }}</td>
+                                  <td>{{ props.item.apellido }}</td>
+                                  <td>{{ props.item.dni }}</td>
+                                </tr>
+                              </template>
+                            </v-data-table>
+                          </v-flex>
+                        </v-layout>
 
                       <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_representante">
                         Debe seleccionar un representante
@@ -605,12 +753,18 @@
                   <v-checkbox class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones">
                   </v-checkbox>                  
 
-                  <v-btn class="blue darken-1 white--text right" @click.native="imprimir" v-if="this.id">
+                  <v-btn color="primary" class="darken-1 white--text right" @click.native="imprimir" v-if="this.id">
                     Imprimir
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>
 
-                  <v-btn class="blue darken-1 white--text right" @click.native="submit" :disabled="!valid_form">
+                  <v-btn 
+                    color="primary" 
+                    class="darken-1 white--text right" 
+                    @click.native="submit" 
+                    :disabled="!valid_form || guardando"
+                    :loading="guardando"
+                  >
                     Guardar Solicitud
                     <v-icon dark right>check_circle</v-icon>
                   </v-btn>
@@ -625,7 +779,7 @@
         </v-flex>
 
         <div class="stuck">
-          <v-toolbar class="blue darken-3">
+          <v-toolbar class="darken-3" color="primary">
             <v-toolbar-title class="white--text">Empresa</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -643,6 +797,23 @@
           </v-container>
         </div>
       </v-layout>
+
+
+    <v-dialog v-model="expand_add" fullscreen transition="dialog-bottom-transition" :overlay="false">
+      <v-card>
+        <v-toolbar dark class="blue">
+          <v-toolbar-title class="white--text">Agregar Matriculado Externo</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="expand_add = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        
+        <nueva-matricula-externa
+          @nueva="addMatriculaExterna"
+        ></nueva-matricula-externa>
+      </v-card>
+    </v-dialog>      
     </v-container>
 </template>
 
@@ -653,45 +824,73 @@ import * as utils from '@/utils'
 import { Solicitud } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputTelefono from '@/components/base/InputTelefono'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
+import NuevaMatriculaExterna from '@/components/NuevaMatriculaExterna'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [ValidatorMixin, NuevaSolicitud],
+  mixins: [MixinValidator, NuevaSolicitud],
   props: ['id'],
 
   data () {
     return {
       solicitud: new Solicitud('empresa'),
       nuevo_contacto: new Solicitud(),
-      nueva_incumbencia: '',
 
       valid: {
         form_solicitud: false,
         form_empresa: false
       },      
 
-      matriculados: [],
+      tipo_representante: 'tec',
+
+      matriculados: [],      
       debouncedUpdate: null,
+
       totalItems: 0,
       loading: false,
       pagination: {
         page: 1,
-        rowsPerPage: 25,
+        rowsPerPage: 10,
       },
+
       filtros: {
         numero: '',
         dni: '',
         apellido: ''
       },
-      matricula_selected: {}
+
+      matricula_selected: {},
+      guardando: false,
+
+      pagination_sec: {
+        rowsPerPage: 5
+      },
+
+      table_rep_sec: {
+        debounceUpdate: null,
+        loading: false,
+        matriculas: [],
+        total: 0,
+        filtros: {
+          numero: '',
+          dni: '',
+          apellido: ''
+        }       
+      }, 
+
+      expand_add: false
     }
   },
 
   watch: {
+    '$route' (to, from) {
+      if (this.datos_cargados) this.initForm();
+    },
+
     filtros: {
       handler () {
         this.pagination.page = 1;
@@ -703,6 +902,13 @@ export default {
     pagination: {
       handler () {
         this.updateMatriculas();
+      },
+      deep: true
+    },
+
+    'table_rep_sec.pagination': {
+      handler () {
+        this.updateMatriculasSec();
       },
       deep: true
     }
@@ -717,17 +923,22 @@ export default {
       return this.valid.form_solicitud && this.valid.form_empresa 
         && this.valid_domicilios
         && this.valid_representante;
-    }
-  },
+    },
 
-  watch: {
-    '$route' (to, from) {
-      if (this.datos_cargados) this.initForm();
-    }
-  },  
+    representantes_legales: function() {
+      if (!this.solicitud.entidad.representantes.length) return [];
+      return this.solicitud.entidad.representantes.filter(r => r.tipo != 'primario');
+    },
+
+    representante: function() {
+      if (!this.solicitud.entidad.representantes.length) return [];
+      return this.solicitud.entidad.representantes.filter(r => r.tipo == 'primario');
+    }    
+  },
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    this.table_rep_sec.debouncedUpdate = _.debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
     
     Promise.all([
       axios.get('/paises'),
@@ -760,6 +971,8 @@ export default {
     initForm: function() {
       this.step = 1;
       this.updateMatriculas();
+      this.updateMatriculasSec();
+
       if (this.id) { 
         this.show_cargando = true;
         axios.get(`/solicitudes/${this.id}`)
@@ -775,9 +988,9 @@ export default {
               this.solicitud.entidad.fechaConstitucion = utils.getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.tipoEmpresa = this.opciones.empresa.find(i => i.valor == r.data.entidad.tipoEmpresa).id;
               this.solicitud.entidad.tipoSociedad = this.opciones.sociedad.find(i => i.valor == r.data.entidad.tipoSociedad).id;
-              this.solicitud.entidad.condafip = this.opciones.condicionafip.find(i => i.valor == r.data.entidad.condafip).id;
 
               this.solicitud.entidad.domicilios = r.data.entidad.domicilios;
+              this.solicitud.entidad.condiciones_afip = r.data.entidad.condiciones_afip;
 
               for(let contacto of r.data.entidad.contactos) {
                 let contacto_nuevo = contacto;
@@ -785,7 +998,6 @@ export default {
                 this.solicitud.entidad.contactos.push(contacto_nuevo);
               }
 
-              this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias;
               this.solicitud.entidad.representantes = r.data.entidad.representantes;
               this.init(false);
         })
@@ -809,47 +1021,34 @@ export default {
       return this.opciones.sociedad.find(s => s.id == id).valor;
     },
 
-    getTipoIncumbencia: function(id) {
-      return this.opciones.incumbencia.find(o => o.id == id).valor;
-    },
-
-    addIncumbencia: function() {
-      if (this.$refs.form_incumbencia.validate()) {
-        this.solicitud.entidad.incumbencias.push(this.nueva_incumbencia);
-        this.nueva_incumbencia = '';
-        this.$refs.form_incumbencia.reset();
-      }
-    },
-
     submit: function() {
-      this.solicitud.operador = this.user.id;
+      this.guardando = true;
       
       if (!this.id) {
         axios.post('/solicitudes', this.solicitud)
             .then(r => {
-              if (r.status != 201) {
-                this.submitError();
-              }
+              this.guardando = false;
               this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
               this.global_state.snackbar.color = 'success';
               this.global_state.snackbar.show = true;
               this.$router.push('/solicitudes/lista')
 
             })
-            .catch(e => this.submitError());
+            .catch(e => this.submitError(e));
       }
       else {
         axios.put(`/solicitudes/${this.id}`, this.solicitud)
           .then(r => {
+            this.guardando = false;
             if (r.status != 200) {
-              this.submitError();
+              this.submitError(e);
             }
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => this.submitError());        
+          .catch(e => this.submitError(e));        
       }      
     },
 
@@ -862,9 +1061,34 @@ export default {
       if (next) this.step = +this.step + 1;
     },      
 
+    updateMatriculasSec: function() {
+      this.table_rep_sec.loading = true;
+      this.table_rep_sec.matriculas = [];
+
+      let offset = (this.table_rep_sec.pagination.page - 1) * this.table_rep_sec.pagination.rowsPerPage;
+      let limit = this.table_rep_sec.pagination.rowsPerPage;
+
+
+      let url;
+      if (this.tipo_representante == 'ext') url = `/matriculas-externas?limit=${limit}&offset=${offset}`;
+      else url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;      
+
+      if (this.table_rep_sec.filtros.numero) url += `&numeroMatricula=${this.table_rep_sec.filtros.numero}`;
+      if (this.table_rep_sec.filtros.dni) url+=`&dni=${this.table_rep_sec.filtros.dni}`;
+      if (this.table_rep_sec.filtros.apellido) url+=`&apellido=${this.table_rep_sec.filtros.apellido}`;
+
+      axios.get(url)
+           .then(r => {
+             this.table_rep_sec.matriculas = r.data.resultados;
+             this.table_rep_sec.total = r.data.totalQuery;
+             this.table_rep_sec.loading = false;
+           })
+           .catch(e => console.error(e));
+    },
+
     updateMatriculas: function() {
       this.loading = true;
-      this.matriculas = [];
+      this.matriculados = [];
       let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
       let limit = this.pagination.rowsPerPage;
 
@@ -888,6 +1112,10 @@ export default {
       this.debouncedUpdate();
     },
 
+    updateListSec: function() {
+      this.table_rep_sec.debouncedUpdate();
+    },
+
     selectRepresentantePrimario: function(matricula) {
       this.solicitud.entidad.representantes = [{
         tipo: 'primario',
@@ -897,6 +1125,19 @@ export default {
         apellido: matricula.entidad.apellido,
         nombre: matricula.entidad.nombre
       }]
+    },
+
+    addRepresentanteSecundario: function(matricula) {
+      this.solicitud.entidad.representantes.push({
+        tipo: 'secundario',
+        matricula: this.tipo_representante == 'tec' ? matricula.id : null,
+        matricula_externa: this.tipo_representante == 'ext' ? matricula.id : null,
+        numeroMatricula: matricula.numeroMatricula,
+        dni: matricula.entidad ? matricula.entidad.dni : matricula.dni,
+        apellido: matricula.entidad ? matricula.entidad.apellido : matricula.apellido,
+        nombre: matricula.entidad ? matricula.entidad.nombre : matricula.nombre
+      });
+      console.log(matricula)
     },
 
     borrarRepresentante: function(numeroMatricula) {
@@ -912,11 +1153,17 @@ export default {
             pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
           })
           .catch(e => console.error(e));
-    },    
+    },   
+
+    addMatriculaExterna: function() {
+      this.updateMatriculasSec();
+      this.expand_add = false;
+    }
   },
 
   components: {
-    InputFecha, InputTelefono
+    InputFecha, InputTelefono,
+    NuevaMatriculaExterna
   }
 }
 </script>

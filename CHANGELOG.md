@@ -1,3 +1,15 @@
+# 1.5.0 (2018-04-03)
+
+## Modificado
+ - Cambio de color 'blue' por 'primary' para modificar colores en ambiente develop.
+ - Botón loading al cargar nuevo objeto (solicitud, legajo, etc).
+
+## Agregado
+
+- **NuevoProfesional**: lista de condiciones impositivas.
+- **Nuevas UI**: Usuarios, Instituciones, Títulos.
+- **Matrícula**: Cambios de estado de matrícula según Documento.
+
 # 1.4.3 (2018-02-26)
 
 ## Solucionado

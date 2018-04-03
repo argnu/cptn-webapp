@@ -11,7 +11,7 @@
       <v-btn flat class="white--text" @click.native="global_state.snackbar.show = false">Cerrar</v-btn>
     </v-snackbar>
 
-    <v-toolbar dark class="blue darken-1">
+    <v-toolbar dark class="darken-1" color="primary">
       <v-toolbar-side-icon 
         v-if="isDelegacionSelected"
         @click="toggleMenuLateral" 
@@ -29,14 +29,14 @@
           </v-list-tile-sub-title>
         </v-list-tile-content> 
 
-        <user-menu></user-menu>
+        <menu-user></menu-user>
       </v-toolbar-items>
 
     </v-toolbar>
 
     <router-view></router-view>
 
-    <v-footer class="blue darken-4">
+    <v-footer class="darken-4" color="primary">
       <span class="white--text"></span>
     </v-footer>
 
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import UserMenu from '@/components/UserMenu'
+import MenuUser from '@/components/MenuUser'
 import MenuLateral from '@/components/MenuLateral'
 
 export default {
@@ -78,7 +78,7 @@ export default {
   },
 
   components: {
-    UserMenu,
+    MenuUser,
     MenuLateral
   }
 }

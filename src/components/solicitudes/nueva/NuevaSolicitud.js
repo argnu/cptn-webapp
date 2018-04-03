@@ -9,6 +9,13 @@ const EntidadDomicilio = () => ({
     domicilio: new Domicilio()
 })
 
+class EntidadCondicionAfip {
+  constructor() {
+    this.condicion_afip = '';
+    this.descripcion = '';
+  }
+}
+
 const tipos_domicilio = [
   Header('Real (Domicilio Declarado en DNI)', 'real'),
   Header('Legal (Domicilio Profesional)', 'legal'),
@@ -22,11 +29,13 @@ const headers = {
     Header('Valor', 'valor'),
   ],
 
-  incumbencias: [
-    Header('Nombre', 'nombre'),
+  condafip: [
+    Header('Tipo', 'tipo'),
+    Header('Descripción', 'descripcion'),
   ],
 
   matriculados: [
+    Header('', 'borrar'),
     Header('N°', 'numero'),
     Header('Nombre', 'nombre'),
     Header('Apellido', 'nombre'),
@@ -79,8 +88,10 @@ export default {
       datos_cargados: false,
       domicilio_edit: null,
       contacto_edit: null,      
+      condafip_edit: null,      
       step: 1,
       nuevo_contacto: new Contacto(),
+      nueva_condafip: new EntidadCondicionAfip(),
       placeholder_contacto: '',
       rules_contacto: [rules.required],
       nuevo_telefono: new Telefono(),
@@ -125,6 +136,17 @@ export default {
   },
 
   methods: {
+    getCondicionAfip: function(condicion) {
+      if (typeof condicion == 'number')
+        return this.opciones.condicionafip.find(c => condicion == c.id).valor;
+      else 
+        return condicion.valor;
+    },
+
+    getTipoContacto: function(id) {
+      return this.opciones.contacto.find(i => id == i.id).valor;
+    },    
+
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
         return axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
@@ -219,6 +241,32 @@ export default {
       this.$refs.form_contacto.reset();
     },
 
+    addCondAfip: function () {
+      if (this.$refs.form_condafip.validate()) {
+        if (this.condafip_edit == null) {
+          this.solicitud.entidad.condiciones_afip.push(this.nueva_condafip);
+        }
+        else {
+          Vue.set(this.solicitud.entidad.condiciones_afip, this.condafip_edit, this.nueva_condafip);
+        }
+        
+        this.nueva_condafip = new EntidadCondicionAfip();
+        this.$refs.form_condafip.reset();
+        this.condafip_edit = null;
+      }
+    },
+
+    editCondAfip: function(index) {
+      this.condafip_edit = index;
+      this.nueva_condafip = this.solicitud.entidad.condiciones_afip[index];
+    },  
+    
+    cancelarEditCondAfip: function() {
+      this.condafip_edit = null;
+      this.nueva_condafip = new Contacto();
+      this.$refs.form_condafip.reset();
+    },
+
     addDomicilio: function () {
       if (this.$refs.form_domicilio.validate()) {
         this.nuevo_domicilio.pais_nombre = this.paises.find(p => p.id == this.nuevo_domicilio.domicilio.pais).nombre;
@@ -306,12 +354,6 @@ export default {
 
     prevStep: function() {
       this.step = this.step - 1;
-    },
-
-    submitError: function() {
-      this.global_state.snackbar.msg = 'Ha ocurrido un error en la carga';
-      this.global_state.snackbar.color = 'error';
-      this.global_state.snackbar.show = true;
-    },
+    }
   }
 }

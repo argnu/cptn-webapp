@@ -9,7 +9,7 @@
                 <v-layout row wrap class="mx-5">
                   <v-flex xs6>
                     <div class="mb-3">
-                      Estado: {{ matricula.estado | upperFirst }}
+                      Número de Matrícula: {{ matricula.numeroMatricula }}
                     </div>
                     <div>
                       Fecha Resolución: {{ matricula.fechaResolucion | fecha }}
@@ -18,10 +18,10 @@
 
                   <v-flex xs6>
                     <div class="mb-3">
-                      Número de Acta: {{ matricula.numeroActa }}
+                      Estado: {{ matricula.estado }}
                     </div>
                     <div class="">
-                      Número de Matrícula: {{ matricula.numeroMatricula }}
+                      Número de Acta: {{ matricula.numeroActa }}                      
                     </div>
                   </v-flex>
                 </v-layout>
@@ -60,9 +60,6 @@
                     <div class="mb-3">
                       Tipo de Sociedad: {{ matricula.entidad.tipoSociedad }}
                     </div>
-                    <div>
-                      Condición Impositiva: {{ matricula.entidad.condafip }}
-                    </div>
                   </v-flex>
                 </v-layout>
               </v-card-text>
@@ -96,9 +93,6 @@
                     </div>
                     <div class="mb-3">
                       Autónomo: {{ matricula.entidad.independiente | boolean }}
-                    </div>
-                    <div>
-                      Jubilado: {{ matricula.entidad.jubilado | boolean }}
                     </div>
                   </v-flex>
 
@@ -209,6 +203,30 @@
 
         <br>
 
+        <v-expansion-panel expand>
+          <v-expansion-panel-content v-model="expand.condiciones_afip" class="blue lighten-4 grey--text text--darken-3">
+            <div slot="header"><b>Condiciones Impositivas</b></div>
+            <v-card class="white">
+              <v-card-text >
+                <v-data-table
+                  :headers="headers.CondicionesAfip"
+                  :items="matricula.entidad.condiciones_afip"
+                  hide-actions
+                  class="elevation-1 mt-4"
+                  no-data-text="No hay datos"
+                >
+                  <template slot="items" slot-scope="props">
+                    <td>{{ props.item.condicion_afip.valor }}</td>
+                    <td>{{ props.item.descripcion }}</td>
+                  </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <br>
+
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.formaciones" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Formaciones</b></div>
@@ -227,9 +245,9 @@
                   </th>
                 </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.tipo }}</td>
-                  <td>{{ props.item.titulo }}</td>
-                  <td>{{ props.item.institucion }}</td>
+                  <td>{{ props.item.titulo.nivel.valor }}</td>
+                  <td>{{ props.item.titulo.nombre }}</td>
+                  <td>{{ props.item.titulo.institucion.nombre }}</td>
                   <td>{{ props.item.fechaEgreso | fecha }}</td>
                   <td>{{ props.item.fechaEmision | fecha }}</td>
                 </template>
@@ -243,7 +261,7 @@
 
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.caja" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Caja Previsional</b></div>
+            <div slot="header"><b>Cajas Previsionales</b></div>
             <v-card class="white">
               <v-card-text>
                 <v-data-table
@@ -297,35 +315,7 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-
-
-        <br>
-
-        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
-          <v-expansion-panel-content v-model="expand.incumbencias" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Incumbencias</b></div>
-            <v-card class="white">
-              <v-card-text >
-                <v-data-table
-                  :headers="headers.Incumbencias"
-                  :items="matricula.entidad.incumbencias"
-                  hide-actions
-                  class="elevation-1 mt-4"
-                  no-data-text="No hay incumbencias"
-                >
-                  <template slot="headers" slot-scope="props">
-                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
-                            <b>{{ header.text }}</b>
-                          </th>
-                        </template>
-                  <template slot="items" slot-scope="props">
-                          <td>{{ props.item.valor }}</td>
-                        </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>        
+   
 
         <br>
 
@@ -380,7 +370,6 @@ export default {
         formaciones: false,
         caja: false,
         subsidiarios: false,
-        incumbencias: false,
         representantes: false
       },
     }

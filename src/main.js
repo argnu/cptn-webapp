@@ -25,6 +25,7 @@ Vue.filter('boolean', function (str) {
 
 Vue.filter('fecha', function (str) {
   if (!str || !str.length) return '';
+  if (/\d{2}\/\d{2}\/\d{4}/.test(str)) return str;
   let moment_date = moment(str);
   return moment_date.isValid() ? moment_date.format('DD/MM/YYYY') : '';
 });
@@ -32,7 +33,7 @@ Vue.filter('fecha', function (str) {
 Vue.filter('round', function (number) {
   if (!number) return 0;
   if (typeof number == 'number') return utils.round(number, 2);
-  else if (typeof number == 'string') return utils.round(utils.getNum(number), 2);
+  else if (typeof number == 'string') return utils.round(utils.getFloat(number), 2);
 });
 
 Vue.filter('upperFirst', function (str) {
@@ -56,6 +57,17 @@ Vue.mixin({
     delegacion: function () {
       return this.global_state.delegacion;
     }
+  },
+
+  methods: {
+    showError: function(e) {
+      console.log(e.response)
+        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.message;
+        this.global_state.snackbar.msg = msg;
+        this.global_state.snackbar.color = 'error';
+        this.global_state.snackbar.show = true;
+        console.error(e);
+    }    
   }
 })
 

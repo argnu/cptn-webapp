@@ -2,7 +2,7 @@
 <v-container class="grey lighten-3">
 
   <v-dialog v-model="show_validar" persistent max-width="50%">
-    <v-toolbar class="blue darken-3">
+    <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Aprobar Solicitud de Matriculación</v-toolbar-title>
     </v-toolbar>
     <v-card>
@@ -10,43 +10,35 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobacion">
 
-            <v-layout>
-              <v-flex xs12 class="mx-4">
+            <v-layout row>
+              <v-flex xs4 class="mx-2">
                 <v-select
-                  v-show="matricula.tipo != 'EMP'"
-                  label="Tipo:"
-                  :items="select_items.tipos_matricula"
-                  v-model="matricula.tipo"
-                  @input="chgTipoMatricula"
+                  label="Tipo de Documento:"
+                  :items="opciones.documento"
+                  v-model="matricula.documento.tipo"
+                  item-text="valor"
+                  item-value="id"
+                  :rules="[rules.required]"
                 >
                 </v-select>
               </v-flex>
-            </v-layout>
 
-            <v-layout row class="mt-4">
-              <v-flex xs6 class="mx-4">
-                N° Matrícula: {{ num_matricula_nueva }}
-              </v-flex>
-            </v-layout>
-
-            <v-layout row>
-              <v-flex xs6 class="ma-4">
-                <input-fecha
-                  v-model="matricula.fechaResolucion"
-                  label="Fecha de Resolución"
-                  :rules="[rules.required, rules.fecha]"
-
-                >
-                </input-fecha>
-              </v-flex>
-
-              <v-flex xs6 class="ma-4">
+              <v-flex xs4 class="mx-2">
                 <v-text-field
-                  v-model="matricula.numeroActa"
+                  v-model="matricula.documento.numero"
                   label="N° Acta"
                   :rules="[rules.required, rules.integer]"
                 >
                 </v-text-field>
+              </v-flex>
+                            
+              <v-flex xs4 class="mx-2">
+                <input-fecha
+                  v-model="matricula.documento.fecha"
+                  label="Fecha de Acta"
+                  :rules="[rules.required, rules.fecha]"
+                >
+                </input-fecha>
               </v-flex>
             </v-layout>
 
@@ -63,7 +55,12 @@
 
             <v-layout row>
               <v-flex xs12>
-                <v-btn class="right green white--text" @click.native="aprobar">
+                <v-btn 
+                  class="right green white--text" 
+                  @click.native="aprobar"
+                  :disabled="submitValidacion"
+                  :loading="submitValidacion"
+                >
                   Aprobar
                   <v-icon dark right>check_circle</v-icon>
                 </v-btn>
@@ -81,14 +78,14 @@
   </v-dialog>
 
 
-  <v-toolbar class="blue darken-3">
+  <v-toolbar class="darken-3" color="primary">
     <v-toolbar-title class="white--text">Solicitudes de Matrículas</v-toolbar-title>
     <v-spacer></v-spacer>
   </v-toolbar>
 
   <v-card class="mt-4">
     <v-expansion-panel expand>
-      <v-expansion-panel-content v-model="expand.filtros" class="blue lighten-4">
+      <v-expansion-panel-content v-model="expand.filtros" class="lighten-4" color="primary">
         <div slot="header"></div>
         <v-container class="white black--text">
           <v-layout row wrap>
@@ -199,7 +196,7 @@
         <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
-            <v-btn fab dark small color="blue" slot="activator">
+            <v-btn fab dark small color="primary" slot="activator">
               <v-icon>more_vert</v-icon>
             </v-btn>
 
@@ -218,10 +215,17 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="imprimirSolicitud(props.item.id)">
+              <v-list-tile @click="imprimirSolicitud(props.item)">
                 <v-list-tile-title>
                   <v-icon class="text--darken-2">print</v-icon>
                   <span class="ml-2">Imprimir</span>
+                </v-list-tile-title>
+              </v-list-tile>
+
+              <v-list-tile @click="imprimirCertificado(props.item)">
+                <v-list-tile-title>
+                  <v-icon class="text--darken-2">print</v-icon>
+                  <span class="ml-2">Imprimir Certificado</span>
                 </v-list-tile-title>
               </v-list-tile>
 
@@ -248,7 +252,7 @@
 
     <v-dialog v-model="expand_cambiar_imgs" fullscreen transition="dialog-bottom-transition" :overlay="false">
       <v-card>
-        <v-toolbar dark class="blue" ref="toolbar">
+        <v-toolbar dark color="primary" ref="toolbar">
           <v-toolbar-title class="white--text">Cambiar Foto y/o Firma</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="cerrarImgs">
@@ -278,7 +282,7 @@ import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
 import InputFecha from '@/components/base/InputFecha'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/stores/Global'
 import ListaStore from '@/stores/listados/Solicitudes'
@@ -323,7 +327,7 @@ const headers = {
 
 export default {
   name: 'lista-solicitud',
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   data() {
     return {
@@ -342,11 +346,16 @@ export default {
       solicitudes: [],
       debouncedUpdate: null,
       submitValidacion: false,
+      opciones: []
     }
   },
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
+    axios.get('/opciones')
+    .then(r => {
+      this.opciones = r.data;
+    })
   },
 
   computed: {
@@ -413,14 +422,8 @@ export default {
     },
 
     selectSolicitud: function(solicitud) {
-      if (solicitud.entidad.tipo == 'empresa') this.matricula.tipo = 'EMP';
-      axios(`/matriculas/nuevo_numero?tipo=${this.matricula.tipo}`)
-      .then(r => {
-        this.num_matricula_nueva = r.data
-        this.show_validar = true;
-        this.matricula.solicitud = solicitud.id;
-      })
-      .catch(e => console.error(e));
+      this.matricula.solicitud = solicitud.id;
+      this.show_validar = true;
     },
 
     chgTipoMatricula: function() {
@@ -429,31 +432,35 @@ export default {
       .catch(e => console.error(e));
     },
 
-    imprimirSolicitud: function(id) {
-      axios.get(`/solicitudes/${id}`)
-          .then(s => {
-            let solicitud = s.data;
-            let pdf = impresionSolicitud(solicitud);
-            pdf.save(`Solicitud ${solicitud.entidad.nombre} ${solicitud.entidad.apellido || '' }.pdf`)
-          })
-          .catch(e => console.error(e));
+    imprimirSolicitud: function(item) {
+      let url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
+      window.open(url, '_blank');      
+    },
+
+    imprimirCertificado: function(item) {
+      let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
+      window.open(url, '_blank');
     },
 
     aprobar: function() {
       if (this.$refs.form_aprobacion.validate()) {
-        this.matricula.operador = this.user.id;
+        this.submitValidacion = true;
 
         axios.post('/matriculas', this.matricula)
-          .then(r => {
-            this.updateSolicitudes();
-            this.matricula = new Matricula();
-            this.$refs.form_aprobacion.reset();
-            this.show_validar = false;
-            this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
-          })
-          .catch(e => console.error(e));
+        .then(r => {
+          this.submitValidacion = false;
+          this.updateSolicitudes();
+          this.matricula = new Matricula();
+          this.$refs.form_aprobacion.reset();
+          this.show_validar = false;
+          this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+        })
+        .catch(e => {
+          this.submitValidacion = false;
+          console.error(e)
+        });
       }
     },
 
@@ -477,7 +484,7 @@ export default {
     rechazar: function(id) {
       if (confirm('Esta segura/o que desea Rechazar la Solicitud de Matriculación seleccionada?')) {
         // 3 ES ESTADO 'Rechazada'
-        axios.patch(`/solicitudes/${id}`, { estado: 3, updated_by: this.user.id })
+        axios.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
             this.updateSolicitudes();
             this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';

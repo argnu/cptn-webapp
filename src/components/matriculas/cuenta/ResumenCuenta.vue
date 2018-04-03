@@ -1,7 +1,7 @@
 <template>
     <v-card>
-      <dialog-detalle :item="item_selected" ref="show_detalle">
-      </dialog-detalle>
+      <detalle-dialog :item="item_selected" ref="show_detalle">
+      </detalle-dialog>
 
       <v-layout row wrap class="mt-4">
         <v-flex xs1 class="mt-5 mx-5">
@@ -71,11 +71,11 @@ import axios from '@/axios'
 import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
-import DatosBasicos from '@/components/matriculas/DatosBasicos';
-import DialogDetalle from '@/components/matriculas/cuenta/detalles/DialogDetalle';
+import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
+import DetalleDialog from '@/components/matriculas/cuenta/detalles/DetalleDialog';
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
-import ValidatorMixin from '@/components/mixins/ValidatorMixin';
+import MixinValidator from '@/components/mixins/MixinValidator';
 
 const headers = [
   Header('Fecha', 'fecha', true),
@@ -89,7 +89,7 @@ const headers = [
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   data () {
     return {
@@ -207,8 +207,8 @@ export default {
   },
 
   components: {
-    DatosBasicos,
-    DialogDetalle,
+    MatriculaDatosBasicos,
+    DetalleDialog,
     InputFecha
   }
 

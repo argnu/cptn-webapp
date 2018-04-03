@@ -4,14 +4,15 @@
       <v-icon x-large>account_circle</v-icon>
     </v-btn>
     <v-list>
-<!--       <v-list-tile>
+       <v-list-tile @click="irPerfil">
         <v-list-tile-action>
           <v-icon>assignment_ind</v-icon>
         </v-list-tile-action>
         <v-list-tile-content>
           <v-list-tile-title>Perfil</v-list-tile-title>
         </v-list-tile-content>
-      </v-list-tile> -->
+      </v-list-tile>
+
       <v-list-tile @click="cambiarDelegacion">
         <v-list-tile-action>
           <v-icon>location_city</v-icon>
@@ -38,7 +39,7 @@ import * as Cookies from 'js-cookie';
 import Store from '@/stores/Global'
 
 export default {
-  name: 'UserMenu',
+  name: 'MenuUser',
   data() {
     return {}
   },
@@ -53,6 +54,10 @@ export default {
 
     cambiarDelegacion: function() {
       this.$router.push({ path: '/seleccionar-delegacion' });
+    },
+
+    irPerfil: function() {
+      this.$router.push({ path: `/usuarios/${this.user.id}` });
     }
   },
 

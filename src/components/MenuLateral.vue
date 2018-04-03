@@ -4,7 +4,7 @@
       <v-list class="pa-0">
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <img src="http://www.coordinadora.com/wp-content/uploads/sidebar_usuario-corporativo.png" />
+            <img src="/static/sidebar_usuario-corporativo.png" />
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ full_name }}</v-list-tile-title>
@@ -36,6 +36,46 @@
           <v-list-tile-title>Listar</v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
+
+      <v-divider class="mb-3"></v-divider>
+      <v-subheader class="bold" v-text="'Instituciones'"></v-subheader>
+      <v-list-tile @click="goto('/instituciones/nueva')">
+        <v-list-tile-action>
+          <v-icon>school</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Nueva</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      <v-list-tile @click="goto('/instituciones/lista')">
+        <v-list-tile-action>
+          <v-icon>view_list</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>Listar</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+
+      <template v-if="user.admin">
+        <v-divider class="mb-3"></v-divider>
+        <v-subheader class="bold" v-text="'Usuarios'"></v-subheader>
+        <v-list-tile @click="goto('/usuarios/nuevo')">
+          <v-list-tile-action>
+            <v-icon>account_circle</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Nuevo</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile @click="goto('/usuarios/lista')">
+          <v-list-tile-action>
+            <v-icon>view_list</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Listar</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>        
+      </template>
 
       <v-divider></v-divider>
       <br>

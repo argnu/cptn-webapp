@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" persistent max-width="600" scrollable>
     <v-card v-if="item">
-      <v-card-title class="headline blue white--text">
+      <v-card-title class="headline" color="primary">
         Detalle de {{ titulo_tipo }}
       </v-card-title>
       <v-card-text class="grey lighten-5">
@@ -14,7 +14,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" flat @click.native="show = false">
+        <v-btn color="primary" class="darken-1" flat @click.native="show = false">
           <v-icon>close</v-icon>
           Cerrar
         </v-btn>
@@ -28,7 +28,7 @@ import DetalleBoleta from './DetalleBoleta';
 import DetalleComprobante from './DetalleComprobante';
 
 export default {
-  name: 'DialogDetalle',
+  name: 'DetalleDialog',
   props: ['item'],
   data () {
     return {

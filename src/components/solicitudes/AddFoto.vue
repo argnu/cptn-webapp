@@ -29,7 +29,7 @@
             </video>   
             <v-btn
                 outline
-                color="blue-grey"
+                color="primary"
                 dark
                 @click.native="capturarFoto"
             >

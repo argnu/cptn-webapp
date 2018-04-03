@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 import InputNumero from '@/components/base/InputNumero'
 
 export default {
     name: 'InputTelefono',
-    mixins: [ValidatorMixin],
+    mixins: [MixinValidator],
     props: {
         type: {
             type: String,

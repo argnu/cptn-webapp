@@ -1,5 +1,5 @@
 export class Persona {
-    construtor() {
+    constructor() {
         this.id = '';
         this.tipo = '';
         this.nombre = '';

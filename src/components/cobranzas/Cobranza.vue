@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <!-- <v-toolbar dark class="blue">
-      <v-toolbar-title class="white--text">Cobranzas</v-toolbar-title>
-    </v-toolbar> -->
-
     <v-card class="elevation-4">
       <v-card-text>
         <v-layout row wrap>
@@ -90,7 +86,7 @@
           </v-flex>
 
           <v-flex xs2 class="mt-4">
-            <v-btn dark class="blue" @click="addItemPago">
+            <v-btn dark color="primary" @click="addItemPago">
               Agregar
             </v-btn>
           </v-flex>
@@ -155,7 +151,7 @@
               <v-icon dark right>check_circle</v-icon>
             </v-btn>
 
-            <v-btn dark class="red right" @click="$emit('cancelar')">
+            <v-btn dark class="red right" @click="cancelar">
               Cancelar
               <v-icon dark right>block</v-icon>
             </v-btn>
@@ -173,7 +169,7 @@ import { Header } from '@/model'
 import * as utils from '@/utils'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
-import ValidatorMixin from '@/components/mixins/ValidatorMixin'
+import MixinValidator from '@/components/mixins/MixinValidator'
 
 
 class ComprobantePago {
@@ -204,7 +200,7 @@ const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
   name: 'Cobranza',
-  mixins: [ValidatorMixin],
+  mixins: [MixinValidator],
 
   props: {
     fecha: {
@@ -246,7 +242,7 @@ export default {
 
     total: function() {
       if (!this.items_pago.length) return 0;
-      return this.items_pago.reduce((prev, act) => prev + utils.getNum(act.importe), 0);
+      return this.items_pago.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
     },
 
     form_valid: function() {
@@ -254,7 +250,7 @@ export default {
     },
 
     supera_importe: function() {
-      return this.total + utils.getNum(this.nueva_forma_pago.importe) > this.importe;
+      return this.total + utils.getFloat(this.nueva_forma_pago.importe) > this.importe;
     }
   },
 
@@ -298,8 +294,9 @@ export default {
 
     pagar: function() {
       if (this.form_valid) {
-        this.$emit('aceptar', utils.clone(this.items_pago));
+        let pagos = utils.clone(this.items_pago)
         this.items_pago = [];
+        this.$emit('aceptar', pagos);
       }
     },
 
@@ -315,6 +312,11 @@ export default {
 
     borrarPago: function(index) {
       this.items_pago.splice(index, 1);
+    },
+
+    cancelar: function() {
+      this.items_pago = [];
+      this.$emit('cancelar');
     }
   },
 
