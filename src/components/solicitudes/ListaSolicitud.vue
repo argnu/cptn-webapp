@@ -433,12 +433,12 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
-      let url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
+      let url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
       window.open(url, '_blank');      
     },
 
     imprimirCertificado: function(item) {
-      let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
+      let url = `http://10.100.18.2:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
       window.open(url, '_blank');
     },
 

@@ -1445,9 +1445,9 @@ export default {
       axios.get(`/solicitudes/${id}`)
           .then(s => {
             let solicitud = s.data; 
-            let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
+            let url = `http://10.100.18.2:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
             window.open(url, '_blank');            
-            url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
+            url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
             window.open(url, '_blank');                 
             
             if (this.id_creada) this.$router.replace('/solicitudes/lista');
