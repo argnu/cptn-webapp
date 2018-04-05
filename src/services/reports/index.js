@@ -1,4 +1,4 @@
-import config from '@/config.private'
+import config from '@/config'
 
 export default {
     open(params) {

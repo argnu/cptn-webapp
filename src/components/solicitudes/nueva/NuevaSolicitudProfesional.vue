@@ -761,6 +761,14 @@
             <v-stepper-content step="8">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
+
+                  <v-checkbox
+                    label="Solicitar Caja Previsional"
+                    v-model="solicitar_caja"
+                    class="ml-4 mb-4"
+                  ></v-checkbox>
+
+
                   <v-form lazy-validation ref="form_beneficiario" @submit.prevent>
 
                   <v-layout row>
@@ -1080,7 +1088,8 @@ export default {
       },
       show_imprimir: false,
       id_creada: null,
-      guardando: false
+      guardando: false,
+      solicitar_caja: false
     }
   },
 
