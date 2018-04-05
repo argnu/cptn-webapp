@@ -183,7 +183,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
@@ -233,7 +233,7 @@ export default {
 
     created: function() {
         Promise.all([
-            axios.get(`/opciones`),
+            api.get(`/opciones`),
             this.update()
         ])
         .then(r => {
@@ -243,7 +243,7 @@ export default {
 
     methods: {
         update: function() {
-            return axios.get(`/instituciones/${this.id}`)
+            return api.get(`/instituciones/${this.id}`)
             .then(r => {
                 this.institucion = r.data
                 this.institucion_original = utils.clone(r.data);
@@ -253,14 +253,14 @@ export default {
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
                 if (this.titulo_edit == null) {
-                    axios.post(`/instituciones/${this.id}/titulos`, this.nuevo_titulo)
+                    api.post(`/instituciones/${this.id}/titulos`, this.nuevo_titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
                     })
                 }
                 else {
-                    axios.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, this.nuevo_titulo)
+                    api.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, this.nuevo_titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
@@ -279,7 +279,7 @@ export default {
         },
 
         borrarTitulo: function(id) {
-            axios.delete(`/instituciones/${this.id}/titulos/${id}`)
+            api.delete(`/instituciones/${this.id}/titulos/${id}`)
             .then(r => {
                 this.update();
             })
@@ -304,7 +304,7 @@ export default {
         guardar: function(atributo) {
             let patch = {};
             patch[atributo] = this.institucion[atributo];
-            axios.patch(`/instituciones/${this.id}`, patch)
+            api.patch(`/instituciones/${this.id}`, patch)
             .then(r => {
                 this.edit.nombre = false;
                 this.edit.cue = false;

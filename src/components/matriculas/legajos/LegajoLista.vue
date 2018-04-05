@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from '@/axios';
+import api from '@/services/api';
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { impresionLegajo } from '@/utils/PDFUtils'
@@ -84,7 +84,7 @@ export default {
 
   created: function() {
     this.loading = true;
-    axios.get(`/matriculas/${this.id}/legajos`)
+    api.get(`/matriculas/${this.id}/legajos`)
     .then(r => {
       this.legajos = r.data.map(l => {
        l.descripcion = `${getTipoLegajo(l.tipo)} - N° ${l.numero_legajo}`; 
@@ -107,8 +107,8 @@ export default {
 
     imprimir: function(id) {
       Promise.all([
-        axios.get(`/legajos/${id}`),
-        axios.get('/tareas/categorias')
+        api.get(`/legajos/${id}`),
+        api.get('/tareas/categorias')
       ])
       .then(([legajo, categorias]) => {        
         let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))

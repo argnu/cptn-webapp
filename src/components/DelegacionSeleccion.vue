@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as Cookies from 'js-cookie'
 import Store from '@/stores/Global'
 
@@ -40,7 +40,7 @@ export default {
     },
 
     created: function() {
-        axios.get(`/usuarios/${this.user.id}/delegaciones`)
+        api.get(`/usuarios/${this.user.id}/delegaciones`)
         .then(r => this.delegaciones = r.data)
         .catch(e => console.error(e));
     },

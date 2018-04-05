@@ -818,7 +818,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Solicitud } from '@/model'
@@ -941,9 +941,9 @@ export default {
     this.table_rep_sec.debouncedUpdate = _.debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
     
     Promise.all([
-      axios.get('/paises'),
-      axios.get('/opciones?sort=valor'),
-      axios.get('/delegaciones')
+      api.get('/paises'),
+      api.get('/opciones?sort=valor'),
+      api.get('/delegaciones')
     ])
     .then(r => {
       this.paises = r[0].data;
@@ -975,7 +975,7 @@ export default {
 
       if (this.id) { 
         this.show_cargando = true;
-        axios.get(`/solicitudes/${this.id}`)
+        api.get(`/solicitudes/${this.id}`)
         .then(r => {          
               this.solicitud = new Solicitud('empresa');
               this.solicitud.fecha = utils.getFecha(r.data.fecha);
@@ -1025,7 +1025,7 @@ export default {
       this.guardando = true;
       
       if (!this.id) {
-        axios.post('/solicitudes', this.solicitud)
+        api.post('/solicitudes', this.solicitud)
             .then(r => {
               this.guardando = false;
               this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
@@ -1037,7 +1037,7 @@ export default {
             .catch(e => this.submitError(e));
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.solicitud)
+        api.put(`/solicitudes/${this.id}`, this.solicitud)
           .then(r => {
             this.guardando = false;
             if (r.status != 200) {
@@ -1077,7 +1077,7 @@ export default {
       if (this.table_rep_sec.filtros.dni) url+=`&dni=${this.table_rep_sec.filtros.dni}`;
       if (this.table_rep_sec.filtros.apellido) url+=`&apellido=${this.table_rep_sec.filtros.apellido}`;
 
-      axios.get(url)
+      api.get(url)
            .then(r => {
              this.table_rep_sec.matriculas = r.data.resultados;
              this.table_rep_sec.total = r.data.totalQuery;
@@ -1099,7 +1099,7 @@ export default {
       if (this.filtros.dni) url+=`&dni=${this.filtros.dni}`;
       if (this.filtros.apellido) url+=`&apellido=${this.filtros.apellido}`;
 
-      axios.get(url)
+      api.get(url)
            .then(r => {
              this.matriculados = r.data.resultados;
              this.totalItems = r.data.totalQuery;
@@ -1146,7 +1146,7 @@ export default {
     },
 
     imprimir: function() {
-      axios.get(`/solicitudes/${this.id}`)
+      api.get(`/solicitudes/${this.id}`)
           .then(s => {
             let solicitud = s.data;
             let pdf = impresionSolicitud(solicitud);

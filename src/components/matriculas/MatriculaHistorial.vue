@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import { Header } from '@/model'
 
 export default {
@@ -54,7 +54,7 @@ export default {
     },
 
     created: function() {
-        axios.get(`/matriculas/${this.id}/historial?sort=-fecha`)
+        api.get(`/matriculas/${this.id}/historial?sort=-fecha`)
         .then(r => {
             this.historial = r.data;
         })

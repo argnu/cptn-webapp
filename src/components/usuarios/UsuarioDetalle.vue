@@ -193,7 +193,7 @@
 
 <script>
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
@@ -247,9 +247,9 @@ export default {
     methods: {
         update: function() {
             return Promise.all([
-                axios.get('/delegaciones'),
-                axios.get(`/usuarios/${this.id}`),
-                axios.get(`/usuarios/${this.id}/delegaciones`)
+                api.get('/delegaciones'),
+                api.get(`/usuarios/${this.id}`),
+                api.get(`/usuarios/${this.id}/delegaciones`)
             ])
             .then(r => {
                 this.delegaciones = r[0].data;
@@ -262,7 +262,7 @@ export default {
 
         addDelegacion: function() {
             if (this.nueva_delegacion.id) {
-                axios.post(`/usuarios/${this.id}/delegaciones`, this.nueva_delegacion)
+                api.post(`/usuarios/${this.id}/delegaciones`, this.nueva_delegacion)
                 .then(r => {
                     this.usuario.delegaciones.push(this.nueva_delegacion);
                     this.nueva_delegacion = {};
@@ -275,7 +275,7 @@ export default {
         },
 
         borrarDelegacion: function(index) {
-            axios.delete(`/usuarios/${this.id}/delegaciones/${this.usuario.delegaciones[index].id}`)
+            api.delete(`/usuarios/${this.id}/delegaciones/${this.usuario.delegaciones[index].id}`)
             .then(r => {
                 this.usuario.delegaciones.splice(index, 1);
             })
@@ -289,7 +289,7 @@ export default {
         submit: function() {
             this.submitted = true;
             if (this.valid_basico && this.valid_pass) {
-                axios.post('/usuarios', this.usuario)
+                api.post('/usuarios', this.usuario)
                 .then(r => {
                     this.submitted = false;
                     this.global_state.snackbar.msg = 'Nuevo usuario creado exitosamente!';
@@ -309,7 +309,7 @@ export default {
                 let patch_usuario = utils.clone(this.usuario);
                 delete(patch_usuario.delegaciones);
 
-                axios.patch(`/usuarios/${this.id}`, patch_usuario)
+                api.patch(`/usuarios/${this.id}`, patch_usuario)
                 .then(r => {
                     this.edit = false;
                     this.global_state.snackbar.msg = 'Datos modificados exitosamente!';
@@ -334,7 +334,7 @@ export default {
             if (this.$refs.form_pass.validate() && this.valid_pass) {
                 let patch = { password: this.password };
 
-                axios.patch(`/usuarios/${this.id}`, patch)
+                api.patch(`/usuarios/${this.id}`, patch)
                 .then(r => {
                     this.submitted_pass = false;
                     this.password = '';

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import axios from '@/axios'
+import api from '@/services/api'
 import * as Cookies from 'js-cookie'
 import Store from '@/stores/Global'
 import Login from '@/components/Login'

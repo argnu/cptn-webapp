@@ -1,4 +1,4 @@
-import rules from '@/rules'
+import rules from '@/validation/rules.js'
 
 export default {
 

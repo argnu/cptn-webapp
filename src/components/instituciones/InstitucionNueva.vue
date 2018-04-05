@@ -212,7 +212,7 @@
 
 <script>
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -254,8 +254,8 @@ export default {
 
     created: function() {
         Promise.all([
-            axios.get('/paises'),
-            axios.get('/opciones')
+            api.get('/paises'),
+            api.get('/opciones')
         ])
         .then(r => {
             this.paises = r[0].data;
@@ -268,7 +268,7 @@ export default {
     methods: {
         changePais: function() {
             if (this.institucion.domicilio.pais) {
-                return axios.get(`/provincias?pais_id=${this.institucion.domicilio.pais}`)
+                return api.get(`/provincias?pais_id=${this.institucion.domicilio.pais}`)
                 .then(r => this.provincias = r.data)
                 .catch(e => {
                     console.error(e);
@@ -283,7 +283,7 @@ export default {
 
         changeProvincia: function () {
             if (this.institucion.domicilio.provincia) {
-                return axios.get(`/departamentos?provincia_id=${this.institucion.domicilio.provincia}`)
+                return api.get(`/departamentos?provincia_id=${this.institucion.domicilio.provincia}`)
                 .then(r => this.departamentos = r.data)
                 .catch(e => {
                     console.error(e);
@@ -298,7 +298,7 @@ export default {
 
         changeDepartamento: function () {
             if (this.institucion.domicilio.departamento) {
-                return axios.get(`/localidades?departamento_id=${this.institucion.domicilio.departamento}`)
+                return api.get(`/localidades?departamento_id=${this.institucion.domicilio.departamento}`)
                 .then(r => this.localidades = r.data)
                 .catch(e => {
                     console.error(e);
@@ -346,7 +346,7 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
-                axios.post('/instituciones', this.institucion)
+                api.post('/instituciones', this.institucion)
                 .then(r => {
                     this.submitted = false;
                     this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';

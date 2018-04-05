@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import axios from '@/axios';
+import api from '@/services/api';
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
@@ -101,7 +101,7 @@ export default {
 
   methods: {
     update: function() {
-      axios.get(`/matriculas/${this.id_matricula}`)
+      api.get(`/matriculas/${this.id_matricula}`)
       .then(r => {
         this.matricula = r.data;
       })
@@ -110,7 +110,7 @@ export default {
 
     habilitar: function() {
       // 13 ES ESTADO 'Habilitado'
-      axios.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
+      api.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
       .then(r => this.update())
       .catch(e => console.error(e));
     },

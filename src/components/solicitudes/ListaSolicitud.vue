@@ -276,7 +276,8 @@
 
 <script>
 import * as moment from 'moment'
-import axios from '@/axios'
+import api from '@/services/api'
+import reports from '@/services/reports'
 import * as _ from 'lodash'
 import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
@@ -352,7 +353,7 @@ export default {
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
-    axios.get('/opciones')
+    api.get('/opciones')
     .then(r => {
       this.opciones = r.data;
     })
@@ -411,7 +412,7 @@ export default {
         
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
-        axios.get(url)
+        api.get(url)
           .then(r => {
             this.solicitudes = r.data.resultados;
             this.totalItems = r.data.totalQuery;
@@ -433,20 +434,30 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
-      let url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
-      window.open(url, '_blank');      
+      reports.open({
+        'jsp-source': 'solicitud_matricula_profesional.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });    
     },
 
     imprimirCertificado: function(item) {
-      let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
-      window.open(url, '_blank');
+      reports.open({
+        'jsp-source': 'ertificado_matricula.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Certificado ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });       
     },
 
     aprobar: function() {
       if (this.$refs.form_aprobacion.validate()) {
         this.submitValidacion = true;
 
-        axios.post('/matriculas', this.matricula)
+        api.post('/matriculas', this.matricula)
         .then(r => {
           this.submitValidacion = false;
           this.updateSolicitudes();
@@ -484,7 +495,7 @@ export default {
     rechazar: function(id) {
       if (confirm('Esta segura/o que desea Rechazar la Solicitud de Matriculación seleccionada?')) {
         // 3 ES ESTADO 'Rechazada'
-        axios.patch(`/solicitudes/${id}`, { estado: 3 })
+        api.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
             this.updateSolicitudes();
             this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';

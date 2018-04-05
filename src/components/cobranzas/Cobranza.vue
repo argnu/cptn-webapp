@@ -164,7 +164,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import { Header } from '@/model'
 import * as utils from '@/utils'
 import InputFecha from '@/components/base/InputFecha'
@@ -256,8 +256,8 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('/opciones?sort=+valor'),
-      axios.get('/bancos')
+      api.get('/opciones?sort=+valor'),
+      api.get('/bancos')
     ])
     .then(r => {
       this.tipos_pago = r[0].data.formaPago;

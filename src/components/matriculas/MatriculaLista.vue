@@ -234,7 +234,7 @@
 
 <script>
 import * as utils from '@/utils'
-import axios from '@/axios'
+import api from '@/services/api'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
@@ -334,7 +334,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
-    axios.get('/opciones?sort=+valor')
+    api.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
         this.select_items.t_documento = r.data.documento;
@@ -369,7 +369,7 @@ export default {
 
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
-        axios.get(url)
+        api.get(url)
           .then(r => {
             this.matriculas = r.data.resultados;
             this.totalItems = r.data.totalQuery;
@@ -398,7 +398,7 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 13 })
+        api.patch(`/matriculas/${id}`, { estado: 13 })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
@@ -413,7 +413,7 @@ export default {
       if (this.$refs.form_cambioestado.validate()) {
         this.submit_cambio = true;
 
-        axios.post('/matriculas/cambiar-estado', this.cambio_estado)
+        api.post('/matriculas/cambiar-estado', this.cambio_estado)
         .then(r => {
           this.submit_cambio = false;
           this.updateMatriculas();

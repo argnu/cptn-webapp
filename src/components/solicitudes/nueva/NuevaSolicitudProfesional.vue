@@ -1031,9 +1031,10 @@
 
 <script>
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
+import reports from '@/services/reports'
 import moment from 'moment'
-import rules from '@/rules'
+import rules from '@/validation/rules.js'
 import * as utils from '@/utils'
 import {
   Solicitud,
@@ -1122,11 +1123,11 @@ export default {
 
   created: function() {
     Promise.all([
-        axios.get('/paises'),
-        axios.get('/opciones?sort=valor'),
-        axios.get('/delegaciones'),
-        axios.get('/instituciones'),
-        axios.get('/cajas-previsionales')
+        api.get('/paises'),
+        api.get('/opciones?sort=valor'),
+        api.get('/delegaciones'),
+        api.get('/instituciones'),
+        api.get('/cajas-previsionales')
       ])
       .then(r => {
         this.paises = r[0].data;
@@ -1165,7 +1166,7 @@ export default {
       this.solicitud = new Solicitud('profesional');
 
       if (this.id) {
-        return axios.get(`/solicitudes/${this.id}`)
+        return api.get(`/solicitudes/${this.id}`)
         .then(r => {
             this.solicitud.fecha = utils.getFecha(r.data.fecha);
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
@@ -1261,7 +1262,7 @@ export default {
     },
 
     chgDni: function() {
-      return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      return api.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
@@ -1298,7 +1299,7 @@ export default {
         let url = `/instituciones/${this.nueva_formacion.institucion}/titulos`;
         if (this.nueva_formacion.nivel) url += `?nivel=${this.nueva_formacion.nivel}`;
 
-        return axios.get(url)
+        return api.get(url)
         .then(r => this.titulos = r.data)
         .catch(e => console.error(e));
       }
@@ -1411,7 +1412,7 @@ export default {
       this.guardando = true;
 
       if (!this.id) {
-        axios.post('/solicitudes', this.makeFormData())
+        api.post('/solicitudes', this.makeFormData())
           .then(r => {
             this.guardando = false;
             this.id_creada = r.data.id;
@@ -1424,7 +1425,7 @@ export default {
           .catch(e => this.submitError(e));
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.makeFormData())
+        api.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
             this.guardando = false;
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
@@ -1442,13 +1443,25 @@ export default {
     imprimir: function() {
       let id = this.id_creada;
       if (!id) id = this.id;
-      axios.get(`/solicitudes/${id}`)
+      api.get(`/solicitudes/${id}`)
           .then(s => {
-            let solicitud = s.data; 
-            let url = `http://10.100.18.3:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
-            window.open(url, '_blank');            
-            url = `http://10.100.18.3:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
-            window.open(url, '_blank');                 
+            let solicitud = s.data;
+
+            reports.open({
+              'jsp-source': 'ertificado_matricula.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
+              'jsp-only-gen': false,
+              'solicitud_id': solicitud.id
+            });   
+
+            reports.open({
+              'jsp-source': 'solicitud_matricula_profesional.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
+              'jsp-only-gen': false,
+              'solicitud_id': solicitud.id
+            });                          
             
             if (this.id_creada) this.$router.replace('/solicitudes/lista');
           })
