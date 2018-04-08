@@ -222,7 +222,7 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="imprimirCertificado(props.item)">
+              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
                 <v-list-tile-title>
                   <v-icon class="text--darken-2">print</v-icon>
                   <span class="ml-2">Imprimir Certificado</span>
@@ -432,9 +432,20 @@ export default {
       .catch(e => console.error(e));
     },
 
-    imprimirSolicitud: function(item) {
-      let url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
-      window.open(url, '_blank');      
+    imprimirSolicitud: function(item) {   
+      if (this.filtros.tipoEntidad == 'empresa') {
+        axios.get(`/solicitudes/${item.id}`)
+            .then(s => {
+              let solicitud = s.data;
+              let pdf = impresionSolicitud(solicitud);
+              pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
+            })
+            .catch(e => console.error(e));        
+      }
+      else {
+        let url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
+        window.open(url, '_blank');   
+      }
     },
 
     imprimirCertificado: function(item) {
