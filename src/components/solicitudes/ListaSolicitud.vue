@@ -222,7 +222,7 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="imprimirCertificado(props.item)">
+              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
                 <v-list-tile-title>
                   <v-icon class="text--darken-2">print</v-icon>
                   <span class="ml-2">Imprimir Certificado</span>
@@ -434,13 +434,24 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
-      reports.open({
-        'jsp-source': 'solicitud_matricula_profesional.jasper',
-        'jsp-format': 'PDF',
-        'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
-        'jsp-only-gen': false,
-        'solicitud_id': item.id
-      });    
+      if (this.filtros.tipoEntidad == 'empresa') {
+        axios.get(`/solicitudes/${item.id}`)
+            .then(s => {
+              let solicitud = s.data;
+              let pdf = impresionSolicitud(solicitud);
+              pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
+            })
+            .catch(e => console.error(e));        
+      }
+      else {
+        reports.open({
+          'jsp-source': 'solicitud_matricula_profesional.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
+          'jsp-only-gen': false,
+          'solicitud_id': item.id
+        });    
+      }      
     },
 
     imprimirCertificado: function(item) {

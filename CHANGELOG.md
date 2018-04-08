@@ -1,4 +1,4 @@
-# UNRELEASED
+# 1.5.0 (2018-04-03)
 
 ## Modificado
  - Cambio de color 'blue' por 'primary' para modificar colores en ambiente develop.
@@ -7,6 +7,19 @@
 ## Agregado
 
 - **NuevoProfesional**: lista de condiciones impositivas.
+- **Nuevas UI**: Usuarios, Instituciones, Títulos.
+- **Matrícula**: Cambios de estado de matrícula según Documento.
+
+# 1.4.3 (2018-02-26)
+
+## Solucionado
+    - Impresión de fechaEgreso en PDF Solicitud.
+    - Fix en validación de fechas.
+
+# 1.4.2 (2018-02-20)
+
+## Modificado
+    - Reemplazo de TECB por TEC-.
 
 # 1.4.1 (2018-02-19)
 
