@@ -31,7 +31,7 @@
                 >
                 </v-text-field>
               </v-flex>
-                            
+
               <v-flex xs4 class="mx-2">
                 <input-fecha
                   v-model="matricula.documento.fecha"
@@ -55,8 +55,8 @@
 
             <v-layout row>
               <v-flex xs12>
-                <v-btn 
-                  class="right green white--text" 
+                <v-btn
+                  class="right green white--text"
                   @click.native="aprobar"
                   :disabled="submitValidacion"
                   :loading="submitValidacion"
@@ -115,19 +115,19 @@
               ></v-text-field>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.profesional.dni" 
-                  label="DNI" 
+                  v-model="filtros.profesional.dni"
+                  label="DNI"
                   @input="updateList"
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.cuit" 
-                  label="CUIT" 
+                  v-model="filtros.empresa.cuit"
+                  label="CUIT"
                   @input="updateList"
                 ></v-text-field>
               </div>
@@ -135,19 +135,19 @@
 
             <v-flex xs12 md3 class="mx-3">
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.profesional.apellido" 
-                  label="Apellido" 
+                  v-model="filtros.profesional.apellido"
+                  label="Apellido"
                   @input="updateList"
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.nombre" 
-                  label="Nombre" 
+                  v-model="filtros.empresa.nombre"
+                  label="Nombre"
                   @input="updateList"
                 ></v-text-field>
               </div>
@@ -156,11 +156,11 @@
 
           <v-layout row wrap>
             <v-flex xs12>
-              <v-btn                
+              <v-btn
                 @click="limpiarFiltros"
-              >Limpiar Filtros</v-btn>              
-            </v-flex>            
-          </v-layout>          
+              >Limpiar Filtros</v-btn>
+            </v-flex>
+          </v-layout>
         </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -183,7 +183,7 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.numero }}</td>
         <td>{{ props.item.fecha | fecha }}</td>
-        
+
         <template v-if="filtros.tipoEntidad == 'profesional'">
           <td>{{ props.item.entidad.apellido }}</td>
           <td>{{ props.item.entidad.nombre }}</td>
@@ -215,40 +215,54 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="imprimirSolicitud(props.item)">
+              <v-list-tile>
                 <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir</span>
+                  <v-menu open-on-hover top offset-x left>
+                    <div slot="activator">
+                      <v-icon class="text--darken-2">print</v-icon>
+                      <span class="ml-2">Imprimir</span>
+                    </div>
+                    <v-list>
+                      <v-list-tile @click="imprimirSolicitud(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Solicitud</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Certificado</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirAnexoCaja(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Anexo Caja</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertBaja(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Cert. Baja Caja Prev.</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirDifusion(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Aceptación de Difusión de Datos</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
-                <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir Certificado</span>
-                </v-list-tile-title>
-              </v-list-tile>
-              
-              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirAnexoCaja(props.item)">
-                <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir Anexo Caja</span>
-                </v-list-tile-title>
-              </v-list-tile>
-              
-              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertBaja(props.item)">
-                <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir Cert. Baja Caja Prev.</span>
-                </v-list-tile-title>
-              </v-list-tile>
-              
-              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirDifusion(props.item)">
-                <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir Aceptación de Difusión de Datos</span>
-                </v-list-tile-title>
-              </v-list-tile>
+
 
               <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
@@ -430,7 +444,7 @@ export default {
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
-        
+
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
         api.get(url)
@@ -462,7 +476,7 @@ export default {
               let pdf = impresionSolicitud(solicitud);
               pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
             })
-            .catch(e => console.error(e));        
+            .catch(e => console.error(e));
       }
       else {
         reports.open({
@@ -471,8 +485,8 @@ export default {
           'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
           'jsp-only-gen': false,
           'solicitud_id': item.id
-        });    
-      }      
+        });
+      }
     },
 
     imprimirCertificado: function(item) {
@@ -482,7 +496,7 @@ export default {
         'jsp-output-file': `Certificado ${item.entidad.apellido}-${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
-      });       
+      });
     },
 
     imprimirAnexoCaja: function(item) {
@@ -492,7 +506,7 @@ export default {
         'jsp-output-file': `Anexo Caja ${item.entidad.apellido}-${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
-      });       
+      });
     },
 
     imprimirCertBaja: function(item) {
@@ -502,7 +516,7 @@ export default {
         'jsp-output-file': `Certificado Baja Caja Previsional ${item.entidad.apellido}-${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
-      });       
+      });
     },
 
     imprimirDifusion: function(item) {
@@ -512,7 +526,7 @@ export default {
         'jsp-output-file': `Aceptacion Difusion Datos ${item.entidad.apellido}-${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
-      });       
+      });
     },
 
     aprobar: function() {
@@ -562,11 +576,11 @@ export default {
             this.updateSolicitudes();
             this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';
             this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;          
+            this.global_state.snackbar.show = true;
         })
         .catch(e => console.error(e));
       }
-    }    
+    }
   },
 
   components: {
