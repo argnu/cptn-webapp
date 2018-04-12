@@ -1300,8 +1300,12 @@ export default {
       return this.opciones.vinculo.find(i => id == i.id).valor;
     },
 
-    getNombreCaja: function(id) {
-      return this.cajas_previsionales.find(i => id == i.id).nombre;
+    getNombreCaja: function(item) {
+      if (typeof item == 'string') return item;
+      else {
+        let caja = this.cajas_previsionales.find(i => item == i.id);
+        return caja ? caja.nombre : '';
+      }
     },
 
     chgDni: function() {
