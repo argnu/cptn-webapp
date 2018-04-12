@@ -6,7 +6,7 @@ export function getFloat(value) {
 }
 
 export function getFecha(str) {
-  return moment(str).isValid() ? moment(str).format('DD/MM/YYYY') : '';  
+  return moment(str).isValid() ? moment(str).format('DD/MM/YYYY') : '';
 }
 
 
@@ -34,8 +34,7 @@ export function validObject(original, rules) {
 }
 
 export function clone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
+  return JSON.parse(JSON.stringify(obj));}
 
 export function round(numero, decimales) {
   if (!numero) return 0;

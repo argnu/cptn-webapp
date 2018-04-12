@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import api from '@/services/api'
 import * as Cookies from 'js-cookie'
+import * as axios from 'axios'
 import Store from '@/stores/Global'
 import Login from '@/components/Login'
 import MainContainer from '@/components/MainContainer'

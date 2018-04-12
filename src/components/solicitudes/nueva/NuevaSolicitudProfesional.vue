@@ -581,7 +581,11 @@
 
 
             <!-- PASO 6: FORMACIONES -->
-            <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
+            <v-stepper-step step="6" edit-icon="check" 
+              editable
+              :complete="valid_formaciones && step > 6"
+              :rules="[() => step <= 6 || valid_formaciones]"
+            >
               Datos de Formación Académica
             </v-stepper-step>
             <v-stepper-content step="6">
@@ -699,8 +703,15 @@
                         </tr>
                       </template>
                     </v-data-table>
-                  </v-container>
 
+                    <br>
+
+                    <v-alert color="error" icon="priority_high" :value="!valid_formaciones">
+                      Debe ingresar al menos un título para el profesional
+                    </v-alert>
+
+
+                  </v-container>
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -773,7 +784,7 @@
 
                   <v-layout row>
                      <v-flex xs5 class="mx-4">
-                      <typeahead
+                      <input-select-new
                         label="Nombre"
                         maxlength="100"
                         :items="cajas_previsionales"
@@ -781,7 +792,7 @@
                         item-value="id"
                         v-model="nueva_caja"
                         :rules="[rules.required]"
-                      ></typeahead>
+                      ></input-select-new>
                     </v-flex>
                      <v-flex xs3>
                       <v-btn @click="addCaja">Agregar</v-btn>
@@ -1054,7 +1065,7 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
-import Typeahead from '@/components/base/Typeahead';
+import InputSelectNew from '@/components/base/InputSelectNew';
 import AddFoto from '@/components/solicitudes/AddFoto';
 import AddFirma from '@/components/solicitudes/AddFirma';
 import MixinValidator from '@/components/mixins/MixinValidator';
@@ -1063,8 +1074,19 @@ import { impresionSolicitud } from '@/utils/PDFUtils'
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [MixinValidator, NuevaSolicitud],
+
   props: ['id', 'dni'],
+
+  mixins: [MixinValidator, NuevaSolicitud],
+
+  components: {
+    InputFecha,
+    InputTelefono,
+    InputNumero,
+    InputSelectNew,
+    AddFoto,
+    AddFirma
+  },
 
   data() {
     return {
@@ -1118,6 +1140,10 @@ export default {
       return this.suma_subsidiarios === 100 || this.solicitud.entidad.subsidiarios.length === 0;
     },
 
+    valid_formaciones: function() {
+      return this.solicitud.entidad.formaciones.length > 0;
+    },
+
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
@@ -1136,7 +1162,7 @@ export default {
         api.get('/opciones?sort=valor'),
         api.get('/delegaciones'),
         api.get('/instituciones'),
-        api.get('/cajas-previsionales')
+        api.get('/cajas-previsionales?sort=+nombre')
       ])
       .then(r => {
         this.paises = r[0].data;
@@ -1490,15 +1516,6 @@ export default {
     cancelarImpresion: function() {
       this.$router.replace('/solicitudes/lista');
     }
-  },
-
-  components: {
-    InputFecha,
-    InputTelefono,
-    InputNumero,
-    Typeahead,
-    AddFoto,
-    AddFirma
   }
 }
 </script>
