@@ -787,7 +787,7 @@
                       <input-select-new
                         label="Nombre"
                         maxlength="100"
-                        :items="cajas_previsionales"
+                        :items="cajas_previsionales_filter"
                         item-text="nombre"
                         item-value="id"
                         v-model="nueva_caja"
@@ -1131,6 +1131,14 @@ export default {
       if (!this.nueva_formacion.fechaEmision) return '';
     },
 
+    cajas_previsionales_filter: function() {
+      return this.cajas_previsionales.filter(c => 
+        !this.solicitud.entidad.cajas_previsionales.find(cp => 
+          cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
+        )
+      );
+    },
+
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -1418,9 +1426,11 @@ export default {
         if (typeof this.nueva_caja == 'number') caja = this.nueva_caja;
         if (typeof this.nueva_caja == 'string') caja = { nombre: this.nueva_caja };
 
-        this.solicitud.entidad.cajas_previsionales.push(caja);
-        this.nueva_caja = '';
-        this.$refs.form_beneficiario.reset();
+        if (this.solicitud.entidad.cajas_previsionales.indexOf(this.getNombreCaja(caja)) == -1) {
+          this.solicitud.entidad.cajas_previsionales.push(caja);
+          this.nueva_caja = '';
+          this.$refs.form_beneficiario.reset();
+        }
       }
     },
 
