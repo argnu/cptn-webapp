@@ -11,7 +11,7 @@
           <v-btn color="green darken-1" flat="flat" @click.native="imprimir">Sí</v-btn>
           <v-btn color="green darken-1" flat="flat" @click.native="cancelarImpresion">No</v-btn>
         </v-card-actions>
-      </v-card>        
+      </v-card>
     </v-dialog>
 
   <v-layout row wrap>
@@ -181,7 +181,7 @@
                         v-model="solicitud.entidad.observaciones"
                         tabindex="13"
                       >
-                      </v-text-field>                      
+                      </v-text-field>
                     </v-flex>
                   </v-layout>
 
@@ -605,7 +605,7 @@
                         </v-select>
 
                          <v-select
-                          autocomplete                         
+                          autocomplete
                           :items="opciones.niveles_titulos"
                           item-text="valor"
                           item-value="id"
@@ -986,12 +986,12 @@
                 </v-card-text>
               </v-card>
 
-              <v-btn 
-                color="primary" 
-                class="darken-1 white--text right" 
+              <v-btn
+                color="primary"
+                class="darken-1 white--text right"
                 :loading="guardando"
                 :disabled="!valid_form || guardando"
-                @click.native="submit" 
+                @click.native="submit"
               >
                 Guardar Solicitud
                 <v-icon dark right>check_circle</v-icon>
@@ -1165,8 +1165,8 @@ export default {
           if (reset) {
             this.$refs.firma.reset();
             this.$refs.form_profesional.reset();
-          }          
-        });        
+          }
+        });
       });
     },
 
@@ -1264,7 +1264,7 @@ export default {
 
     getVinculo: function(id) {
       return this.opciones.vinculo.find(i => id == i.id).valor;
-    },    
+    },
 
     getNombreCaja: function(id) {
       return this.cajas_previsionales.find(i => id == i.id).nombre;
@@ -1328,7 +1328,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.formaciones, this.formacion_edit, this.nueva_formacion);
         }
-        
+
         this.nueva_formacion = new Formacion();
         this.formacion_edit = null;
         Vue.nextTick().then(() => {
@@ -1342,7 +1342,7 @@ export default {
       this.nueva_formacion = this.solicitud.entidad.formaciones[index];
       if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
       if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
-     
+
       this.updateTitulos();
     },
 
@@ -1456,13 +1456,23 @@ export default {
           .then(s => {
             let solicitud = s.data;
 
+            if (this.solicitar_caja) {
+              reports.open({
+                'jsp-source': 'anexo_caja_previsional.jasper',
+                'jsp-format': 'PDF',
+                'jsp-output-file': `Anexo Caja ${solicitud.entidad.apellido}-${Date.now()}`,
+                'jsp-only-gen': false,
+                'solicitud_id': solicitud.id
+              });
+            }
+
             reports.open({
-              'jsp-source': 'ertificado_matricula.jasper',
+              'jsp-source': 'certificado_matricula.jasper',
               'jsp-format': 'PDF',
               'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
               'jsp-only-gen': false,
               'solicitud_id': solicitud.id
-            });   
+            });
 
             reports.open({
               'jsp-source': 'solicitud_matricula_profesional.jasper',
@@ -1470,8 +1480,8 @@ export default {
               'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
               'jsp-only-gen': false,
               'solicitud_id': solicitud.id
-            });                          
-            
+            });
+
             if (this.id_creada) this.$router.replace('/solicitudes/lista');
           })
           .catch(e => console.error(e));

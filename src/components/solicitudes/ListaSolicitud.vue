@@ -228,6 +228,27 @@
                   <span class="ml-2">Imprimir Certificado</span>
                 </v-list-tile-title>
               </v-list-tile>
+              
+              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirAnexoCaja(props.item)">
+                <v-list-tile-title>
+                  <v-icon class="text--darken-2">print</v-icon>
+                  <span class="ml-2">Imprimir Anexo Caja</span>
+                </v-list-tile-title>
+              </v-list-tile>
+              
+              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertBaja(props.item)">
+                <v-list-tile-title>
+                  <v-icon class="text--darken-2">print</v-icon>
+                  <span class="ml-2">Imprimir Cert. Baja Caja Prev.</span>
+                </v-list-tile-title>
+              </v-list-tile>
+              
+              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirDifusion(props.item)">
+                <v-list-tile-title>
+                  <v-icon class="text--darken-2">print</v-icon>
+                  <span class="ml-2">Imprimir Aceptación de Difusión de Datos</span>
+                </v-list-tile-title>
+              </v-list-tile>
 
               <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
@@ -456,9 +477,39 @@ export default {
 
     imprimirCertificado: function(item) {
       reports.open({
-        'jsp-source': 'ertificado_matricula.jasper',
+        'jsp-source': 'certificado_matricula.jasper',
         'jsp-format': 'PDF',
         'jsp-output-file': `Certificado ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });       
+    },
+
+    imprimirAnexoCaja: function(item) {
+      reports.open({
+        'jsp-source': 'anexo_caja_previsional.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Anexo Caja ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });       
+    },
+
+    imprimirCertBaja: function(item) {
+      reports.open({
+        'jsp-source': 'certificado_baja_para_caja.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Certificado Baja Caja Previsional ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });       
+    },
+
+    imprimirDifusion: function(item) {
+      reports.open({
+        'jsp-source': 'aceptacion_difusion.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Aceptacion Difusion Datos ${item.entidad.apellido}-${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
       });       
