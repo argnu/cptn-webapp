@@ -548,14 +548,13 @@ export default {
         api.post('/matriculas', this.matricula)
         .then(r => {
 
-          //FALTA CORREGIR PARAMETROS
-          // reports.open({
-          //   'jsp-source': 'matricula_habilitada.jasper',
-          //   'jsp-format': 'PDF',
-          //   'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.entidad.apellido}-${Date.now()}`,
-          //   'jsp-only-gen': false,
-          //   'solicitud_id': r.data.id
-          // });
+          reports.open({
+            'jsp-source': 'certificado_matriculado_habilitado.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.numeroMatricula}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'id_matricula': r.data.id
+          });
 
           this.submitValidacion = false;
           this.updateSolicitudes();

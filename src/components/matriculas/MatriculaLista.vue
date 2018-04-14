@@ -211,10 +211,37 @@
             </v-btn>
             
             <v-list>
+              <v-list-tile>
+                <v-list-tile-title>
+                  <v-menu open-on-hover top offset-x left>
+                    <div slot="activator">
+                      <v-icon class="text--darken-2">print</v-icon>
+                      <span class="ml-2">Imprimir</span>
+                    </div>
+                    <v-list>
+                      <v-list-tile
+                        @click="imprimirCredencial(props.item)"
+                      >
+                        <v-icon class="text--darken-2 mr-2">print</v-icon>
+                        <v-list-tile-title>Credencial</v-list-tile-title>
+                      </v-list-tile>
+                      
+                      <v-list-tile
+                        @click="imprimirCertificado(props.item)"
+                      >
+                        <v-icon class="text--darken-2 mr-2">print</v-icon>
+                        <v-list-tile-title>Certificado de Habilitación</v-list-tile-title>
+                      </v-list-tile>
+                      
+                    </v-list>
+                  </v-menu>
+                </v-list-tile-title>
+              </v-list-tile>
+
               <v-list-tile
                 @click="showCambioEstado(props.item.id)"
               >
-                <v-icon class="secondary--text mr-2">gavel</v-icon>
+                <v-icon class="primary--text mr-2">gavel</v-icon>
                 <v-list-tile-title>Cambiar Estado</v-list-tile-title>
               </v-list-tile>
 
@@ -237,6 +264,7 @@
 <script>
 import * as utils from '@/utils'
 import api from '@/services/api'
+import reports from '@/services/reports'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
@@ -439,6 +467,34 @@ export default {
 
     rematricular: function(dni) {
       this.$router.push(`/solicitudes/profesionales/nueva?dni=${dni}`);
+    },
+
+    imprimirCredencial: function(item) {
+      reports.open({
+        'jsp-source': 'credencial-v4.3-dorso.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Credencial (Dorso) ${item.numeroMatricula} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'numeroMatricula': item.numeroMatricula
+      });
+
+      reports.open({
+        'jsp-source': 'credencial-v4.3-frente.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Credencial (Frente) ${item.numeroMatricula} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'numeroMatricula': item.numeroMatricula
+      });      
+    },
+
+    imprimirCertificado: function(item) {
+      reports.open({
+        'jsp-source': 'certificado_matriculado_habilitado.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'id_matricula': item.id
+      });      
     }
 
   },
