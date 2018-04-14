@@ -1111,7 +1111,8 @@ export default {
       show_imprimir: false,
       id_creada: null,
       guardando: false,
-      solicitar_caja: false
+      solicitar_caja: false,
+      rematriculado: false
     }
   },
 
@@ -1492,39 +1493,45 @@ export default {
     imprimir: function() {
       let id = this.id_creada;
       if (!id) id = this.id;
-      api.get(`/solicitudes/${id}`)
-          .then(s => {
-            let solicitud = s.data;
+      Promise.all([
+        api.get(`/solicitudes/${id}`),
+        api.get(`/matriculas?entidad=${id}`)
+      ])    
+      .then(rs => {
+        let solicitud = rs[0].data;
+        let es_rematriculado = rs[1].data.length > 0;
 
-            if (this.solicitar_caja) {
-              reports.open({
-                'jsp-source': 'anexo_caja_previsional.jasper',
-                'jsp-format': 'PDF',
-                'jsp-output-file': `Anexo Caja ${solicitud.entidad.apellido}-${Date.now()}`,
-                'jsp-only-gen': false,
-                'solicitud_id': solicitud.id
-              });
-            }
+        if (this.solicitar_caja) {
+          reports.open({
+            'jsp-source': 'anexo_caja_previsional.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Anexo Caja ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'solicitud_id': solicitud.id
+          });
+        }
 
-            reports.open({
-              'jsp-source': 'certificado_matricula.jasper',
-              'jsp-format': 'PDF',
-              'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
-              'jsp-only-gen': false,
-              'solicitud_id': solicitud.id
-            });
+        if (es_rematriculado) {
+          reports.open({
+            'jsp-source': 'certificado_matricula.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'solicitud_id': solicitud.id
+          });
+        }
 
-            reports.open({
-              'jsp-source': 'solicitud_matricula_profesional.jasper',
-              'jsp-format': 'PDF',
-              'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
-              'jsp-only-gen': false,
-              'solicitud_id': solicitud.id
-            });
+        reports.open({
+          'jsp-source': 'solicitud_matricula_profesional.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
+          'jsp-only-gen': false,
+          'solicitud_id': solicitud.id
+        });
 
-            if (this.id_creada) this.$router.replace('/solicitudes/lista');
-          })
-          .catch(e => console.error(e));
+        if (this.id_creada) this.$router.replace('/solicitudes/lista');
+      })
+      .catch(e => console.error(e));
     },
 
     cancelarImpresion: function() {

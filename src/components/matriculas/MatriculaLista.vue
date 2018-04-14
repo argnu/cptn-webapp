@@ -1,5 +1,7 @@
 <template>
 <v-container class="grey lighten-3">
+
+  
   <v-dialog v-model="show_cambio" persistent max-width="70%">
     <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Cambio de Estado de Matrícula</v-toolbar-title>

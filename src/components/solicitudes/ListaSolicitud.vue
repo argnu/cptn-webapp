@@ -13,6 +13,17 @@
             <v-layout row>
               <v-flex xs4 class="mx-2">
                 <v-select
+                  label="Tipo de Matrícula:"
+                  :items="$options.tipos_matricula"
+                  v-model="matricula.tipo"
+                >
+                </v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row>
+              <v-flex xs4 class="mx-2">
+                <v-select
                   label="Tipo de Documento:"
                   :items="opciones.documento"
                   v-model="matricula.documento.tipo"
@@ -332,11 +343,6 @@ const select_items = {
   tipo: [
     { text: 'Profesionales', value: 'profesional' },
     { text: 'Empresas', value: 'empresa' }
-  ],
-  tipos_matricula: [
-    { text: 'TECA', value: 'TECA' },
-    { text: 'TEC-', value: 'TEC-' },
-    { text: 'IDO', value: 'IDO' }
   ]
 }
 
@@ -364,6 +370,12 @@ const headers = {
 export default {
   name: 'lista-solicitud',
   mixins: [MixinValidator],
+
+  tipos_matricula: [
+    { text: 'TECA', value: 'TECA' },
+    { text: 'TEC-', value: 'TEC-' },
+    { text: 'IDO', value: 'IDO' }
+  ],
 
   data() {
     return {
@@ -535,6 +547,16 @@ export default {
 
         api.post('/matriculas', this.matricula)
         .then(r => {
+
+          //FALTA CORREGIR PARAMETROS
+          // reports.open({
+          //   'jsp-source': 'matricula_habilitada.jasper',
+          //   'jsp-format': 'PDF',
+          //   'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.entidad.apellido}-${Date.now()}`,
+          //   'jsp-only-gen': false,
+          //   'solicitud_id': r.data.id
+          // });
+
           this.submitValidacion = false;
           this.updateSolicitudes();
           this.matricula = new Matricula();
