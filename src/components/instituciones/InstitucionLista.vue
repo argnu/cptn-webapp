@@ -80,7 +80,7 @@
 
 <script>
 import * as utils from '@/utils'
-import axios from '@/axios'
+import api from '@/services/api'
 import * as _ from 'lodash'
 import { Header } from '@/model'
 import ListaStore from '@/stores/listados/Instituciones'
@@ -151,7 +151,7 @@ export default {
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
-      axios.get(url)
+      api.get(url)
         .then(r => {
           this.instituciones = r.data.resultados;
           this.totalItems = r.data.totalQuery;

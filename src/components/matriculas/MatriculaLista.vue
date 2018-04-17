@@ -1,5 +1,7 @@
 <template>
 <v-container class="grey lighten-3">
+
+  
   <v-dialog v-model="show_cambio" persistent max-width="70%">
     <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Cambio de Estado de Matrícula</v-toolbar-title>
@@ -209,10 +211,37 @@
             </v-btn>
             
             <v-list>
+              <v-list-tile>
+                <v-list-tile-title>
+                  <v-menu open-on-hover top offset-x left>
+                    <div slot="activator">
+                      <v-icon class="text--darken-2">print</v-icon>
+                      <span class="ml-2">Imprimir</span>
+                    </div>
+                    <v-list>
+                      <v-list-tile
+                        @click="imprimirCredencial(props.item)"
+                      >
+                        <v-icon class="text--darken-2 mr-2">print</v-icon>
+                        <v-list-tile-title>Credencial</v-list-tile-title>
+                      </v-list-tile>
+                      
+                      <v-list-tile
+                        @click="imprimirCertificado(props.item)"
+                      >
+                        <v-icon class="text--darken-2 mr-2">print</v-icon>
+                        <v-list-tile-title>Certificado de Habilitación</v-list-tile-title>
+                      </v-list-tile>
+                      
+                    </v-list>
+                  </v-menu>
+                </v-list-tile-title>
+              </v-list-tile>
+
               <v-list-tile
                 @click="showCambioEstado(props.item.id)"
               >
-                <v-icon class="secondary--text mr-2">gavel</v-icon>
+                <v-icon class="primary--text mr-2">gavel</v-icon>
                 <v-list-tile-title>Cambiar Estado</v-list-tile-title>
               </v-list-tile>
 
@@ -234,7 +263,8 @@
 
 <script>
 import * as utils from '@/utils'
-import axios from '@/axios'
+import api from '@/services/api'
+import reports from '@/services/reports'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import { Matricula, Header} from '@/model'
@@ -334,7 +364,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
-    axios.get('/opciones?sort=+valor')
+    api.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
         this.select_items.t_documento = r.data.documento;
@@ -369,7 +399,7 @@ export default {
 
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
-        axios.get(url)
+        api.get(url)
           .then(r => {
             this.matriculas = r.data.resultados;
             this.totalItems = r.data.totalQuery;
@@ -398,7 +428,7 @@ export default {
     habilitar: function(id) {
       if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
         // 13 ES ESTADO 'Habilitado'
-        axios.patch(`/matriculas/${id}`, { estado: 13 })
+        api.patch(`/matriculas/${id}`, { estado: 13 })
         .then(r => this.updateMatriculas())
         .catch(e => console.error(e));
       }
@@ -413,7 +443,7 @@ export default {
       if (this.$refs.form_cambioestado.validate()) {
         this.submit_cambio = true;
 
-        axios.post('/matriculas/cambiar-estado', this.cambio_estado)
+        api.post('/matriculas/cambiar-estado', this.cambio_estado)
         .then(r => {
           this.submit_cambio = false;
           this.updateMatriculas();
@@ -437,6 +467,34 @@ export default {
 
     rematricular: function(dni) {
       this.$router.push(`/solicitudes/profesionales/nueva?dni=${dni}`);
+    },
+
+    imprimirCredencial: function(item) {
+      reports.open({
+        'jsp-source': 'credencial-v4.3-dorso.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Credencial (Dorso) ${item.numeroMatricula} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'numeroMatricula': item.numeroMatricula
+      });
+
+      reports.open({
+        'jsp-source': 'credencial-v4.3-frente.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Credencial (Frente) ${item.numeroMatricula} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'numeroMatricula': item.numeroMatricula
+      });      
+    },
+
+    imprimirCertificado: function(item) {
+      reports.open({
+        'jsp-source': 'certificado_matriculado_habilitado.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'id_matricula': item.id
+      });      
     }
 
   },

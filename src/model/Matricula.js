@@ -7,7 +7,7 @@ export class Matricula {
     };
     this.solicitud = null;
     this.delegacion = delegacion;
-    this.generar_boleta = true;
+    this.generar_boleta = false;
     this.tipo = 'TECA';
   }
 }

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import Store from '@/stores/Global'
 import AddFoto from '@/components/solicitudes/AddFoto'
 import AddFirma from '@/components/solicitudes/AddFirma'
@@ -104,13 +104,13 @@ export default {
             if (this.foto) {
                 form_data = new FormData();
                 form_data.append('foto', this.foto);
-                proms.push(axios.put(`/profesionales/${this.profesional.id}/foto`, form_data));
+                proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, form_data));
             }
 
             if (this.firma) {
                 form_data = new FormData();
                 form_data.append('firma', this.firma);
-                proms.push(axios.put(`/profesionales/${this.profesional.id}/firma`, form_data));
+                proms.push(api.put(`/profesionales/${this.profesional.id}/firma`, form_data));
             }
 
             Promise.all(proms)

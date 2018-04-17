@@ -595,7 +595,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as moment from 'moment'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
@@ -747,14 +747,14 @@ export default {
 
   created: function() {
     Promise.all([
-      axios.get('/paises'),
-      axios.get('/tareas/categorias')
+      api.get('/paises'),
+      api.get('/tareas/categorias')
     ])
     .then(r => {
       this.paises = r[0].data;
       this.categorias = r[1].data;
       if (this.id_legajo) {
-        return axios.get(`/legajos/${this.id_legajo}`)
+        return api.get(`/legajos/${this.id_legajo}`)
               .then(r => {
                   this.legajo = r.data;
                   if (this.legajo.domicilio) {
@@ -766,13 +766,13 @@ export default {
                   else this.legajo.domicilio = new Domicilio();
 
                   this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
-                  return axios.get(`/matriculas/${this.legajo.matricula}`);
+                  return api.get(`/matriculas/${this.legajo.matricula}`);
               })
       }
       else { 
         this.changePais();
         this.changeProvincia();        
-        return axios.get(`/matriculas/${this.id_matricula}`);
+        return api.get(`/matriculas/${this.id_matricula}`);
       }
     })
     .then(r => this.matricula = r.data)
@@ -781,25 +781,25 @@ export default {
 
   methods: {
     changePais: function() {
-      axios.get(`/provincias?pais_id=${this.legajo.domicilio.pais}`)
+      api.get(`/provincias?pais_id=${this.legajo.domicilio.pais}`)
              .then(r => this.provincias = r.data)
              .catch(e => console.error(e));
            },
 
     changeProvincia: function() {
-        axios.get(`/departamentos?provincia_id=${this.legajo.domicilio.provincia}`)
+        api.get(`/departamentos?provincia_id=${this.legajo.domicilio.provincia}`)
              .then(r => this.departamentos = r.data)
              .catch(e => console.error(e));
     },
 
     changeDepartamento: function() {
-        axios.get(`/localidades?departamento_id=${this.legajo.domicilio.departamento}`)
+        api.get(`/localidades?departamento_id=${this.legajo.domicilio.departamento}`)
              .then(r => this.localidades = r.data)
              .catch(e => console.error(e));
     },
 
     chgSubcategoria: function() {
-      axios.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
+      api.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
            .then(r => this.items_predeterminados = r.data)
            .catch(e => console.error(e));
     },
@@ -807,7 +807,7 @@ export default {
     chgItemPredeterminado: function() {
       this.items_valores_predeterminados = [];
       if (typeof this.nuevo_item.item == 'number') {
-        axios.get(`/tareas/items/${this.nuevo_item.item}/predeterminados`)
+        api.get(`/tareas/items/${this.nuevo_item.item}/predeterminados`)
              .then(r => this.items_valores_predeterminados = r.data)
              .catch(e => console.error(e));
       }
@@ -820,7 +820,7 @@ export default {
 
     chgCuitComitente: function() {
       if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
-        axios.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
+        api.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
           if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
         })
@@ -830,7 +830,7 @@ export default {
     chgDni: function() {
       if (this.nuevo_comitente.persona.dni) {
         if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
-          axios.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
+          api.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
           .then(r => {
             if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
           })
@@ -876,7 +876,7 @@ export default {
       this.submitted = true;
       this.legajo.delegacion = this.global_state.delegacion.id;
 
-      axios.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
+      api.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
            .then(r => {
              this.submitted = false;
              this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
@@ -892,7 +892,7 @@ export default {
 
     imprimir: function() {
       let categoria = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria))
-      axios.get(`/legajos/${this.id_legajo}`)
+      api.get(`/legajos/${this.id_legajo}`)
       .then(r => {
         let legajo = r.data;
         let pdf = impresionLegajo(legajo, categoria);

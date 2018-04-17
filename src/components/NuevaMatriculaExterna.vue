@@ -91,9 +91,9 @@
 
 <script>
 
-import axios from '@/axios'
+import api from '@/services/api'
 import { PersonaFisica } from '@/model/Persona'
-import rules from '@/rules'
+import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
 class Matricula {
@@ -120,7 +120,7 @@ export default {
         submit: function() {
             this.submitted = true;
             if (this.$refs.form_matricula.validate()) {
-                axios.post('/matriculas-externas', this.matricula)
+                api.post('/matriculas-externas', this.matricula)
                 .then(r => {
                     if (r.status == 201) {
                         this.matricula = new Matricula();
@@ -140,7 +140,7 @@ export default {
         },
 
         chgDni: function() {
-            axios.get(`/personas?dni=${this.matricula.persona.dni}`)
+            api.get(`/personas?dni=${this.matricula.persona.dni}`)
             .then(r => {
                 if (r.data.length) {
                     let persona = r.data.find(p => p.dni == this.matricula.persona.dni);

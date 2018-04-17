@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils'
 import * as moment from 'moment'
 import { Header } from '@/model'
@@ -175,7 +175,7 @@ export default {
     },
 
     created: function() {
-        axios.get('/opciones?sort=+valor')
+        api.get('/opciones?sort=+valor')
         .then(r => {
             this.tipos_comprobante = r.data.comprobante;
         })
@@ -205,7 +205,7 @@ export default {
                 this.boleta.matricula = this.idMatricula;
                 this.boleta.total = this.boleta.items.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
                 this.boleta.delegacion = Store.state.delegacion.id;
-                axios.post('/boletas', this.boleta)
+                api.post('/boletas', this.boleta)
                 .then(r => {
                     this.submitted = false;
                     this.boleta = new Boleta();

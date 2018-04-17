@@ -11,7 +11,7 @@
           <v-btn color="green darken-1" flat="flat" @click.native="imprimir">Sí</v-btn>
           <v-btn color="green darken-1" flat="flat" @click.native="cancelarImpresion">No</v-btn>
         </v-card-actions>
-      </v-card>        
+      </v-card>
     </v-dialog>
 
   <v-layout row wrap>
@@ -181,7 +181,7 @@
                         v-model="solicitud.entidad.observaciones"
                         tabindex="13"
                       >
-                      </v-text-field>                      
+                      </v-text-field>
                     </v-flex>
                   </v-layout>
 
@@ -581,7 +581,11 @@
 
 
             <!-- PASO 6: FORMACIONES -->
-            <v-stepper-step step="6" edit-icon="check" editable :complete="step > 6">
+            <v-stepper-step step="6" edit-icon="check" 
+              editable
+              :complete="valid_formaciones && step > 6"
+              :rules="[() => step <= 6 || valid_formaciones]"
+            >
               Datos de Formación Académica
             </v-stepper-step>
             <v-stepper-content step="6">
@@ -605,7 +609,7 @@
                         </v-select>
 
                          <v-select
-                          autocomplete                         
+                          autocomplete
                           :items="opciones.niveles_titulos"
                           item-text="valor"
                           item-value="id"
@@ -699,8 +703,15 @@
                         </tr>
                       </template>
                     </v-data-table>
-                  </v-container>
 
+                    <br>
+
+                    <v-alert color="error" icon="priority_high" :value="!valid_formaciones">
+                      Debe ingresar al menos un título para el profesional
+                    </v-alert>
+
+
+                  </v-container>
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -761,19 +772,27 @@
             <v-stepper-content step="8">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
+
+                  <v-checkbox
+                    label="Solicitar Caja Previsional"
+                    v-model="solicitar_caja"
+                    class="ml-4 mb-4"
+                  ></v-checkbox>
+
+
                   <v-form lazy-validation ref="form_beneficiario" @submit.prevent>
 
                   <v-layout row>
                      <v-flex xs5 class="mx-4">
-                      <typeahead
+                      <input-select-new
                         label="Nombre"
                         maxlength="100"
-                        :items="cajas_previsionales"
+                        :items="cajas_previsionales_filter"
                         item-text="nombre"
                         item-value="id"
                         v-model="nueva_caja"
                         :rules="[rules.required]"
-                      ></typeahead>
+                      ></input-select-new>
                     </v-flex>
                      <v-flex xs3>
                       <v-btn @click="addCaja">Agregar</v-btn>
@@ -978,12 +997,12 @@
                 </v-card-text>
               </v-card>
 
-              <v-btn 
-                color="primary" 
-                class="darken-1 white--text right" 
+              <v-btn
+                color="primary"
+                class="darken-1 white--text right"
                 :loading="guardando"
                 :disabled="!valid_form || guardando"
-                @click.native="submit" 
+                @click.native="submit"
               >
                 Guardar Solicitud
                 <v-icon dark right>check_circle</v-icon>
@@ -1031,9 +1050,10 @@
 
 <script>
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
+import reports from '@/services/reports'
 import moment from 'moment'
-import rules from '@/rules'
+import rules from '@/validation/rules.js'
 import * as utils from '@/utils'
 import {
   Solicitud,
@@ -1045,7 +1065,7 @@ import {
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
-import Typeahead from '@/components/base/Typeahead';
+import InputSelectNew from '@/components/base/InputSelectNew';
 import AddFoto from '@/components/solicitudes/AddFoto';
 import AddFirma from '@/components/solicitudes/AddFirma';
 import MixinValidator from '@/components/mixins/MixinValidator';
@@ -1054,8 +1074,19 @@ import { impresionSolicitud } from '@/utils/PDFUtils'
 
 export default {
   name: 'nueva-solicitud',
-  mixins: [MixinValidator, NuevaSolicitud],
+
   props: ['id', 'dni'],
+
+  mixins: [MixinValidator, NuevaSolicitud],
+
+  components: {
+    InputFecha,
+    InputTelefono,
+    InputNumero,
+    InputSelectNew,
+    AddFoto,
+    AddFirma
+  },
 
   data() {
     return {
@@ -1079,7 +1110,9 @@ export default {
       },
       show_imprimir: false,
       id_creada: null,
-      guardando: false
+      guardando: false,
+      solicitar_caja: false,
+      rematriculado: false
     }
   },
 
@@ -1099,6 +1132,14 @@ export default {
       if (!this.nueva_formacion.fechaEmision) return '';
     },
 
+    cajas_previsionales_filter: function() {
+      return this.cajas_previsionales.filter(c => 
+        !this.solicitud.entidad.cajas_previsionales.find(cp => 
+          cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
+        )
+      );
+    },
+
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -1106,6 +1147,10 @@ export default {
 
     valid_subsidiarios: function() {
       return this.suma_subsidiarios === 100 || this.solicitud.entidad.subsidiarios.length === 0;
+    },
+
+    valid_formaciones: function() {
+      return this.solicitud.entidad.formaciones.length > 0;
     },
 
     valid_form: function() {
@@ -1122,11 +1167,11 @@ export default {
 
   created: function() {
     Promise.all([
-        axios.get('/paises'),
-        axios.get('/opciones?sort=valor'),
-        axios.get('/delegaciones'),
-        axios.get('/instituciones'),
-        axios.get('/cajas-previsionales')
+        api.get('/paises'),
+        api.get('/opciones?sort=valor'),
+        api.get('/delegaciones'),
+        api.get('/instituciones'),
+        api.get('/cajas-previsionales?sort=+nombre')
       ])
       .then(r => {
         this.paises = r[0].data;
@@ -1155,8 +1200,8 @@ export default {
           if (reset) {
             this.$refs.firma.reset();
             this.$refs.form_profesional.reset();
-          }          
-        });        
+          }
+        });
       });
     },
 
@@ -1165,7 +1210,7 @@ export default {
       this.solicitud = new Solicitud('profesional');
 
       if (this.id) {
-        return axios.get(`/solicitudes/${this.id}`)
+        return api.get(`/solicitudes/${this.id}`)
         .then(r => {
             this.solicitud.fecha = utils.getFecha(r.data.fecha);
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
@@ -1254,14 +1299,18 @@ export default {
 
     getVinculo: function(id) {
       return this.opciones.vinculo.find(i => id == i.id).valor;
-    },    
+    },
 
-    getNombreCaja: function(id) {
-      return this.cajas_previsionales.find(i => id == i.id).nombre;
+    getNombreCaja: function(item) {
+      if (typeof item == 'string') return item;
+      else {
+        let caja = this.cajas_previsionales.find(i => item == i.id);
+        return caja ? caja.nombre : '';
+      }
     },
 
     chgDni: function() {
-      return axios.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
+      return api.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
         if (r.data.length > 0) this.fillProfesional(r.data[0]);
         else this.solicitud.entidad.id = null;
@@ -1298,7 +1347,7 @@ export default {
         let url = `/instituciones/${this.nueva_formacion.institucion}/titulos`;
         if (this.nueva_formacion.nivel) url += `?nivel=${this.nueva_formacion.nivel}`;
 
-        return axios.get(url)
+        return api.get(url)
         .then(r => this.titulos = r.data)
         .catch(e => console.error(e));
       }
@@ -1318,7 +1367,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.formaciones, this.formacion_edit, this.nueva_formacion);
         }
-        
+
         this.nueva_formacion = new Formacion();
         this.formacion_edit = null;
         Vue.nextTick().then(() => {
@@ -1332,7 +1381,7 @@ export default {
       this.nueva_formacion = this.solicitud.entidad.formaciones[index];
       if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
       if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
-     
+
       this.updateTitulos();
     },
 
@@ -1382,9 +1431,11 @@ export default {
         if (typeof this.nueva_caja == 'number') caja = this.nueva_caja;
         if (typeof this.nueva_caja == 'string') caja = { nombre: this.nueva_caja };
 
-        this.solicitud.entidad.cajas_previsionales.push(caja);
-        this.nueva_caja = '';
-        this.$refs.form_beneficiario.reset();
+        if (this.solicitud.entidad.cajas_previsionales.indexOf(this.getNombreCaja(caja)) == -1) {
+          this.solicitud.entidad.cajas_previsionales.push(caja);
+          this.nueva_caja = '';
+          this.$refs.form_beneficiario.reset();
+        }
       }
     },
 
@@ -1411,7 +1462,7 @@ export default {
       this.guardando = true;
 
       if (!this.id) {
-        axios.post('/solicitudes', this.makeFormData())
+        api.post('/solicitudes', this.makeFormData())
           .then(r => {
             this.guardando = false;
             this.id_creada = r.data.id;
@@ -1424,7 +1475,7 @@ export default {
           .catch(e => this.submitError(e));
       }
       else {
-        axios.put(`/solicitudes/${this.id}`, this.makeFormData())
+        api.put(`/solicitudes/${this.id}`, this.makeFormData())
           .then(r => {
             this.guardando = false;
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
@@ -1442,31 +1493,50 @@ export default {
     imprimir: function() {
       let id = this.id_creada;
       if (!id) id = this.id;
-      axios.get(`/solicitudes/${id}`)
-          .then(s => {
-            let solicitud = s.data; 
-            let url = `http://10.100.18.2:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
-            window.open(url, '_blank');            
-            url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${solicitud.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${solicitud.id}`;
-            window.open(url, '_blank');                 
-            
-            if (this.id_creada) this.$router.replace('/solicitudes/lista');
-          })
-          .catch(e => console.error(e));
+      Promise.all([
+        api.get(`/solicitudes/${id}`),
+        api.get(`/matriculas?entidad=${id}`)
+      ])    
+      .then(rs => {
+        let solicitud = rs[0].data;
+        let es_rematriculado = rs[1].data.length > 0;
+
+        if (this.solicitar_caja) {
+          reports.open({
+            'jsp-source': 'anexo_caja_previsional.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Anexo Caja ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'solicitud_id': solicitud.id
+          });
+        }
+
+        if (es_rematriculado) {
+          reports.open({
+            'jsp-source': 'certificado_matricula.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'solicitud_id': solicitud.id
+          });
+        }
+
+        reports.open({
+          'jsp-source': 'solicitud_matricula_profesional.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
+          'jsp-only-gen': false,
+          'solicitud_id': solicitud.id
+        });
+
+        if (this.id_creada) this.$router.replace('/solicitudes/lista');
+      })
+      .catch(e => console.error(e));
     },
 
     cancelarImpresion: function() {
       this.$router.replace('/solicitudes/lista');
     }
-  },
-
-  components: {
-    InputFecha,
-    InputTelefono,
-    InputNumero,
-    Typeahead,
-    AddFoto,
-    AddFirma
   }
 }
 </script>

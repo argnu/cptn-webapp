@@ -13,6 +13,17 @@
             <v-layout row>
               <v-flex xs4 class="mx-2">
                 <v-select
+                  label="Tipo de Matrícula:"
+                  :items="$options.tipos_matricula"
+                  v-model="matricula.tipo"
+                >
+                </v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row>
+              <v-flex xs4 class="mx-2">
+                <v-select
                   label="Tipo de Documento:"
                   :items="opciones.documento"
                   v-model="matricula.documento.tipo"
@@ -31,7 +42,7 @@
                 >
                 </v-text-field>
               </v-flex>
-                            
+
               <v-flex xs4 class="mx-2">
                 <input-fecha
                   v-model="matricula.documento.fecha"
@@ -55,8 +66,8 @@
 
             <v-layout row>
               <v-flex xs12>
-                <v-btn 
-                  class="right green white--text" 
+                <v-btn
+                  class="right green white--text"
                   @click.native="aprobar"
                   :disabled="submitValidacion"
                   :loading="submitValidacion"
@@ -115,19 +126,19 @@
               ></v-text-field>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.profesional.dni" 
-                  label="DNI" 
+                  v-model="filtros.profesional.dni"
+                  label="DNI"
                   @input="updateList"
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.cuit" 
-                  label="CUIT" 
+                  v-model="filtros.empresa.cuit"
+                  label="CUIT"
                   @input="updateList"
                 ></v-text-field>
               </div>
@@ -135,19 +146,19 @@
 
             <v-flex xs12 md3 class="mx-3">
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.profesional.apellido" 
-                  label="Apellido" 
+                  v-model="filtros.profesional.apellido"
+                  label="Apellido"
                   @input="updateList"
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.nombre" 
-                  label="Nombre" 
+                  v-model="filtros.empresa.nombre"
+                  label="Nombre"
                   @input="updateList"
                 ></v-text-field>
               </div>
@@ -156,11 +167,11 @@
 
           <v-layout row wrap>
             <v-flex xs12>
-              <v-btn                
+              <v-btn
                 @click="limpiarFiltros"
-              >Limpiar Filtros</v-btn>              
-            </v-flex>            
-          </v-layout>          
+              >Limpiar Filtros</v-btn>
+            </v-flex>
+          </v-layout>
         </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -183,7 +194,7 @@
       <template slot="items" slot-scope="props">
         <td>{{ props.item.numero }}</td>
         <td>{{ props.item.fecha | fecha }}</td>
-        
+
         <template v-if="filtros.tipoEntidad == 'profesional'">
           <td>{{ props.item.entidad.apellido }}</td>
           <td>{{ props.item.entidad.nombre }}</td>
@@ -215,19 +226,54 @@
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile @click="imprimirSolicitud(props.item)">
+              <v-list-tile>
                 <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir</span>
+                  <v-menu open-on-hover top offset-x left>
+                    <div slot="activator">
+                      <v-icon class="text--darken-2">print</v-icon>
+                      <span class="ml-2">Imprimir</span>
+                    </div>
+                    <v-list>
+                      <v-list-tile @click="imprimirSolicitud(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Solicitud</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Certificado</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirAnexoCaja(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Anexo Caja</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertBaja(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Cert. Baja Caja Prev.</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirDifusion(props.item)">
+                        <v-list-tile-title>
+                          <v-icon class="text--darken-2">print</v-icon>
+                          <span class="ml-2">Aceptación de Difusión de Datos</span>
+                        </v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
-                <v-list-tile-title>
-                  <v-icon class="text--darken-2">print</v-icon>
-                  <span class="ml-2">Imprimir Certificado</span>
-                </v-list-tile-title>
-              </v-list-tile>
+
 
               <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
@@ -276,7 +322,8 @@
 
 <script>
 import * as moment from 'moment'
-import axios from '@/axios'
+import api from '@/services/api'
+import reports from '@/services/reports'
 import * as _ from 'lodash'
 import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
@@ -296,11 +343,6 @@ const select_items = {
   tipo: [
     { text: 'Profesionales', value: 'profesional' },
     { text: 'Empresas', value: 'empresa' }
-  ],
-  tipos_matricula: [
-    { text: 'TECA', value: 'TECA' },
-    { text: 'TEC-', value: 'TEC-' },
-    { text: 'IDO', value: 'IDO' }
   ]
 }
 
@@ -329,6 +371,12 @@ export default {
   name: 'lista-solicitud',
   mixins: [MixinValidator],
 
+  tipos_matricula: [
+    { text: 'TECA', value: 'TECA' },
+    { text: 'TEC-', value: 'TEC-' },
+    { text: 'IDO', value: 'IDO' }
+  ],
+
   data() {
     return {
       matricula: new Matricula(Store.state.delegacion.id),
@@ -352,7 +400,7 @@ export default {
 
   created: function() {
     this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
-    axios.get('/opciones')
+    api.get('/opciones')
     .then(r => {
       this.opciones = r.data;
     })
@@ -408,10 +456,10 @@ export default {
         if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
         if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
-        
+
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
-        axios.get(url)
+        api.get(url)
           .then(r => {
             this.solicitudes = r.data.resultados;
             this.totalItems = r.data.totalQuery;
@@ -432,7 +480,7 @@ export default {
       .catch(e => console.error(e));
     },
 
-    imprimirSolicitud: function(item) {   
+    imprimirSolicitud: function(item) {
       if (this.filtros.tipoEntidad == 'empresa') {
         axios.get(`/solicitudes/${item.id}`)
             .then(s => {
@@ -440,25 +488,74 @@ export default {
               let pdf = impresionSolicitud(solicitud);
               pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
             })
-            .catch(e => console.error(e));        
+            .catch(e => console.error(e));
       }
       else {
-        let url = `http://10.100.18.2:40007/genReport?jsp-source=solicitud_matricula_profesional.jasper&jsp-format=PDF&jsp-output-file=Solicitud ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
-        window.open(url, '_blank');   
+        reports.open({
+          'jsp-source': 'solicitud_matricula_profesional.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
+          'jsp-only-gen': false,
+          'solicitud_id': item.id
+        });
       }
     },
 
     imprimirCertificado: function(item) {
-      let url = `http://10.100.18.2:40007/genReport?jsp-source=certificado_matricula.jasper&jsp-format=PDF&jsp-output-file=Certificado ${item.entidad.apellido}-${Date.now()}&jsp-only-gen=false&solicitud_id=${item.id}`;
-      window.open(url, '_blank');
+      reports.open({
+        'jsp-source': 'certificado_matricula.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Certificado ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });
+    },
+
+    imprimirAnexoCaja: function(item) {
+      reports.open({
+        'jsp-source': 'anexo_caja_previsional.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Anexo Caja ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });
+    },
+
+    imprimirCertBaja: function(item) {
+      reports.open({
+        'jsp-source': 'certificado_baja_para_caja.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Certificado Baja Caja Previsional ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });
+    },
+
+    imprimirDifusion: function(item) {
+      reports.open({
+        'jsp-source': 'aceptacion_difusion.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Aceptacion Difusion Datos ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });
     },
 
     aprobar: function() {
       if (this.$refs.form_aprobacion.validate()) {
         this.submitValidacion = true;
 
-        axios.post('/matriculas', this.matricula)
+        api.post('/matriculas', this.matricula)
         .then(r => {
+
+          reports.open({
+            'jsp-source': 'certificado_matriculado_habilitado.jasper',
+            'jsp-format': 'PDF',
+            'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.numeroMatricula}-${Date.now()}`,
+            'jsp-only-gen': false,
+            'id_matricula': r.data.id
+          });
+
           this.submitValidacion = false;
           this.updateSolicitudes();
           this.matricula = new Matricula();
@@ -495,16 +592,16 @@ export default {
     rechazar: function(id) {
       if (confirm('Esta segura/o que desea Rechazar la Solicitud de Matriculación seleccionada?')) {
         // 3 ES ESTADO 'Rechazada'
-        axios.patch(`/solicitudes/${id}`, { estado: 3 })
+        api.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
             this.updateSolicitudes();
             this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';
             this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;          
+            this.global_state.snackbar.show = true;
         })
         .catch(e => console.error(e));
       }
-    }    
+    }
   },
 
   components: {

@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils'
-import rules from '@/rules'
+import rules from '@/validation/rules.js'
 import { Contacto, Telefono, Domicilio, Header } from '@/model'
 
 const EntidadDomicilio = () => ({
@@ -149,7 +149,7 @@ export default {
 
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
-        return axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+        return api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
              .then(r => this.provincias = r.data)
              .catch(e => {
                console.error(e);
@@ -164,7 +164,7 @@ export default {
 
     changeProvincia: function () {
       if (this.nuevo_domicilio.domicilio.provincia) {
-        return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+        return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
              .then(r => this.departamentos = r.data)
              .catch(e => {
                console.error(e);
@@ -179,7 +179,7 @@ export default {
 
     changeDepartamento: function () {
       if (this.nuevo_domicilio.domicilio.departamento) {
-        return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+        return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
              .then(r => this.localidades = r.data)
              .catch(e => {
                console.error(e);
@@ -295,16 +295,16 @@ export default {
     setDomicilio: function(domicilio_copiar) {
       if (typeof domicilio_copiar.pais == 'number') {
         this.nuevo_domicilio.domicilio.pais = domicilio_copiar.pais;
-        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+        api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
           .then(r => {
             this.provincias = r.data;
             this.nuevo_domicilio.domicilio.provincia = domicilio_copiar.provincia;
-            return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+            return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
           })
           .then(r => {
             this.departamentos = r.data
             this.nuevo_domicilio.domicilio.departamento = domicilio_copiar.departamento;
-            return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+            return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
           })
           .then(r => {
             this.localidades = r.data;
@@ -316,16 +316,16 @@ export default {
       
       else {
         this.nuevo_domicilio.domicilio.pais = this.paises.find(p => p.nombre == domicilio_copiar.pais).id;
-        axios.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+        api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
           .then(r => {
             this.provincias = r.data;
             this.nuevo_domicilio.domicilio.provincia = this.provincias.find(p => p.nombre == domicilio_copiar.provincia).id;
-            return axios.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+            return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
           })
           .then(r => {
             this.departamentos = r.data;
             this.nuevo_domicilio.domicilio.departamento = this.departamentos.find(p => p.nombre == domicilio_copiar.departamento).id;
-            return axios.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+            return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
           })
           .then(r => {
             this.localidades = r.data;

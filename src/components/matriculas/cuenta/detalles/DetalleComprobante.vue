@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils';
 
 const headers = [
@@ -93,7 +93,7 @@ export default {
   },
 
   created: function() {
-    axios.get('/opciones?sort=+valor')
+    api.get('/opciones?sort=+valor')
     .then(r => {
       this.formas_pago = r.data.formaPago;
     })

@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as Cookies from 'js-cookie'
 import Store from '@/stores/Global'
 
@@ -114,12 +114,12 @@ export default {
       this.submitted = true;
       this.auth_error = 'Usuario/contraseña inválidos'
       this.submit_error = false;
-      axios.post('/usuarios/auth', this.usuario)
+      api.post('/usuarios/auth', this.usuario)
       .then(r => {
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);
         Store.setUser(r.data);
-        axios.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
-        axios.get(`/usuarios/${r.data.id}/delegaciones`)
+        api.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
+        api.get(`/usuarios/${r.data.id}/delegaciones`)
         .then(r => { 
           if (!r.data.length) {
             this.submit_error = true;

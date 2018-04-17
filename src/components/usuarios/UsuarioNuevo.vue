@@ -134,7 +134,7 @@
 
 <script>
 import Vue from 'vue'
-import axios from '@/axios'
+import api from '@/services/api'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -167,7 +167,7 @@ export default {
     },
 
     created: function() {
-        axios.get('/delegaciones')
+        api.get('/delegaciones')
         .then(r => this.delegaciones = r.data)
         .catch(e => console.error(e));
     },
@@ -188,7 +188,7 @@ export default {
         submit: function() {
             this.submitted = true;
             if (this.valid_basico && this.valid_pass) {
-                axios.post('/usuarios', this.usuario)
+                api.post('/usuarios', this.usuario)
                 .then(r => {
                     this.submitted = false;
                     this.global_state.snackbar.msg = 'Nuevo usuario creado exitosamente!';

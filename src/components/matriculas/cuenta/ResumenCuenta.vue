@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
@@ -177,8 +177,8 @@ export default {
       }
 
       Promise.all([
-        axios.get(url_boletas),
-        axios.get(url_comprobantes)
+        api.get(url_boletas),
+        api.get(url_comprobantes)
       ])
      .then(([boletas, comprobantes]) => {
        let resumen = boletas.data.map(b => {

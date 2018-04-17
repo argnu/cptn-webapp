@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import api from '@/services/api'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Header } from '@/model'
@@ -255,8 +255,8 @@ export default {
       let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false`;
       
       Promise.all([
-        axios.get(url_boletas),
-        axios.get(url_volantes)
+        api.get(url_boletas),
+        api.get(url_volantes)
       ])
       .then(([boletas, volantes]) => {        
         this.boletas = [];
@@ -307,7 +307,7 @@ export default {
         delegacion: this.global_state.delegacion.id
       }
       
-      axios.post('comprobantes', comprobante)
+      api.post('comprobantes', comprobante)
       .then(r => {
         console.info(`Comprobante ${r.data.id} generado!`);
         this.global_state.snackbar.msg = 'Comprobante generado exitosamente!';
@@ -348,7 +348,7 @@ export default {
         delegacion: this.global_state.delegacion.id
       }
       
-      axios.post('volantespago', volante)
+      api.post('volantespago', volante)
       .then(r => {
         console.info(`Volante ${r.data.id} generado!`);
         this.imprimirVolante(r.data.id);
@@ -362,10 +362,10 @@ export default {
     },
 
     imprimirVolante(id) {
-        axios.get(`/volantespago/${id}`)
+        api.get(`/volantespago/${id}`)
         .then(v => {
               let volante = v.data;
-              axios.get(`/matriculas/${volante.matricula}`)
+              api.get(`/matriculas/${volante.matricula}`)
               .then(m =>{
                 let matricula = m.data;
                 volante.matricula= matricula;
