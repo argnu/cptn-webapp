@@ -241,28 +241,36 @@
                         </v-list-tile-title>
                       </v-list-tile>
 
-                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertificado(props.item)">
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional' && props.item.estado != 'Rechazada'" 
+                        @click="imprimirCertificado(props.item)"
+                      >
                         <v-list-tile-title>
                           <v-icon class="text--darken-2">print</v-icon>
                           <span class="ml-2">Certificado</span>
                         </v-list-tile-title>
                       </v-list-tile>
 
-                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirAnexoCaja(props.item)">
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional' && props.item.estado != 'Rechazada'" 
+                        @click="imprimirAnexoCaja(props.item)"
+                      >
                         <v-list-tile-title>
                           <v-icon class="text--darken-2">print</v-icon>
                           <span class="ml-2">Anexo Caja</span>
                         </v-list-tile-title>
                       </v-list-tile>
 
-                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirCertBaja(props.item)">
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" 
+                        @click="imprimirCertBaja(props.item)"
+                      >
                         <v-list-tile-title>
                           <v-icon class="text--darken-2">print</v-icon>
                           <span class="ml-2">Cert. Baja Caja Prev.</span>
                         </v-list-tile-title>
                       </v-list-tile>
 
-                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional'" @click="imprimirDifusion(props.item)">
+                      <v-list-tile  v-show="filtros.tipoEntidad == 'profesional' && props.item.estado != 'Rechazada'" 
+                        @click="imprimirDifusion(props.item)"
+                      >
                         <v-list-tile-title>
                           <v-icon class="text--darken-2">print</v-icon>
                           <span class="ml-2">Aceptación de Difusión de Datos</span>

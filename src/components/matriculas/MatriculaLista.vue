@@ -211,7 +211,7 @@
             </v-btn>
             
             <v-list>
-              <v-list-tile>
+              <v-list-tile v-if="props.item.estado == 'Habilitado'">
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>
                     <div slot="activator">
