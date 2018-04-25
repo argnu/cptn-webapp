@@ -77,6 +77,19 @@
         </v-list-tile>        
       </template>
 
+      <template v-if="user.admin">
+        <v-divider class="mb-3"></v-divider>
+        <v-subheader class="bold" v-text="'Sistema'"></v-subheader>
+        <v-list-tile @click="goto('/configuracion')">
+          <v-list-tile-action>
+            <v-icon>settings</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Configuración</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>       
+      </template>
+
       <v-divider></v-divider>
       <br>
     </v-list>
