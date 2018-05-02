@@ -3,7 +3,7 @@ import * as moment from 'moment'
 export default {
   required: value => !!value || 'Dato Obligatorio',
 
-  number: value => value && value.length ? (/^\d+,{0,1}\d+$/.test(value) || 'Formato incorrecto') : true,
+  number: value => value && value.length ? (/^\d+(,\d+)?$/.test(value) || 'Formato incorrecto') : true,
 
   integer: value => value && value.length ? (/^\d+$/.test(value) || 'Formato incorrecto') : true,
 
@@ -55,4 +55,6 @@ export default {
      || 'Formato incorrecto'
     )
     : true,
+
+  dia: value => value < 0 || value > 31 ? 'Número de día inválido' : true,
 }
