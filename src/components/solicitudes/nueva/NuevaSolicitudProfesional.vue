@@ -599,13 +599,24 @@
                         <v-select
                           autocomplete
                           :items="instituciones"
-                          item-text="nombre"
                           item-value="id"
+                          item-text="nombre"
                           label="Institución"
                           v-model="nueva_formacion.institucion"
                           :rules="[rules.required]"
+                          :filter="filterInstitucion"
                           @input="updateTitulos"
-                        >
+                        >                      
+                          <template slot="item" slot-scope="data">
+                              <v-list-tile-action>
+                                <v-icon class="green--text" v-if="data.item.valida">check_circle</v-icon>
+                                <v-icon class="red--text" v-else>block</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
+                                <v-list-tile-sub-title>CUE: {{ data.item.cue }}</v-list-tile-sub-title>
+                              </v-list-tile-content>
+                          </template>                        
                         </v-select>
 
                          <v-select
@@ -618,7 +629,7 @@
                           v-model="nueva_formacion.nivel"
                           :rules="[rules.required]"
                           @input="updateTitulos"
-                        >
+                        >                        
                         </v-select>
 
                         <v-select
@@ -630,6 +641,17 @@
                           v-model="nueva_formacion.titulo"
                           :rules="[rules.required]"
                         >
+                          <template slot="item" slot-scope="data">
+                            <template>
+                              <v-list-tile-action>
+                                <v-icon class="green--text" v-if="data.item.valido">check_circle</v-icon>
+                                <v-icon class="red--text" v-else>block</v-icon>
+                              </v-list-tile-action>
+                              <v-list-tile-content>
+                                <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
+                              </v-list-tile-content>
+                            </template>
+                          </template>                         
                         </v-select>
                       </v-flex>
 
@@ -1536,6 +1558,13 @@ export default {
 
     cancelarImpresion: function() {
       this.$router.replace('/solicitudes/lista');
+    },
+
+    filterInstitucion: function(item, queryText) {
+      if (!queryText || !queryText.length) return true;
+      if (item.cue && item.cue.includes(queryText)) return true;
+      if (item.nombre.includes(queryText)) return true;
+      return false;
     }
   }
 }

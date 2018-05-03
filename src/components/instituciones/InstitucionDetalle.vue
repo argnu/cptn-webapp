@@ -343,6 +343,9 @@ export default {
                 .then(r => {
                     this.edit = false;
                     this.submitted = false;
+                    this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
+                    this.global_state.snackbar.color = 'success';
+                    this.global_state.snackbar.show = true;                    
                     this.update();
                 })
             }
