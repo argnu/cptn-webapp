@@ -11,7 +11,7 @@
 
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
-            <v-flex xs5 class="mx-5 mb-3">
+            <v-flex xs4 class="mx-5 mb-3">
                 <v-text-field
                     label="Nombre"
                     v-model="institucion.nombre"
@@ -19,12 +19,19 @@
                 ></v-text-field>
             </v-flex>
 
-            <v-flex xs5 class="mx-5 mb-3">
+            <v-flex xs4 class="mx-5 mb-3">
                 <v-text-field
                     label="CUE"
                     v-model="institucion.cue"
                     :rules="[rules.required]"
                 ></v-text-field>
+            </v-flex>
+
+            <v-flex xs4 class="mx-5 mb-3">
+                <v-checkbox
+                    label="Válida"
+                    v-model="institucion.valida"
+                ></v-checkbox>
             </v-flex>
         </v-layout>
         </v-form>
@@ -117,6 +124,11 @@
                     :rules="[rules.required]"
                 >
                 </v-select>
+
+                <v-checkbox
+                    label="Válida"
+                    v-model="nuevo_titulo.valido"
+                ></v-checkbox>
             </v-flex>
 
             <v-flex xs5 class="mx-5">
@@ -130,7 +142,7 @@
                     :rules="[rules.required]"
                 >
                 </v-select>
-                                
+
                 <v-select
                     label="Incumbencias"
                     :items="opciones.incumbencia"
@@ -141,7 +153,7 @@
                     max-height="400"
                     hint="Seleccione las incumbencias"
                     persistent-hint
-                ></v-select>                
+                ></v-select>
             </v-flex>
         </v-layout>
 
@@ -181,6 +193,7 @@
                         <td>{{ props.item.nombre }}</td>
                         <td>{{ getNivelTitulo(props.item.nivel) }}</td>
                         <td>{{ props.item.tipo_matricula }}</td>
+                        <td>{{ props.item.valido | boolean }}</td>
                     </template>
                 </v-data-table>
             </v-flex>
@@ -221,6 +234,8 @@ import MixinValidator from '@/components/mixins/MixinValidator'
 export default {
     name: 'InstitucionNueva',
 
+    props: ['id'],
+
     mixins: [MixinValidator],
 
     headers: [
@@ -260,7 +275,31 @@ export default {
         .then(r => {
             this.paises = r[0].data;
             this.opciones = r[1].data;
-            this.changePais().then(() => this.changeProvincia());
+            if (this.id) {
+                api.get(`/instituciones/${this.id}`)
+                .then(r => {
+                    this.institucion.nombre = r.data.nombre;
+                    this.institucion.cue = r.data.cue;
+                    this.institucion.valida = r.data.valida;
+                    if (r.data.domicilio) {
+                        this.institucion.domicilio = r.data.domicilio;
+                        this.changePais()
+                        .then(() => this.changeProvincia())
+                        .then(() => this.changeDepartamento());
+                    }
+                    else {
+                        this.changePais().then(() => this.changeProvincia());
+                    }
+                    for(let titulo of r.data.titulos) {
+                        titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia.id);
+                        this.institucion.titulos.push(titulo);
+                    }
+                    
+                });
+            }
+            else {
+                this.changePais().then(() => this.changeProvincia());
+            }
         })
         .catch(e => console.error(e));
     },
@@ -311,7 +350,8 @@ export default {
             }
         },
 
-        getNivelTitulo: function(id) {
+        getNivelTitulo: function(nivel) {
+            let id = (typeof nivel == 'object') ? nivel.id : nivel;
             return this.opciones.niveles_titulos.find(n => n.id == id).valor;
         },
 
@@ -346,22 +386,43 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
-                api.post('/instituciones', this.institucion)
-                .then(r => {
-                    this.submitted = false;
-                    this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';
-                    this.global_state.snackbar.color = 'success';
-                    this.global_state.snackbar.show = true;
-                    this.$router.replace('/instituciones/lista');
-                })
-                .catch(e => {
-                    this.submitted = false;
-                    let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                    this.global_state.snackbar.msg = msg;
-                    this.global_state.snackbar.color = 'error';
-                    this.global_state.snackbar.show = true;                    
-                    console.error(e);
-                })
+
+                if (this.id) {
+                    api.put(`/instituciones/${this.id}`, this.institucion)
+                    .then(r => {
+                        this.submitted = false;
+                        this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
+                        this.global_state.snackbar.color = 'success';
+                        this.global_state.snackbar.show = true;
+                        this.$router.replace('/instituciones/lista');
+                    })
+                    .catch(e => {
+                        this.submitted = false;
+                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+                        this.global_state.snackbar.msg = msg;
+                        this.global_state.snackbar.color = 'error';
+                        this.global_state.snackbar.show = true;
+                        console.error(e);
+                    })
+                }
+                else {
+                    api.post('/instituciones', this.institucion)
+                    .then(r => {
+                        this.submitted = false;
+                        this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';
+                        this.global_state.snackbar.color = 'success';
+                        this.global_state.snackbar.show = true;
+                        this.$router.replace('/instituciones/lista');
+                    })
+                    .catch(e => {
+                        this.submitted = false;
+                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+                        this.global_state.snackbar.msg = msg;
+                        this.global_state.snackbar.color = 'error';
+                        this.global_state.snackbar.show = true;
+                        console.error(e);
+                    })
+                }
             }
         }
     }

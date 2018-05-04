@@ -65,11 +65,11 @@
             <v-icon>assignment</v-icon>
           </v-btn>
         </td>
-        <!-- <td>
-          <v-btn fab small dark color="primary" slot="activator">
+        <td>
+          <v-btn fab small dark color="primary" slot="activator" @click="editar(props.item.id)">
             <v-icon>edit</v-icon>
           </v-btn>
-        </td> -->
+        </td>
         <td>{{ props.item.cue }}</td>
         <td>{{ props.item.nombre }}</td>
       </template>
@@ -90,6 +90,7 @@ export default {
 
   headers: [
     Header('Ver', 'detalle'),
+    Header('Editar', 'editar'),
     Header('CUE', 'cue', true),
     Header('Nombre', 'nombre', true)
   ],
@@ -162,6 +163,10 @@ export default {
 
     verDetalle: function(id) {
       this.$router.push(`/instituciones/${id}`);
+    },  
+
+    editar: function(id) {
+      this.$router.push(`/instituciones/modificar/${id}`);
     },    
 
   }

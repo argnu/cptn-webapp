@@ -144,6 +144,12 @@ export default new Router({
           component: InstitucionDetalle,
           props: true
         },
+        {
+          path: '/instituciones/modificar/:id',
+          name: 'InstitucionDetalle',
+          component: InstitucionNueva,
+          props: true
+        },
 
         {
           path: '/usuarios/lista',

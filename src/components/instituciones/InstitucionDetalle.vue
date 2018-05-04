@@ -5,82 +5,31 @@
       </v-toolbar>
       <v-card>
 
-        <v-layout class="mt-4">
-            <v-flex xs10>
-            </v-flex>
-            <v-flex xs2>
-                <v-switch
-                    label="Editar Datos"
-                    v-model="edit"
-                    @change="chgEdit"
-                ></v-switch>
-            </v-flex>
-        </v-layout> 
-                  
-        <v-form ref="form_institucion" v-model="form_valid">
-          <v-layout  class="ma-4">
+          <br>
+          <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>
+          <br>
+
+        <v-layout  class="ma-4">
             <v-flex xs4 class="mx-4">
-                <template v-if="edit">
-                    <v-text-field
-                        label="Nombre"
-                        v-model="institucion_mod.nombre"
-                    ></v-text-field>
-                </template>
-                <template v-else>
-                    <b>Nombre:</b>
-                    <span class="ml-2">{{ institucion.nombre }}</span>
-                </template>
+                <b>Nombre:</b>
+                <span class="ml-2">{{ institucion.nombre }}</span>
             </v-flex>
 
             <v-flex xs2 class="mx-4">
-                <template v-if="edit">
-                    <v-text-field
-                        label="CUE"
-                        v-model="institucion_mod.cue"
-                    ></v-text-field>
-                </template>
-                <template v-else>
-                    <b>CUE:</b>
-                    <span class="ml-2">{{ institucion.cue }}</span>
-                </template>
+                <b>CUE:</b>
+                <span class="ml-2">{{ institucion.cue }}</span>                
             </v-flex>
 
             <v-flex xs2 class="mx-4">
-                <template v-if="edit">
-                    <v-checkbox
-                        label="Válida"
-                        v-model="institucion_mod.valida"
-                    ></v-checkbox>
-                </template>
-                <template v-else>
-                    <b>Válida:</b>
-                    <span class="ml-2">{{ institucion.valida | boolean }}</span>
-                </template>
-            </v-flex>            
-          </v-layout>
-          </v-form>
-
-
-        <v-layout v-show="edit" class="mb-4">
-            <v-flex xs12>
-                <v-btn
-                    class="green darken-1 white--text right"
-                    @click.native="guardar"
-                    :disabled="!form_valid || submitted"
-                    :loading="submitted"
-                >
-                    Guardar
-                    <v-icon dark right>check_circle</v-icon>
-                </v-btn>
-
-                <v-btn dark class="red right" @click="cancelEdit">
-                    Cancelar
-                    <v-icon dark right>block</v-icon>
-                </v-btn>
+                <b>Válida:</b>
+                <span class="ml-2">{{ institucion.valida | boolean }}</span>
             </v-flex>
-        </v-layout>            
+        </v-layout>
 
-        <span class="subheading blue--text text--darken-4 ma-4"><b>Títulos</b></span>
+        <v-divider></v-divider>
+        
+        <br>
+        <span class="subheading blue--text text--darken-4 ml-5"><b>Títulos</b></span>
 
         <v-layout row>
             <v-flex xs12 class="ma-4">
@@ -176,7 +125,7 @@
                                 class="mt-2"
                                 label="Válido"
                                 v-model="nuevo_titulo.valido"
-                            ></v-checkbox>                            
+                            ></v-checkbox>
                         </v-flex>
 
                         <v-flex xs12 md3 class="mx-4">
@@ -226,7 +175,9 @@ import MixinValidator from '@/components/mixins/MixinValidator'
 
 export default {
     name: 'InstitucionDetalle',
+
     props: ['id'],
+
     mixins: [MixinValidator],
 
     headers: [
@@ -254,14 +205,10 @@ export default {
     data() {
         return {
             institucion: new Institucion(),
-            institucion_mod: new Institucion(),
             show_formtitulo: false,
             nuevo_titulo: new Titulo(),
             titulo_edit: null,
-            edit: false,
-            opciones: [],
-            submitted: false,
-            form_valid: true
+            opciones: []
         }
     },
 
@@ -334,30 +281,6 @@ export default {
             this.nuevo_titulo = new Titulo();
             this.show_formtitulo = false;
             this.titulo_edit = null;
-        },
-
-        guardar: function() {
-            this.submitted = true;
-            if (this.$refs.form_institucion.validate()) {
-                api.patch(`/instituciones/${this.id}`, this.institucion_mod)
-                .then(r => {
-                    this.edit = false;
-                    this.submitted = false;
-                    this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
-                    this.global_state.snackbar.color = 'success';
-                    this.global_state.snackbar.show = true;                    
-                    this.update();
-                })
-            }
-        },
-
-        cancelEdit: function() {
-            this.institucion_mod = utils.clone(this.institucion);
-            this.edit = false;
-        },
-
-        chgEdit: function(e) {
-            if (!e) this.institucion_mod = utils.clone(this.institucion);
         }
 
     }
