@@ -18,18 +18,17 @@
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
-              <tr>
-                <td>{{ props.item.fecha_solicitud | fecha }}</td>
-                <td>{{ props.item.descripcion }}</td>
-                <td>
-                  <v-btn fab dark small @click="imprimir(props.item.id)" color="blue">
-                    <v-icon>print</v-icon>
-                  </v-btn>                
-                  <v-btn fab dark small @click="verDetalle(props.item.id)" color="blue">
-                    <v-icon>launch</v-icon>
-                  </v-btn>
-                </td>                
-              </tr>
+              <td>{{ props.item.fecha_solicitud | fecha }}</td>
+              <td>{{ props.item.descripcion }}</td>
+              <td class="justify-center layout px-0">
+                <v-btn small icon class="mx-0"  @click="verDetalle(props.item.id)" title="Ver Detalle">
+                  <v-icon color="primary">launch</v-icon>
+                </v-btn>
+
+                <v-btn small icon class="mx-4" @click="imprimir(props.item.id)" title="Imprimir">
+                  <v-icon color="secondary">print</v-icon>
+                </v-btn>
+              </td>              
             </template>
           </v-data-table>
         </v-card-text>
@@ -53,7 +52,7 @@ const headers = [
 
 
 export default {
-  
+
   name: 'LegajoLista',
 
   props: ['id'],
@@ -80,14 +79,14 @@ export default {
       }
       else this.legajos = utils.clone(this.legajos_original);
     }
-  },    
+  },
 
   created: function() {
     this.loading = true;
     api.get(`/matriculas/${this.id}/legajos`)
     .then(r => {
       this.legajos = r.data.map(l => {
-       l.descripcion = `${getTipoLegajo(l.tipo)} - N° ${l.numero_legajo}`; 
+       l.descripcion = `${getTipoLegajo(l.tipo)} - N° ${l.numero_legajo}`;
        return l;
       });
       this.legajos_original = utils.clone(this.legajos);
@@ -110,12 +109,12 @@ export default {
         api.get(`/legajos/${id}`),
         api.get('/tareas/categorias')
       ])
-      .then(([legajo, categorias]) => {        
+      .then(([legajo, categorias]) => {
         let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))
         let pdf = impresionLegajo(legajo.data, categoria);
         pdf.save(`${getTipoLegajo(legajo.data.tipo)} - N° ${legajo.data.numero_legajo}.pdf`)
-      }) 
-    }    
+      })
+    }
   },
 
 }

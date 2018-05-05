@@ -25,17 +25,19 @@ const tipos_domicilio = [
 
 const headers = {
   contactos: [
+    Header('', 'acciones'),
     Header('Tipo', 'tipo'),
     Header('Valor', 'valor'),
   ],
 
   condafip: [
+    Header('', 'acciones'),
     Header('Tipo', 'tipo'),
     Header('Descripción', 'descripcion'),
   ],
 
   matriculados: [
-    Header('', 'borrar'),
+    Header('', 'acciones'),
     Header('N°', 'numero'),
     Header('Nombre', 'nombre'),
     Header('Apellido', 'nombre'),
@@ -53,6 +55,7 @@ const headers = {
   ],
 
   formacion: [
+    Header('', 'acciones'),
     Header('Título', 'titulo'),
     Header('Institución', 'institucion'),
     Header('Fecha de Egreso', 'fechaEgreso'),
@@ -60,16 +63,8 @@ const headers = {
     Header('Lapso Emisión', 'tiempoEmision')
   ],
 
-  beneficiarios: [
-    Header('DNI', 'dni'),
-    Header('Apellido', 'apellido'),
-    Header('Nombre', 'nombre'),
-    Header('Fecha de Nacimiento', 'fechaNacimiento'),
-    Header('Vínculo', 'vinculo'),
-    Header('Invalidez', 'invalidez')
-  ],
-
   subsidiarios: [
+    Header('', 'acciones'),
     Header('DNI', 'dni'),
     Header('Apellido', 'apellido'),
     Header('Nombre', 'nombre'),
@@ -77,6 +72,7 @@ const headers = {
   ],
 
   caja_previsional: [
+    Header('', 'acciones'),
     Header('Nombre', 'nombre')
   ]
 }

@@ -188,11 +188,12 @@
     >
 
       <template slot="items" slot-scope="props">
-        <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="verMatricula(props.item.id)">
-            <v-icon>assignment_ind</v-icon>
+        <td class="justify-center layout px-0">
+          <v-btn small icon class="mx-0"  @click="verMatricula(props.item.id)" title="Ver Matrícula">
+            <v-icon color="primary">assignment_ind</v-icon>
           </v-btn>
-        </td>
+        </td>     
+
         <td>{{ props.item.numeroMatricula }}</td>
           <template v-if="filtros.tipoEntidad == 'profesional'">
             <td>{{ props.item.entidad.apellido }}</td>
@@ -289,22 +290,22 @@ export default {
 
   headers: {
     empresa: [
-      Header('Detalle', 'ver'),
+      Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
       Header('Nombre', 'nombreEmpresa', true),
       Header('CUIT', 'cuit', true),
       Header('Estado', 'estado', true),
-      Header('Acciones', 'acciones')
+      Header('Menú', 'acciones')
     ],
 
     profesional: [
-      Header('Detalle', 'ver'),
+      Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
       Header('Apellido', 'apellido', true),
       Header('Nombre', 'nombre', true),
       Header('DNI', 'dni', true),
       Header('Estado', 'estado', true),
-      Header('Acciones', 'acciones')
+      Header('Menú', 'acciones')
     ]
   },
 
@@ -409,29 +410,8 @@ export default {
       }
     },
 
-    irPermiso: function(id) {
-      this.$router.push(`/matriculas/${id}/permiso`);
-    },
-
-    verDetalle: function(id) {
-      this.$router.push(`/matriculas/profesional/${id}`);
-    },
-
-    verCuenta: function(id) {
-      this.$router.push(`/matriculas/${id}/resumen`);
-    },
-
     verMatricula: function(id) {
       this.$router.push(`/matriculas/${id}`);
-    },
-
-    habilitar: function(id) {
-      if (confirm('Esta segura/o que desea Habilitar la Matrícula seleccionada?')) {
-        // 13 ES ESTADO 'Habilitado'
-        api.patch(`/matriculas/${id}`, { estado: 13 })
-        .then(r => this.updateMatriculas())
-        .catch(e => console.error(e));
-      }
     },
 
     showCambioEstado: function(id) {

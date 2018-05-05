@@ -17,7 +17,7 @@
 
             <v-flex xs2 class="mx-4">
                 <b>CUE:</b>
-                <span class="ml-2">{{ institucion.cue }}</span>                
+                <span class="ml-2">{{ institucion.cue }}</span>
             </v-flex>
 
             <v-flex xs2 class="mx-4">
@@ -27,7 +27,7 @@
         </v-layout>
 
         <v-divider></v-divider>
-        
+
         <br>
         <span class="subheading blue--text text--darken-4 ml-5"><b>Títulos</b></span>
 
@@ -52,14 +52,13 @@
                             hide-actions
                         >
                             <template slot="items" slot-scope="props">
-                                <td>
-                                    <v-btn fab small dark color="primary"  @click="editTitulo(props.item)">
-                                        <v-icon>edit</v-icon>
+                                <td class="justify-center layout px-0">
+                                    <v-btn small icon class="mx-0" @click="borrarTitulo(props.item.id)">
+                                        <v-icon color="red">delete</v-icon>
                                     </v-btn>
-                                </td>
-                                <td>
-                                    <v-btn fab small dark color="primary"  @click="borrarTitulo(props.item.id)">
-                                        <v-icon>delete</v-icon>
+
+                                    <v-btn small icon class="mx-4" @click="editTitulo(props.item)">
+                                        <v-icon color="deep-purple">edit</v-icon>
                                     </v-btn>
                                 </td>
                                 <td>{{ props.item.nombre }}</td>
@@ -181,8 +180,7 @@ export default {
     mixins: [MixinValidator],
 
     headers: [
-        Header('Modificar', 'edit'),
-        Header('Borrar', 'borrar'),
+        Header('', 'acciones'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
@@ -266,7 +264,7 @@ export default {
                 this.update();
             })
             .catch(e => {
-                if (e.response.status == 400)
+                if (e.response.status == 409)
                     alert('No es posible eliminar el título. Existen profesionales relacionados al mismo');
                 else console.error(e);
             })

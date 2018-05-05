@@ -36,7 +36,7 @@ export default {
     headers: [
         Header('Fecha', 'fecha'),
         Header('Estado', 'estado'),
-        Header('Documento.', 'tipo_doc')
+        Header('Documento', 'tipo_doc')
     ],
 
     data() {

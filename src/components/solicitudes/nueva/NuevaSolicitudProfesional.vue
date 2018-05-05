@@ -342,19 +342,15 @@
                             class="elevation-1"
                             no-data-text="No hay domicilios"
                         >
-                          <template slot="headers" slot-scope="props">
-                            <th v-for="(header, i) of props.headers" :key="i" class="pa-3">
-                              <b>{{ header.text }}</b>
-                            </th>
-                          </template>
                           <template slot="items" slot-scope="props">
                             <tr :active="props.index == domicilio_edit">
-                              <td>
-                                <v-btn fab small @click="editDomicilio(props.index)">
-                                  <v-icon>mode_edit</v-icon>
+                              <td class="justify-center layout px-0">
+                                <v-btn icon small class="mx-0" @click="removeElem('domicilios', props.index)">
+                                  <v-icon color="red">delete</v-icon>
                                 </v-btn>
-                                <v-btn fab small @click="removeElem('domicilios', props.index)">
-                                  <v-icon>delete</v-icon>
+
+                                <v-btn icon small class="mx-3" @click="editDomicilio(props.index)">
+                                  <v-icon color="deep-purple">mode_edit</v-icon>
                                 </v-btn>
                               </td>
 
@@ -457,21 +453,15 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay contactos"
                     >
-                      <template slot="headers" slot-scope="props">
-                        <th></th>
-                        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                          {{ header.text }}
-                        </th>
-                        <th></th>
-                      </template>
                       <template slot="items" slot-scope="props">
                         <tr :active="props.index == contacto_edit">
-                          <td>
-                            <v-btn fab small @click="editContacto(props.index)">
-                              <v-icon>mode_edit</v-icon>
+                          <td class="justify-center layout px-0">
+                            <v-btn icon small class="mx-0" @click="removeElem('contactos', props.index)">
+                              <v-icon color="red">delete</v-icon>
                             </v-btn>
-                            <v-btn fab small @click="removeElem('contactos', props.index)">
-                              <v-icon>delete</v-icon>
+
+                            <v-btn icon small class="mx-3" @click="editContacto(props.index)">
+                              <v-icon color="deep-purple">mode_edit</v-icon>
                             </v-btn>
                           </td>
                           <td>{{ getTipoContacto(props.item.tipo) }}</td>
@@ -546,23 +536,15 @@
                       class="elevation-1 mt-4"
                       no-data-text="No hay datos"
                     >
-                      <template slot="headers" slot-scope="props">
-                        <th></th>
-                        <th></th>
-                        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                          {{ header.text }}
-                        </th>
-                      </template>
                       <template slot="items" slot-scope="props">
                         <tr :active="props.index == condafip_edit">
-                          <td style="max-width:10px">
-                            <v-btn fab small @click="editCondAfip(props.index)">
-                              <v-icon>mode_edit</v-icon>
+                          <td class="justify-center layout px-0">
+                            <v-btn icon small class="mx-0" @click="removeElem('condiciones_afip', props.index)">
+                              <v-icon color="red">delete</v-icon>
                             </v-btn>
-                          </td>
-                          <td>
-                            <v-btn fab small @click="removeElem('condiciones_afip', props.index)">
-                              <v-icon>delete</v-icon>
+
+                            <v-btn icon small class="mx-3" @click="editCondAfip(props.index)">
+                              <v-icon color="deep-purple">mode_edit</v-icon>
                             </v-btn>
                           </td>
                           <td>{{ getCondicionAfip(props.item.condicion_afip) }}</td>
@@ -581,7 +563,7 @@
 
 
             <!-- PASO 6: FORMACIONES -->
-            <v-stepper-step step="6" edit-icon="check" 
+            <v-stepper-step step="6" edit-icon="check"
               editable
               :complete="valid_formaciones && step > 6"
               :rules="[() => step <= 6 || valid_formaciones]"
@@ -606,7 +588,7 @@
                           :rules="[rules.required]"
                           :filter="filterInstitucion"
                           @input="updateTitulos"
-                        >                      
+                        >
                           <template slot="item" slot-scope="data">
                               <v-list-tile-action>
                                 <v-icon class="green--text" v-if="data.item.valida">check_circle</v-icon>
@@ -616,7 +598,7 @@
                                 <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
                                 <v-list-tile-sub-title>CUE: {{ data.item.cue }}</v-list-tile-sub-title>
                               </v-list-tile-content>
-                          </template>                        
+                          </template>
                         </v-select>
 
                          <v-select
@@ -629,7 +611,7 @@
                           v-model="nueva_formacion.nivel"
                           :rules="[rules.required]"
                           @input="updateTitulos"
-                        >                        
+                        >
                         </v-select>
 
                         <v-select
@@ -651,7 +633,7 @@
                                 <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
                               </v-list-tile-content>
                             </template>
-                          </template>                         
+                          </template>
                         </v-select>
                       </v-flex>
 
@@ -697,24 +679,15 @@
                       no-data-text="No hay formaciones"
                       style="margin-top:30px"
                     >
-                      <template slot="headers" slot-scope="props">
-                          <th></th>
-                          <th></th>
-                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                            <b>{{ header.text }}</b>
-                          </th>
-                          <th></th>
-                      </template>
                       <template slot="items" slot-scope="props">
                         <tr :active="props.index == formacion_edit">
-                          <td>
-                            <v-btn fab small @click="editFormacion(props.index)">
-                              <v-icon>mode_edit</v-icon>
+                          <td class="justify-center layout px-0">
+                            <v-btn icon small class="mx-0" @click="removeElem('formaciones', props.index)">
+                              <v-icon color="red">delete</v-icon>
                             </v-btn>
-                          </td>
-                          <td>
-                            <v-btn fab small @click="removeElem('formaciones', props.index)">
-                              <v-icon>delete</v-icon>
+
+                            <v-btn icon small class="mx-3" @click="editFormacion(props.index)">
+                              <v-icon color="deep-purple">mode_edit</v-icon>
                             </v-btn>
                           </td>
                           <td>{{ getTitulo(props.item) }}</td>
@@ -829,22 +802,16 @@
                       no-data-text="No hay cajas agregadas"
                       style="margin-top:30px"
                     >
-                      <template slot="headers" slot-scope="props">
-                          <th></th>
-                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                            <b>{{ header.text }}</b>
-                          </th>
-                          </template>
                       <template slot="items" slot-scope="props">
-                            <td style="max-width:30px">
-                              <v-btn fab small @click="removeElem('cajas_previsionales', props.index)">
-                                <v-icon>delete</v-icon>
-                              </v-btn>
-                            </td>
-                            <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
-                            <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
-                            <td v-else>{{ getNombreCaja(props.item) }}</td>
-                          </template>
+                        <td class="justify-center layout px-0">
+                          <v-btn icon small class="mx-0" @click="removeElem('cajas_previsionales', props.index)">
+                            <v-icon color="red">delete</v-icon>
+                          </v-btn>
+                        </td>
+                        <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
+                        <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
+                        <td v-else>{{ getNombreCaja(props.item) }}</td>
+                      </template>
                     </v-data-table>
                   </v-form>
                 </v-card-text>
@@ -918,21 +885,15 @@
                         class="elevation-1"
                         no-data-text="No hay subsidiarios"
                       >
-                        <template slot="headers" slot-scope="props">
-                          <th></th>
-                          <th></th>
-                          <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                            <b>{{ header.text }}</b>
-                          </th>
-                        </template>
                         <template slot="items" slot-scope="props">
                           <tr :active="props.index == subsidiario_edit">
-                            <td>
-                              <v-btn fab small @click="editSubsidiario(props.index)">
-                                <v-icon>mode_edit</v-icon>
+                            <td class="justify-center layout px-0">
+                              <v-btn icon small class="mx-0" @click="removeElem('subsidiarios', props.index)">
+                                <v-icon color="red">delete</v-icon>
                               </v-btn>
-                              <v-btn fab small @click="removeElem('subsidiarios', props.index)">
-                                <v-icon>delete</v-icon>
+
+                              <v-btn icon small class="mx-3" @click="editSubsidiario(props.index)">
+                                <v-icon color="deep-purple">mode_edit</v-icon>
                               </v-btn>
                             </td>
                             <td>{{ props.item.dni }}</td>
@@ -1080,7 +1041,6 @@ import * as utils from '@/utils'
 import {
   Solicitud,
   Formacion,
-  Beneficiario,
   Subsidiario,
   Header
 } from '@/model';
@@ -1120,7 +1080,6 @@ export default {
       deAcuerdo: true,
       solicitud: new Solicitud('profesional'),
       nueva_formacion: new Formacion(),
-      nuevo_beneficiario: new Beneficiario(),
       nuevo_subsidiario: new Subsidiario(),
       nueva_caja: '',
       publicar_todos: false,
@@ -1155,8 +1114,8 @@ export default {
     },
 
     cajas_previsionales_filter: function() {
-      return this.cajas_previsionales.filter(c => 
-        !this.solicitud.entidad.cajas_previsionales.find(cp => 
+      return this.cajas_previsionales.filter(c =>
+        !this.solicitud.entidad.cajas_previsionales.find(cp =>
           cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
         )
       );
@@ -1413,14 +1372,6 @@ export default {
       this.$refs.form_formacion.reset();
     },
 
-    addBeneficiario: function() {
-      if (this.$refs.form_beneficiario.validate()) {
-        this.solicitud.entidad.beneficiarios.push(this.nuevo_beneficiario);
-        this.nuevo_beneficiario = new Beneficiario();
-        this.$refs.form_beneficiario.reset();
-      }
-    },
-
     addSubsidiario: function() {
       if (this.$refs.form_subsidiario.validate()) {
         if (this.subsidiario_edit == null) {
@@ -1518,7 +1469,7 @@ export default {
       Promise.all([
         api.get(`/solicitudes/${id}`),
         api.get(`/matriculas?entidad=${id}`)
-      ])    
+      ])
       .then(rs => {
         let solicitud = rs[0].data;
         let es_rematriculado = rs[1].data.length > 0;
@@ -1546,7 +1497,7 @@ export default {
         reports.open({
           'jsp-source': 'solicitud_matricula_profesional.jasper',
           'jsp-format': 'PDF',
-          'jsp-output-file': `Solicitud ${solicitud.entidad.apellido}-${Date.now()}`,
+          'jsp-output-file': `Solicitud N° ${solicitud.numero}-${Date.now()}`,
           'jsp-only-gen': false,
           'solicitud_id': solicitud.id
         });

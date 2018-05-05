@@ -1,16 +1,5 @@
 import { Entidad } from '@/model/Entidad';
 
-export class Beneficiario {
-  constructor() {
-    this.dni = '';
-    this.apellido = '';
-    this.nombre = '';
-    this.fechaNacimiento = '';
-    this.vinculo = '';
-    this.invalidez = false;
-  }
-}
-
 export class Subsidiario {
   constructor() {
     this.dni = '';
@@ -55,7 +44,6 @@ export class Profesional extends Entidad {
     this.empresa = '';
     this.serviciosPrestados = '';
     this.cajas_previsionales = [];
-    this.beneficiarios = [];
     this.subsidiarios = [];
     this.publicarEmail = false;
     this.publicarCelular = false;

@@ -32,7 +32,7 @@
             <v-flex xs12 md3 class="mx-4">
               <v-btn @click="limpiarFiltros">
                 Limpiar Filtros
-              </v-btn>                
+              </v-btn>
             </v-flex>
           </v-layout>
 
@@ -59,18 +59,17 @@
     >
 
       <template slot="items" slot-scope="props">
-        <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="verDetalle(props.item.id)"
-            title="Ver Detalle"
-          >
-            <v-icon>assignment</v-icon>
+        <td class="justify-center layout px-0">
+          <v-btn small icon class="mx-0"  @click="verDetalle(props.item.id)" title="Ver Detalle">
+            <v-icon color="primary">assignment</v-icon>
           </v-btn>
-        </td>
-        <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="desactivar(props.item.id)"
-            title="Desactivar"
+
+          <v-btn small icon class="mx-4" @click="toggleActivo(props.item)"
+            :title="props.item.activo ? 'Desactivar' : 'Activar'"
           >
-            <v-icon>visibility_off</v-icon>
+            <v-icon color="deep-purple">
+              {{ props.item.activo ? 'check_box' : 'check_box_outline_blank' }}
+            </v-icon>
           </v-btn>
         </td>
         <td>{{ props.item.username }}</td>
@@ -95,8 +94,7 @@ export default {
   name: 'UsuarioLista',
 
   headers: [
-    Header('Ver', 'detalle'),
-    Header('Desactivar', 'desactivar'),
+    Header('', 'acciones'),
     Header('Usuario', 'username', true),
     Header('Nombre', 'nombre', true),
     Header('Apellido', 'apellido', true),
@@ -176,12 +174,11 @@ export default {
       this.$router.push(`/usuarios/${id}`);
     },
 
-    desactivar: function(id) {
-        if (confirm("Está seguro/a que desea desactivar al usuario?")) {
-            api.patch(`/usuarios/${id}`, { activo: false })
-            .then(r => {
-                this.udpateUsuarios();
-            })
+    toggleActivo: function(usuario) {
+      let msg = `Está seguro/a que desea ${usuario.activo ? 'desactivar' : 'activar'} al usuario?`;
+        if (confirm(msg)) {
+            api.patch(`/usuarios/${usuario.id}`, { activo: !usuario.activo })
+            .then(r => this.udpateUsuarios())
             .catch(e => console.error(e));
         }
     }

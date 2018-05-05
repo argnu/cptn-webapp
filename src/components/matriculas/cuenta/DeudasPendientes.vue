@@ -22,25 +22,25 @@
         >
           <template slot="items" slot-scope="props">
             <tr>
-              <td>
+              <td class="justify-center layout px-0">
+                <v-checkbox
+                  v-model="props.item.checked"
+                >
+                </v-checkbox>
+              </td>              
+              <td>{{ props.item.fecha | fecha }}</td>
+              <td>{{ props.item.fecha_vencimiento | fecha }}</td>
+              <td>{{ props.item.descripcion }}</td>
+              <td>${{ props.item.total | round }}</td>
+              <td>${{ props.item.interes | round }}</td>
+              <td class="justify-center layout px-0">
                 <v-btn
                   v-if="props.item.tipo == 'volante'"
                   fab dark small @click="imprimirVolante(props.item.id)" color="primary"
                 >
                   <v-icon>print</v-icon>
                 </v-btn>
-              </td>
-              <td>{{ props.item.fecha | fecha }}</td>
-              <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>{{ props.item.descripcion }}</td>
-              <td>${{ props.item.total | round }}</td>
-              <td>${{ props.item.interes | round }}</td>
-              <td>
-                <v-checkbox
-                  v-model="props.item.checked"
-                >
-                </v-checkbox>
-              </td>
+              </td>              
             </tr>
           </template>
         </v-data-table>
@@ -176,13 +176,13 @@ export default {
   },
 
   headers: [
-    Header('Imprimir', 'imprimir'),
+    Header('Sel.', 'check'),
     Header('Fecha', 'fecha', true),
-    Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+    Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
     Header('Importe', 'total', true),
     Header('Intereses', 'interes', true),
-    Header('Seleccionar', 'check')
+    Header('', 'imprimir')
   ],
 
   data () {
@@ -276,7 +276,7 @@ export default {
           b.tipo = 'boleta';
           b.checked = false;
           b.descripcion = b.tipo_comprobante.descripcion;
-          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes.dias);
+          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
           this.boletas.push(b);
         });
 

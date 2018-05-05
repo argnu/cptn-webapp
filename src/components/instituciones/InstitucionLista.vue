@@ -60,16 +60,16 @@
     >
 
       <template slot="items" slot-scope="props">
-        <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="verDetalle(props.item.id)">
-            <v-icon>assignment</v-icon>
+        <td class="justify-center layout px-0">
+          <v-btn small icon class="mx-0" @click="verDetalle(props.item.id)">
+            <v-icon color="primary">assignment</v-icon>
           </v-btn>
+
+          <v-btn small icon class="mx-4" @click="editar(props.item.id)">
+            <v-icon color="deep-purple">edit</v-icon>
+          </v-btn>          
         </td>
-        <td>
-          <v-btn fab small dark color="primary" slot="activator" @click="editar(props.item.id)">
-            <v-icon>edit</v-icon>
-          </v-btn>
-        </td>
+
         <td>{{ props.item.cue }}</td>
         <td>{{ props.item.nombre }}</td>
       </template>
@@ -89,8 +89,7 @@ export default {
   name: 'lista-solicitud',
 
   headers: [
-    Header('Ver', 'detalle'),
-    Header('Editar', 'editar'),
+    Header('', 'acciones'),
     Header('CUE', 'cue', true),
     Header('Nombre', 'nombre', true)
   ],

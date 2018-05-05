@@ -28,18 +28,16 @@
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
-              <tr>
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
                 <td>{{ props.item.debe }}</td>
                 <td>{{ props.item.haber }}</td>
-                <td>
-                  <v-btn fab dark small color="blue" @click="verDetalle(props.item)">
-                    <v-icon>launch</v-icon>
+                <td class="justify-center layout px-0">
+                  <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
+                    <v-icon color="primary">launch</v-icon>
                   </v-btn>
-                </td>
-              </tr>
+                </td>                
             </template>
           </v-data-table>
         </v-flex>
@@ -79,7 +77,7 @@ import MixinValidator from '@/components/mixins/MixinValidator';
 
 const headers = [
   Header('Fecha', 'fecha', true),
-  Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+  Header('Fecha de Venc.', 'fecha_vencimiento', true),
   Header('Descripción', 'descripcion', true),
   Header('Debe', 'debe', true),
   Header('Haber', 'haber', true),
