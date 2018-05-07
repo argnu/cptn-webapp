@@ -1329,7 +1329,11 @@ export default {
         if (this.nueva_formacion.nivel) url += `?nivel=${this.nueva_formacion.nivel}`;
 
         return api.get(url)
-        .then(r => this.titulos = r.data)
+        .then(r => { 
+          this.titulos = r.data
+          if (!this.titulos.find(t => t.id == this.nueva_formacion.titulo))
+            this.nueva_formacion.titulo = null;
+        })
         .catch(e => console.error(e));
       }
     },
@@ -1359,9 +1363,10 @@ export default {
 
     editFormacion: function(index) {
       this.formacion_edit = index;
-      this.nueva_formacion = this.solicitud.entidad.formaciones[index];
+      this.nueva_formacion = utils.clone(this.solicitud.entidad.formaciones[index]);
       if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
       if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
+      if (this.nueva_formacion.titulo.id) this.nueva_formacion.titulo = this.nueva_formacion.titulo.id;
 
       this.updateTitulos();
     },
@@ -1389,7 +1394,7 @@ export default {
 
     editSubsidiario: function(index) {
       this.subsidiario_edit = index;
-      this.nuevo_subsidiario = this.solicitud.entidad.subsidiarios[index];
+      this.nuevo_subsidiario = utils.clone(this.solicitud.entidad.subsidiarios[index]);
     },
 
     cancelarEditSubsidiario: function() {

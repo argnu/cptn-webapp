@@ -146,7 +146,7 @@ export default new Router({
         },
         {
           path: '/instituciones/modificar/:id',
-          name: 'InstitucionDetalle',
+          name: 'InstitucionEdit',
           component: InstitucionNueva,
           props: true
         },

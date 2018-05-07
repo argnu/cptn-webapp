@@ -15,7 +15,7 @@
                 <span class="ml-2">{{ institucion.nombre }}</span>
             </v-flex>
 
-            <v-flex xs2 class="mx-4">
+            <v-flex xs4 class="mx-4">
                 <b>CUE:</b>
                 <span class="ml-2">{{ institucion.cue }}</span>
             </v-flex>

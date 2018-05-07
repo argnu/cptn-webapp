@@ -222,7 +222,7 @@ export default {
 
     editContacto: function(index) {
       this.contacto_edit = index;
-      this.nuevo_contacto = this.solicitud.entidad.contactos[index];
+      this.nuevo_contacto = utils.clone(this.solicitud.entidad.contactos[index]);
       if (this.nuevo_contacto.tipo === 1 || this.nuevo_contacto.tipo === 2) {
         let params = this.nuevo_contacto.valor.substring(1, this.nuevo_contacto.valor.length).split('-')
         if (!this.nuevo_contacto.valor[0] == '+') params[0] = '54';
@@ -254,7 +254,7 @@ export default {
 
     editCondAfip: function(index) {
       this.condafip_edit = index;
-      this.nueva_condafip = this.solicitud.entidad.condiciones_afip[index];
+      this.nueva_condafip = utils.clone(this.solicitud.entidad.condiciones_afip[index]);
     },  
     
     cancelarEditCondAfip: function() {
