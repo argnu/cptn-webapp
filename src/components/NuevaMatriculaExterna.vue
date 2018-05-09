@@ -19,6 +19,7 @@
                 <v-text-field
                     label="CUIT/CUIL"
                     v-model="matricula.persona.cuit"
+                    :rules="[rules.cuit]"
                 ></v-text-field>
               </v-flex>
 

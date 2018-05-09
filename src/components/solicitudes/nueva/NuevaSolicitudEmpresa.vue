@@ -105,7 +105,7 @@
                             tabindex="8"
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
-                            :rules="[rules.required, rules.integer]"
+                            :rules="[rules.required, rules.cuit]"
                           >
                           </v-text-field>
 

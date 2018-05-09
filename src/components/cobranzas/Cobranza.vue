@@ -74,12 +74,13 @@
                     :rules="[rules.required]"
                   >
                 </v-select>
-                  <v-text-field
+                  <input-texto
                     label="Titular Cuenta"
+                    uppercase
                     v-model="nueva_forma_pago.titular_cuenta"
                     :rules="[rules.required]"
                   >
-                  </v-text-field>
+                  </input-texto>
                 </v-flex>
               </v-layout>
             </v-form>
@@ -167,6 +168,7 @@
 import api from '@/services/api'
 import { Header } from '@/model'
 import * as utils from '@/utils'
+import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -213,7 +215,9 @@ export default {
   },
 
   components: {
-    InputFecha, InputNumero
+    InputTexto,
+    InputFecha, 
+    InputNumero
   },
 
   data () {

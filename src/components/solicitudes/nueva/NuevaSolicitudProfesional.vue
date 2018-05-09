@@ -97,14 +97,15 @@
                       >
                       </v-text-field>
 
-                      <v-text-field
+                      <input-texto
                         label="Nombre"
                         v-model="solicitud.entidad.nombre"
                         tabindex="5"
                         maxlength="100"
+                        uppercase
                         :rules="[rules.required]"
                       >
-                      </v-text-field>
+                      </input-texto>
 
                       <v-select
                         autocomplete
@@ -149,9 +150,9 @@
                       <v-text-field
                         label="CUIT/CUIL"
                         v-model="solicitud.entidad.cuit"
-                        :rules="[rules.integer]"
+                        :rules="[rules.cuit]"
                         tabindex="6"
-                        maxlength="20"
+                        maxlength="11"
                       >
                       </v-text-field>
 
@@ -1055,6 +1056,7 @@ import {
   Subsidiario,
   Header
 } from '@/model';
+import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
@@ -1073,6 +1075,7 @@ export default {
   mixins: [MixinValidator, NuevaSolicitud],
 
   components: {
+    InputTexto,
     InputFecha,
     InputTelefono,
     InputNumero,

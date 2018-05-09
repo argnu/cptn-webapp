@@ -90,6 +90,7 @@
                       label="CUIT/CUIL"
                       v-model="nuevo_comitente.persona.cuit"
                       @change="chgCuitComitente"
+                      :rules="[rules.cuit]"
                     >
                     </v-text-field>
 
