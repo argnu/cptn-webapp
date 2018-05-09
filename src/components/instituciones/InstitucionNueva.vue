@@ -29,14 +29,14 @@
 
             <v-flex xs4 class="mx-5 mb-3">
                 <v-checkbox
-                    label="Válida"
+                    label="Institución Válida"
                     v-model="institucion.valida"
                 ></v-checkbox>
             </v-flex>
         </v-layout>
         </v-form>
 
-        <br>
+        <v-divider class="my-5"></v-divider>
 
         <v-layout row>
             <v-flex xs12>
@@ -101,7 +101,7 @@
             </v-flex>
         </v-layout>
 
-        <br>
+        <v-divider class="my-5"></v-divider>
 
         <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Títulos</b></span>
 
@@ -126,7 +126,7 @@
                 </v-select>
 
                 <v-checkbox
-                    label="Válida"
+                    label="Título Válido"
                     v-model="nuevo_titulo.valido"
                 ></v-checkbox>
             </v-flex>
@@ -180,16 +180,15 @@
                     no-data-text="No hay titulos"
                 >
                     <template slot="items" slot-scope="props">
-                        <td>
-                            <v-btn fab small dark color="primary"  @click="editTitulo(props.index)">
-                                <v-icon>edit</v-icon>
-                            </v-btn>
-                        </td>
-                        <td>
-                            <v-btn fab small dark color="primary"  @click="borrarTitulo(props.index)">
-                                <v-icon>delete</v-icon>
-                            </v-btn>
-                        </td>
+                        <td class="justify-center layout px-0">
+                        <v-btn small icon class="mx-0" @click="borrarTitulo(props.index)">
+                            <v-icon color="red">delete</v-icon>
+                        </v-btn>
+
+                        <v-btn small icon class="mx-4" @click="editTitulo(props.index)">
+                            <v-icon color="deep-purple">edit</v-icon>
+                        </v-btn>          
+                        </td>                        
                         <td>{{ props.item.nombre }}</td>
                         <td>{{ getNivelTitulo(props.item.nivel) }}</td>
                         <td>{{ props.item.tipo_matricula }}</td>

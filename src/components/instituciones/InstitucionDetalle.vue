@@ -26,9 +26,8 @@
             </v-flex>
         </v-layout>
 
-        <v-divider></v-divider>
-
-        <br>
+        <v-divider class="my-5"></v-divider>
+        
         <span class="subheading blue--text text--darken-4 ml-5"><b>Títulos</b></span>
 
         <v-layout row>

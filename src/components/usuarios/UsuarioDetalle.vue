@@ -6,6 +6,7 @@
     </v-toolbar>
 
     <v-card>
+        <br>
         <v-layout class="mt-4">
             <v-flex xs10>
                 <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>

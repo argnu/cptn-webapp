@@ -160,6 +160,7 @@ export default {
       if (this.filtros.email) url += `&filter[email]=${this.filtros.email}`;
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+      else url+='&sort=+apellido';
 
       api.get(url)
         .then(r => {
