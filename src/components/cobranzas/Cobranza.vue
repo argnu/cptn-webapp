@@ -254,6 +254,12 @@ export default {
     }
   },
 
+  watch: {
+    importe: function(importe_nuevo) {
+      this.nueva_forma_pago.importe = importe_nuevo;
+    }
+  },
+
   created: function() {
     Promise.all([
       api.get('/opciones?sort=+valor'),
@@ -268,8 +274,10 @@ export default {
 
   methods: {
     chgFormaPago: function(tipo) {
+      let importe_guardar = this.nueva_forma_pago.importe;
       if (this.esCheque) this.nueva_forma_pago = new ComprobantePagoCheque(tipo);
       else this.nueva_forma_pago = new ComprobantePago(tipo);
+      this.nueva_forma_pago.importe = importe_guardar;
     },
 
     addItem: function() {
@@ -277,6 +285,7 @@ export default {
       this.nueva_forma_pago = new ComprobantePago();
       this.$refs.form_basico.reset();
       if (this.$refs.form_cheque) this.$refs.form_cheque.reset();
+      this.nueva_forma_pago.importe = this.importe - this.total;
     },
 
     addItemPago: function() {
@@ -315,8 +324,13 @@ export default {
     },
 
     cancelar: function() {
-      this.items_pago = [];
+      this.reset();
       this.$emit('cancelar');
+    },
+
+    reset: function() {
+      this.items_pago = [];
+      this.nueva_forma_pago.importe = this.importe;
     }
   },
 

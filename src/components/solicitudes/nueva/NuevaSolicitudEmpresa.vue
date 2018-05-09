@@ -1118,9 +1118,13 @@ export default {
     imprimir: function() {
       api.get(`/solicitudes/${this.id}`)
           .then(s => {
-            let solicitud = s.data;
-            let pdf = impresionSolicitud(solicitud);
-            pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
+            reports.open({
+              'jsp-source': 'solicitud_matricula_empresa.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `Solicitud ${solicitud.numero} - ${Date.now()}`,
+              'jsp-only-gen': false,
+              'solicitud_id': item.id
+            });            
           })
           .catch(e => console.error(e));
     },

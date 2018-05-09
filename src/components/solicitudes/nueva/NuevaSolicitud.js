@@ -58,9 +58,10 @@ const headers = {
     Header('', 'acciones'),
     Header('Título', 'titulo'),
     Header('Institución', 'institucion'),
-    Header('Fecha de Egreso', 'fechaEgreso'),
-    Header('Fecha de Emisión', 'fechaEmision'),
-    Header('Lapso Emisión', 'tiempoEmision')
+    Header('Fecha Egreso', 'fechaEgreso'),
+    Header('Fecha Emisión', 'fechaEmision'),
+    Header('Lapso Emisión', 'tiempoEmision'),
+    Header('Principal', 'principal')
   ],
 
   subsidiarios: [

@@ -119,9 +119,12 @@
                 <v-select
                     label="Tipo de Matrícula"
                     autocomplete
-                    :items="$options.tipos_matricula"
+                    clearable
+                    return-object
+                    item-text="valor"
+                    item-value="id"
+                    :items="opciones.matricula"
                     v-model="nuevo_titulo.tipo_matricula"
-                    :rules="[rules.required]"
                 >
                 </v-select>
 
@@ -135,6 +138,7 @@
                 <v-select
                     label="Nivel"
                     autocomplete
+                    return-object
                     :items="opciones.niveles_titulos"
                     item-value="id"
                     item-text="valor"
@@ -149,10 +153,11 @@
                     item-text="valor"
                     item-value="id"
                     v-model="nuevo_titulo.incumbencias"
-                    multiple
                     max-height="400"
                     hint="Seleccione las incumbencias"
                     persistent-hint
+                    return-object
+                    multiple
                 ></v-select>
             </v-flex>
         </v-layout>
@@ -181,17 +186,18 @@
                 >
                     <template slot="items" slot-scope="props">
                         <td class="justify-center layout px-0">
-                        <v-btn small icon class="mx-0" @click="borrarTitulo(props.index)">
-                            <v-icon color="red">delete</v-icon>
-                        </v-btn>
+                            <v-btn small icon class="mx-0" @click="borrarTitulo(props.index)">
+                                <v-icon color="red">delete</v-icon>
+                            </v-btn>
 
-                        <v-btn small icon class="mx-4" @click="editTitulo(props.index)">
-                            <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>          
+                            <v-btn small icon class="mx-4" @click="editTitulo(props.index)">
+                                <v-icon color="deep-purple">edit</v-icon>
+                            </v-btn>          
                         </td>                        
                         <td>{{ props.item.nombre }}</td>
-                        <td>{{ getNivelTitulo(props.item.nivel) }}</td>
-                        <td>{{ props.item.tipo_matricula }}</td>
+                        <td>{{ props.item.nivel.valor }}</td>
+                        <td>{{ props.item.tipo_matricula ? props.item.tipo_matricula.valor : '' }}</td>
+                        <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
                         <td>{{ props.item.valido | boolean }}</td>
                     </template>
                 </v-data-table>
@@ -225,6 +231,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
+import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -238,11 +245,12 @@ export default {
     mixins: [MixinValidator],
 
     headers: [
-        Header('Modificar', 'edit'),
-        Header('Borrar', 'borrar'),
+        Header('', 'acciones'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
+        Header('Incumbencias', 'incumbencias'),
+        Header('Válido', 'valido'),
     ],
 
     tipos_matricula: [
@@ -263,6 +271,12 @@ export default {
             localidades: [],
             valid_basico: false,
             submitted: false
+        }
+    },
+
+    filters: {
+        lista_incumbencias: function(incumbencias) {
+            return incumbencias.map(i => i.valor).join(',');
         }
     },
 
@@ -290,7 +304,7 @@ export default {
                         this.changePais().then(() => this.changeProvincia());
                     }
                     for(let titulo of r.data.titulos) {
-                        titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia.id);
+                        titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
                         this.institucion.titulos.push(titulo);
                     }
                     
@@ -349,11 +363,6 @@ export default {
             }
         },
 
-        getNivelTitulo: function(nivel) {
-            let id = (typeof nivel == 'object') ? nivel.id : nivel;
-            return this.opciones.niveles_titulos.find(n => n.id == id).valor;
-        },
-
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
                 if (this.titulo_edit == null) {
@@ -371,7 +380,7 @@ export default {
 
         editTitulo: function(index) {
             this.titulo_edit = index;
-            this.nuevo_titulo = this.institucion.titulos[index];
+            this.nuevo_titulo = utils.clone(this.institucion.titulos[index]);
         },
 
         borrarTitulo: function(index) {
@@ -385,9 +394,15 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
+                let institucion = utils.clone(this.institucion);
+                institucion.titulos.forEach(t => {
+                    t.incumbencias = t.incumbencias.map(i => i.id);
+                    t.nivel = t.nivel.id;
+                    t.tipo_matricula = t.tipo_matricula ? t.tipo_matricula.id : null;
+                })
 
                 if (this.id) {
-                    api.put(`/instituciones/${this.id}`, this.institucion)
+                    api.put(`/instituciones/${this.id}`, institucion)
                     .then(r => {
                         this.submitted = false;
                         this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
@@ -405,7 +420,7 @@ export default {
                     })
                 }
                 else {
-                    api.post('/instituciones', this.institucion)
+                    api.post('/instituciones', institucion)
                     .then(r => {
                         this.submitted = false;
                         this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';

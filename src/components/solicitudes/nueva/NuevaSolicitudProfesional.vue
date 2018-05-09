@@ -635,6 +635,13 @@
                             </template>
                           </template>
                         </v-select>
+
+                        <v-checkbox
+                          label="Título Principal" 
+                          class="my-2" 
+                          v-model="nueva_formacion.principal"
+                          :disabled="existeTituloPrincipal && !nueva_formacion.principal"
+                        ></v-checkbox>                        
                       </v-flex>
 
                       <v-flex xs6 class="mx-4">
@@ -695,6 +702,7 @@
                           <td>{{ props.item.fechaEgreso | fecha }}</td>
                           <td>{{ props.item.fechaEmision | fecha }}</td>
                           <td>{{ props.item.tiempoEmision }}</td>
+                          <td>{{ props.item.principal | boolean }}</td>
                         </tr>
                       </template>
                     </v-data-table>
@@ -725,6 +733,9 @@
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
                       <v-checkbox
+                        tabindex="33"
+                        label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
+                      </v-checkbox>                      <v-checkbox
                         tabindex="33"
                         label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
                       </v-checkbox>
@@ -1108,6 +1119,10 @@ export default {
       return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
     },
 
+    existeTituloPrincipal: function() {
+      return this.solicitud.entidad.formaciones.find(f => f.principal) != undefined;
+    },
+
     lapso_emision: function() {
       return '12';
       if (!this.nueva_formacion.fechaEmision) return '';
@@ -1483,7 +1498,7 @@ export default {
           reports.open({
             'jsp-source': 'anexo_caja_previsional.jasper',
             'jsp-format': 'PDF',
-            'jsp-output-file': `Anexo Caja ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-output-file': `Anexo Caja Sol. ${solicitud.numero} - ${Date.now()}`,
             'jsp-only-gen': false,
             'solicitud_id': solicitud.id
           });
@@ -1493,7 +1508,7 @@ export default {
           reports.open({
             'jsp-source': 'certificado_matricula.jasper',
             'jsp-format': 'PDF',
-            'jsp-output-file': `Certificado ${solicitud.entidad.apellido}-${Date.now()}`,
+            'jsp-output-file': `Certificado Matricula en Tramite Sol. ${solicitud.numero} - ${Date.now()}`,
             'jsp-only-gen': false,
             'solicitud_id': solicitud.id
           });
@@ -1502,7 +1517,7 @@ export default {
         reports.open({
           'jsp-source': 'solicitud_matricula_profesional.jasper',
           'jsp-format': 'PDF',
-          'jsp-output-file': `Solicitud N° ${solicitud.numero}-${Date.now()}`,
+          'jsp-output-file': `Solicitud ${solicitud.numero}-${Date.now()}`,
           'jsp-only-gen': false,
           'solicitud_id': solicitud.id
         });

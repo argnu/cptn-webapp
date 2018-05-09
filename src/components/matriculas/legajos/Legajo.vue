@@ -21,7 +21,7 @@
       </v-flex>
     </v-layout>
 
-    <v-layout row wrap>     
+    <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-text>
@@ -60,7 +60,7 @@
               </v-flex>
             </v-layout>
 
-            </v-form> 
+            </v-form>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -99,7 +99,7 @@
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer]"
                       @change="chgDni"
-                    ></v-text-field>                    
+                    ></v-text-field>
 
                     <input-numero
                       label="Porcentaje"
@@ -134,7 +134,7 @@
 
                   <v-btn @click="addComitente">
                     Agregar
-                  </v-btn>                  
+                  </v-btn>
                 </v-flex>
             </v-layout>
 
@@ -176,7 +176,7 @@
 
                 <v-alert color="error" icon="priority_high" :value="!this.legajo.id && !valid_comitentes">
                   Los porcentajes deben sumar 100%
-                </v-alert>                                  
+                </v-alert>
               </v-flex>
             </v-layout>
           </v-card-text>
@@ -376,7 +376,7 @@
                         <v-btn fab small @click="removeItem(props.index)">
                           <v-icon>delete</v-icon>
                         </v-btn>
-                      </td>                      
+                      </td>
                     </tr>
                   </template>
                 </v-data-table>
@@ -431,7 +431,7 @@
                   v-model="legajo.honorarios_presupuestados"
                   :disabled="legajo.id > 0"
                   decimal
-                ></input-numero>                
+                ></input-numero>
               </v-flex>
 
               <v-flex xs3 class="ml-5">
@@ -513,7 +513,7 @@
 
       <v-layout row wrap>
         <v-flex xs12>
-          <v-form ref="form_aportes" v-model="valid.aportes"> 
+          <v-form ref="form_aportes" v-model="valid.aportes">
 
           <v-card class="ma-2 elevation-4">
             <v-card-title>
@@ -667,7 +667,7 @@ const Legajo = (matricula) => ({
 })
 
 export default {
-  
+
   name: 'Legajo',
 
   props: ['id_legajo', 'id_matricula'],
@@ -719,16 +719,16 @@ export default {
     suma_comitentes: function() {
       if (!this.legajo.comitentes.length) return 0;
       return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
-    },    
+    },
 
     valid_comitentes: function() {
-      return this.suma_comitentes === 100;   
+      return this.suma_comitentes === 100;
     },
 
     valid_form: function() {
       return this.valid.basicos && this.valid_comitentes && this.valid.ubicacion && this.valid.tareas
         && (this.legajo.tipo !=3 || this.valid.aportes);
-    },    
+    },
 
     item_item_invalid: function() {
       if (typeof this.nuevo_item.item == 'number') return false;
@@ -769,10 +769,14 @@ export default {
                   return api.get(`/matriculas/${this.legajo.matricula}`);
               })
       }
-      else { 
-        this.changePais();
-        this.changeProvincia();        
-        return api.get(`/matriculas/${this.id_matricula}`);
+      else {
+      this.legajo.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+      this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+      this.changePais()
+      .then(() => this.changeProvincia())
+      .then(() => this.changeDepartamento());        
+
+      return api.get(`/matriculas/${this.id_matricula}`);
       }
     })
     .then(r => this.matricula = r.data)
@@ -781,21 +785,21 @@ export default {
 
   methods: {
     changePais: function() {
-      api.get(`/provincias?pais_id=${this.legajo.domicilio.pais}`)
-             .then(r => this.provincias = r.data)
-             .catch(e => console.error(e));
-           },
+      return api.get(`/provincias?pais_id=${this.legajo.domicilio.pais}`)
+      .then(r => this.provincias = r.data)
+      .catch(e => console.error(e));
+    },
 
     changeProvincia: function() {
-        api.get(`/departamentos?provincia_id=${this.legajo.domicilio.provincia}`)
-             .then(r => this.departamentos = r.data)
-             .catch(e => console.error(e));
+      return api.get(`/departamentos?provincia_id=${this.legajo.domicilio.provincia}`)
+      .then(r => this.departamentos = r.data)
+      .catch(e => console.error(e));
     },
 
     changeDepartamento: function() {
-        api.get(`/localidades?departamento_id=${this.legajo.domicilio.departamento}`)
-             .then(r => this.localidades = r.data)
-             .catch(e => console.error(e));
+      return api.get(`/localidades?departamento_id=${this.legajo.domicilio.departamento}`)
+      .then(r => this.localidades = r.data)
+      .catch(e => console.error(e));
     },
 
     chgSubcategoria: function() {
@@ -853,10 +857,10 @@ export default {
     addItem: function() {
       if (typeof this.nuevo_item.item == 'string') {
         this.nuevo_item.item = {
-          descripcion: this.nuevo_item.item 
+          descripcion: this.nuevo_item.item
         }
       };
-      
+
       this.legajo.items.push(this.nuevo_item);
       this.nuevo_item = LegajoItem();
     },
@@ -868,7 +872,7 @@ export default {
     getDescItem: function(item) {
       if (typeof item == 'number')
         return this.items_predeterminados.find(i => i.id == item).descripcion;
-      else 
+      else
         return item.descripcion;
     },
 
