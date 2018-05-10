@@ -257,24 +257,26 @@
                           <v-flex xs6 class="ma-4">
                             <v-select
                               tabindex="12"
-                              :items="paises"
                               label="País"
-                              v-model="nuevo_domicilio.domicilio.pais"
+                              return-object
                               autocomplete
                               item-text="nombre"
-                              item-value="id"
-                              @input="changePais"
+                              item-value="id"                              
+                              :items="paises"
                               :rules="[rules.required]"
+                              v-model="nuevo_domicilio.domicilio.pais"
+                              @input="changePais"
                             >
                             </v-select>
 
                             <v-select
                               tabindex="14"
-                              :items="departamentos"
                               label="Departamento"
+                              autocomplete
+                              return-object                              
+                              :items="departamentos"
                               @input="changeDepartamento"
                               v-model="nuevo_domicilio.domicilio.departamento"
-                              autocomplete single-line bottom
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
@@ -298,7 +300,8 @@
                               label="Provincia"
                               @input="changeProvincia"
                               v-model="nuevo_domicilio.domicilio.provincia"
-                              autocomplete single-line bottom
+                              autocomplete
+                              return-object   
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
@@ -311,7 +314,8 @@
                               label="Localidad"
                               v-model="nuevo_domicilio.domicilio.localidad"
                               :rules="[rules.required]"
-                              autocomplete single-line bottom
+                              autocomplete
+                              return-object   
                               item-text="nombre"
                               item-value="id"
                             >
@@ -329,7 +333,7 @@
                               {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
                             </v-btn>
 
-                          <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
+                          <v-btn class="right" light v-show="domicilio_edit != null" @click="resetDomicilio">
                             Cancelar
                           </v-btn>
                           </v-flex>
@@ -356,18 +360,10 @@
 
                               <td>{{ props.item.tipo | upperFirst }}</td>
 
-                              <template v-if="!props.item.id">
-                                <td>{{ props.item.pais_nombre }}</td>
-                                <td>{{ props.item.provincia_nombre }}</td>
-                                <td>{{ props.item.departamento_nombre }}</td>
-                                <td>{{ props.item.localidad_nombre }}</td>
-                              </template>
-                              <template v-else>
-                                <td>{{ props.item.domicilio.pais }}</td>
-                                <td>{{ props.item.domicilio.provincia }}</td>
-                                <td>{{ props.item.domicilio.departamento }}</td>
-                                <td>{{ props.item.domicilio.localidad }}</td>
-                              </template>
+                              <td>{{ props.item.domicilio.pais.nombre }}</td>
+                              <td>{{ props.item.domicilio.provincia.nombre }}</td>
+                              <td>{{ props.item.domicilio.departamento.nombre }}</td>
+                              <td>{{ props.item.domicilio.localidad.nombre }}</td>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
                             </tr>
@@ -1108,11 +1104,6 @@ export default {
       return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
     },
 
-    lapso_emision: function() {
-      return '12';
-      if (!this.nueva_formacion.fechaEmision) return '';
-    },
-
     cajas_previsionales_filter: function() {
       return this.cajas_previsionales.filter(c =>
         !this.solicitud.entidad.cajas_previsionales.find(cp =>
@@ -1161,8 +1152,8 @@ export default {
         this.instituciones = r[3].data.resultados;
         this.cajas_previsionales = r[4].data;
         this.datos_cargados = true;
-        this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
-        this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+        this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento;
+        this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad;
         this.init();
       })
       .catch(e => console.error(e));
@@ -1432,7 +1423,16 @@ export default {
         form_data.append('foto', this.foto);
       if (this.firma)
         form_data.append('firma', this.firma);
-      form_data.append('solicitud', JSON.stringify(this.solicitud));
+
+      let solicitud = utils.clone(this.solicitud);
+      solicitud.entidad.domicilios.forEach(d => {
+        d.domicilio.pais = d.domicilio.pais.id;
+        d.domicilio.provincia = d.domicilio.provincia.id;
+        d.domicilio.departamento = d.domicilio.departamento.id;
+        d.domicilio.localidad = d.domicilio.localidad.id;
+      });
+
+      form_data.append('solicitud', JSON.stringify(solicitud));
       return form_data;
     },
 

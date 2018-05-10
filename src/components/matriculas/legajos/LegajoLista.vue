@@ -11,7 +11,7 @@
             <v-icon>add</v-icon>
           </v-btn>
           <v-data-table
-              :headers="headers"
+              :headers="$options.headers"
               :items="legajos"
               no-data-text=""
               :rows-per-page-items="[25,30,35]"
@@ -44,12 +44,6 @@ import { Header } from '@/model'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
-const headers = [
-  Header('Fecha', 'fecha_solicitud', true),
-  Header('Descripción', 'descripcion', true),
-  Header('', 'acciones')
-]
-
 
 export default {
 
@@ -57,17 +51,17 @@ export default {
 
   props: ['id'],
 
+  headers: [
+    Header('Fecha', 'fecha_solicitud', true),
+    Header('Descripción', 'descripcion', true),
+    Header('', 'acciones')
+  ],
+
   data () {
     return {
       legajos: [],
       legajos_original: [],
       loading: false,
-    }
-  },
-
-  computed: {
-    headers: function() {
-      return headers;
     }
   },
 

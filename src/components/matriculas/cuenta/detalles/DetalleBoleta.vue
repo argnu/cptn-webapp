@@ -19,7 +19,7 @@
     <br>
 
     <v-data-table
-        :headers="headers"
+        :headers="$options.headers"
         :items="boleta.items"
         class="elevation-1"
         no-data-text="No hay items"
@@ -42,29 +42,15 @@
 <script>
 import * as utils from '@/utils';
 
-const headers = [
-  { text: 'N°', value: 'item' },
-  { text: 'Descripción', value: 'descripcion' },
-  { text: 'Importe', value: 'importe' }
-];
-
 export default {
   name: 'DetalleBoleta',
   props: ['boleta'],
 
-  data () {
-    return {
-    }
-  },
-
-  computed: {
-    headers: function() {
-      return headers;
-    }
-  },
-
-  methods: {
-  },
+  headers: [
+    { text: 'N°', value: 'item' },
+    { text: 'Descripción', value: 'descripcion' },
+    { text: 'Importe', value: 'importe' }
+  ],
 
 }
 </script>

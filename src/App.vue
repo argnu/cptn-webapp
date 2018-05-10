@@ -52,10 +52,6 @@ import MenuLateral from '@/components/MenuLateral'
 
 export default {
   name: 'app',
-  data() {
-    return {
-    }
-  },
 
   computed: {
     isLogged: function() {

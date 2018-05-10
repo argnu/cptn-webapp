@@ -181,7 +181,7 @@
 
   <v-card>
     <v-data-table
-      :headers="headers[filtros.tipoEntidad]"
+      :headers="$options.headers[filtros.tipoEntidad]"
       :items="solicitudes"
       class="elevation-1"
       no-data-text="No se encontraron solicitudes"
@@ -354,27 +354,6 @@ const select_items = {
   ]
 }
 
-const headers = {
-  empresa: [
-    Header('N°', 'numero', true),
-    Header('Fecha', 'fecha', true),
-    Header('Nombre', 'nombreEmpresa', true),
-    Header('CUIT', 'cuit', true),
-    Header('Estado', 'estado', true),
-    Header('Menú', 'acciones')
-  ],
-
-  profesional: [
-    Header('N°', 'numero', true),
-    Header('Fecha', 'fecha', true),
-    Header('Apellido', 'apellido', true),
-    Header('Nombre', 'nombre', true),
-    Header('DNI', 'dni', true),
-    Header('Estado', 'estado', true),
-    Header('Menú', 'acciones')
-  ]
-}
-
 export default {
   name: 'lista-solicitud',
   mixins: [MixinValidator],
@@ -384,6 +363,27 @@ export default {
     { text: 'TEC-', value: 'TEC-' },
     { text: 'IDO', value: 'IDO' }
   ],
+
+  headers: {
+    empresa: [
+      Header('N°', 'numero', true),
+      Header('Fecha', 'fecha', true),
+      Header('Nombre', 'nombreEmpresa', true),
+      Header('CUIT', 'cuit', true),
+      Header('Estado', 'estado', true),
+      Header('Menú', 'acciones')
+    ],
+
+    profesional: [
+      Header('N°', 'numero', true),
+      Header('Fecha', 'fecha', true),
+      Header('Apellido', 'apellido', true),
+      Header('Nombre', 'nombre', true),
+      Header('DNI', 'dni', true),
+      Header('Estado', 'estado', true),
+      Header('Menú', 'acciones')
+    ]
+  },
 
   data() {
     return {
@@ -417,10 +417,6 @@ export default {
   computed: {
     select_items: function() {
       return select_items;
-    },
-
-    headers: function() {
-      return headers;
     }
   },
 

@@ -58,11 +58,6 @@ export default {
           default: () => false
       }
     },
-    
-    data() {
-        return {
-        }
-    },    
 
     computed: {
         formatted: function() {

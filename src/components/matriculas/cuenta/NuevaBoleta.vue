@@ -66,7 +66,7 @@
         <v-layout row class="mt-4">
             <v-flex xs12>
                 <v-data-table
-                    :headers="headers_items"
+                    :headers="$options.headers_items"
                     :items="boleta.items"
                     class="elevation-1"
                     hide-actions
@@ -133,13 +133,6 @@ class BoletaItem {
     }
 }
 
-const headers_items = [
-    Header('Item', 'item'),
-    Header('Descripción', 'descripcion'),
-    Header('Importe', 'importe'),
-    Header('', 'acciones')
-]
-
 export default {
     name: 'NuevaBoleta',
     props: ['idMatricula'],
@@ -149,6 +142,13 @@ export default {
         InputFecha,
         InputNumero
     },
+
+    headers_items: [
+        Header('Item', 'item'),
+        Header('Descripción', 'descripcion'),
+        Header('Importe', 'importe'),
+        Header('', 'acciones')
+    ],
 
     data() {
         return {
@@ -165,10 +165,6 @@ export default {
     },
 
     computed: {
-        headers_items: function() {
-            return headers_items;
-        },
-
         valid_form: function() {
             return this.valid.boleta && this.boleta.items.length > 0;
         }

@@ -18,7 +18,7 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
-              :headers="headers_resumen"
+              :headers="$options.headers_resumen"
               :items="resumen"
               class="elevation-1"
               no-data-text="No hay datos"
@@ -75,19 +75,19 @@ import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
 import MixinValidator from '@/components/mixins/MixinValidator';
 
-const headers = [
-  Header('Fecha', 'fecha', true),
-  Header('Fecha de Venc.', 'fecha_vencimiento', true),
-  Header('Descripción', 'descripcion', true),
-  Header('Debe', 'debe', true),
-  Header('Haber', 'haber', true),
-  Header('', 'detalle')
-]
-
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
   mixins: [MixinValidator],
+
+  headers_resumen: [
+    Header('Fecha', 'fecha', true),
+    Header('Fecha de Venc.', 'fecha_vencimiento', true),
+    Header('Descripción', 'descripcion', true),
+    Header('Debe', 'debe', true),
+    Header('Haber', 'haber', true),
+    Header('', 'detalle')
+  ],
 
   data () {
     return {
@@ -109,10 +109,6 @@ export default {
   },
 
   computed: {
-    headers_resumen: function() {
-      return headers;
-    },
-
     totales_debe: function() {
       return this.resumen.length ?
         this.resumen.reduce((prev, act) => prev + (act.tipo == 'boleta' ? act.total : 0), 0)

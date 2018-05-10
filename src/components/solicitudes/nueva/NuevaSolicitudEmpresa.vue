@@ -184,6 +184,7 @@
                               label="País"
                               v-model="nuevo_domicilio.domicilio.pais"
                               autocomplete
+                              return-object
                               item-text="nombre"
                               item-value="id"
                               @input="changePais"
@@ -197,7 +198,8 @@
                               label="Departamento"
                               @input="changeDepartamento"
                               v-model="nuevo_domicilio.domicilio.departamento"
-                              autocomplete single-line bottom
+                              autocomplete
+                              return-object
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
@@ -220,7 +222,8 @@
                               label="Provincia"
                               @input="changeProvincia"
                               v-model="nuevo_domicilio.domicilio.provincia"
-                              autocomplete single-line bottom
+                              autocomplete
+                              return-object
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
@@ -232,7 +235,8 @@
                               :items="localidades"
                               label="Localidad"
                               v-model="nuevo_domicilio.domicilio.localidad"
-                              autocomplete single-line bottom
+                              autocomplete
+                              return-object
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
@@ -251,7 +255,7 @@
                               {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
                             </v-btn>
 
-                            <v-btn class="right" light v-show="domicilio_edit != null" @click="cancelarEditDomicilio">
+                            <v-btn class="right" light v-show="domicilio_edit != null" @click="resetDomicilio">
                               Cancelar
                             </v-btn>
                           </v-flex>
@@ -277,18 +281,10 @@
                               </td>
                               <td>{{ props.item.tipo | upperFirst }}</td>
 
-                              <template v-if="!props.item.id">
-                                <td>{{ props.item.pais_nombre }}</td>
-                                <td>{{ props.item.provincia_nombre }}</td>
-                                <td>{{ props.item.departamento_nombre }}</td>
-                                <td>{{ props.item.localidad_nombre }}</td>
-                              </template>
-                              <template v-else>
-                                <td>{{ props.item.domicilio.pais }}</td>
-                                <td>{{ props.item.domicilio.provincia }}</td>
-                                <td>{{ props.item.domicilio.departamento }}</td>
-                                <td>{{ props.item.domicilio.localidad }}</td>
-                              </template>
+                              <td>{{ props.item.domicilio.pais.nombre }}</td>
+                              <td>{{ props.item.domicilio.provincia.nombre }}</td>
+                              <td>{{ props.item.domicilio.departamento.nombre }}</td>
+                              <td>{{ props.item.domicilio.localidad.nombre }}</td>
 
                               <td>{{ props.item.domicilio.direccion }}</td>
                             </tr>
@@ -920,8 +916,8 @@ export default {
       this.opciones = r[1].data;
       this.delegaciones = r[2].data;
       this.datos_cargados = true;
-      this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
-      this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+      this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento;
+      this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad;
       this.initForm();
     })
     .catch(e => console.error(e));

@@ -135,7 +135,7 @@
                       <b>Domicilio Real</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ domicilioReal ? domicilioReal.localidad : ''}}
+                      Localidad: {{ domicilioReal ? domicilioReal.localidad.nombre : ''}}
                     </div>
                     <div class="mb-4">
                       Dirección: {{ domicilioReal ? domicilioReal.direccion : ''}}
@@ -147,7 +147,7 @@
                       <b>Domicilio Legal</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ domicilioLegal ? domicilioLegal.localidad : ''}}
+                      Localidad: {{ domicilioLegal ? domicilioLegal.localidad.nombre : ''}}
                     </div>
                     <div class="mb-4">
                       Dirección: {{ domicilioLegal ? domicilioLegal.direccion : '' }}
@@ -159,7 +159,7 @@
                       <b>Domicilio Especial</b>
                     </div>
                     <div class="mb-4">
-                      Localidad: {{ domicilioEspecial ? domicilioEspecial.localidad : ''}}
+                      Localidad: {{ domicilioEspecial ? domicilioEspecial.localidad.nombre : ''}}
                     </div>
                     <div class="mb-4">
                       Dirección: {{ domicilioEspecial ? domicilioEspecial.direccion : '' }}

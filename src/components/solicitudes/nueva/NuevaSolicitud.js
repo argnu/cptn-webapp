@@ -83,8 +83,8 @@ export default {
       show_cargando: false,
       datos_cargados: false,
       domicilio_edit: null,
-      contacto_edit: null,      
-      condafip_edit: null,      
+      contacto_edit: null,
+      condafip_edit: null,
       step: 1,
       nuevo_contacto: new Contacto(),
       nueva_condafip: new EntidadCondicionAfip(),
@@ -135,24 +135,24 @@ export default {
     getCondicionAfip: function(condicion) {
       if (typeof condicion == 'number')
         return this.opciones.condicionafip.find(c => condicion == c.id).valor;
-      else 
+      else
         return condicion.valor;
     },
 
     getTipoContacto: function(id) {
       return this.opciones.contacto.find(i => id == i.id).valor;
-    },    
+    },
 
     changePais: function() {
       if (this.nuevo_domicilio.domicilio.pais) {
-        return api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
+        return api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais.id}`)
              .then(r => this.provincias = r.data)
              .catch(e => {
                console.error(e);
                Promise.reject(e);
               });
       }
-      else { 
+      else {
         this.provincias = [];
         return Promise.resolve();
       }
@@ -160,14 +160,14 @@ export default {
 
     changeProvincia: function () {
       if (this.nuevo_domicilio.domicilio.provincia) {
-        return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
+        return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia.id}`)
              .then(r => this.departamentos = r.data)
              .catch(e => {
                console.error(e);
                Promise.reject(e);
               });
       }
-      else { 
+      else {
         this.departamentos = [];
         return Promise.resolve();
       }
@@ -175,30 +175,30 @@ export default {
 
     changeDepartamento: function () {
       if (this.nuevo_domicilio.domicilio.departamento) {
-        return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
+        return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento.id}`)
              .then(r => this.localidades = r.data)
              .catch(e => {
                console.error(e);
                Promise.reject(e);
               });
       }
-      else { 
+      else {
         this.localidades = [];
         return Promise.resolve();
       }
     },
 
     chgTipoContacto: function(e) {
-      if (e == 3) { 
+      if (e == 3) {
         this.rules_contacto = [rules.required, rules.email];
         this.placeholder_contacto = 'Ej. mweingart@argnu.org'
       }
-      else if (e == 4) { 
+      else if (e == 4) {
         this.rules_contacto = [rules.required, rules.url];
         this.placeholder_contacto = 'Ej. http://www.liberascio.org';
       }
       else this.placeholder_contacto = '';
-    },    
+    },
 
     addContacto: function () {
       if (this.$refs.form_contacto.validate()) {
@@ -212,7 +212,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.contactos, this.contacto_edit, this.nuevo_contacto);
         }
-        
+
         this.nuevo_contacto = new Contacto();
         this.nuevo_telefono = new Telefono();
         this.$refs.form_contacto.reset();
@@ -228,8 +228,8 @@ export default {
         if (!this.nuevo_contacto.valor[0] == '+') params[0] = '54';
         this.nuevo_telefono = new Telefono(...params);
       }
-    },  
-    
+    },
+
     cancelarEditContacto: function() {
       this.contacto_edit = null;
       this.nuevo_contacto = new Contacto();
@@ -245,7 +245,7 @@ export default {
         else {
           Vue.set(this.solicitud.entidad.condiciones_afip, this.condafip_edit, this.nueva_condafip);
         }
-        
+
         this.nueva_condafip = new EntidadCondicionAfip();
         this.$refs.form_condafip.reset();
         this.condafip_edit = null;
@@ -255,8 +255,8 @@ export default {
     editCondAfip: function(index) {
       this.condafip_edit = index;
       this.nueva_condafip = utils.clone(this.solicitud.entidad.condiciones_afip[index]);
-    },  
-    
+    },
+
     cancelarEditCondAfip: function() {
       this.condafip_edit = null;
       this.nueva_condafip = new Contacto();
@@ -265,82 +265,55 @@ export default {
 
     addDomicilio: function () {
       if (this.$refs.form_domicilio.validate()) {
-        this.nuevo_domicilio.pais_nombre = this.paises.find(p => p.id == this.nuevo_domicilio.domicilio.pais).nombre;
-        this.nuevo_domicilio.provincia_nombre = this.provincias.find(p => p.id == this.nuevo_domicilio.domicilio.provincia).nombre;
-        this.nuevo_domicilio.departamento_nombre = this.departamentos.find(p => p.id == this.nuevo_domicilio.domicilio.departamento).nombre;
-        this.nuevo_domicilio.localidad_nombre = this.localidades.find(p => p.id == this.nuevo_domicilio.domicilio.localidad).nombre;     
-
         if (this.domicilio_edit != null) {
           this.nuevo_domicilio.tipo = this.solicitud.entidad.domicilios[this.domicilio_edit].tipo;
+          this.nuevo_domicilio.id = this.solicitud.entidad.domicilios[this.domicilio_edit].id;
           Vue.set(this.solicitud.entidad.domicilios, this.domicilio_edit, this.nuevo_domicilio);
         }
         else {
           this.solicitud.entidad.domicilios.push(this.nuevo_domicilio);
         }
-        this.nuevo_domicilio = EntidadDomicilio();
-        this.$refs.form_domicilio.reset();
-        this.domicilio_edit = null;
+        
+        this.resetDomicilio();
       }
     },
 
     copiarDomicilio: function(tipo) {
       let domicilio_copiar = this.solicitud.entidad.domicilios.find(d => d.tipo == tipo).domicilio;
-      this.setDomicilio(domicilio_copiar);
+      this.nuevo_domicilio.domicilio = utils.clone(domicilio_copiar);
+      this.changeCombosDomicilio();
     },
 
-    setDomicilio: function(domicilio_copiar) {
-      if (typeof domicilio_copiar.pais == 'number') {
-        this.nuevo_domicilio.domicilio.pais = domicilio_copiar.pais;
-        api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
-          .then(r => {
-            this.provincias = r.data;
-            this.nuevo_domicilio.domicilio.provincia = domicilio_copiar.provincia;
-            return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
-          })
-          .then(r => {
-            this.departamentos = r.data
-            this.nuevo_domicilio.domicilio.departamento = domicilio_copiar.departamento;
-            return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
-          })
-          .then(r => {
-            this.localidades = r.data;
-            this.nuevo_domicilio.domicilio.localidad = domicilio_copiar.localidad;
-            this.nuevo_domicilio.domicilio.direccion = domicilio_copiar.direccion;
-          })
-          .catch(e => console.error(e));
-      }
-      
-      else {
-        this.nuevo_domicilio.domicilio.pais = this.paises.find(p => p.nombre == domicilio_copiar.pais).id;
-        api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais}`)
-          .then(r => {
-            this.provincias = r.data;
-            this.nuevo_domicilio.domicilio.provincia = this.provincias.find(p => p.nombre == domicilio_copiar.provincia).id;
-            return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia}`)
-          })
-          .then(r => {
-            this.departamentos = r.data;
-            this.nuevo_domicilio.domicilio.departamento = this.departamentos.find(p => p.nombre == domicilio_copiar.departamento).id;
-            return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento}`)
-          })
-          .then(r => {
-            this.localidades = r.data;
-            this.nuevo_domicilio.domicilio.localidad = this.localidades.find(p => p.nombre == domicilio_copiar.localidad).id;
-            this.nuevo_domicilio.domicilio.direccion = domicilio_copiar.direccion;
-          })
-          .catch(e => console.error(e));
-      }
+    changeCombosDomicilio: function() {
+      api.get(`/provincias?pais_id=${this.nuevo_domicilio.domicilio.pais.id}`)
+      .then(r => {
+        this.provincias = r.data;
+        return api.get(`/departamentos?provincia_id=${this.nuevo_domicilio.domicilio.provincia.id}`)
+      })
+      .then(r => {
+        this.departamentos = r.data;
+        return api.get(`/localidades?departamento_id=${this.nuevo_domicilio.domicilio.departamento.id}`)
+      })
+      .then(r => {
+        this.localidades = r.data;
+      })
+      .catch(e => console.error(e));
     },
 
     editDomicilio: function(index) {
       this.domicilio_edit = index;
-      this.setDomicilio(this.solicitud.entidad.domicilios[index].domicilio);
-    },    
+      this.nuevo_domicilio = utils.clone(this.solicitud.entidad.domicilios[index]);
+      this.changeCombosDomicilio(this.solicitud.entidad.domicilios[index].domicilio);
+    },
 
-    cancelarEditDomicilio: function() {
+    resetDomicilio: function() {
       this.domicilio_edit = null;
+      // this.$refs.form_domicilio.reset();
       this.nuevo_domicilio = EntidadDomicilio();
-      this.$refs.form_domicilio.reset();
+      this.nuevo_domicilio.domicilio.pais = 1;
+      this.nuevo_domicilio.domicilio.provincia = 14;
+      this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento;
+      this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad;        
     },
 
     removeElem: function(tipo, index) {
