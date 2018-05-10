@@ -77,8 +77,7 @@
                             label="Nombre"
                             v-model="solicitud.entidad.nombre"
                             :rules="[rules.required]"
-                          >
-                          </v-text-field>
+                          ></v-text-field>
 
                           <v-select
                             autocomplete
@@ -101,13 +100,13 @@
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-numero
                             tabindex="8"
+                            maxlength="11"
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
                             :rules="[rules.required, rules.cuit]"
-                          >
-                          </v-text-field>
+                          ></input-numero>
 
                           <input-fecha
                               tabindex="9"
@@ -792,6 +791,7 @@ import api from '@/services/api'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Solicitud } from '@/model'
+import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import InputTelefono from '@/components/base/InputTelefono'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -804,6 +804,13 @@ export default {
   name: 'nueva-solicitud-empresa',
   mixins: [MixinValidator, NuevaSolicitud],
   props: ['id'],
+
+  components: {
+    InputFecha, 
+    InputTelefono,
+    InputNumero,
+    NuevaMatriculaExterna
+  },
 
   data () {
     return {
@@ -1133,11 +1140,6 @@ export default {
       this.updateMatriculasSec();
       this.expand_add = false;
     }
-  },
-
-  components: {
-    InputFecha, InputTelefono,
-    NuevaMatriculaExterna
   }
 }
 </script>

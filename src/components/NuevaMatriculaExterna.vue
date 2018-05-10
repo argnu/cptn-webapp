@@ -9,26 +9,29 @@
       <v-card-text>          
           <v-layout row>
               <v-flex xs4 class="mx-4">
-                <v-text-field
+                <input-numero
                     label="DNI"
+                    maxlength="8"
                     v-model="matricula.persona.dni"
                     :rules="[rules.required, rules.number]"
                     @input="chgDni"
-                ></v-text-field>
+                ></input-numero>
 
-                <v-text-field
+                <input-numero
+                    maxlength="11"
                     label="CUIT/CUIL"
                     v-model="matricula.persona.cuit"
                     :rules="[rules.cuit]"
-                ></v-text-field>
+                ></input-numero>
               </v-flex>
 
               <v-flex xs4>
-                <v-text-field
+                <input-texto
                     label="Nombre"
+                    type="letras"
                     v-model="matricula.persona.nombre"
                     :rules="[rules.required]"
-                ></v-text-field>  
+                ></input-texto>  
 
                 <v-text-field
                     label="Teléfono"
@@ -37,11 +40,12 @@
               </v-flex>
 
               <v-flex xs4 class="mx-4">
-                <v-text-field
+                <input-texto
+                    type="letras"
                     label="Apellido"
                     v-model="matricula.persona.apellido"
                     :rules="[rules.required]"
-                ></v-text-field>                  
+                ></input-texto>                  
               </v-flex>
           </v-layout>
       </v-card-text>
@@ -56,11 +60,11 @@
       <v-card-text>
           <v-layout row>
               <v-flex xs4 class="mx-4">
-                <v-text-field
+                <input-texto
                     label="N° Matrícula"
                     v-model="matricula.numeroMatricula"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
               </v-flex>
 
               <v-flex xs4>
@@ -96,6 +100,8 @@ import api from '@/services/api'
 import { PersonaFisica } from '@/model/Persona'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import InputNumero from '@/components/base/InputNumero'
+import InputTexto from '@/components/base/InputTexto'
 
 class Matricula {
     constructor() {
@@ -108,6 +114,11 @@ class Matricula {
 export default {
     name: 'NuevaMatriculaExterna',
     mixins: [MixinValidator],
+
+    components: {
+        InputTexto,
+        InputNumero
+    },
 
     data() {
         return {

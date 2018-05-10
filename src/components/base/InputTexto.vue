@@ -8,6 +8,7 @@
         :rules="rules"
         :disabled="disabled"
         :value="formatted"
+        :prepend-icon="prependIcon"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
@@ -29,7 +30,7 @@ export default {
       },
 
       value: {
-        //   type: String,
+          type: String,
           required: true
       },
 
@@ -57,9 +58,18 @@ export default {
       uppercase: {
           type: Boolean,
           default: () => false
+      },
+
+      type: {
+          type: String,
+          default: () => 'alfanumerico'
+      },
+
+      prependIcon: {
+          type: String
       }
     },
-    
+
     computed: {
         formatted: function() {
             return this.value && this.uppercase ? this.value.toUpperCase() : '';
@@ -69,7 +79,11 @@ export default {
     methods: {
         keypress: function(e) {
             if (e.charCode == 32) return true;
-            if (/[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ'`]{1}/.test(e.key)) return true
+
+            let regexp = /[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ'`]{1}/;
+            if (this.type == 'alfanumerico') regexp = /\w{1}/;
+
+            if (regexp.test(e.key)) return true
             else e.preventDefault();
         },
 

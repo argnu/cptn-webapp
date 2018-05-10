@@ -47,12 +47,12 @@
               </v-flex>
 
               <v-flex xs3 class="mx-4">
-                <v-text-field
+                <input-numero
                   v-model="cambio_estado.documento.numero"
                   label="N° Resolución/Acta"
                   :rules="[rules.required, rules.integer]"
                 >
-                </v-text-field>
+                </input-numero>
               </v-flex>
             </v-layout>
 
@@ -268,6 +268,7 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -287,6 +288,11 @@ class CambioEstado {
 export default {
   name: 'MatriculaLista',
   mixins: [MixinValidator],
+
+  components: {
+    InputNumero,
+    InputFecha
+  },  
 
   headers: {
     empresa: [
@@ -477,10 +483,6 @@ export default {
       });      
     }
 
-  },
-
-  components: {
-    InputFecha
   }
 
 }

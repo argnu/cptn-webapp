@@ -8,6 +8,7 @@
         :rules="rules"
         :disabled="disabled"
         :value="formatted"
+        :maxlength="maxlength"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
@@ -56,6 +57,10 @@ export default {
       decimal: {
           type: Boolean,
           default: () => false
+      },
+
+      maxlength: {
+          type: String
       }
     },
     

@@ -85,7 +85,7 @@
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-numero
                         label="DNI"
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
@@ -95,7 +95,7 @@
                         @blur="chgDni"
                         @keypress.enter="chgDni"
                       >
-                      </v-text-field>
+                      </input-numero>
 
                       <input-texto
                         label="Nombre"
@@ -128,33 +128,33 @@
                       >
                       </input-fecha>
 
-                      <v-text-field
+                      <input-texto
                         label="Nacionalidad"
+                        type="letras"
                         v-model="solicitud.entidad.nacionalidad"
                         maxlength="45"
                         tabindex="11"
-                      >
-                      </v-text-field>
+                      ></input-texto>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-texto
                         label="Apellido"
+                        type="letras"
                         v-model="solicitud.entidad.apellido"
                         :rules="[rules.required]"
                         maxlength="100"
                         tabindex="4"
-                      >
-                      </v-text-field>
+                      ></input-texto>
 
-                      <v-text-field
+                      <input-numero
                         label="CUIT/CUIL"
                         v-model="solicitud.entidad.cuit"
                         :rules="[rules.cuit]"
                         tabindex="6"
                         maxlength="11"
                       >
-                      </v-text-field>
+                      </input-numero>
 
                       <v-select
                         autocomplete
@@ -847,31 +847,33 @@
                   <v-form ref="form_subsidiario" lazy-validation>
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-numero
                             label="DNI"
-                            maxlength="20"
+                            maxlength="8"
                             v-model="nuevo_subsidiario.dni"
                             :rules="[rules.required, rules.integer]"
                           >
-                          </v-text-field>
+                          </input-numero>
 
-                          <v-text-field
+                          <input-texto
                             label="Apellido"
                             maxlength="100"
+                            type="letras"
                             v-model="nuevo_subsidiario.apellido"
                             :rules="[rules.required]"
                           >
-                          </v-text-field>
+                          </input-texto>
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-texto
                             label="Nombre"
                             maxlength="100"
+                            type="letras"
                             v-model="nuevo_subsidiario.nombre"
                             :rules="[rules.required]"
                           >
-                          </v-text-field>
+                          </input-texto>
 
                           <input-numero
                             label="Porcentaje"

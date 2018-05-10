@@ -86,21 +86,23 @@
                       @change="chgTipoComitente"
                     ></v-select>
 
-                    <v-text-field
+                    <input-numero
                       label="CUIT/CUIL"
+                      maxlength="11"
                       v-model="nuevo_comitente.persona.cuit"
                       @change="chgCuitComitente"
                       :rules="[rules.cuit]"
                     >
-                    </v-text-field>
+                    </input-numero>
 
-                    <v-text-field
+                    <input-numero
                       v-if="nuevo_comitente.persona.tipo == 'fisica'"
                       label="DNI"
+                      maxlength="8"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer]"
                       @change="chgDni"
-                    ></v-text-field>
+                    ></input-numero>
 
                     <input-numero
                       label="Porcentaje"
@@ -111,31 +113,28 @@
                 </v-flex>
 
                 <v-flex xs6>
-                  <v-text-field
+                  <input-texto
                     label="Nombre"
+                    type="letras"
                     v-model="nuevo_comitente.persona.nombre"
                     :rules="[rules.required]"
-                  >
-                  </v-text-field>
+                  ></input-texto>
 
-                      <v-text-field
-                        v-if="nuevo_comitente.persona.tipo == 'fisica'"
-                        label="Apellido"
-                        v-model="nuevo_comitente.persona.apellido"
-                        :rules="[rules.required]"
-                      >
-                      </v-text-field>
+                  <input-texto
+                    v-if="nuevo_comitente.persona.tipo == 'fisica'"
+                    label="Apellido"
+                    type="letras"
+                    v-model="nuevo_comitente.persona.apellido"
+                    :rules="[rules.required]"
+                  ></input-texto>
 
-                    <v-text-field
-                      label="Telefono"
-                      v-model="nuevo_comitente.persona.telefono"
-                    >
-                    </v-text-field>
+                  <v-text-field
+                    label="Telefono"
+                    v-model="nuevo_comitente.persona.telefono"
+                  ></v-text-field>
 
 
-                  <v-btn @click="addComitente">
-                    Agregar
-                  </v-btn>
+                  <v-btn @click="addComitente">Agregar</v-btn>
                 </v-flex>
             </v-layout>
 
@@ -601,6 +600,7 @@ import * as moment from 'moment'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
+import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -907,6 +907,7 @@ export default {
   },
 
   components: {
+    InputTexto,
     InputFecha,
     InputNumero,
     Typeahead,
