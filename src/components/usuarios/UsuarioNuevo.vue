@@ -67,47 +67,18 @@
         <v-layout row>
             <v-flex xs12 md7 class="mx-5">
                 <v-select
-                    label="Delegación"
+                    label="Delegaciones"
                     autocomplete
+                    multiple
+                    return-object
                     :items="delegaciones"
                     item-value="id"
                     item-text="nombre"
-                    v-model="nueva_delegacion"
                     :rules="[rules.required]"
-                    return-object
-                >
-                </v-select>
-            </v-flex>
-
-            <v-flex xs12 md1>
-                <v-btn class="right mb-4" light @click="addDelegacion">
-                    Agregar
-                </v-btn>
-            </v-flex>            
-        </v-layout>
-
-
-        <v-layout row class="mt-4">
-            <v-flex xs11>
-                <v-data-table
-                    :headers="$options.headers"
-                    :items="usuario.delegaciones"
-                    hide-actions
-                    class="elevation-1 mx-5"
-                    no-data-text="No hay delegaciones"
-                >
-                    <template slot="items" slot-scope="props">
-                        <td>
-                            <v-btn fab small dark color="primary"  @click="borrarDelegacion(props.index)">
-                                <v-icon>delete</v-icon>
-                            </v-btn>
-                        </td>
-                        <td>{{ props.item.nombre }}</td>
-                    </template>
-                </v-data-table>
+                    v-model="usuario.delegaciones"
+                ></v-select>
             </v-flex>
         </v-layout>
-
 
         <v-layout>
             <v-flex xs12 class="ma-5">
@@ -135,6 +106,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
+import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -153,7 +125,6 @@ export default {
     data() {
         return {
             usuario: new Usuario(),
-            nueva_delegacion: {},
             delegaciones: [],
             valid_basico: false,
             submitted: false
@@ -173,22 +144,13 @@ export default {
     },
 
     methods: {
-        addDelegacion: function() {
-            if (this.nueva_delegacion.id) {
-                this.usuario.delegaciones.push(this.nueva_delegacion);
-                this.nueva_delegacion = {};
-            }
-        },
-
-        borrarDelegacion: function(index) {
-            this.usuario.delegaciones.splice(index, 1);
-        },
-
-
         submit: function() {
             this.submitted = true;
             if (this.valid_basico && this.valid_pass) {
-                api.post('/usuarios', this.usuario)
+                let usuario = utils.clone(this.usuario);
+                usuario.delegaciones = usuario.delegaciones.map(d => d.id);
+
+                api.post('/usuarios', usuario)
                 .then(r => {
                     this.submitted = false;
                     this.global_state.snackbar.msg = 'Nuevo usuario creado exitosamente!';
