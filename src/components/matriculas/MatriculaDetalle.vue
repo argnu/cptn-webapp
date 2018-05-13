@@ -11,17 +11,11 @@
                     <div class="mb-3">
                       Número de Matrícula: {{ matricula.numeroMatricula }}
                     </div>
-                    <div>
-                      Fecha Resolución: {{ matricula.fechaResolucion | fecha }}
-                    </div>
                   </v-flex>
 
                   <v-flex xs6>
                     <div class="mb-3">
                       Estado: {{ matricula.estado }}
-                    </div>
-                    <div class="">
-                      Número de Acta: {{ matricula.numeroActa }}                      
                     </div>
                   </v-flex>
                 </v-layout>

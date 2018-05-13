@@ -225,6 +225,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
+import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -238,11 +239,11 @@ export default {
     mixins: [MixinValidator],
 
     headers: [
-        Header('Modificar', 'edit'),
-        Header('Borrar', 'borrar'),
+        Header('', 'acciones'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
+        Header('Válido', 'valido'),
     ],
 
     tipos_matricula: [
@@ -356,22 +357,24 @@ export default {
 
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
+                let titulo = utils.clone(this.nuevo_titulo);
+
                 if (this.titulo_edit == null) {
-                    this.institucion.titulos.push(this.nuevo_titulo);
+                    this.institucion.titulos.push(titulo);
                 }
                 else {
-                    Vue.set(this.institucion.titulos, this.titulo_edit, this.nuevo_titulo);
+                    Vue.set(this.institucion.titulos, this.titulo_edit, titulo);
                 }
 
+                this.$refs.form_titulo.reset();
                 this.nuevo_titulo = new Titulo();
                 this.titulo_edit = null;
-                setTimeout(() => this.$refs.form_titulo.reset(), 10);
             }
         },
 
         editTitulo: function(index) {
             this.titulo_edit = index;
-            this.nuevo_titulo = this.institucion.titulos[index];
+            this.nuevo_titulo = utils.clone(this.institucion.titulos[index]);
         },
 
         borrarTitulo: function(index) {

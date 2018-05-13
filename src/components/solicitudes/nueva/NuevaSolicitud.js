@@ -265,7 +265,7 @@ export default {
 
     addDomicilio: function () {
       if (this.$refs.form_domicilio.validate()) {
-        if (this.domicilio_edit != null) {
+        if (this.domicilio_edit != null && this.solicitud.entidad.domicilios[this.domicilio_edit]) {
           this.nuevo_domicilio.tipo = this.solicitud.entidad.domicilios[this.domicilio_edit].tipo;
           this.nuevo_domicilio.id = this.solicitud.entidad.domicilios[this.domicilio_edit].id;
           Vue.set(this.solicitud.entidad.domicilios, this.domicilio_edit, this.nuevo_domicilio);

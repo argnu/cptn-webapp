@@ -234,6 +234,7 @@
                               v-model="nuevo_domicilio.tipo"
                               autocomplete
                               :rules="domicilio_edit != null ? [] : [rules.required]"
+                              :disabled="domicilio_edit != null"
                             >
                             </v-select>
                           </v-flex>
@@ -1105,10 +1106,11 @@ export default {
     },
 
     cajas_previsionales_filter: function() {
+      if (!this.solicitud.entidad.cajas_previsionales.length) return this.cajas_previsionales;
       return this.cajas_previsionales.filter(c =>
-        !this.solicitud.entidad.cajas_previsionales.find(cp =>
-          cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
-        )
+        !this.solicitud.entidad.cajas_previsionales.find(cp => {
+         return cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
+        })
       );
     },
 
@@ -1230,6 +1232,7 @@ export default {
       this.solicitud.entidad.independiente = entidad.independiente;
       this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
       this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
+      this.solicitud.entidad.jubilado = entidad.jubilado;
 
       this.solicitud.entidad.domicilios = entidad.domicilios;
 
