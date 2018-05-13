@@ -558,7 +558,7 @@ export default {
             'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.numeroMatricula}-${Date.now()}`,
             'jsp-only-gen': false,
             'id_matricula': r.data.id
-          });
+          });        
 
           this.submitValidacion = false;
           this.updateSolicitudes();

@@ -105,6 +105,7 @@
                             tabindex="8"
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
+                            maxlength="20"
                             :rules="[rules.required, rules.integer]"
                           >
                           </v-text-field>
@@ -505,6 +506,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
+                              maxlength="20"
                               @input="updateList"
                               v-model="filtros.dni"
                             >
