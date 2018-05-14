@@ -6,6 +6,7 @@
     </v-toolbar>
 
     <v-card>
+        <br>
         <v-layout class="mt-4">
             <v-flex xs10>
                 <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>
@@ -62,6 +63,19 @@
                             <b>Nombre:</b> {{ usuario.nombre }}
                         </div>
                     </template>
+
+                    <v-select
+                        class="mt-2"
+                        label="Delegaciones"
+                        autocomplete
+                        multiple
+                        item-value="id"
+                        item-text="nombre"
+                        v-model="usuario.delegaciones"
+                        :items="opciones_delegacion"
+                        :rules="[rules.required]"
+                        :readonly="!edit || !user.admin"
+                    ></v-select>                    
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
@@ -101,6 +115,7 @@
             </v-flex>
         </v-layout>        
 
+        <v-divider></v-divider>
         <br>
 
         <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Cambiar Contraseña</b></span>
@@ -136,56 +151,6 @@
             </v-flex>
         </v-layout>
         </v-form>
-
-        <template v-if="user.admin">
-            <br>
-
-            <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Delegaciones</b></span>
-
-            <v-layout row class="mt-3">
-                <v-flex xs12 md7 class="mx-5">
-                    <v-select
-                        label="Delegación"
-                        autocomplete
-                        :items="opciones_delegacion"
-                        item-value="id"
-                        item-text="nombre"
-                        v-model="nueva_delegacion"
-                        :rules="[rules.required]"
-                        return-object
-                    >
-                    </v-select>
-                </v-flex>
-
-                <v-flex xs12 md1>
-                    <v-btn class="right mb-4" light @click="addDelegacion">
-                        Agregar
-                    </v-btn>
-                </v-flex>
-            </v-layout>
-
-
-            <v-layout row class="mt-4">
-                <v-flex xs11>
-                    <v-data-table
-                        :headers="$options.headers"
-                        :items="usuario.delegaciones"
-                        hide-actions
-                        class="elevation-1 mx-5"
-                        no-data-text="No hay delegaciones"
-                    >
-                        <template slot="items" slot-scope="props">
-                            <td>
-                                <v-btn fab small dark color="primary"  @click="borrarDelegacion(props.index)">
-                                    <v-icon>delete</v-icon>
-                                </v-btn>
-                            </td>
-                            <td>{{ props.item.nombre }}</td>
-                        </template>
-                    </v-data-table>
-                </v-flex>
-            </v-layout>
-        </template>
     </v-card>
 
   </v-container>
@@ -254,35 +219,10 @@ export default {
             .then(r => {
                 this.delegaciones = r[0].data;
                 this.usuario = r[1].data;
-                Vue.set(this.usuario, 'delegaciones', r[2].data);
+                this.usuario.delegaciones = r[2].data.map(d => d.id);
                 this.usuario_original = utils.clone(this.usuario);
             })
             .catch(e => console.error(e));
-        },
-
-        addDelegacion: function() {
-            if (this.nueva_delegacion.id) {
-                api.post(`/usuarios/${this.id}/delegaciones`, this.nueva_delegacion)
-                .then(r => {
-                    this.usuario.delegaciones.push(this.nueva_delegacion);
-                    this.nueva_delegacion = {};
-                })
-                .catch(e => {
-                    this.submitted = false;
-                    this.showError(e)
-                });
-            }
-        },
-
-        borrarDelegacion: function(index) {
-            api.delete(`/usuarios/${this.id}/delegaciones/${this.usuario.delegaciones[index].id}`)
-            .then(r => {
-                this.usuario.delegaciones.splice(index, 1);
-            })
-            .catch(e => {
-                this.submitted = false;
-                this.showError(e)
-            });
         },
 
 
@@ -307,9 +247,7 @@ export default {
         guardar: function() {
             if (this.$refs.form_basico.validate()) {
                 let patch_usuario = utils.clone(this.usuario);
-                delete(patch_usuario.delegaciones);
-
-                api.patch(`/usuarios/${this.id}`, patch_usuario)
+                api.put(`/usuarios/${this.id}`, patch_usuario)
                 .then(r => {
                     this.edit = false;
                     this.global_state.snackbar.msg = 'Datos modificados exitosamente!';

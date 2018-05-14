@@ -164,7 +164,7 @@
                       <td>{{ props.item.persona.dni ? props.item.persona.dni : '' }}</td>
                       <td>{{ props.item.porcentaje }}</td>
                       <td>
-                        <v-btn fab small @click="rmComitente(props.index)">
+                        <v-btn fab small @click="rmComitente(props.index)" v-if="!legajo.id">
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </td>
@@ -373,7 +373,7 @@
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
                       <td>
-                        <v-btn fab small @click="removeItem(props.index)">
+                        <v-btn fab small @click="removeItem(props.index)" v-if="!legajo.id">
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </td>                      

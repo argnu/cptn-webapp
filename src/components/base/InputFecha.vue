@@ -1,7 +1,7 @@
 <template>
   <v-layout row>
     <v-text-field
-    slot="activator"
+      slot="activator"
       :label="label"
       :value="formatted"
       append-icon="event"

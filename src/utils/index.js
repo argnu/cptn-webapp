@@ -5,8 +5,14 @@ export function getFloat(value) {
   return value && value.length ? parseFloat(value.replace(',', '.')) : null;
 }
 
-export function getFecha(str) {
-  return moment(str).isValid() ? moment(str).format('DD/MM/YYYY') : '';
+export function getFecha(fecha) {
+  if (!fecha) return moment(fecha).format('DD/MM/YYYY');
+  if (typeof fecha == 'object') 
+    return moment(fecha).isValid() ? moment(fecha).format('DD/MM/YYYY') : '';
+  else if (fecha.indexOf('/') == -1)
+    return moment(fecha, 'YYYY-MM-DD').isValid() ? moment(fecha, 'YYYY-MM-DD').format('DD/MM/YYYY') : '';
+  else 
+    return fecha;
 }
 
 

@@ -8,7 +8,7 @@
           Nueva Boleta
         </v-btn>
       </v-flex>
-    </v-layout>    
+    </v-layout>
 
     <v-layout row wrap>
       <v-flex xs9>
@@ -22,25 +22,25 @@
         >
           <template slot="items" slot-scope="props">
             <tr>
-              <td>
-                <v-btn 
-                  v-if="props.item.tipo == 'volante'"
-                  fab dark small @click="imprimirVolante(props.item.id)" color="primary"
-                >
-                  <v-icon>print</v-icon>
-                </v-btn>                
-              </td>
-              <td>{{ props.item.fecha | fecha }}</td>
-              <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>{{ props.item.descripcion }}</td>
-              <td>${{ props.item.total | round }}</td>
-              <td>${{ props.item.interes | round }}</td>     
-              <td>
+              <td class="justify-center layout px-0">
                 <v-checkbox
                   v-model="props.item.checked"
                 >
                 </v-checkbox>
-              </td>
+              </td>              
+              <td>{{ props.item.fecha | fecha }}</td>
+              <td>{{ props.item.fecha_vencimiento | fecha }}</td>
+              <td>{{ props.item.descripcion }}</td>
+              <td>${{ props.item.total | round }}</td>
+              <td>${{ props.item.interes | round }}</td>
+              <td class="justify-center layout px-0">
+                <v-btn
+                  v-if="props.item.tipo == 'volante'"
+                  fab dark small @click="imprimirVolante(props.item.id)" color="primary"
+                >
+                  <v-icon>print</v-icon>
+                </v-btn>
+              </td>              
             </tr>
           </template>
         </v-data-table>
@@ -92,7 +92,7 @@
               @click="generarVolante"
             >
               Volante Pago
-            </v-btn>    
+            </v-btn>
           </v-flex>
           <v-flex xs6 class="mx-1">
             <v-btn
@@ -141,14 +141,14 @@
             <v-icon>close</v-icon>
           </v-btn>
         </v-toolbar>
-        
+
         <nueva-boleta
           :id-matricula="id"
           @cancelar="show_addboleta = false"
           @update="nuevaBoleta"
         ></nueva-boleta>
       </v-card>
-    </v-dialog>      
+    </v-dialog>
 
   </v-container>
 </template>
@@ -176,13 +176,13 @@ export default {
   },
 
   headers: [
-    Header('Imprimir', 'imprimir'),
+    Header('Sel.', 'check'),
     Header('Fecha', 'fecha', true),
-    Header('Fecha de Vencimiento', 'fecha_vencimiento', true),
+    Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
     Header('Importe', 'total', true),
     Header('Intereses', 'interes', true),
-    Header('Seleccionar', 'check')
+    Header('', 'imprimir')
   ],
 
   data () {
@@ -196,7 +196,9 @@ export default {
       pagination: {
         sortBy: 'fecha_vencimiento',
         descending: false
-      },      
+      },
+      interes_tasa: 2.8,
+      interes_dias: 30
     }
   },
 
@@ -218,14 +220,14 @@ export default {
       }
       else this.boletas = utils.clone(this.boletas_original);
     }
-  },  
+  },
 
   computed: {
     subtotal: function() {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
         let num = act.tipo == 'boleta' ? act.total : act.subtotal;
-        return prev + (act.checked ? num : 0); 
+        return prev + (act.checked ? num : 0);
       }, 0);
       return utils.round(suma, 2);
     },
@@ -234,7 +236,7 @@ export default {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
         let num = act.tipo == 'boleta' ? act.interes : act.interes_total;
-        return prev + (act.checked ? num : 0); 
+        return prev + (act.checked ? num : 0);
       }, 0);
       return utils.round(suma, 2);
     },
@@ -245,7 +247,17 @@ export default {
   },
 
   created: function() {
-    this.updateBoletas();
+    Promise.all([
+        api.get('/valores_globales?nombre=interes_tasa'),
+        api.get('/valores_globales?nombre=interes_dias')
+    ])
+
+    .then(r => {
+      this.interes_tasa = r[0].data[0].valor;
+      this.interes_dias = r[1].data[0].valor;
+      this.updateBoletas();
+    })
+    .catch(e => console.error(e))
   },
 
   methods: {
@@ -253,21 +265,21 @@ export default {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
       let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false`;
-      
+
       Promise.all([
         api.get(url_boletas),
         api.get(url_volantes)
       ])
-      .then(([boletas, volantes]) => {        
+      .then(([boletas, volantes]) => {
         this.boletas = [];
         boletas.data.forEach(b => {
           b.tipo = 'boleta';
           b.checked = false;
           b.descripcion = b.tipo_comprobante.descripcion;
-          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago));
+          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
           this.boletas.push(b);
         });
-        
+
         volantes.data.forEach(v => {
           v.tipo = 'volante';
           v.checked = false;
@@ -287,7 +299,7 @@ export default {
     updateIntereses: function() {
       this.boletas.forEach(b => {
         if (b.tipo == 'boleta') {
-          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago))
+          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes.dias)
         }
       });
     },
@@ -306,18 +318,18 @@ export default {
         importe_total: this.importe_total,
         delegacion: this.global_state.delegacion.id
       }
-      
+
       api.post('comprobantes', comprobante)
       .then(r => {
         console.info(`Comprobante ${r.data.id} generado!`);
         this.global_state.snackbar.msg = 'Comprobante generado exitosamente!';
         this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;        
+        this.global_state.snackbar.show = true;
         this.expand_pago = false;
         this.updateBoletas();
         this.$emit('update');
       })
-      .catch(e => console.error(e));      
+      .catch(e => console.error(e));
     },
 
     generarVolante: function() {
@@ -326,14 +338,14 @@ export default {
       if (!boletas.length) {
         this.global_state.snackbar.msg = 'Debe seleccionar al menos una boleta';
         this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;        
+        this.global_state.snackbar.show = true;
         return;
       }
 
       if (boletas.some(b => b.tipo == 'volante')) {
         this.global_state.snackbar.msg = 'No puede haber volantes de pago seleccionar para generar un volante';
         this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;        
+        this.global_state.snackbar.show = true;
         return;
       }
 
@@ -347,14 +359,14 @@ export default {
         importe_total: this.importe_total,
         delegacion: this.global_state.delegacion.id
       }
-      
+
       api.post('volantespago', volante)
       .then(r => {
         console.info(`Volante ${r.data.id} generado!`);
         this.imprimirVolante(r.data.id);
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;        
+        this.global_state.snackbar.show = true;
         this.updateBoletas();
         this.$emit('update');
       })
@@ -370,7 +382,7 @@ export default {
                 let matricula = m.data;
                 volante.matricula= matricula;
                 let pdf = impresionVolante(volante);
-                pdf.save(`Volante ${id}.pdf`);             
+                pdf.save(`Volante ${id}.pdf`);
               })
           });
     },
@@ -383,7 +395,7 @@ export default {
       this.updateBoletas();
       this.$emit('update');
       this.show_addboleta = false;
-    },    
+    },
   },
 
 }

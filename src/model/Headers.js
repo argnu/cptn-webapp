@@ -13,15 +13,6 @@ export const Formaciones = [
       { text: 'Fecha Emisión', value: 'fechaEmision' , sortable: false }
   ];
 
-export const Beneficiarios = [
-    { text: 'Nombre', value: 'nombre' , sortable: false },
-    { text: 'Apellido', value: 'apellido' , sortable: false },
-    { text: 'DNI', value: 'dni' , sortable: false },
-    { text: 'Fecha de Nacimiento', value: 'fechaNacimiento' , sortable: false },
-    { text: 'Vínculo', value: 'vinculo' , sortable: false },
-    { text: 'Invalidez', value: 'invalidez' , sortable: false }
-  ];
-
 export const Subsidiarios = [
     { text: 'Nombre', value: 'nombre' , sortable: false },
     { text: 'Apellido', value: 'apellido' , sortable: false },

@@ -14,7 +14,7 @@
     <br>
 
     <v-data-table
-        :headers="headers"
+        :headers="$options.headers.comprobante"
         :items="comprobante.items"
         class="elevation-1"
         no-data-text="No hay items"
@@ -34,7 +34,7 @@
 
     <br>
     <v-data-table
-        :headers="headers_pagos"
+        :headers="$options.headers.pago"
         :items="comprobante.pagos"
         class="elevation-1"
         no-data-text="No hay pagos"
@@ -58,18 +58,6 @@
 import api from '@/services/api'
 import * as utils from '@/utils';
 
-const headers = [
-  { text: 'N°', value: 'item' },
-  { text: 'Descripción', value: 'descripcion' },
-  { text: 'Importe', value: 'importe' }
-];
-
-const headers_pagos = [
-  { text: 'Forma de Pago', value: 'forma_pago' },
-  { text: 'Fecha', value: 'fecha' },
-  { text: 'Importe', value: 'importe' }
-];
-
 let formas_pago = [];
 
 export default {
@@ -82,14 +70,18 @@ export default {
     }
   },
 
-  computed: {
-    headers: function() {
-      return headers;
-    },
+  headers: {
+    comprobante: [
+      { text: 'N°', value: 'item' },
+      { text: 'Descripción', value: 'descripcion' },
+      { text: 'Importe', value: 'importe' }
+    ],
 
-    headers_pagos: function() {
-      return headers_pagos;
-    }
+    pago: [
+      { text: 'Forma de Pago', value: 'forma_pago' },
+      { text: 'Fecha', value: 'fecha' },
+      { text: 'Importe', value: 'importe' }
+    ]
   },
 
   created: function() {

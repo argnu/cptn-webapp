@@ -40,9 +40,6 @@ import Store from '@/stores/Global'
 
 export default {
   name: 'MenuUser',
-  data() {
-    return {}
-  },
 
   methods: {
     logout: function() {

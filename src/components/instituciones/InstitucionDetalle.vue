@@ -4,56 +4,31 @@
         <v-toolbar-title class="white--text">Institución</v-toolbar-title>
       </v-toolbar>
       <v-card>
-          <v-layout>
-            <v-flex xs5 class="ma-4">
-                    <template v-if="edit.nombre">
-                        <v-text-field
-                            label="Nombre"
-                            v-model="institucion.nombre"
-                        ></v-text-field>
-                    </template>
-                    <template v-else>
-                        <b>Nombre:</b>
-                        <span class="ml-2">{{ institucion.nombre }}</span>
-                    </template>
 
-                    <v-btn fab small light @click="edit.nombre = true" v-show="!edit.nombre">
-                        <v-icon>edit</v-icon>
-                    </v-btn>
-                    <v-btn fab small light @click="cancelarEdit('nombre')" v-show="edit.nombre">
-                        <v-icon>cancel</v-icon>
-                    </v-btn>
-                    <v-btn fab small light v-show="edit.nombre" @click="guardar('nombre')">
-                        <v-icon>save</v-icon>
-                    </v-btn>
+          <br>
+          <span class="subheading blue--text text--darken-4 ml-5"><b>Datos Básicos</b></span>
+          <br>
+
+        <v-layout  class="ma-4">
+            <v-flex xs4 class="mx-4">
+                <b>Nombre:</b>
+                <span class="ml-2">{{ institucion.nombre }}</span>
             </v-flex>
 
-            <v-flex xs5 class="ma-4">
-                        <template v-if="edit.cue">
-                            <v-text-field
-                                label="CUE"
-                                v-model="institucion.cue"
-                            ></v-text-field>
-                        </template>
-                        <template v-else>
-                            <b>CUE:</b>
-                            <span class="ml-2">{{ institucion.cue }}</span>
-                        </template>
-
-                        <v-btn fab small light @click="edit.cue = true" v-show="!edit.cue">
-                            <v-icon>edit</v-icon>
-                        </v-btn>
-                        <v-btn fab small light @click="cancelarEdit('cue')" v-show="edit.cue">
-                            <v-icon>cancel</v-icon>
-                        </v-btn>
-
-                        <v-btn fab small light v-show="edit.cue" @click="guardar('cue')">
-                            <v-icon>save</v-icon>
-                        </v-btn>
+            <v-flex xs4 class="mx-4">
+                <b>CUE:</b>
+                <span class="ml-2">{{ institucion.cue }}</span>
             </v-flex>
-          </v-layout>
 
-        <span class="subheading blue--text text--darken-4 ma-4"><b>Títulos</b></span>
+            <v-flex xs2 class="mx-4">
+                <b>Válida:</b>
+                <span class="ml-2">{{ institucion.valida | boolean }}</span>
+            </v-flex>
+        </v-layout>
+
+        <v-divider class="my-5"></v-divider>
+        
+        <span class="subheading blue--text text--darken-4 ml-5"><b>Títulos</b></span>
 
         <v-layout row>
             <v-flex xs12 class="ma-4">
@@ -76,20 +51,20 @@
                             hide-actions
                         >
                             <template slot="items" slot-scope="props">
-                                <td>
-                                    <v-btn fab small dark color="primary"  @click="editTitulo(props.item)">
-                                        <v-icon>edit</v-icon>
+                                <td class="justify-center layout px-0">
+                                    <v-btn small icon class="mx-0" @click="borrarTitulo(props.item.id)">
+                                        <v-icon color="red">delete</v-icon>
                                     </v-btn>
-                                </td>
-                                <td>
-                                    <v-btn fab small dark color="primary"  @click="borrarTitulo(props.item.id)">
-                                        <v-icon>delete</v-icon>
+
+                                    <v-btn small icon class="mx-4" @click="editTitulo(props.item)">
+                                        <v-icon color="deep-purple">edit</v-icon>
                                     </v-btn>
                                 </td>
                                 <td>{{ props.item.nombre }}</td>
                                 <td>{{ props.item.nivel.valor }}</td>
                                 <td>{{ props.item.tipo_matricula }}</td>
                                 <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
+                                <td>{{ props.item.valido | boolean }}</td>
                             </template>
                         </v-data-table>
                     </div>
@@ -143,6 +118,12 @@
                                 :rules="[rules.required]"
                             >
                             </v-select>
+
+                            <v-checkbox
+                                class="mt-2"
+                                label="Válido"
+                                v-model="nuevo_titulo.valido"
+                            ></v-checkbox>
                         </v-flex>
 
                         <v-flex xs12 md3 class="mx-4">
@@ -192,16 +173,18 @@ import MixinValidator from '@/components/mixins/MixinValidator'
 
 export default {
     name: 'InstitucionDetalle',
+
     props: ['id'],
+
     mixins: [MixinValidator],
 
     headers: [
-        Header('Modificar', 'edit'),
-        Header('Borrar', 'borrar'),
+        Header('', 'acciones'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Incumbencias', 'incumbencias')
+        Header('Incumbencias', 'incumbencias'),
+        Header('Válido', 'valido')
     ],
 
     tipos_matricula: [
@@ -219,15 +202,10 @@ export default {
     data() {
         return {
             institucion: new Institucion(),
-            institucion_original: null,
             show_formtitulo: false,
             nuevo_titulo: new Titulo(),
             titulo_edit: null,
-            edit: {
-                cue: false,
-                nombre: false
-            },
-            opciones: [],
+            opciones: []
         }
     },
 
@@ -246,7 +224,7 @@ export default {
             return api.get(`/instituciones/${this.id}`)
             .then(r => {
                 this.institucion = r.data
-                this.institucion_original = utils.clone(r.data);
+                this.institucion_mod = utils.clone(r.data);
             });
         },
 
@@ -275,6 +253,7 @@ export default {
             this.nuevo_titulo.nivel = titulo.nivel.id;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
+            this.nuevo_titulo.valido = titulo.valido;
             this.show_formtitulo = true;
         },
 
@@ -284,7 +263,7 @@ export default {
                 this.update();
             })
             .catch(e => {
-                if (e.response.status == 400)
+                if (e.response.status == 409)
                     alert('No es posible eliminar el título. Existen profesionales relacionados al mismo');
                 else console.error(e);
             })
@@ -295,26 +274,10 @@ export default {
         },
 
         resetNuevoTitulo: function() {
+            this.$refs.form_titulo.reset();
             this.nuevo_titulo = new Titulo();
             this.show_formtitulo = false;
             this.titulo_edit = null;
-            this.$refs.form_titulo.reset();
-        },
-
-        guardar: function(atributo) {
-            let patch = {};
-            patch[atributo] = this.institucion[atributo];
-            api.patch(`/instituciones/${this.id}`, patch)
-            .then(r => {
-                this.edit.nombre = false;
-                this.edit.cue = false;
-                this.update();
-            })
-        },
-
-        cancelarEdit: function(atributo) {
-            this.institucion[atributo] = this.institucion_original[atributo];
-            this.edit[atributo] = false;
         }
 
     }

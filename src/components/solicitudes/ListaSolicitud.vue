@@ -181,7 +181,7 @@
 
   <v-card>
     <v-data-table
-      :headers="headers[filtros.tipoEntidad]"
+      :headers="$options.headers[filtros.tipoEntidad]"
       :items="solicitudes"
       class="elevation-1"
       no-data-text="No se encontraron solicitudes"
@@ -207,9 +207,9 @@
         <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
-            <v-btn fab dark small color="primary" slot="activator">
-              <v-icon>more_vert</v-icon>
-            </v-btn>
+            <v-btn icon slot="activator">
+              <v-icon class="blue--text">more_vert</v-icon>
+            </v-btn>            
 
             <v-list>
               <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="selectSolicitud(props.item)">
@@ -230,13 +230,13 @@
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>
                     <div slot="activator">
-                      <v-icon class="text--darken-2">print</v-icon>
+                      <v-icon color="primary">print</v-icon>
                       <span class="ml-2">Imprimir</span>
                     </div>
                     <v-list>
                       <v-list-tile @click="imprimirSolicitud(props.item)">
                         <v-list-tile-title>
-                          <v-icon class="text--darken-2">print</v-icon>
+                          <v-icon color="primary">print</v-icon>
                           <span class="ml-2">Solicitud</span>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -245,7 +245,7 @@
                         @click="imprimirCertificado(props.item)"
                       >
                         <v-list-tile-title>
-                          <v-icon class="text--darken-2">print</v-icon>
+                          <v-icon color="primary">print</v-icon>
                           <span class="ml-2">Certificado</span>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -254,7 +254,7 @@
                         @click="imprimirAnexoCaja(props.item)"
                       >
                         <v-list-tile-title>
-                          <v-icon class="text--darken-2">print</v-icon>
+                          <v-icon color="primary">print</v-icon>
                           <span class="ml-2">Anexo Caja</span>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -263,7 +263,7 @@
                         @click="imprimirCertBaja(props.item)"
                       >
                         <v-list-tile-title>
-                          <v-icon class="text--darken-2">print</v-icon>
+                          <v-icon color="primary">print</v-icon>
                           <span class="ml-2">Cert. Baja Caja Prev.</span>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -272,7 +272,7 @@
                         @click="imprimirDifusion(props.item)"
                       >
                         <v-list-tile-title>
-                          <v-icon class="text--darken-2">print</v-icon>
+                          <v-icon color="primary">print</v-icon>
                           <span class="ml-2">Aceptación de Difusión de Datos</span>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -285,14 +285,14 @@
 
               <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
-                  <v-icon class="blue--text text--darken-2">edit</v-icon>
+                  <v-icon color="deep-purple">edit</v-icon>
                   <span class="ml-2">Modificar</span>
                 </v-list-tile-title>
               </v-list-tile>
 
               <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="showCambiarImgs(props.item.entidad)">
                 <v-list-tile-title>
-                  <v-icon class="blue--text text--darken-2">add_a_photo</v-icon>
+                  <v-icon color="deep-purple">add_a_photo</v-icon>
                   <span class="ml-2">Cambiar Foto y/o Firma</span>
                 </v-list-tile-title>
               </v-list-tile>
@@ -354,27 +354,6 @@ const select_items = {
   ]
 }
 
-const headers = {
-  empresa: [
-    Header('N°', 'numero', true),
-    Header('Fecha', 'fecha', true),
-    Header('Nombre', 'nombreEmpresa', true),
-    Header('CUIT', 'cuit', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ],
-
-  profesional: [
-    Header('N°', 'numero', true),
-    Header('Fecha', 'fecha', true),
-    Header('Apellido', 'apellido', true),
-    Header('Nombre', 'nombre', true),
-    Header('DNI', 'dni', true),
-    Header('Estado', 'estado', true),
-    Header('', 'acciones')
-  ]
-}
-
 export default {
   name: 'lista-solicitud',
   mixins: [MixinValidator],
@@ -384,6 +363,27 @@ export default {
     { text: 'TEC-', value: 'TEC-' },
     { text: 'IDO', value: 'IDO' }
   ],
+
+  headers: {
+    empresa: [
+      Header('N°', 'numero', true),
+      Header('Fecha', 'fecha', true),
+      Header('Nombre', 'nombreEmpresa', true),
+      Header('CUIT', 'cuit', true),
+      Header('Estado', 'estado', true),
+      Header('Menú', 'acciones')
+    ],
+
+    profesional: [
+      Header('N°', 'numero', true),
+      Header('Fecha', 'fecha', true),
+      Header('Apellido', 'apellido', true),
+      Header('Nombre', 'nombre', true),
+      Header('DNI', 'dni', true),
+      Header('Estado', 'estado', true),
+      Header('Menú', 'acciones')
+    ]
+  },
 
   data() {
     return {
@@ -417,10 +417,6 @@ export default {
   computed: {
     select_items: function() {
       return select_items;
-    },
-
-    headers: function() {
-      return headers;
     }
   },
 
@@ -494,7 +490,7 @@ export default {
             .then(s => {
               let solicitud = s.data;
               let pdf = impresionSolicitud(solicitud);
-              pdf.save(`Solicitud ${solicitud.entidad.nombre}.pdf`)
+              pdf.save(`Solicitud N° ${solicitud.numero}.pdf`)
             })
             .catch(e => console.error(e));
       }
@@ -562,7 +558,7 @@ export default {
             'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.numeroMatricula}-${Date.now()}`,
             'jsp-only-gen': false,
             'id_matricula': r.data.id
-          });
+          });        
 
           this.submitValidacion = false;
           this.updateSolicitudes();

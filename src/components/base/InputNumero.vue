@@ -24,7 +24,7 @@ export default {
 
       disabled: {
           type: Boolean,
-          default: false
+          default: () => false
       },
 
       value: {
@@ -41,12 +41,12 @@ export default {
 
       suffix: {
           type: String,
-          default: ''
+          default: () => ''
       },
 
       prefix: {
           type: String,
-          default: ''
+          default: () => ''
       },
 
       tabindex: {
@@ -55,14 +55,9 @@ export default {
 
       decimal: {
           type: Boolean,
-          default: false
+          default: () => false
       }
     },
-    
-    data() {
-        return {
-        }
-    },    
 
     computed: {
         formatted: function() {

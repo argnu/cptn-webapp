@@ -28,6 +28,7 @@ import UsuarioLista from '@/components/usuarios/UsuarioLista'
 import UsuarioNuevo from '@/components/usuarios/UsuarioNuevo'
 import UsuarioDetalle from '@/components/usuarios/UsuarioDetalle'
 
+import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 Vue.use(Router)
 
@@ -143,6 +144,12 @@ export default new Router({
           component: InstitucionDetalle,
           props: true
         },
+        {
+          path: '/instituciones/modificar/:id',
+          name: 'InstitucionEdit',
+          component: InstitucionNueva,
+          props: true
+        },
 
         {
           path: '/usuarios/lista',
@@ -163,6 +170,11 @@ export default new Router({
             if (to.params.id == Store.state.user.id || Store.state.user.admin) next();
             else next(false);
           },          
+        },
+        {
+          path: '/configuracion',
+          name: 'SistemaConfiguracion',
+          component: SistemaConfiguracion          
         }
       ]
     },
