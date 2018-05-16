@@ -1231,7 +1231,7 @@ export default {
       this.solicitud.entidad.empresa = entidad.empresa;
       this.solicitud.entidad.independiente = entidad.independiente;
       this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales.map(c => c.caja.id);
       this.solicitud.entidad.jubilado = entidad.jubilado;
 
       this.solicitud.entidad.domicilios = entidad.domicilios;
@@ -1428,11 +1428,20 @@ export default {
         form_data.append('firma', this.firma);
 
       let solicitud = utils.clone(this.solicitud);
+
       solicitud.entidad.domicilios.forEach(d => {
         d.domicilio.pais = d.domicilio.pais.id;
         d.domicilio.provincia = d.domicilio.provincia.id;
         d.domicilio.departamento = d.domicilio.departamento.id;
         d.domicilio.localidad = d.domicilio.localidad.id;
+      });
+
+      solicitud.entidad.condiciones_afip.forEach(c => {
+        if (c.condicion_afip.id) c.condicion_afip = c.condicion_afip.id;
+      });
+
+      solicitud.entidad.formaciones.forEach(f => {
+        if (f.titulo.id) f.titulo = f.titulo.id;
       });
 
       form_data.append('solicitud', JSON.stringify(solicitud));
