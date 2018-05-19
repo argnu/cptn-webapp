@@ -471,7 +471,7 @@ export default {
       reports.open({
         'jsp-source': 'certificado_matriculado_habilitado.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula}-${Date.now()}`,
+        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula} - ${Date.now()}`,
         'jsp-only-gen': false,
         'id_matricula': item.id
       });      

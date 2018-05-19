@@ -23,10 +23,7 @@
           <template slot="items" slot-scope="props">
             <tr>
               <td class="justify-center layout px-0">
-                <v-checkbox
-                  v-model="props.item.checked"
-                >
-                </v-checkbox>
+                <v-checkbox v-model="props.item.checked"></v-checkbox>
               </td>              
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
@@ -96,14 +93,12 @@
           </v-flex>
           <v-flex xs6 class="mx-1">
             <v-btn
-              dark
               color="primary"
               class="darken-1"
               style="width:100%"
               @click="expand_pago = true"
-            >
-              Pagar
-            </v-btn>
+              :disabled="boletas_selected.length == 0"
+            >Pagar</v-btn>
           </v-flex>
         </v-layout>
 
@@ -117,11 +112,12 @@
         <v-toolbar dark color="primary">
           <v-toolbar-title class="white--text">Recibo de Pago</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon @click="expand_pago = false">
+          <v-btn icon @click="cerrarVentanaPago">
             <v-icon>close</v-icon>
           </v-btn>
         </v-toolbar>
         <cobranza
+          ref="cobranza"
           :fecha="fecha_pago"
           :importe="importe_total"
           @cancelar="expand_pago = false"
@@ -243,6 +239,10 @@ export default {
 
     importe_total: function() {
       return utils.round(this.subtotal + this.intereses_total, 2);
+    },
+
+    boletas_selected: function() {
+      return this.boletas.filter(b => b.checked);
     }
   },
 
@@ -396,6 +396,11 @@ export default {
       this.$emit('update');
       this.show_addboleta = false;
     },
+
+    cerrarVentanaPago: function() {
+      this.expand_pago = false;
+      this.$refs.cobranza.reset();
+    }
   },
 
 }

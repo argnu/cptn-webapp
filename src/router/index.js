@@ -9,7 +9,7 @@ import DelegacionSeleccion from '@/components/DelegacionSeleccion'
 
 import NuevaSolicitudEmpresa from '@/components/solicitudes/nueva/NuevaSolicitudEmpresa'
 import NuevaSolicitudProfesional from '@/components/solicitudes/nueva/NuevaSolicitudProfesional'
-import ListaSolicitud from '@/components/solicitudes/ListaSolicitud'
+import SolicitudLista from '@/components/solicitudes/SolicitudLista'
 
 import MatriculaMain from '@/components/matriculas/MatriculaMain'
 import Matricula from '@/components/matriculas/Matricula'
@@ -79,8 +79,8 @@ export default new Router({
         },
         {
           path: '/solicitudes/lista',
-          name: 'ListaSolicitud',
-          component: ListaSolicitud
+          name: 'SolicitudLista',
+          component: SolicitudLista
         },
         {
           path: '/solicitudes/empresas/nueva',

@@ -62,7 +62,7 @@
                                 </td>
                                 <td>{{ props.item.nombre }}</td>
                                 <td>{{ props.item.nivel.valor }}</td>
-                                <td>{{ props.item.tipo_matricula }}</td>
+                                <td>{{ props.item.tipo_matricula.valor }}</td>
                                 <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
                                 <td>{{ props.item.valido | boolean }}</td>
                             </template>
@@ -101,6 +101,7 @@
                                 item-value="id"
                                 v-model="nuevo_titulo.incumbencias"
                                 multiple
+                                return-object
                                 max-height="400"
                                 hint="Seleccione las incumbencias"
                                 persistent-hint
@@ -111,6 +112,7 @@
                             <v-select
                                 label="Nivel"
                                 autocomplete
+                                return-object
                                 :items="opciones.niveles_titulos"
                                 item-value="id"
                                 item-text="valor"
@@ -130,9 +132,12 @@
                             <v-select
                                 label="Tipo de Matrícula"
                                 autocomplete
-                                :items="$options.tipos_matricula"
+                                clearable
+                                return-object
+                                item-text="valor"
+                                item-value="id"
+                                :items="opciones.matricula"
                                 v-model="nuevo_titulo.tipo_matricula"
-                                :rules="[rules.required]"
                             >
                             </v-select>
                         </v-flex>
@@ -187,12 +192,6 @@ export default {
         Header('Válido', 'valido')
     ],
 
-    tipos_matricula: [
-        { text: 'TECA', value: 'TECA' },
-        { text: 'TEC-', value: 'TEC-' },
-        { text: 'IDO', value: 'IDO' }
-    ],
-
     filters: {
         lista_incumbencias: function(lista) {
             return lista.map(i => i.incumbencia.valor).join(', ');
@@ -230,15 +229,20 @@ export default {
 
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
+                let titulo = utils.clone(this.nuevo_titulo);
+                if (titulo.tipo_matricula) titulo.tipo_matricula = titulo.tipo_matricula.id;
+                titulo.nivel = titulo.nivel.id;
+                titulo.incumbencias = titulo.incumbencias.map(i => i.id);
+
                 if (this.titulo_edit == null) {
-                    api.post(`/instituciones/${this.id}/titulos`, this.nuevo_titulo)
+                    api.post(`/instituciones/${this.id}/titulos`, titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
                     })
                 }
                 else {
-                    api.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, this.nuevo_titulo)
+                    api.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
@@ -250,9 +254,10 @@ export default {
         editTitulo: function(titulo) {
             this.titulo_edit = titulo.id;
             this.nuevo_titulo.nombre = titulo.nombre;
-            this.nuevo_titulo.nivel = titulo.nivel.id;
+            this.nuevo_titulo.nivel = titulo.nivel;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
+            console.log(titulo.incumbencias.map(i => i.incumbencia))
             this.nuevo_titulo.valido = titulo.valido;
             this.show_formtitulo = true;
         },
