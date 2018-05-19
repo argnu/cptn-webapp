@@ -182,7 +182,7 @@
                         label="Observaciones"
                         uppercase
                         v-model="solicitud.entidad.observaciones"
-                        tabindex="13"
+                        tabindex="12"
                       ></input-texto>
                     </v-flex>
                   </v-layout>
@@ -231,6 +231,7 @@
                         <v-layout row class="mx-4">
                           <v-flex xs8>
                             <v-select
+                              tabindex="15"
                               :items="tipos_domicilio"
                               label="Tipo"
                               v-model="nuevo_domicilio.tipo"
@@ -243,7 +244,7 @@
 
                           <v-flex xs3 class="mt-2 ml-4">
                             <v-menu offset-y>
-                              <v-btn slot="activator">Copiar de...</v-btn>
+                              <v-btn slot="activator" tabindex="16">Copiar de...</v-btn>
                               <v-list>
                                 <v-list-tile
                                   v-for="tipo of tipos_domicilio_cargados"
@@ -259,7 +260,7 @@
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="12"
+                              tabindex="17"
                               label="País"
                               return-object
                               autocomplete
@@ -272,7 +273,7 @@
                             ></v-select>
 
                             <v-select
-                              tabindex="14"
+                              tabindex="19"
                               label="Departamento"
                               autocomplete
                               return-object                              
@@ -285,7 +286,7 @@
                             ></v-select>
 
                             <input-texto
-                              tabindex="16"
+                              tabindex="21"
                               uppercase
                               maxlength="100"
                               label="Dirección"
@@ -296,7 +297,7 @@
 
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="13"
+                              tabindex="18"
                               :items="provincias"
                               label="Provincia"
                               @input="changeProvincia"
@@ -310,7 +311,7 @@
                             </v-select>
 
                             <v-select
-                              tabindex="15"
+                              tabindex="20"
                               :items="localidades"
                               label="Localidad"
                               v-model="nuevo_domicilio.domicilio.localidad"
@@ -327,6 +328,7 @@
                         <v-layout class="mb-4">
                           <v-flex xs12>
                             <v-btn
+                              tabindex="21"
                               class="right"
                               light
                               @click="addDomicilio"
@@ -378,7 +380,7 @@
                       </v-form>
                     </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="33">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="22">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -396,6 +398,7 @@
                     <v-layout row>
                       <v-flex xs3 class="mx-2">
                         <v-select
+                          tabindex="23"
                           single-line bottom
                           :items="opciones.contacto"
                           item-text="valor"
@@ -410,11 +413,13 @@
 
                       <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
                         <input-telefono
+                          tabindex="24"
                           :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
                           v-model="nuevo_telefono"
                         ></input-telefono>
 
                         <v-checkbox
+                          tabindex="25"
                           v-show="nuevo_contacto.tipo === 2"
                           label="Whatsapp"
                           v-model="nuevo_contacto.whatsapp"
@@ -424,6 +429,7 @@
 
                       <v-flex xs8 class="mx-2" v-else>
                         <v-text-field
+                          tabindex="26"
                           v-model="nuevo_contacto.valor"
                           :rules="rules_contacto"
                           :placeholder="placeholder_contacto"
@@ -434,7 +440,7 @@
 
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-btn class="right" light @click="addContacto">
+                        <v-btn class="right" light @click="addContacto" tabindex="27">
                           {{ contacto_edit != null ? 'Guardar' : 'Agregar' }}
                         </v-btn>
                         <v-btn class="right" light v-show="contacto_edit != null" @click="cancelarEditContacto">
@@ -476,7 +482,8 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="28"
+              >Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -494,6 +501,7 @@
                     <v-layout row>
                       <v-flex xs4 class="mx-2">
                         <v-select
+                          tabindex="29"
                           autocomplete
                           single-line bottom
                           :items="opciones.condicionafip"
@@ -508,6 +516,7 @@
 
                       <v-flex xs7 class="mx-2">
                         <input-texto
+                          tabindex="30"
                           label="Descripción"
                           uppercase
                           v-model="nueva_condafip.descripcion"
@@ -517,7 +526,7 @@
 
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-btn class="right" light @click="addCondAfip">
+                        <v-btn class="right" light @click="addCondAfip" tabindex="31">
                           {{ condafip_edit != null ? 'Guardar' : 'Agregar' }}
                         </v-btn>
                         <v-btn class="right" light v-show="condafip_edit != null" @click="cancelarEditCondAfip">
@@ -554,7 +563,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="32">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -576,6 +585,7 @@
                     <v-layout row>
                       <v-flex xs6 class="mx-4">
                         <v-select
+                          tabindex="33"
                           autocomplete
                           :items="instituciones"
                           item-value="id"
@@ -598,7 +608,8 @@
                           </template>
                         </v-select>
 
-                         <v-select
+                         <v-select                        
+                          tabindex="34"
                           autocomplete
                           :items="opciones.niveles_titulos"
                           item-text="valor"
@@ -608,10 +619,10 @@
                           v-model="nueva_formacion.nivel"
                           :rules="[rules.required]"
                           @input="updateTitulos"
-                        >
-                        </v-select>
+                        ></v-select>
 
                         <v-select
+                          tabindex="35"
                           autocomplete single-line bottom
                           item-text="nombre"
                           item-value="id"
@@ -635,6 +646,7 @@
 
                         <v-checkbox
                           label="Título Principal" 
+                          tabindex="38"
                           class="my-2" 
                           v-model="nueva_formacion.principal"
                           :disabled="existeTituloPrincipal && !nueva_formacion.principal"
@@ -643,13 +655,16 @@
 
                       <v-flex xs6 class="mx-4">
                         <input-fecha
+                          tabindex="36"
                           v-model="nueva_formacion.fechaEmision"
                           label="Fecha Emisión"
                           :rules="[rules.fecha]"
                           @change="chgFechaEmision"
                         >
                         </input-fecha>
+
                         <input-fecha
+                          tabindex="37"
                           v-model="nueva_formacion.fechaEgreso"
                           label="Fecha Egreso"
                           :rules="[rules.required, rules.fecha]"
@@ -666,7 +681,7 @@
 
                     <v-layout class="mb-4">
                       <v-flex xs12>
-                        <v-btn class="right" light @click="addFormacion">
+                        <v-btn class="right" light @click="addFormacion" tabindex="39">
                           {{ formacion_edit != null ? 'Guardar' : 'Agregar' }}
                         </v-btn>
                         <v-btn class="right" light v-show="formacion_edit != null" @click="cancelarEditFormacion">
@@ -715,7 +730,8 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="40"
+              >Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -730,27 +746,24 @@
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
                       <v-checkbox
-                        tabindex="33"
-                        label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
-                      </v-checkbox>                      <v-checkbox
-                        tabindex="33"
+                        tabindex="41"
                         label="Relación de Dependencia" class="mb-4" v-model="solicitud.entidad.relacionDependencia">
                       </v-checkbox>
 
                       <v-checkbox
-                        tabindex="35"
+                        tabindex="43"
                         label="Profesional Independiente" class="mb-4" v-model="solicitud.entidad.independiente">
                       </v-checkbox>
 
                       <v-checkbox
-                        tabindex="37"
+                        tabindex="45"
                         label="Jubilado" class="mb-4" v-model="solicitud.entidad.jubilado">
                       </v-checkbox>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
                       <input-texto
-                        tabindex="34"
+                        tabindex="42"
                         maxlength="100"
                         label="Empresa" 
                         uppercase
@@ -759,7 +772,7 @@
                       ></input-texto>
                       
                       <input-texto
-                        tabindex="36"
+                        tabindex="44"
                         label="Servicios Prestados" 
                         uppercase
                         :disabled="!solicitud.entidad.independiente" 
@@ -769,7 +782,7 @@
                   </v-layout>
                 </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="38">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="45">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -784,6 +797,7 @@
                 <v-card-text>
 
                   <v-checkbox
+                    tabindex="46"
                     label="Solicitar Caja Previsional"
                     v-model="solicitar_caja"
                     class="ml-4 mb-4"
@@ -795,6 +809,7 @@
                   <v-layout row>
                      <v-flex xs5 class="mx-4">
                       <input-select-new
+                        tabindex="47"
                         label="Nombre"
                         maxlength="100"
                         :items="cajas_previsionales_filter"
@@ -805,7 +820,7 @@
                       ></input-select-new>
                     </v-flex>
                      <v-flex xs3>
-                      <v-btn @click="addCaja">Agregar</v-btn>
+                      <v-btn @click="addCaja" tabindex="48">Agregar</v-btn>
                     </v-flex>
                   </v-layout>
 
@@ -831,7 +846,7 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="49">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -851,6 +866,7 @@
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
                           <input-numero
+                            tabindex="50"
                             label="DNI"
                             maxlength="8"
                             v-model="nuevo_subsidiario.dni"
@@ -859,6 +875,7 @@
                           </input-numero>
 
                           <input-texto
+                            tabindex="51"
                             label="Apellido"
                             maxlength="100"
                             type="letras"
@@ -871,6 +888,7 @@
 
                         <v-flex xs6 class="ma-4">
                           <input-texto
+                            tabindex="52"
                             label="Nombre"
                             maxlength="100"
                             type="letras"
@@ -881,6 +899,7 @@
                           </input-texto>
 
                           <input-numero
+                            tabindex="53"
                             label="Porcentaje"
                             decimal
                             v-model="nuevo_subsidiario.porcentaje"
@@ -890,7 +909,7 @@
                         </v-flex>
                       </v-layout>
 
-                      <v-btn class="right mb-4" light @click="addSubsidiario">
+                      <v-btn class="right mb-4" light @click="addSubsidiario" tabindex="54">
                         {{ subsidiario_edit != null ? 'Guardar' : 'Agregar' }}
                       </v-btn>
                       <v-btn class="right" light v-show="subsidiario_edit != null" @click="cancelarEditSubsidiario">
@@ -933,7 +952,7 @@
 
                 </v-card-text>
               </v-card>
-              <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="55">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
@@ -946,18 +965,13 @@
             <v-stepper-content step="10">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <!-- <blockquote>
-                    Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provinca de Neuquén, previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Consejo
-                    Profesional de Técnicos de Neuquén. Nota: de comprobarse la falsedad de la presente Declaración Jurada el Consejo Profesional aplicará al profesional una sanción consistente en duplo de la matrículo anual vigente. Art 29, Ley 708
-                  </blockquote>
-                  <br> -->
-
-                  <v-checkbox label="De Acuerdo" v-model="deAcuerdo">
+                  <v-checkbox tabindex="56" label="De Acuerdo" v-model="deAcuerdo">
                   </v-checkbox>
 
                   <h3>Permitir la publicación de los datos:</h3>
 
                   <v-checkbox
+                    tabindex="57"
                     class="mt-4"
                     label="Todos"
                     @change="chgPublicarTodos"
@@ -968,23 +982,30 @@
                   <v-layout row class="mt-2">
                     <v-flex xs6>
                       <v-checkbox
+                        tabindex="58"
                         label="Email"
                         v-model="solicitud.entidad.publicarEmail"
                       >
                       </v-checkbox>
+
                       <v-checkbox
+                        tabindex="59"
                         label="Celular"
                         v-model="solicitud.entidad.publicarCelular"
                       >
                       </v-checkbox>
                     </v-flex>
+
                     <v-flex xs6>
                       <v-checkbox
+                        tabindex="60"
                         label="Dirección"
                         v-model="solicitud.entidad.publicarDireccion"
                       >
                       </v-checkbox>
+
                       <v-checkbox
+                        tabindex="61"
                         label="Acervo"
                         v-model="solicitud.entidad.publicarAcervo"
                       >
@@ -994,12 +1015,15 @@
 
                   <br>
 
-                  <v-checkbox class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones">
-                  </v-checkbox>
+                  <v-checkbox 
+                    tabindex="62"
+                    class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones"
+                  ></v-checkbox>
                 </v-card-text>
               </v-card>
 
               <v-btn
+                tabindex="63"
                 color="primary"
                 class="darken-1 white--text right"
                 :loading="guardando"

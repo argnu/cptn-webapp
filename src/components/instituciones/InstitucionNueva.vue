@@ -13,6 +13,7 @@
         <v-layout row>
             <v-flex xs4 class="mx-5 mb-3">
                 <input-texto
+                    tabindex="1"
                     label="Nombre"
                     uppercase
                     v-model="institucion.nombre"
@@ -22,6 +23,7 @@
 
             <v-flex xs4 class="mx-5 mb-3">
                 <input-texto
+                    tabindex="2"
                     label="CUE"
                     uppercase
                     v-model="institucion.cue"
@@ -31,6 +33,7 @@
 
             <v-flex xs4 class="mx-5 mb-3">
                 <v-checkbox
+                    tabindex="3"
                     label="Institución Válida"
                     v-model="institucion.valida"
                 ></v-checkbox>
@@ -47,6 +50,7 @@
                 <v-layout row>
                     <v-flex xs6 class="ml-5">
                         <v-select
+                            tabindex="4"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -58,6 +62,7 @@
                         </v-select>
 
                         <v-select
+                            tabindex="6"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -71,6 +76,7 @@
 
                     <v-flex xs6 class="mx-5">
                         <v-select
+                            tabindex="5"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -82,6 +88,7 @@
                         </v-select>
 
                         <v-select
+                            tabindex="7"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -95,6 +102,7 @@
 
                 <v-layout xs12 class="mx-5">
                     <input-texto
+                        tabindex="8"
                         label="Dirección"
                         uppercase
                         v-model="institucion.domicilio.direccion"
@@ -113,6 +121,7 @@
         <v-layout row>
             <v-flex xs5 class="mx-5">
                 <input-texto
+                    tabindex="9"
                     label="Nombre"
                     uppercase
                     v-model="nuevo_titulo.nombre"
@@ -121,6 +130,7 @@
                 </input-texto>
 
                 <v-select
+                    tabindex="10"
                     label="Tipo de Matrícula"
                     autocomplete
                     clearable
@@ -133,6 +143,7 @@
                 </v-select>
 
                 <v-checkbox
+                    tabindex="13"
                     label="Título Válido"
                     v-model="nuevo_titulo.valido"
                 ></v-checkbox>
@@ -140,6 +151,7 @@
 
             <v-flex xs5 class="mx-5">
                 <v-select
+                    tabindex="11"
                     label="Nivel"
                     autocomplete
                     return-object
@@ -152,6 +164,7 @@
                 </v-select>
 
                 <v-select
+                    tabindex="12"
                     label="Incumbencias"
                     :items="opciones.incumbencia"
                     item-text="valor"
@@ -170,7 +183,7 @@
 
         <v-layout row>
             <v-flex xs12 class="mx-5">
-                <v-btn class="right mb-4" light @click="addTitulo">
+                <v-btn class="right mb-4" light @click="addTitulo" tabindex="14">
                     {{ titulo_edit != null ? 'Guardar' : 'Agregar' }}
                 </v-btn>
                 <v-btn class="right" light v-show="titulo_edit != null" @click="cancelarEditTitulo">
@@ -216,6 +229,7 @@
                     @click.native="submit"
                     :disabled="!valid_basico || submitted"
                     :loading="submitted"
+                    tabindex="15"
                 >
                     Guardar
                     <v-icon dark right>check_circle</v-icon>

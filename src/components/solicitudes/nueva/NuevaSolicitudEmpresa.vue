@@ -152,6 +152,7 @@
                         <v-layout row class="mx-4">
                           <v-flex xs8>
                             <v-select
+                              tabindex="12"
                               :items="tipos_domicilio"
                               label="Tipo"
                               v-model="nuevo_domicilio.tipo"
@@ -163,7 +164,7 @@
 
                           <v-flex xs3 class="mt-2 ml-4">
                             <v-menu offset-y>
-                              <v-btn slot="activator">Copiar de...</v-btn>
+                              <v-btn slot="activator" tabindex="13">Copiar de...</v-btn>
                               <v-list>
                                 <v-list-tile
                                   v-for="tipo of tipos_domicilio_cargados"
@@ -179,7 +180,7 @@
                         <v-layout row>
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="12"
+                              tabindex="14"
                               :items="paises"
                               label="País"
                               v-model="nuevo_domicilio.domicilio.pais"
@@ -193,7 +194,7 @@
                             </v-select>
 
                             <v-select
-                              tabindex="14"
+                              tabindex="16"
                               :items="departamentos"
                               label="Departamento"
                               @input="changeDepartamento"
@@ -207,7 +208,7 @@
                             </v-select>
 
                             <input-texto
-                              tabindex="16"
+                              tabindex="18"
                               label="Dirección"
                               uppercase
                               v-model="nuevo_domicilio.domicilio.direccion"
@@ -218,7 +219,7 @@
 
                           <v-flex xs6 class="ma-4">
                             <v-select
-                              tabindex="13"
+                              tabindex="15"
                               :items="provincias"
                               label="Provincia"
                               @input="changeProvincia"
@@ -232,7 +233,7 @@
                             </v-select>
 
                             <v-select
-                              tabindex="15"
+                              tabindex="17"
                               :items="localidades"
                               label="Localidad"
                               v-model="nuevo_domicilio.domicilio.localidad"
@@ -249,6 +250,7 @@
                         <v-layout class="mb-4">
                           <v-flex xs12>
                             <v-btn
+                              tabindex="19"
                               class="right"
                               light
                               @click="addDomicilio"
@@ -299,7 +301,7 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="30">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="20">Continuar</v-btn>
                   <v-btn flat @click.native="step = 2" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -317,6 +319,7 @@
                           <v-layout row>
                             <v-flex xs3 class="mx-2">
                               <v-select
+                                tabindex="21"
                                 single-line bottom
                                 :items="opciones.contacto"
                                 item-text="valor"
@@ -331,11 +334,13 @@
 
                             <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
                               <input-telefono
+                                tabindex="22"
                                 :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
                                 v-model="nuevo_telefono"
                               ></input-telefono>
 
                               <v-checkbox
+                                tabindex="23"
                                 v-show="nuevo_contacto.tipo === 2"
                                 label="Whatsapp"
                                 v-model="nuevo_contacto.whatsapp"
@@ -345,6 +350,7 @@
 
                             <v-flex xs8 class="mx-2" v-else>
                               <v-text-field
+                                tabindex="24"
                                 v-model="nuevo_contacto.valor"
                                 :rules="rules_contacto"
                                 :placeholder="placeholder_contacto"
@@ -355,7 +361,7 @@
 
                           <v-layout row wrap>
                             <v-flex xs12>
-                              <v-btn class="right" light @click="addContacto">
+                              <v-btn class="right" light @click="addContacto" tabindex="25">
                                 {{ contacto_edit != null ? 'Guardar' : 'Agregar' }}
                               </v-btn>
                               <v-btn class="right" light v-show="contacto_edit != null" @click="cancelarEditContacto">
@@ -393,7 +399,9 @@
                       </v-form>
                     </v-card-text>
                   </v-card>
-                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+                  <v-btn color="primary" darken-1 @click.native="nextStep" class="right"
+                    tabindex="26"
+                  >Continuar</v-btn>
                   <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
                 </v-stepper-content>
 
@@ -410,6 +418,7 @@
                     <v-layout row>
                       <v-flex xs4 class="mx-2">
                         <v-select
+                          tabindex="27"
                           autocomplete
                           single-line bottom
                           :items="opciones.condicionafip"
@@ -424,6 +433,7 @@
 
                       <v-flex xs7 class="mx-2">
                         <input-texto
+                          tabindex="28"
                           label="Descripción"
                           uppercase
                           v-model="nueva_condafip.descripcion"
@@ -434,7 +444,7 @@
 
                     <v-layout row wrap>
                       <v-flex xs12>
-                        <v-btn class="right" light @click="addCondAfip">
+                        <v-btn class="right" light @click="addCondAfip" tabindex="29">
                           {{ condafip_edit != null ? 'Guardar' : 'Agregar' }}
                         </v-btn>
                         <v-btn class="right" light v-show="condafip_edit != null" @click="cancelarEditCondAfip">
@@ -471,7 +481,8 @@
                   </v-form>
                 </v-card-text>
               </v-card>
-              <v-btn blue darken-1 @click.native="nextStep" class="right">Continuar</v-btn>
+              <v-btn color="primary" @click.native="nextStep" class="right" tabindex="30"
+              >Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
             </v-stepper-content>
 
