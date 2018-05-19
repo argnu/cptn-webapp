@@ -44,7 +44,6 @@ import { Header } from '@/model'
 import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
-
 export default {
 
   name: 'LegajoLista',

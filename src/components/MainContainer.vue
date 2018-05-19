@@ -6,14 +6,7 @@
 
 <script>
 export default {
-  name: 'MainContainer',
-
-  created: function() {
-  },
-
-  methods: {
-  },
-
+  name: 'MainContainer'
 }
 </script>
 

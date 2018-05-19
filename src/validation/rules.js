@@ -5,6 +5,8 @@ export default {
 
   number: value => value && value.length ? (/^\d+(,\d+)?$/.test(value) || 'Formato incorrecto') : true,
 
+  cuit: value => value && value.length ? (/^\d{11}$/.test(value) || 'Debe contener 11 números') : true,
+
   integer: value => value && value.length ? (/^\d+$/.test(value) || 'Formato incorrecto') : true,
 
   fecha: value => {

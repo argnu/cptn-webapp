@@ -35,12 +35,12 @@
               </v-flex>
 
               <v-flex xs4 class="mx-2">
-                <v-text-field
+                <input-numero
                   v-model="matricula.documento.numero"
                   label="N° Acta"
                   :rules="[rules.required, rules.integer]"
                 >
-                </v-text-field>
+                </input-numero>
               </v-flex>
 
               <v-flex xs4 class="mx-2">
@@ -336,6 +336,7 @@ import * as _ from 'lodash'
 import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
+import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
@@ -602,6 +603,7 @@ export default {
 
   components: {
     InputFecha,
+    InputNumero,
     CambiarFotoFirma
   }
 

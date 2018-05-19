@@ -12,11 +12,13 @@
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
                     label="Usuario"
+                    type="letras"
+                    uppercase
                     v-model="usuario.username"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
 
                 <v-text-field
                     label="Contraseña"
@@ -27,11 +29,13 @@
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
+                    type="letras"
                     label="Nombre"
+                    uppercase
                     v-model="usuario.nombre"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
 
                 <v-text-field
                     label="Repetir Contraseña"
@@ -45,11 +49,13 @@
             </v-flex>
 
             <v-flex xs12 md3 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
                     label="Apellido"
+                    type="letras"
+                    uppercase
                     v-model="usuario.apellido"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
 
                 <v-text-field
                     label="Email"

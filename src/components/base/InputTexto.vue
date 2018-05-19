@@ -2,21 +2,23 @@
     <v-text-field
         ref="input"
         :tabindex="tabindex"
+        :maxlength="maxlength"
         :prefix="prefix"
         :suffix="suffix"
         :label="label"
         :rules="rules"
         :disabled="disabled"
-        :value="formatted"
-        :maxlength="maxlength"
+        :value="value"
+        :prepend-icon="prependIcon"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
 </template>
 
 <script>
+
 export default {
-    name: 'InputNumero',
+    name: 'InputTexto',
     props: {
       label: {
           type: String,
@@ -29,7 +31,7 @@ export default {
       },
 
       value: {
-        //   type: String,
+          type: String,
           required: true
       },
 
@@ -54,36 +56,44 @@ export default {
           type: String
       },
 
-      decimal: {
+      uppercase: {
           type: Boolean,
           default: () => false
       },
 
-      maxlength: {
+      type: {
           type: String
-      }
-    },
+      },
 
-    computed: {
-        formatted: function() {
-            return this.value ? this.value.toString().replace('.', ',') : '';
-        }
+      prependIcon: {
+          type: String
+      },
+
+      maxlength: {
+          type: [String, Number]
+      }
     },
 
     methods: {
         keypress: function(e) {
-            if (/\d{1}/.test(e.key)) return true;
-            else {
-                if (this.decimal && (e.key == '.' || e.key == ',')) {
-                    if (e.target.value.indexOf(',') !== -1 || e.target.value.length === 0) e.preventDefault();
-                    else return true;
-                }  
-                else if (e.key.length == 1) e.preventDefault();
-            }
+            if (!this.type) return true;
+            if (e.charCode == 32) return true;
+
+            let regexp = /[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ'`]{1}/;
+            if (this.type == 'alfanumerico') regexp = /\w{1}/;
+
+            if (regexp.test(e.key)) return true
+            else e.preventDefault();
         },
 
         update: function(e) {
-            if (e) this.$emit('input', this.decimal ? e.replace('.', ',') : e);
+            if (e) this.$emit('input', this.format(e));
+        },
+
+        format: function(e) {
+            if (!e) return '';
+            else if (this.uppercase) return e.toUpperCase();
+            else return e;
         }
     }
 

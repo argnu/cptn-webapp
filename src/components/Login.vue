@@ -9,13 +9,15 @@
 
           <v-layout row wrap v-if="!delegaciones.length">
             <v-flex md6 offset-md3 xs12>
-              <v-text-field
+              <input-texto
                 label="Nombre de Usuario"
                 prepend-icon="account_box"
+                uppercase
+                type="letras"
                 v-model="usuario.username"
                 @input="submitted = false"
-              >
-              </v-text-field>
+              ></input-texto>
+
               <br>
               <v-text-field
                 label="Contraseña"
@@ -83,6 +85,7 @@
 import api from '@/services/api'
 import * as Cookies from 'js-cookie'
 import Store from '@/stores/Global'
+import InputTexto from '@/components/base/InputTexto'
 
 
 const User = () => ({
@@ -92,6 +95,11 @@ const User = () => ({
 
 export default {
   name: 'Login',
+
+  components: {
+    InputTexto
+  },
+
   data () {
     return {
       usuario: User(),

@@ -18,7 +18,7 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
-              :headers="$options.headers_resumen"
+              :headers="$options.headers"
               :items="resumen"
               class="elevation-1"
               no-data-text="No hay datos"
@@ -80,7 +80,7 @@ export default {
   props: ['id'],
   mixins: [MixinValidator],
 
-  headers_resumen: [
+  headers: [
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),

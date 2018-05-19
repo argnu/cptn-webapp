@@ -72,13 +72,13 @@
 
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-texto
                             tabindex="4"
                             label="Nombre"
+                            uppercase
                             v-model="solicitud.entidad.nombre"
                             :rules="[rules.required]"
-                          >
-                          </v-text-field>
+                          ></input-texto>
 
                           <v-select
                             autocomplete
@@ -101,14 +101,13 @@
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-numero
                             tabindex="8"
+                            maxlength="11"
                             label="CUIT"
                             v-model="solicitud.entidad.cuit"
-                            maxlength="20"
-                            :rules="[rules.required, rules.integer]"
-                          >
-                          </v-text-field>
+                            :rules="[rules.required, rules.cuit]"
+                          ></input-numero>
 
                           <input-fecha
                               tabindex="9"
@@ -207,13 +206,14 @@
                             >
                             </v-select>
 
-                            <v-text-field
+                            <input-texto
                               tabindex="16"
                               label="Dirección"
+                              uppercase
                               v-model="nuevo_domicilio.domicilio.direccion"
                               :rules="[rules.required]"
                             >
-                            </v-text-field>
+                            </input-texto>
                           </v-flex>
 
                           <v-flex xs6 class="ma-4">
@@ -423,11 +423,12 @@
                       </v-flex>
 
                       <v-flex xs7 class="mx-2">
-                        <v-text-field
+                        <input-texto
                           label="Descripción"
+                          uppercase
                           v-model="nueva_condafip.descripcion"
                         >
-                        </v-text-field>
+                        </input-texto>
                       </v-flex>
                     </v-layout>
 
@@ -790,6 +791,8 @@ import api from '@/services/api'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Solicitud } from '@/model'
+import InputNumero from '@/components/base/InputNumero'
+import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputTelefono from '@/components/base/InputTelefono'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -802,6 +805,14 @@ export default {
   name: 'nueva-solicitud-empresa',
   mixins: [MixinValidator, NuevaSolicitud],
   props: ['id'],
+
+  components: {
+    InputFecha, 
+    InputTelefono,
+    InputNumero,
+    InputTexto,
+    NuevaMatriculaExterna
+  },
 
   data () {
     return {
@@ -1131,11 +1142,6 @@ export default {
       this.updateMatriculasSec();
       this.expand_add = false;
     }
-  },
-
-  components: {
-    InputFecha, InputTelefono,
-    NuevaMatriculaExterna
   }
 }
 </script>

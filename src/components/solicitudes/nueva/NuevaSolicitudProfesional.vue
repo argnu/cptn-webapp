@@ -85,7 +85,7 @@
 
                   <v-layout row>
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-numero
                         label="DNI"
                         v-model="solicitud.entidad.dni"
                         :rules="[rules.required, rules.integer]"
@@ -95,16 +95,17 @@
                         @blur="chgDni"
                         @keypress.enter="chgDni"
                       >
-                      </v-text-field>
+                      </input-numero>
 
-                      <v-text-field
+                      <input-texto
                         label="Nombre"
                         v-model="solicitud.entidad.nombre"
                         tabindex="5"
                         maxlength="100"
+                        uppercase
                         :rules="[rules.required]"
                       >
-                      </v-text-field>
+                      </input-texto>
 
                       <v-select
                         autocomplete
@@ -127,33 +128,35 @@
                       >
                       </input-fecha>
 
-                      <v-text-field
+                      <input-texto
                         label="Nacionalidad"
+                        type="letras"
+                        uppercase
                         v-model="solicitud.entidad.nacionalidad"
                         maxlength="45"
                         tabindex="11"
-                      >
-                      </v-text-field>
+                      ></input-texto>
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-texto
                         label="Apellido"
+                        type="letras"
+                        uppercase
                         v-model="solicitud.entidad.apellido"
                         :rules="[rules.required]"
                         maxlength="100"
                         tabindex="4"
-                      >
-                      </v-text-field>
+                      ></input-texto>
 
-                      <v-text-field
+                      <input-numero
                         label="CUIT/CUIL"
                         v-model="solicitud.entidad.cuit"
-                        :rules="[rules.integer]"
+                        :rules="[rules.cuit]"
                         tabindex="6"
-                        maxlength="20"
+                        maxlength="11"
                       >
-                      </v-text-field>
+                      </input-numero>
 
                       <v-select
                         autocomplete
@@ -165,23 +168,22 @@
                         label="Estado Civil"
                         single-line bottom
                         :rules="[rules.required]"
-                      >
-                      </v-select>
+                      ></v-select>
 
-                      <v-text-field
+                      <input-texto
                         label="Lugar Nacimiento"
+                        uppercase
                         v-model="solicitud.entidad.lugarNacimiento"
                         maxlength="100"
                         tabindex="10"
-                      >
-                      </v-text-field>
+                      ></input-texto>
 
-                      <v-text-field
+                      <input-texto
                         label="Observaciones"
+                        uppercase
                         v-model="solicitud.entidad.observaciones"
                         tabindex="13"
-                      >
-                      </v-text-field>
+                      ></input-texto>
                     </v-flex>
                   </v-layout>
 
@@ -267,8 +269,7 @@
                               :rules="[rules.required]"
                               v-model="nuevo_domicilio.domicilio.pais"
                               @input="changePais"
-                            >
-                            </v-select>
+                            ></v-select>
 
                             <v-select
                               tabindex="14"
@@ -281,17 +282,16 @@
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
-                            >
-                            </v-select>
+                            ></v-select>
 
-                            <v-text-field
+                            <input-texto
                               tabindex="16"
+                              uppercase
                               maxlength="100"
                               label="Dirección"
                               v-model="nuevo_domicilio.domicilio.direccion"
                               :rules="[rules.required]"
-                            >
-                            </v-text-field>
+                            ></input-texto>
                           </v-flex>
 
                           <v-flex xs6 class="ma-4">
@@ -507,11 +507,11 @@
                       </v-flex>
 
                       <v-flex xs7 class="mx-2">
-                        <v-text-field
+                        <input-texto
                           label="Descripción"
+                          uppercase
                           v-model="nueva_condafip.descripcion"
-                        >
-                        </v-text-field>
+                        ></input-texto>
                       </v-flex>
                     </v-layout>
 
@@ -749,15 +749,22 @@
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-texto
                         tabindex="34"
                         maxlength="100"
-                        label="Empresa" :disabled="!solicitud.entidad.relacionDependencia" v-model="solicitud.entidad.empresa">
-                      </v-text-field>
-                      <v-text-field
+                        label="Empresa" 
+                        uppercase
+                        :disabled="!solicitud.entidad.relacionDependencia" 
+                        v-model="solicitud.entidad.empresa"
+                      ></input-texto>
+                      
+                      <input-texto
                         tabindex="36"
-                        label="Servicios Prestados" :disabled="!solicitud.entidad.independiente" v-model="solicitud.entidad.serviciosPrestados">
-                      </v-text-field>
+                        label="Servicios Prestados" 
+                        uppercase
+                        :disabled="!solicitud.entidad.independiente" 
+                        v-model="solicitud.entidad.serviciosPrestados"
+                      ></input-texto>
                     </v-flex>
                   </v-layout>
                 </v-card-text>
@@ -843,31 +850,35 @@
                   <v-form ref="form_subsidiario" lazy-validation>
                       <v-layout row>
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-numero
                             label="DNI"
-                            maxlength="20"
+                            maxlength="8"
                             v-model="nuevo_subsidiario.dni"
                             :rules="[rules.required, rules.integer]"
                           >
-                          </v-text-field>
+                          </input-numero>
 
-                          <v-text-field
+                          <input-texto
                             label="Apellido"
                             maxlength="100"
+                            type="letras"
+                            uppercase
                             v-model="nuevo_subsidiario.apellido"
                             :rules="[rules.required]"
                           >
-                          </v-text-field>
+                          </input-texto>
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
-                          <v-text-field
+                          <input-texto
                             label="Nombre"
                             maxlength="100"
+                            type="letras"
+                            uppercase
                             v-model="nuevo_subsidiario.nombre"
                             :rules="[rules.required]"
                           >
-                          </v-text-field>
+                          </input-texto>
 
                           <input-numero
                             label="Porcentaje"
@@ -1052,6 +1063,7 @@ import {
   Subsidiario,
   Header
 } from '@/model';
+import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
@@ -1070,6 +1082,7 @@ export default {
   mixins: [MixinValidator, NuevaSolicitud],
 
   components: {
+    InputTexto,
     InputFecha,
     InputTelefono,
     InputNumero,
@@ -1546,7 +1559,7 @@ export default {
     filterInstitucion: function(item, queryText) {
       if (!queryText || !queryText.length) return true;
       if (item.cue && item.cue.includes(queryText)) return true;
-      if (item.nombre.includes(queryText)) return true;
+      if (item.nombre.toLowerCase().includes(queryText.toLowerCase())) return true;
       return false;
     }
   }
