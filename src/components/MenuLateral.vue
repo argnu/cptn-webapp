@@ -17,7 +17,7 @@
     <v-list class="pt-0" dense>
       <v-divider class="mb-3"></v-divider>
       <v-subheader class="bold" v-text="'Solicitudes'"></v-subheader>
-      <v-list-tile  v-for="item in items" :key="item.title" @click="goto(item.route)">
+      <v-list-tile  v-for="item in $options.items" :key="item.title" @click="goto(item.route)">
         <v-list-tile-action>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-tile-action>
@@ -97,11 +97,6 @@
 </template>
 
 <script>
-const items = [
-  { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
-  { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
-  { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
-];
 
 export default {
   name: 'MenuLateral',
@@ -111,11 +106,13 @@ export default {
     }
   },
 
-  computed: {
-    items: function() {
-      return items;
-    },
+  items: [
+    { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
+    { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
+    { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
+  ],
 
+  computed: {
     full_name: function() {
       return `${this.user.nombre} ${this.user.apellido}`;
     }

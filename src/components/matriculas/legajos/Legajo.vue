@@ -116,6 +116,7 @@
                   <input-texto
                     label="Nombre"
                     type="letras"
+                    uppercase
                     v-model="nuevo_comitente.persona.nombre"
                     :rules="[rules.required]"
                   ></input-texto>
@@ -124,6 +125,7 @@
                     v-if="nuevo_comitente.persona.tipo == 'fisica'"
                     label="Apellido"
                     type="letras"
+                    uppercase
                     v-model="nuevo_comitente.persona.apellido"
                     :rules="[rules.required]"
                   ></input-texto>

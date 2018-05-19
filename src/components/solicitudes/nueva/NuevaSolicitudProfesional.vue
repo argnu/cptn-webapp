@@ -131,6 +131,7 @@
                       <input-texto
                         label="Nacionalidad"
                         type="letras"
+                        uppercase
                         v-model="solicitud.entidad.nacionalidad"
                         maxlength="45"
                         tabindex="11"
@@ -141,6 +142,7 @@
                       <input-texto
                         label="Apellido"
                         type="letras"
+                        uppercase
                         v-model="solicitud.entidad.apellido"
                         :rules="[rules.required]"
                         maxlength="100"
@@ -166,23 +168,22 @@
                         label="Estado Civil"
                         single-line bottom
                         :rules="[rules.required]"
-                      >
-                      </v-select>
+                      ></v-select>
 
-                      <v-text-field
+                      <input-texto
                         label="Lugar Nacimiento"
+                        uppercase
                         v-model="solicitud.entidad.lugarNacimiento"
                         maxlength="100"
                         tabindex="10"
-                      >
-                      </v-text-field>
+                      ></input-texto>
 
-                      <v-text-field
+                      <input-texto
                         label="Observaciones"
+                        uppercase
                         v-model="solicitud.entidad.observaciones"
                         tabindex="13"
-                      >
-                      </v-text-field>
+                      ></input-texto>
                     </v-flex>
                   </v-layout>
 
@@ -266,8 +267,7 @@
                               item-value="id"
                               @input="changePais"
                               :rules="[rules.required]"
-                            >
-                            </v-select>
+                            ></v-select>
 
                             <v-select
                               tabindex="14"
@@ -279,17 +279,16 @@
                               item-text="nombre"
                               item-value="id"
                               :rules="[rules.required]"
-                            >
-                            </v-select>
+                            ></v-select>
 
-                            <v-text-field
+                            <input-texto
                               tabindex="16"
+                              uppercase
                               maxlength="100"
                               label="Dirección"
                               v-model="nuevo_domicilio.domicilio.direccion"
                               :rules="[rules.required]"
-                            >
-                            </v-text-field>
+                            ></input-texto>
                           </v-flex>
 
                           <v-flex xs6 class="ma-4">
@@ -511,11 +510,11 @@
                       </v-flex>
 
                       <v-flex xs7 class="mx-2">
-                        <v-text-field
+                        <input-texto
                           label="Descripción"
+                          uppercase
                           v-model="nueva_condafip.descripcion"
-                        >
-                        </v-text-field>
+                        ></input-texto>
                       </v-flex>
                     </v-layout>
 
@@ -753,15 +752,22 @@
                     </v-flex>
 
                     <v-flex xs6 class="ma-4">
-                      <v-text-field
+                      <input-texto
                         tabindex="34"
                         maxlength="100"
-                        label="Empresa" :disabled="!solicitud.entidad.relacionDependencia" v-model="solicitud.entidad.empresa">
-                      </v-text-field>
-                      <v-text-field
+                        label="Empresa" 
+                        uppercase
+                        :disabled="!solicitud.entidad.relacionDependencia" 
+                        v-model="solicitud.entidad.empresa"
+                      ></input-texto>
+                      
+                      <input-texto
                         tabindex="36"
-                        label="Servicios Prestados" :disabled="!solicitud.entidad.independiente" v-model="solicitud.entidad.serviciosPrestados">
-                      </v-text-field>
+                        label="Servicios Prestados" 
+                        uppercase
+                        :disabled="!solicitud.entidad.independiente" 
+                        v-model="solicitud.entidad.serviciosPrestados"
+                      ></input-texto>
                     </v-flex>
                   </v-layout>
                 </v-card-text>
@@ -859,6 +865,7 @@
                             label="Apellido"
                             maxlength="100"
                             type="letras"
+                            uppercase
                             v-model="nuevo_subsidiario.apellido"
                             :rules="[rules.required]"
                           >
@@ -870,6 +877,7 @@
                             label="Nombre"
                             maxlength="100"
                             type="letras"
+                            uppercase
                             v-model="nuevo_subsidiario.nombre"
                             :rules="[rules.required]"
                           >
@@ -1126,11 +1134,6 @@ export default {
 
     existeTituloPrincipal: function() {
       return this.solicitud.entidad.formaciones.find(f => f.principal) != undefined;
-    },
-
-    lapso_emision: function() {
-      return '12';
-      if (!this.nueva_formacion.fechaEmision) return '';
     },
 
     cajas_previsionales_filter: function() {
@@ -1539,7 +1542,7 @@ export default {
     filterInstitucion: function(item, queryText) {
       if (!queryText || !queryText.length) return true;
       if (item.cue && item.cue.includes(queryText)) return true;
-      if (item.nombre.includes(queryText)) return true;
+      if (item.nombre.toLowerCase().includes(queryText.toLowerCase())) return true;
       return false;
     }
   }

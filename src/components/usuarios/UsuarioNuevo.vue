@@ -32,6 +32,7 @@
                 <input-texto
                     type="letras"
                     label="Nombre"
+                    uppercase
                     v-model="usuario.nombre"
                     :rules="[rules.required]"
                 ></input-texto>
@@ -51,6 +52,7 @@
                 <input-texto
                     label="Apellido"
                     type="letras"
+                    uppercase
                     v-model="usuario.apellido"
                     :rules="[rules.required]"
                 ></input-texto>

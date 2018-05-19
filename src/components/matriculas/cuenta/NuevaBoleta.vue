@@ -38,11 +38,12 @@
         <v-form lazy-validation ref="form_item" v-model="valid.item">
         <v-layout row class="mt-4">
             <v-flex xs4 class="mx-4">
-                <v-text-field
+                <input-texto
                     label="Descripción"
+                    uppercase
                     v-model="boleta_item.descripcion"
                     :rules = "[rules.required]"
-                ></v-text-field>
+                ></input-texto>
 
             </v-flex>
 
@@ -66,7 +67,7 @@
         <v-layout row class="mt-4">
             <v-flex xs12>
                 <v-data-table
-                    :headers="headers_items"
+                    :headers="$options.headers"
                     :items="boleta.items"
                     class="elevation-1"
                     hide-actions
@@ -109,6 +110,7 @@ import * as utils from '@/utils'
 import * as moment from 'moment'
 import { Header } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import InputTexto from '@/components/base/InputTexto'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import Store from '@/stores/Global'
@@ -133,13 +135,6 @@ class BoletaItem {
     }
 }
 
-const headers_items = [
-    Header('Item', 'item'),
-    Header('Descripción', 'descripcion'),
-    Header('Importe', 'importe'),
-    Header('', 'acciones')
-]
-
 export default {
     name: 'NuevaBoleta',
     props: ['idMatricula'],
@@ -147,8 +142,16 @@ export default {
 
     components: {
         InputFecha,
-        InputNumero
+        InputNumero,
+        InputTexto
     },
+
+    headers: [
+        Header('Item', 'item'),
+        Header('Descripción', 'descripcion'),
+        Header('Importe', 'importe'),
+        Header('', 'acciones')
+    ],
 
     data() {
         return {
@@ -165,10 +168,6 @@ export default {
     },
 
     computed: {
-        headers_items: function() {
-            return headers_items;
-        },
-
         valid_form: function() {
             return this.valid.boleta && this.boleta.items.length > 0;
         }

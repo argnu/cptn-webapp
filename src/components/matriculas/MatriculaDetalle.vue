@@ -180,7 +180,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Contactos"
+                  :headers="$options.headers.Contactos"
                   :items="matricula.entidad.contactos"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -209,7 +209,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.CondicionesAfip"
+                  :headers="$options.headers.CondicionesAfip"
                   :items="matricula.entidad.condiciones_afip"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -233,7 +233,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Formaciones"
+                  :headers="$options.headers.Formaciones"
                   :items="matricula.entidad.formaciones"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -293,7 +293,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Subsidiarios"
+                  :headers="$options.headers.Subsidiarios"
                   :items="matricula.entidad.subsidiarios"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -325,7 +325,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Representantes"
+                  :headers="$options.headers.Representantes"
                   :items="matricula.entidad.representantes"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -360,6 +360,8 @@ export default {
   name: 'MatriculaDetalle',
   props: ['matricula'],
 
+  headers: headers,
+
   data() {
     return {
       expand: {
@@ -376,10 +378,6 @@ export default {
   },
 
   computed: {
-    headers: function() {
-      return headers;
-    },
-
     domicilioReal: function() {
       if (!this.matricula.entidad.domicilios.length) return null;
       let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'real');

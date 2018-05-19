@@ -12,19 +12,21 @@
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
             <v-flex xs4 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
                     label="Nombre"
+                    uppercase
                     v-model="institucion.nombre"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
             </v-flex>
 
             <v-flex xs4 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
                     label="CUE"
+                    uppercase
                     v-model="institucion.cue"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
             </v-flex>
 
             <v-flex xs4 class="mx-5 mb-3">
@@ -92,11 +94,12 @@
                 </v-layout>
 
                 <v-layout xs12 class="mx-5">
-                    <v-text-field
+                    <input-texto
                         label="Dirección"
+                        uppercase
                         v-model="institucion.domicilio.direccion"
                     >
-                    </v-text-field>
+                    </input-texto>
                 </v-layout>
             </v-flex>
         </v-layout>
@@ -109,12 +112,13 @@
 
         <v-layout row>
             <v-flex xs5 class="mx-5">
-                <v-text-field
+                <input-texto
                     label="Nombre"
+                    uppercase
                     v-model="nuevo_titulo.nombre"
                     :rules="[rules.required]"
                 >
-                </v-text-field>
+                </input-texto>
 
                 <v-select
                     label="Tipo de Matrícula"
@@ -234,6 +238,7 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
+import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
 
@@ -243,6 +248,10 @@ export default {
     props: ['id'],
 
     mixins: [MixinValidator],
+
+    components: {
+        InputTexto
+    },
 
     headers: [
         Header('', 'acciones'),

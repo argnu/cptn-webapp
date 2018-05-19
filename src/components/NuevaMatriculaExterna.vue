@@ -29,6 +29,7 @@
                 <input-texto
                     label="Nombre"
                     type="letras"
+                    uppercase
                     v-model="matricula.persona.nombre"
                     :rules="[rules.required]"
                 ></input-texto>  
@@ -43,6 +44,7 @@
                 <input-texto
                     type="letras"
                     label="Apellido"
+                    uppercase
                     v-model="matricula.persona.apellido"
                     :rules="[rules.required]"
                 ></input-texto>                  
@@ -62,17 +64,19 @@
               <v-flex xs4 class="mx-4">
                 <input-texto
                     label="N° Matrícula"
+                    uppercase
                     v-model="matricula.numeroMatricula"
                     :rules="[rules.required]"
                 ></input-texto>
               </v-flex>
 
               <v-flex xs4>
-                <v-text-field
+                <input-texto
                     label="Nombre Institución"
+                    uppercase
                     v-model="matricula.nombreInstitucion"
                     :rules="[rules.required]"
-                ></v-text-field>                 
+                ></input-texto>                 
               </v-flex>
 
               <v-flex xs4 class="mx-4">              

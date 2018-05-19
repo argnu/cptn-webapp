@@ -14,17 +14,12 @@
     <br>
 
     <v-data-table
-        :headers="headers"
+        :headers="$options.headers"
         :items="comprobante.items"
         class="elevation-1"
         no-data-text="No hay items"
         hide-actions
-        >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
+    >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
@@ -34,17 +29,12 @@
 
     <br>
     <v-data-table
-        :headers="headers_pagos"
+        :headers="$options.headers_pagos"
         :items="comprobante.pagos"
         class="elevation-1"
         no-data-text="No hay pagos"
         hide-actions
     >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
       <template slot="items" slot-scope="props">
         <td>{{ getFormaPago(props.item.forma_pago) }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
@@ -58,17 +48,6 @@
 import api from '@/services/api'
 import * as utils from '@/utils';
 
-const headers = [
-  { text: 'N°', value: 'item' },
-  { text: 'Descripción', value: 'descripcion' },
-  { text: 'Importe', value: 'importe' }
-];
-
-const headers_pagos = [
-  { text: 'Forma de Pago', value: 'forma_pago' },
-  { text: 'Fecha', value: 'fecha' },
-  { text: 'Importe', value: 'importe' }
-];
 
 let formas_pago = [];
 
@@ -82,15 +61,17 @@ export default {
     }
   },
 
-  computed: {
-    headers: function() {
-      return headers;
-    },
+  headers: [
+    { text: 'N°', value: 'item' },
+    { text: 'Descripción', value: 'descripcion' },
+    { text: 'Importe', value: 'importe' }
+  ],
 
-    headers_pagos: function() {
-      return headers_pagos;
-    }
-  },
+  headers_pagos: [
+    { text: 'Forma de Pago', value: 'forma_pago' },
+    { text: 'Fecha', value: 'fecha' },
+    { text: 'Importe', value: 'importe' }
+  ],
 
   created: function() {
     api.get('/opciones?sort=+valor')

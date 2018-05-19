@@ -19,17 +19,12 @@
     <br>
 
     <v-data-table
-        :headers="headers"
+        :headers="$options.headers"
         :items="boleta.items"
         class="elevation-1"
         no-data-text="No hay items"
         hide-actions
-        >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
+    >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
@@ -40,32 +35,15 @@
 </template>
 
 <script>
-import * as utils from '@/utils';
-
-const headers = [
-  { text: 'N°', value: 'item' },
-  { text: 'Descripción', value: 'descripcion' },
-  { text: 'Importe', value: 'importe' }
-];
-
 export default {
   name: 'DetalleBoleta',
   props: ['boleta'],
 
-  data () {
-    return {
-    }
-  },
-
-  computed: {
-    headers: function() {
-      return headers;
-    }
-  },
-
-  methods: {
-  },
-
+  headers: [
+    { text: 'N°', value: 'item' },
+    { text: 'Descripción', value: 'descripcion' },
+    { text: 'Importe', value: 'importe' }
+  ],
 }
 </script>
 

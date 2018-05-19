@@ -2,12 +2,13 @@
     <v-text-field
         ref="input"
         :tabindex="tabindex"
+        :maxlength="maxlength"
         :prefix="prefix"
         :suffix="suffix"
         :label="label"
         :rules="rules"
         :disabled="disabled"
-        :value="formatted"
+        :value="value"
         :prepend-icon="prependIcon"
         @keypress="keypress($event)"
         @input="update($event)"
@@ -61,23 +62,21 @@ export default {
       },
 
       type: {
-          type: String,
-          default: () => 'alfanumerico'
+          type: String
       },
 
       prependIcon: {
           type: String
-      }
-    },
+      },
 
-    computed: {
-        formatted: function() {
-            return this.value && this.uppercase ? this.value.toUpperCase() : '';
-        }
+      maxlength: {
+          type: [String, Number]
+      }
     },
 
     methods: {
         keypress: function(e) {
+            if (!this.type) return true;
             if (e.charCode == 32) return true;
 
             let regexp = /[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ'`]{1}/;
@@ -88,7 +87,13 @@ export default {
         },
 
         update: function(e) {
-            if (e) this.$emit('input', e);
+            if (e) this.$emit('input', this.format(e));
+        },
+
+        format: function(e) {
+            if (!e) return '';
+            else if (this.uppercase) return e.toUpperCase();
+            else return e;
         }
     }
 

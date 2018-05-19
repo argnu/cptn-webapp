@@ -87,12 +87,13 @@
                 <v-form ref="form_titulo" lazy-validation>
                     <v-layout>
                         <v-flex xs12 md3 class="mx-4">
-                            <v-text-field
+                            <input-texto
                                 label="Nombre"
+                                uppercase
                                 v-model="nuevo_titulo.nombre"
                                 :rules="[rules.required]"
                             >
-                            </v-text-field>
+                            </input-texto>
 
                             <v-select
                                 label="Incumbencias"
@@ -173,6 +174,7 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
+import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
 
@@ -182,6 +184,10 @@ export default {
     props: ['id'],
 
     mixins: [MixinValidator],
+
+    components: {
+        InputTexto
+    },
 
     headers: [
         Header('', 'acciones'),
