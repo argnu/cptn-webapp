@@ -33,9 +33,12 @@
               <td class="justify-center layout px-0">
                 <v-btn
                   v-if="props.item.tipo == 'volante'"
-                  fab dark small @click="imprimirVolante(props.item.id)" color="primary"
+                  small icon
+                  class="mx-0"
+                  title="Imprimir"
+                  @click="imprimirVolante(props.item.id)"
                 >
-                  <v-icon>print</v-icon>
+                  <v-icon color="secondary">print</v-icon>
                 </v-btn>
               </td>              
             </tr>
@@ -264,7 +267,7 @@ export default {
     updateBoletas: function() {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
-      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false&vencido=false`;
 
       Promise.all([
         api.get(url_boletas),
