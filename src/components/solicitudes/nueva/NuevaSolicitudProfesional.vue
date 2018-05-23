@@ -817,6 +817,7 @@
                         item-value="id"
                         v-model="nueva_caja"
                         :rules="[rules.required]"
+                        return-object
                       ></input-select-new>
                     </v-flex>
                      <v-flex xs3>
@@ -838,9 +839,12 @@
                             <v-icon color="red">delete</v-icon>
                           </v-btn>
                         </td>
-                        <td v-if="props.item.caja">{{ props.item.caja.nombre }}</td>
-                        <td v-else-if="props.item.nombre">{{ props.item.nombre }}</td>
-                        <td v-else>{{ getNombreCaja(props.item) }}</td>
+                        <template v-if="props.item.caja">
+                          <td>{{ props.item.caja.nombre }}</td>
+                        </template>
+                        <template v-else>
+                          <td>{{ props.item.nombre }}</td>
+                        </template>
                       </template>
                     </v-data-table>
                   </v-form>
@@ -1161,7 +1165,7 @@ export default {
       if (!this.solicitud.entidad.cajas_previsionales.length) return this.cajas_previsionales;
       return this.cajas_previsionales.filter(c =>
         !this.solicitud.entidad.cajas_previsionales.find(cp => {
-         return cp == c.nombre || cp == c.id || this.getNombreCaja(cp) == c.nombre
+         return cp == c.nombre || cp == c.id || cp.nombre == c.nombre
         })
       );
     },
@@ -1283,7 +1287,8 @@ export default {
       this.solicitud.entidad.empresa = entidad.empresa;
       this.solicitud.entidad.independiente = entidad.independiente;
       this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales.map(c => c.caja.id);
+      console.log(JSON.parse(JSON.stringify(entidad.cajas_previsionales)))
+      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
       this.solicitud.entidad.jubilado = entidad.jubilado;
 
       this.solicitud.entidad.domicilios = entidad.domicilios;
@@ -1314,6 +1319,12 @@ export default {
       }
     },
 
+    updateCajas: function() {
+      return api.get('/cajas-previsionales?sort=+nombre')
+      .then(r => this.cajas_previsionales = r.data)
+      .catch(e => console.error(e));
+    },
+
     getInstitucion: function(item) {
       if (item.titulo.institucion) return item.titulo.institucion.nombre;
       return this.instituciones.find(i => item.institucion == i.id).nombre;
@@ -1326,14 +1337,6 @@ export default {
 
     getVinculo: function(id) {
       return this.opciones.vinculo.find(i => id == i.id).valor;
-    },
-
-    getNombreCaja: function(item) {
-      if (typeof item == 'string') return item;
-      else {
-        let caja = this.cajas_previsionales.find(i => item == i.id);
-        return caja ? caja.nombre : '';
-      }
     },
 
     chgDni: function() {
@@ -1451,14 +1454,23 @@ export default {
 
     addCaja: function() {
       if (this.$refs.form_beneficiario.validate()) {
-        let caja;
-        if (typeof this.nueva_caja == 'number') caja = this.nueva_caja;
-        if (typeof this.nueva_caja == 'string') caja = { nombre: this.nueva_caja };
-
-        if (this.solicitud.entidad.cajas_previsionales.indexOf(this.getNombreCaja(caja)) == -1) {
-          this.solicitud.entidad.cajas_previsionales.push(caja);
+        
+        if (typeof this.nueva_caja == 'object') {
+          this.solicitud.entidad.cajas_previsionales.push(this.nueva_caja);
           this.nueva_caja = '';
           this.$refs.form_beneficiario.reset();
+        }
+        else if (typeof this.nueva_caja == 'string') {
+          api.post('/cajas-previsionales', { nombre: this.nueva_caja })
+          .then(caja => {
+            this.updateCajas()
+            .then(() => {
+              this.solicitud.entidad.cajas_previsionales.push(caja.data);
+              this.nueva_caja = '';
+              this.$refs.form_beneficiario.reset();
+            })
+          })
+          .catch(e => console.log(e));
         }
       }
     },
@@ -1495,6 +1507,13 @@ export default {
       solicitud.entidad.formaciones.forEach(f => {
         if (f.titulo.id) f.titulo = f.titulo.id;
       });
+
+      solicitud.entidad.cajas_previsionales = solicitud.entidad.cajas_previsionales.map(c => {
+        if (c.caja) return c;
+        else return c.id;
+      });
+
+      console.log(solicitud.entidad.cajas_previsionales)
 
       form_data.append('solicitud', JSON.stringify(solicitud));
       return form_data;
