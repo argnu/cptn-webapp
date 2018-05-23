@@ -104,7 +104,7 @@
                     uppercase
                     v-model="nuevo_comitente.persona.apellido"
                     :rules="[rules.required]"
-                  ></input-texto>                   
+                  ></input-texto>
 
                     <input-numero
                       label="Porcentaje"
@@ -134,7 +134,7 @@
                       @change="chgCuitComitente"
                       :rules="[rules.cuit]"
                     >
-                    </input-numero>                  
+                    </input-numero>
 
                   <v-text-field
                     label="Telefono"
@@ -153,31 +153,23 @@
             <v-layout row class="mt-4">
               <v-flex xs12 class="mx-4">
                 <v-data-table
-                    :headers="headers.comitentes"
+                    :headers="$options.headers.comitentes"
                     :items="legajo.comitentes"
                     class="elevation-4"
                     no-data-text="No hay comitentes"
                     hide-actions
                 >
-                  <template slot="headers" slot-scope="props">
-                    <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                      <b>{{ header.text }}</b>
-                    </th>
-                    <th></th>
-                  </template>
                   <template slot="items" slot-scope="props">
-                    <tr>
+                      <td class="justify-center layout px-0">
+                        <v-btn icon small class="mx-0" @click="rmComitente(props.index)" v-if="!legajo.id">
+                          <v-icon color="red">delete</v-icon>
+                        </v-btn>
+                      </td>
                       <td>{{ props.item.persona.cuit }}</td>
                       <td>{{ props.item.persona.nombre }}</td>
                       <td>{{ props.item.persona.apellido ? props.item.persona.apellido : '' }}</td>
                       <td>{{ props.item.persona.dni ? props.item.persona.dni : '' }}</td>
                       <td>{{ props.item.porcentaje }}</td>
-                      <td>
-                        <v-btn fab small @click="rmComitente(props.index)" v-if="!legajo.id">
-                          <v-icon>delete</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
                   </template>
                 </v-data-table>
 
@@ -366,27 +358,20 @@
             <v-layout row wrap class="mt-3">
               <v-flex xs12>
                 <v-data-table
-                    :headers="headers.items"
+                    :headers="$options.headers.items"
                     :items="legajo.items"
                     class="elevation-4"
                     no-data-text="No hay items"
                     hide-actions
                 >
-                  <template slot="headers" slot-scope="props">
-                    <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                      <b>{{ header.text }}</b>
-                    </th>
-                  </template>
                   <template slot="items" slot-scope="props">
-                    <tr>
-                      <td>{{ getDescItem(props.item.item) }}</td>
-                      <td>{{ props.item.valor }}</td>
-                      <td>
-                        <v-btn fab small @click="removeItem(props.index)" v-if="!legajo.id">
-                          <v-icon>delete</v-icon>
+                      <td class="justify-center layout px-0">
+                        <v-btn icon small class="mx-0" @click="removeItem(props.index)" v-if="!legajo.id">
+                          <v-icon color="red">delete</v-icon>
                         </v-btn>
                       </td>
-                    </tr>
+                      <td>{{ getDescItem(props.item.item) }}</td>
+                      <td>{{ props.item.valor }}</td>
                   </template>
                 </v-data-table>
               </v-flex>
@@ -627,22 +612,6 @@ const tipo_persona = [
   Header('Jurídica', 'juridica')
 ]
 
-const headers = {
-  items: [
-    Header('Descripción', 'descripcion', false),
-    Header('Valor', 'valor', false)
-  ],
-
-  comitentes: [
-    Header('CUIT/CUIL', 'cuit', false),
-    Header('Nombre', 'nombre', false),
-    Header('Apellido', 'apellido', false),
-    Header('DNI', 'dni', false),
-    Header('%', 'porcentaje', false)
-  ]
-}
-
-
 const LegajoItem = () => ({
   item: '',
   valor: ''
@@ -684,6 +653,23 @@ export default {
 
   mixins: [MixinValidator],
 
+  headers: {
+    items: [
+      Header('', 'acciones'),
+      Header('Descripción', 'descripcion', false),
+      Header('Valor', 'valor', false)
+    ],
+
+    comitentes: [
+      Header('', 'acciones'),
+      Header('CUIT/CUIL', 'cuit', false),
+      Header('Nombre', 'nombre', false),
+      Header('Apellido', 'apellido', false),
+      Header('DNI', 'dni', false),
+      Header('%', 'porcentaje', false)
+    ]    
+  },
+
   data () {
     return {
       legajo: Legajo(),
@@ -715,10 +701,6 @@ export default {
 
     tipo_persona: function() {
       return tipo_persona;
-    },
-
-    headers: function() {
-      return headers;
     },
 
     subcategorias: function() {
@@ -784,7 +766,7 @@ export default {
       this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
       this.changePais()
       .then(() => this.changeProvincia())
-      .then(() => this.changeDepartamento());        
+      .then(() => this.changeDepartamento());
 
       return api.get(`/matriculas/${this.id_matricula}`);
       }
