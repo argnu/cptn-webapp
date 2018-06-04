@@ -1,59 +1,24 @@
 <template>
     <v-text-field
-        ref="input"
-        :tabindex="tabindex"
-        :maxlength="maxlength"
-        :prefix="prefix"
-        :suffix="suffix"
-        :label="label"
-        :rules="rules"
-        :disabled="disabled"
+        v-bind="$attrs"
         :value="value"
-        :prepend-icon="prependIcon"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
 </template>
 
 <script>
+import Vue from 'vue'
+import { isMobile } from '@/utils'
 
 export default {
     name: 'InputTexto',
+    inheritAttrs: false,
+    
     props: {
-      label: {
-          type: String,
-          default: ''
-      },
-
-      disabled: {
-          type: Boolean,
-          default: () => false
-      },
-
       value: {
         //   type: String,
           required: true
-      },
-
-      rules: {
-          type: Array,
-          default () {
-            return [];
-          }
-      },
-
-      suffix: {
-          type: String,
-          default: () => ''
-      },
-
-      prefix: {
-          type: String,
-          default: () => ''
-      },
-
-      tabindex: {
-          type: String
       },
 
       uppercase: {
@@ -63,14 +28,6 @@ export default {
 
       type: {
           type: String
-      },
-
-      prependIcon: {
-          type: String
-      },
-
-      maxlength: {
-          type: [String, Number]
       }
     },
 
@@ -87,7 +44,8 @@ export default {
         },
 
         update: function(e) {
-            if (e) this.$emit('input', this.format(e));
+            if (isMobile()) this.$emit('input', e);
+            else this.$emit('input', this.format(e));
         },
 
         format: function(e) {

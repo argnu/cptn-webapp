@@ -128,3 +128,8 @@ export function diffDatesStr(d1, d2) {
 
   return str;
 }
+
+
+export function isMobile(){ 
+  return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}
