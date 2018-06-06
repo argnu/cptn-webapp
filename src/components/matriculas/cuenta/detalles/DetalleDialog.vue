@@ -8,8 +8,11 @@
         <template v-if="item.tipo == 'boleta'">
           <detalle-boleta :boleta="item"></detalle-boleta>
         </template>
-        <template v-if="item.tipo == 'comprobante'">
+        <template v-else-if="item.tipo == 'comprobante'">
           <detalle-comprobante :comprobante="item"></detalle-comprobante>
+        </template>
+        <template v-else-if="item.tipo == 'volante'">
+          <detalle-volante-pago :volante="item"></detalle-volante-pago>
         </template>
       </v-card-text>
       <v-card-actions>
@@ -26,10 +29,19 @@
 <script>
 import DetalleBoleta from './DetalleBoleta';
 import DetalleComprobante from './DetalleComprobante';
+import DetalleVolantePago from './DetalleVolantePago';
 
 export default {
   name: 'DetalleDialog',
+  
   props: ['item'],
+
+  components: {
+    DetalleBoleta,
+    DetalleComprobante,
+    DetalleVolantePago
+  },
+
   data () {
     return {
       show: false
@@ -47,11 +59,6 @@ export default {
     mostrar: function() {
       this.show = true;
     }
-  },
-
-  components: {
-    DetalleBoleta,
-    DetalleComprobante
   }
 
 }

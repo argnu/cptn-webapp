@@ -116,12 +116,17 @@ import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import InputTexto from '@/components/base/InputTexto'
 
 
 export default {
     name: 'UsuarioNuevo',
 
     mixins: [MixinValidator],
+
+    components: {
+        InputTexto
+    },
 
     headers: [
         Header('Borrar', 'borrar'),

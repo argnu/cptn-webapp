@@ -16,9 +16,7 @@
           <span :class="{ 'black--text': tab_selected == 'tab-detalle' }">Detalle</span>
         </v-tab>
         <v-tab href="#tab-cuenta">
-          <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">
-            account_balance
-          </v-icon>
+          <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">account_balance</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
         </v-tab>
         <v-tab href="#tab-pendientes">
@@ -39,27 +37,32 @@
         </v-tab-item>
 
         <v-tab-item id="tab-cuenta">
-          <resumen-cuenta 
+          <resumen-cuenta
+            v-if="tab_selected == 'tab-cuenta'" 
             :id="matricula.id"
             ref="resumen"
-          >
-          </resumen-cuenta>
+          ></resumen-cuenta>
         </v-tab-item>
 
         <v-tab-item id="tab-pendientes">
           <deudas-pendientes 
+            v-if="tab_selected == 'tab-pendientes'"
             :id="matricula.id" 
-            @update="updateDeudas"
-          >            
-          </deudas-pendientes>
+          ></deudas-pendientes>
         </v-tab-item>
 
         <v-tab-item id="tab-legajo">
-          <legajo-lista :id="matricula.id"></legajo-lista>
+          <legajo-lista 
+            v-if="tab_selected == 'tab-legajo'"
+            :id="matricula.id"
+          ></legajo-lista>
         </v-tab-item>
 
         <v-tab-item id="tab-historial">
-          <matricula-historial :id="matricula.id"></matricula-historial>
+          <matricula-historial 
+            v-if="tab_selected == 'tab-historial'"
+            :id="matricula.id"
+          ></matricula-historial>
         </v-tab-item>
 
     </v-tabs>
@@ -113,10 +116,6 @@ export default {
       api.patch(`/matriculas/${this.id_matricula}`, { estado: 13 })
       .then(r => this.update())
       .catch(e => console.error(e));
-    },
-
-    updateDeudas: function() {
-      this.$refs.resumen.updateBoletas();
     }
   }
 

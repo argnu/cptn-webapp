@@ -14,84 +14,89 @@
       </v-list>
     </v-toolbar>
 
-    <v-list class="pt-0" dense>
-      <v-divider class="mb-3"></v-divider>
-      <v-subheader class="bold" v-text="'Solicitudes'"></v-subheader>
-      <v-list-tile  v-for="item in $options.items" :key="item.title" @click="goto(item.route)">
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
+    <v-list>
 
-      <v-divider class="mb-3"></v-divider>
-      <v-subheader class="bold" v-text="'Matriculados'"></v-subheader>
-      <v-list-tile @click="goto('/matriculas/lista')">
-        <v-list-tile-action>
-          <v-icon>view_list</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>Listar</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-
-      <v-divider class="mb-3"></v-divider>
-      <v-subheader class="bold" v-text="'Instituciones'"></v-subheader>
-      <v-list-tile @click="goto('/instituciones/nueva')">
-        <v-list-tile-action>
-          <v-icon>school</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>Nueva</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="goto('/instituciones/lista')">
-        <v-list-tile-action>
-          <v-icon>view_list</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>Listar</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-
-      <template v-if="user.admin">
-        <v-divider class="mb-3"></v-divider>
-        <v-subheader class="bold" v-text="'Usuarios'"></v-subheader>
-        <v-list-tile @click="goto('/usuarios/nuevo')">
-          <v-list-tile-action>
-            <v-icon>account_circle</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Nuevo</v-list-tile-title>
-          </v-list-tile-content>
+      <v-list-group
+        prepend-icon="description"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Solicitudes</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/usuarios/lista')">
-          <v-list-tile-action>
-            <v-icon>view_list</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Listar</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>        
-      </template>
 
-      <template v-if="user.admin">
-        <v-divider class="mb-3"></v-divider>
-        <v-subheader class="bold" v-text="'Sistema'"></v-subheader>
-        <v-list-tile @click="goto('/configuracion')">
-          <v-list-tile-action>
-            <v-icon>settings</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Configuración</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>       
-      </template>
+        <v-list-tile @click="goto('/solicitudes/profesionales/nueva')">
+          <v-list-tile-sub-title>Nuevo Profesional</v-list-tile-sub-title>
+        </v-list-tile>
+        <v-list-tile @click="goto('/solicitudes/empresas/nueva')">
+          <v-list-tile-sub-title>Nueva Empresa</v-list-tile-sub-title>
+        </v-list-tile>
+        <v-list-tile @click="goto('/solicitudes/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
 
       <v-divider></v-divider>
-      <br>
+
+      <v-list-group
+        prepend-icon="assignment"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Matrículas</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/matriculas/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-group
+        prepend-icon="school"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Instituciones</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/instituciones/nueva')">
+          <v-list-tile-sub-title>Agregar Nueva</v-list-tile-sub-title>
+        </v-list-tile>
+        <v-list-tile @click="goto('/instituciones/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-group
+        prepend-icon="account_circle"
+        v-if="user.admin"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Usuarios</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/usuarios/nuevo')">
+          <v-list-tile-sub-title>Agregar Nuevo</v-list-tile-sub-title>
+        </v-list-tile>
+        <v-list-tile @click="goto('/usuarios/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-group
+        prepend-icon="settings"
+        v-if="user.admin"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Sistema</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/configuracion')">
+          <v-list-tile-sub-title>Configuración</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -105,12 +110,6 @@ export default {
       show_drawer: false,
     }
   },
-
-  items: [
-    { title: 'Listar', icon: 'view_list', route: '/solicitudes/lista' },
-    { title: 'Nuevo Profesional', icon: 'account_circle', route: '/solicitudes/profesionales/nueva' },
-    { title: 'Nueva Empresa', icon: 'business', route: '/solicitudes/empresas/nueva' }
-  ],
 
   computed: {
     full_name: function() {
@@ -133,7 +132,4 @@ export default {
 </script>
 
 <style>
-.bold {
-  font-weight: bold;
-}
 </style>

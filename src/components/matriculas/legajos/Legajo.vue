@@ -122,14 +122,14 @@
                       label="DNI"
                       maxlength="8"
                       v-model="nuevo_comitente.persona.dni"
-                      :rules="[rules.required, rules.integer]"
+                      :rules="[rules.required, rules.integer, rules.dni]"
                       @change="chgDni"
                     ></input-numero>
 
                     <input-numero
                       label="CUIT/CUIL"
                       tabindex="7"
-                      maxlength="9"
+                      maxlength="11"
                       v-model="nuevo_comitente.persona.cuit"
                       @change="chgCuitComitente"
                       :rules="[rules.cuit]"
@@ -141,11 +141,19 @@
                     tabindex="8"
                     v-model="nuevo_comitente.persona.telefono"
                   ></v-text-field>
-
-
-                  <v-btn @click="addComitente" tabindex="10">Agregar</v-btn>
                 </v-flex>
             </v-layout>
+
+            <v-layout row>
+              <v-flex xs12>
+                <v-btn class="right" @click="guardarComitente" tabindex="10">
+                  {{ comitente_edit != null ? 'Guardar' : 'Agregar' }}
+                </v-btn>
+                <v-btn class="right" v-show="comitente_edit != null" @click="cancelarEditComitente">
+                  Cancelar
+                </v-btn>
+              </v-flex>
+            </v-layout>            
 
             </v-form>
 
@@ -163,6 +171,9 @@
                       <td class="justify-center layout px-0">
                         <v-btn icon small class="mx-0" @click="rmComitente(props.index)" v-if="!legajo.id">
                           <v-icon color="red">delete</v-icon>
+                        </v-btn>
+                        <v-btn icon small class="mx-4" @click="editComitente(props.index)" v-if="!legajo.id">
+                          <v-icon color="deep-purple">edit</v-icon>
                         </v-btn>
                       </td>
                       <td>{{ props.item.persona.cuit }}</td>
@@ -318,7 +329,7 @@
             </v-layout>
 
             <v-layout row wrap class="mt-3" v-if="!legajo.id">
-              <v-flex xs4 class="ml-4">
+              <v-flex xs3 class="ml-4">
                 <typeahead
                   tabindex="19"
                   label="Item"
@@ -331,7 +342,7 @@
                 </typeahead>
               </v-flex>
 
-              <v-flex xs4 class="ml-4">
+              <v-flex xs3 class="ml-4">
                 <typeahead
                   tabindex="20"
                   label="Valor"
@@ -343,14 +354,23 @@
                 </typeahead>
               </v-flex>
 
-              <v-flex xs3 class="mx-3">
+              <v-flex xs1 class="mx-3" v-show="tareaitem_edit != null">
+                <v-btn
+                  light
+                  @click="cancelarEditTareaItem"
+                >
+                  Cancelar
+                </v-btn>
+              </v-flex>
+              
+              <v-flex xs2 class="mx-3">
                 <v-btn
                   tabindex="21"
                   light
-                  @click="addItem"
+                  @click="guardarItem"
                   :disabled="item_invalid"
                 >
-                  Agregar
+                  {{ tareaitem_edit ? 'Guardar' : 'Agregar' }}
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -369,6 +389,9 @@
                         <v-btn icon small class="mx-0" @click="removeItem(props.index)" v-if="!legajo.id">
                           <v-icon color="red">delete</v-icon>
                         </v-btn>
+                        <v-btn icon small class="mx-4" @click="editTareaItem(props.index)" v-if="!legajo.id">
+                          <v-icon color="deep-purple">edit</v-icon>
+                        </v-btn>                        
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
@@ -589,8 +612,10 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import api from '@/services/api'
 import * as moment from 'moment'
+import * as utils from '@/utils'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
@@ -667,7 +692,7 @@ export default {
       Header('Apellido', 'apellido', false),
       Header('DNI', 'dni', false),
       Header('%', 'porcentaje', false)
-    ]    
+    ]
   },
 
   data () {
@@ -690,6 +715,8 @@ export default {
       items_predeterminados: [],
       items_valores_predeterminados: [],
       nuevo_item: LegajoItem(),
+      comitente_edit: null,
+      tareaitem_edit: null,
       submitted: false
     }
   },
@@ -834,11 +861,18 @@ export default {
       }
     },
 
-    addComitente: function() {
+    guardarComitente: function() {
       if (this.$refs.form_comitente.validate()) {
-        this.legajo.comitentes.push(this.nuevo_comitente);
-        this.chgTipoComitente();
-        this.$refs.form_comitente.reset()
+        if (this.comitente_edit != null) {
+          Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
+          this.comitente_edit = null;
+        }
+        else { 
+          this.legajo.comitentes.push(this.nuevo_comitente);
+        }
+        
+        this.nuevo_comitente = new Comitente('fisica');
+        this.$refs.form_comitente.reset();
       }
     },
 
@@ -846,19 +880,45 @@ export default {
       this.legajo.comitentes.splice(index, 1);
     },
 
-    addItem: function() {
+    editComitente: function(index) {
+      this.$refs.form_comitente.reset();
+      this.comitente_edit = index;
+      this.nuevo_comitente = utils.clone(this.legajo.comitentes[index]);
+    },
+
+    cancelarEditComitente: function() {
+      this.comitente_edit = null;
+      this.nuevo_comitente = new Comitente('fisica');
+      this.$refs.form_comitente.reset();
+    },
+
+    guardarItem: function() {
       if (typeof this.nuevo_item.item == 'string') {
         this.nuevo_item.item = {
           descripcion: this.nuevo_item.item
         }
       };
 
-      this.legajo.items.push(this.nuevo_item);
+      if (this.tareaitem_edit != null) {
+        Vue.set(this.legajo.items, this.tareaitem_edit, this.nuevo_item);
+      }
+      else this.legajo.items.push(this.nuevo_item);
       this.nuevo_item = LegajoItem();
     },
 
     removeItem: function(index) {
       this.legajo.items.splice(index, 1);
+    },
+
+    editTareaItem: function(index) {
+      this.tareaitem_edit = index;
+      this.nuevo_item = utils.clone(this.legajo.items[index]);  
+      if (this.legajo.items[index].item.descripcion) this.nuevo_item.item = this.legajo.items[index].item.descripcion;
+    },
+
+    cancelarEditTareaItem: function() {
+      this.tareaitem_edit = null;
+      this.nuevo_item = LegajoItem();
     },
 
     getDescItem: function(item) {
