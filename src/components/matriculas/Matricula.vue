@@ -55,7 +55,10 @@
         </v-tab-item>
 
         <v-tab-item id="tab-legajo">
-          <legajo-lista :id="matricula.id"></legajo-lista>
+          <legajo-lista 
+            :id="matricula.id"
+            :show-add="matricula.estado.id == 13"
+          ></legajo-lista>
         </v-tab-item>
 
         <v-tab-item id="tab-historial">

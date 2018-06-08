@@ -15,7 +15,7 @@
 
                   <v-flex xs6>
                     <div class="mb-3">
-                      Estado: {{ matricula.estado }}
+                      Estado: {{ matricula.estado.valor }}
                     </div>
                   </v-flex>
                 </v-layout>

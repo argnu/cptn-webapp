@@ -204,7 +204,7 @@
             <td>{{ props.item.entidad.nombre }}</td>
             <td>{{ props.item.entidad.cuit }}</td>
           </template>
-        <td>{{ props.item.estado }}</td>
+        <td>{{ props.item.estado.valor }}</td>
         <td>
           <v-menu>
             <v-btn icon slot="activator">
@@ -212,7 +212,7 @@
             </v-btn>
             
             <v-list>
-              <v-list-tile v-if="props.item.estado == 'Habilitado'">
+              <v-list-tile v-if="props.item.estado.id == 13">
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>
                     <div slot="activator">

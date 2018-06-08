@@ -3,7 +3,9 @@
     <v-flex xs12>
       <v-card class="mt-5">
         <v-card-text>
+          <!--Solo si el estado es habilitado!-->
           <v-btn
+            v-if="showAdd"
             absolute dark fab top right
             color="green"
             @click="nuevoLegajo"
@@ -48,7 +50,10 @@ export default {
 
   name: 'LegajoLista',
 
-  props: ['id'],
+  props: {
+    id: Number, 
+    showAdd: Boolean
+  },
 
   headers: [
     Header('Fecha', 'fecha_solicitud', true),

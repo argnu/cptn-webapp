@@ -68,7 +68,7 @@
             <v-toolbar dark color="primary">
             <v-toolbar-title class="white--text">{{ edit ? 'Modificar' : 'Agregar' }} Variable</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon @click="show_dialog = false">
+            <v-btn icon @click="cerrarDialog">
                 <v-icon>close</v-icon>
             </v-btn>
             </v-toolbar>
@@ -76,7 +76,7 @@
                 ref="form_variable"
                 v-model="variable_form"
                 @guardar="guardar"
-                @cancelar="show_dialog = false"
+                @cancelar="cerrarDialog"
             ></variable-global>
 
             <br>
@@ -88,6 +88,8 @@
                 :value="error_msg.length > 0"
                 transition="scale-transition"
             >{{ error_msg }}</v-alert>              
+
+            <br>
         </v-card>
     </v-dialog>
   </v-container>
@@ -213,6 +215,11 @@ export default {
                     .catch(e => console.error(e));                    
                 }
             }
+        },
+
+        cerrarDialog: function() {
+            this.error_msg = '';
+            this.show_dialog = false;
         }
 
     }
