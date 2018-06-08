@@ -7,7 +7,7 @@
             label="DNI"
             maxlength="8"
             v-model="nuevo_subsidiario.dni"
-            :rules="[rules.required, rules.integer]"
+            :rules="[rules.required, rules.integer, rules.dni]"
         ></input-numero>
 
         <input-texto
