@@ -9,3 +9,10 @@ export class Entidad {
         this.condiciones_afip = [];
     }
 }
+
+export class EntidadCondicionAfip {
+  constructor() {
+    this.condicion_afip = '';
+    this.descripcion = '';
+  }
+}

@@ -1,31 +1,6 @@
 <template>
     <v-layout row wrap v-if="matricula.entidad">
         <span class="ma-2"></span>
-        <v-expansion-panel expand>
-          <v-expansion-panel-content v-model="expand.basicos" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Datos Básicos</b></div>
-            <v-card class="white">
-              <v-card-text>
-                <v-layout row wrap class="mx-5">
-                  <v-flex xs6>
-                    <div class="mb-3">
-                      Número de Matrícula: {{ matricula.numeroMatricula }}
-                    </div>
-                  </v-flex>
-
-                  <v-flex xs6>
-                    <div class="mb-3">
-                      Estado: {{ matricula.estado.valor }}
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <br>
-
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
           <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Datos de la Empresa</b></div>
@@ -66,7 +41,15 @@
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Datos del Profesional</b></div>
-            <v-card >
+            <v-card>
+              <v-btn 
+                class="right primary" 
+                v-if="user.admin"
+                @click.native="$emit('editProfesional')"
+              >
+                <v-icon dark class="mr-2">edit</v-icon>
+                Modificar Datos
+              </v-btn>              
               <v-card-text>
                 <v-layout row wrap class="mx-5">
                   <v-flex xs6>
@@ -95,10 +78,10 @@
                       Nacionalidad: {{ matricula.entidad.nacionalidad }}
                     </div>
                     <div class="mb-3">
-                      Sexo: {{ matricula.entidad.sexo }}
+                      Sexo: {{ matricula.entidad.sexo.valor }}
                     </div>
                     <div class="mb-3">
-                      Estado Civil: {{ matricula.entidad.estadoCivil }}
+                      Estado Civil: {{ matricula.entidad.estadoCivil.valor }}
                     </div>
                     <div class="mb-3">
                       Observaciones: {{ matricula.entidad.observaciones }}
@@ -359,8 +342,7 @@ export default {
   data() {
     return {
       expand: {
-        basicos: true,
-        detalle: false,
+        detalle: true,
         domicilios: false,
         contactos: false,
         formaciones: false,
@@ -389,11 +371,7 @@ export default {
       let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'especial');
       return dom ? dom.domicilio : null;
     }
-  },
-
-  methods: {
-
-  },
+  }
 
 }
 </script>

@@ -1,4 +1,5 @@
 <template>
+<v-container>
   <v-layout row wrap>
     <v-flex xs12>
       <v-card class="mt-5">
@@ -23,13 +24,13 @@
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td>{{ props.item.descripcion }}</td>
               <td class="justify-center layout px-0">
-                <v-btn small icon class="mx-0"  @click="verDetalle(props.item.id)" title="Ver Detalle">
-                  <v-icon color="primary">launch</v-icon>
-                </v-btn>
-
-                <v-btn small icon class="mx-4" @click="imprimir(props.item.id)" title="Imprimir">
+                <v-btn small icon class="mx-0" @click="imprimir(props.item.id)" title="Imprimir">
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
+
+                <v-btn small icon class="mx-4"  @click="verDetalle(props.item.id)" title="Ver Detalle">
+                  <v-icon color="primary">launch</v-icon>
+                </v-btn>            
               </td>              
             </template>
           </v-data-table>
@@ -37,6 +38,7 @@
       </v-card>
     </v-flex>
   </v-layout>
+</v-container>
 </template>
 
 <script>

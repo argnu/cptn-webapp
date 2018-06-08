@@ -16,6 +16,7 @@ import Matricula from '@/components/matriculas/Matricula'
 import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
+import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
 
 import Cobranza from '@/components/cobranzas/Cobranza'
 import Legajo from '@/components/matriculas/legajos/Legajo'
@@ -121,6 +122,12 @@ export default new Router({
             },
           ]
         },
+        {
+          path: '/profesionales/:id/modificar',
+          name: 'ProfesionalModificar',
+          component: ProfesionalModificar,
+          props: true
+        },          
         {
           path: '/legajos/:id_legajo',
           name: 'Legajo',

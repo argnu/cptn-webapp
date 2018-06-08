@@ -104,30 +104,22 @@
         <v-layout row>
           <v-flex xs12>
             <v-data-table
-                :headers="header_pagos"
+                :headers="$options.headers"
                 :items="items_pago"
                 class="elevation-1"
                 no-data-text="No hay pagos"
                 hide-actions
               >
-              <template slot="headers" slot-scope="props">
-                <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                  <b>{{ header.text }}</b>
-                </th>
-                <th></th>
-              </template>
               <template slot="items" slot-scope="props">
-                <tr>
+                  <td class="justify-center layout px-0">
+                    <v-btn small icon class="mx-0"  @click="borrarPago(props.index)">
+                      <v-icon color="red">delete</v-icon>
+                    </v-btn>           
+                  </td>                 
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe | round }}</td>
                   <td>{{ props.item.numero_cheque }}</td>
-                  <td>{{ getBanco(props.item.banco) }}</td>
-                  <td>
-                    <v-btn fab class="grey" dark small @click="borrarPago(props.index)">
-                      <v-icon>delete</v-icon>
-                    </v-btn>
-                  </td>
-                </tr>
+                  <td>{{ getBanco(props.item.banco) }}</td>                 
               </template>
             </v-data-table>
 
@@ -191,13 +183,6 @@ class ComprobantePagoCheque extends ComprobantePago {
   }
 }
 
-const header_pagos = [
-  Header('Forma de Pago', 'forma'),
-  Header('Importe', 'importe'),
-  Header('N° Cheque', 'numero_cheque'),
-  Header('Banco', 'banco')
-]
-
 const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
@@ -220,6 +205,14 @@ export default {
     InputNumero
   },
 
+  headers: [
+    Header('', 'borrar'),
+    Header('Forma de Pago', 'forma'),
+    Header('Importe', 'importe'),
+    Header('N° Cheque', 'numero_cheque'),
+    Header('Banco', 'banco')
+  ],
+
   data () {
     return {
       tipos_pago: [],
@@ -234,10 +227,6 @@ export default {
   },
 
   computed: {
-    header_pagos: function() {
-      return header_pagos;
-    },
-
     esCheque: function() {
       if (!this.nueva_forma_pago.forma_pago) return false;
       let forma_pago = this.tipos_pago.find(f => f.id == this.nueva_forma_pago.forma_pago);

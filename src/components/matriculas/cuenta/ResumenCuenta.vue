@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-container>
       <detalle-dialog :item="item_selected" ref="show_detalle">
       </detalle-dialog>
 
@@ -43,7 +43,7 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row wrap>
+      <v-layout row wrap v-if="resumen.length > 0">
         <v-flex xs6>
         </v-flex>
         <v-flex xs6>
@@ -54,14 +54,15 @@
               hide-headers
           >
             <template slot="items" slot-scope="props">
-              <td>{{props.item.t}}</td>
-              <td>{{props.item.d}}</td>
-              <td>{{props.item.h}}</td>
+              <td>{{props.item.t }}</td>
+              <td v-if="props.item.d">{{props.item.d | round }}</td>
+              <td v-else></td>
+              <td>{{props.item.h | round }}</td>
             </template>
           </v-data-table>
         </v-flex>
       </v-layout>    
-    </v-card>
+    </v-container>
 </template>
 
 <script>
@@ -159,22 +160,26 @@ export default {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&vencido=true`;
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
         url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_volantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
       if (this.rules.fecha(this.filtros.fecha_hasta)) {
         url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_volantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
 
       Promise.all([
         api.get(url_boletas),
-        api.get(url_comprobantes)
+        api.get(url_comprobantes),
+        api.get(url_volantes)
       ])
-     .then(([boletas, comprobantes]) => {
+     .then(([boletas, comprobantes, volantes]) => {
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
@@ -185,7 +190,13 @@ export default {
          c.haber = c.importe_cancelado;
          c.descripcion = 'Recibo';
          return c;
+       })).concat(volantes.data.map(c => {
+         c.tipo = 'volante';
+         c.haber = c.importe_total;
+         c.descripcion = 'Volante de Pago';
+         return c;
        }));
+
        this.resumen = resumen;
        this.resumen_original = utils.clone(resumen);
        this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));

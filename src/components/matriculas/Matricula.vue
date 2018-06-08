@@ -1,24 +1,20 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
 
-    <matricula-datos-basicos 
+    <matricula-datos-basicos
       :matricula="matricula"
       @habilitar="habilitar"
     >
     </matricula-datos-basicos>
 
-    <br>
-
-    <v-tabs fixed icons v-model="tab_selected">
+    <v-tabs fixed icons v-model="tab_selected" class="mt-2">
         <v-tabs-slider color="black"></v-tabs-slider>
         <v-tab href="#tab-detalle">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-detalle' }">account_box</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-detalle' }">Detalle</span>
         </v-tab>
         <v-tab href="#tab-cuenta">
-          <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">
-            account_balance
-          </v-icon>
+          <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">account_balance</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
         </v-tab>
         <v-tab href="#tab-pendientes">
@@ -35,34 +31,55 @@
         </v-tab>
 
         <v-tab-item id="tab-detalle">
-          <matricula-detalle :matricula="matricula"></matricula-detalle>
+          <v-divider></v-divider>
+          <v-card>
+            <matricula-detalle
+              :matricula="matricula"
+              @editProfesional="editProfesional"
+            ></matricula-detalle>
+          </v-card>
         </v-tab-item>
 
         <v-tab-item id="tab-cuenta">
-          <resumen-cuenta 
-            :id="matricula.id"
-            ref="resumen"
-          >
-          </resumen-cuenta>
+          <v-divider></v-divider>
+          <v-card>
+            <resumen-cuenta
+              v-if="tab_selected == 'tab-cuenta'"
+              :id="matricula.id"
+              ref="resumen"
+            ></resumen-cuenta>
+          </v-card>
         </v-tab-item>
 
         <v-tab-item id="tab-pendientes">
-          <deudas-pendientes 
-            :id="matricula.id" 
-            @update="updateDeudas"
-          >            
-          </deudas-pendientes>
+          <v-divider></v-divider>
+          <v-card>
+            <deudas-pendientes
+              v-if="tab_selected == 'tab-pendientes'"
+              :id="matricula.id"
+            ></deudas-pendientes>
+          </v-card>
         </v-tab-item>
 
         <v-tab-item id="tab-legajo">
-          <legajo-lista 
-            :id="matricula.id"
-            :show-add="matricula.estado.id == 13"
-          ></legajo-lista>
+          <v-divider></v-divider>
+          <v-card>
+            <legajo-lista
+              v-if="tab_selected == 'tab-legajo'"
+              :id="matricula.id"
+              :show-add="matricula.estado.id == 13"
+            ></legajo-lista>
+          </v-card>
         </v-tab-item>
 
         <v-tab-item id="tab-historial">
-          <matricula-historial :id="matricula.id"></matricula-historial>
+          <v-divider></v-divider>
+          <v-card>
+            <matricula-historial
+              v-if="tab_selected == 'tab-historial'"
+              :id="matricula.id"
+            ></matricula-historial>
+          </v-card>
         </v-tab-item>
 
     </v-tabs>
@@ -86,10 +103,10 @@ export default {
     MatriculaDatosBasicos,
     MatriculaDetalle,
     MatriculaHistorial,
-    ResumenCuenta,    
+    ResumenCuenta,
     LegajoLista,
     DeudasPendientes
-  },  
+  },
 
   data () {
     return {
@@ -118,8 +135,8 @@ export default {
       .catch(e => console.error(e));
     },
 
-    updateDeudas: function() {
-      this.$refs.resumen.updateBoletas();
+    editProfesional: function() {
+      this.$router.push(`/profesionales/${this.matricula.entidad.id}/modificar`);
     }
   }
 

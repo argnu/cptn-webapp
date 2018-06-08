@@ -251,8 +251,8 @@ export default {
 
   created: function() {
     Promise.all([
-        api.get('/valores_globales?nombre=interes_tasa'),
-        api.get('/valores_globales?nombre=interes_dias')
+        api.get('/valores_globales?variable=3'), //Recupero tasa de interes(id=3) válido en la fecha
+        api.get('/valores_globales?variable=4')    //Recupero día de interés(id=4) válido en la fecha
     ])
 
     .then(r => {
