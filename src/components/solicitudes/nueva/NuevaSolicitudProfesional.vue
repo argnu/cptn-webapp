@@ -113,6 +113,7 @@
                         :items="opciones.sexo"
                         item-text="valor"
                         item-value="id"
+                        return-object
                         v-model="solicitud.entidad.sexo"
                         label="Sexo"
                         single-line bottom
@@ -164,6 +165,7 @@
                         :items="opciones.estadocivil"
                         item-text="valor"
                         item-value="id"
+                        return-object
                         v-model="solicitud.entidad.estadoCivil"
                         label="Estado Civil"
                         single-line bottom
@@ -189,22 +191,22 @@
 
                   <v-layout row>
                     <v-flex xs12 class="mx-4">
-                      <add-foto
+                      <profesional-add-foto
                           edit
                           :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
                           @change="chgFoto"
-                      ></add-foto>
+                      ></profesional-add-foto>
                     </v-flex>
                   </v-layout>
 
                   <v-layout row class="mx-4 mt-4">
                     <v-flex xs12 class="mt-4">
-                      <add-firma
+                      <profesional-add-firma
                         edit
                         :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''"
                         @change="chgFirma"
                         ref="firma"
-                      ></add-firma>
+                      ></profesional-add-firma>
                     </v-flex>
                   </v-layout>
 
@@ -225,160 +227,17 @@
               Domicilios del Profesional
             </v-stepper-step>
             <v-stepper-content step="3">
-              <v-card class="grey lighten-4 elevation-4 mb-2" ref="form">
+              <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_domicilio" lazy-validation>
-                        <v-layout row class="mx-4">
-                          <v-flex xs8>
-                            <v-select
-                              tabindex="15"
-                              :items="tipos_domicilio"
-                              label="Tipo"
-                              v-model="nuevo_domicilio.tipo"
-                              autocomplete
-                              :rules="domicilio_edit != null ? [] : [rules.required]"
-                              :disabled="domicilio_edit != null"
-                            >
-                            </v-select>
-                          </v-flex>
+                  <entidad-domicilios
+                    tabindex="15"
+                    v-model="solicitud.entidad.domicilios"
+                  ></entidad-domicilios>
 
-                          <v-flex xs3 class="mt-2 ml-4">
-                            <v-menu offset-y>
-                              <v-btn slot="activator" tabindex="16">Copiar de...</v-btn>
-                              <v-list>
-                                <v-list-tile
-                                  v-for="tipo of tipos_domicilio_cargados"
-                                  :key="tipo.value" @click="copiarDomicilio(tipo.value)"
-                                >
-                                  <v-list-tile-title>{{ tipo.text }}</v-list-tile-title>
-                                </v-list-tile>
-                              </v-list>
-                            </v-menu>
-                          </v-flex>
-                        </v-layout>
-
-                        <v-layout row>
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              tabindex="17"
-                              label="País"
-                              return-object
-                              autocomplete
-                              item-text="nombre"
-                              item-value="id"                              
-                              :items="paises"
-                              :rules="[rules.required]"
-                              v-model="nuevo_domicilio.domicilio.pais"
-                              @input="changePais"
-                            ></v-select>
-
-                            <v-select
-                              tabindex="19"
-                              label="Departamento"
-                              autocomplete
-                              return-object                              
-                              :items="departamentos"
-                              @input="changeDepartamento"
-                              v-model="nuevo_domicilio.domicilio.departamento"
-                              item-text="nombre"
-                              item-value="id"
-                              :rules="[rules.required]"
-                            ></v-select>
-
-                            <input-texto
-                              tabindex="21"
-                              uppercase
-                              maxlength="100"
-                              label="Dirección"
-                              v-model="nuevo_domicilio.domicilio.direccion"
-                              :rules="[rules.required]"
-                            ></input-texto>
-                          </v-flex>
-
-                          <v-flex xs6 class="ma-4">
-                            <v-select
-                              tabindex="18"
-                              :items="provincias"
-                              label="Provincia"
-                              @input="changeProvincia"
-                              v-model="nuevo_domicilio.domicilio.provincia"
-                              autocomplete
-                              return-object   
-                              item-text="nombre"
-                              item-value="id"
-                              :rules="[rules.required]"
-                            >
-                            </v-select>
-
-                            <v-select
-                              tabindex="20"
-                              :items="localidades"
-                              label="Localidad"
-                              v-model="nuevo_domicilio.domicilio.localidad"
-                              :rules="[rules.required]"
-                              autocomplete
-                              return-object   
-                              item-text="nombre"
-                              item-value="id"
-                            >
-                            </v-select>
-                          </v-flex>
-                        </v-layout>
-
-                        <v-layout class="mb-4">
-                          <v-flex xs12>
-                            <v-btn
-                              tabindex="21"
-                              class="right"
-                              light
-                              @click="addDomicilio"
-                            >
-                              {{ domicilio_edit != null ? 'Guardar' : 'Agregar' }}
-                            </v-btn>
-
-                          <v-btn class="right" light v-show="domicilio_edit != null" @click="resetDomicilio">
-                            Cancelar
-                          </v-btn>
-                          </v-flex>
-                        </v-layout>
-
-                        <v-data-table
-                            :headers="headers.domicilios"
-                            :items="solicitud.entidad.domicilios"
-                            hide-actions
-                            class="elevation-1"
-                            no-data-text="No hay domicilios"
-                        >
-                          <template slot="items" slot-scope="props">
-                            <tr :active="props.index == domicilio_edit">
-                              <td class="justify-center layout px-0">
-                                <v-btn icon small class="mx-0" @click="removeElem('domicilios', props.index)">
-                                  <v-icon color="red">delete</v-icon>
-                                </v-btn>
-
-                                <v-btn icon small class="mx-3" @click="editDomicilio(props.index)">
-                                  <v-icon color="deep-purple">mode_edit</v-icon>
-                                </v-btn>
-                              </td>
-
-                              <td>{{ props.item.tipo | upperFirst }}</td>
-
-                              <td>{{ props.item.domicilio.pais.nombre }}</td>
-                              <td>{{ props.item.domicilio.provincia.nombre }}</td>
-                              <td>{{ props.item.domicilio.departamento.nombre }}</td>
-                              <td>{{ props.item.domicilio.localidad.nombre }}</td>
-
-                              <td>{{ props.item.domicilio.direccion }}</td>
-                            </tr>
-                          </template>
-                        </v-data-table>
-
-                      <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
-                        Debe ingresar al menos un domicilio
-                      </v-alert>
-
-                      </v-form>
-                    </v-card-text>
+                  <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
+                      Debe ingresar al menos un domicilio
+                  </v-alert>                  
+                </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="22">Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
@@ -392,96 +251,14 @@
             <v-stepper-content step="4">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_contacto" lazy-validation>
-
-                  <v-container>
-                    <v-layout row>
-                      <v-flex xs3 class="mx-2">
-                        <v-select
-                          tabindex="23"
-                          single-line bottom
-                          :items="opciones.contacto"
-                          item-text="valor"
-                          item-value="id"
-                          label="Tipo"
-                          v-model="nuevo_contacto.tipo"
-                          :rules="[rules.required]"
-                          @change="chgTipoContacto"
-                        >
-                        </v-select>
-                      </v-flex>
-
-                      <v-flex xs8 class="mx-2" v-if="nuevo_contacto.tipo > 0 && nuevo_contacto.tipo < 3">
-                        <input-telefono
-                          tabindex="24"
-                          :type="(nuevo_contacto.tipo === 2) ? 'celular' : 'fijo'"
-                          v-model="nuevo_telefono"
-                        ></input-telefono>
-
-                        <v-checkbox
-                          tabindex="25"
-                          v-show="nuevo_contacto.tipo === 2"
-                          label="Whatsapp"
-                          v-model="nuevo_contacto.whatsapp"
-                          light
-                        ></v-checkbox>
-                      </v-flex>
-
-                      <v-flex xs8 class="mx-2" v-else>
-                        <v-text-field
-                          tabindex="26"
-                          v-model="nuevo_contacto.valor"
-                          :rules="rules_contacto"
-                          :placeholder="placeholder_contacto"
-                        >
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-btn class="right" light @click="addContacto" tabindex="27">
-                          {{ contacto_edit != null ? 'Guardar' : 'Agregar' }}
-                        </v-btn>
-                        <v-btn class="right" light v-show="contacto_edit != null" @click="cancelarEditContacto">
-                          Cancelar
-                        </v-btn>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-data-table
-                      :headers="headers.contactos"
-                      :items="solicitud.entidad.contactos"
-                      hide-actions
-                      class="elevation-1 mt-4"
-                      no-data-text="No hay contactos"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <tr :active="props.index == contacto_edit">
-                          <td class="justify-center layout px-0">
-                            <v-btn icon small class="mx-0" @click="removeElem('contactos', props.index)">
-                              <v-icon color="red">delete</v-icon>
-                            </v-btn>
-
-                            <v-btn icon small class="mx-3" @click="editContacto(props.index)">
-                              <v-icon color="deep-purple">mode_edit</v-icon>
-                            </v-btn>
-                          </td>
-                          <td>{{ getTipoContacto(props.item.tipo) }}</td>
-                          <td>{{ props.item.valor }}</td>
-                          <td>
-                            <span v-if="props.item.tipo == 2">
-                              Whatsapp: {{ props.item.whatsapp | boolean }}
-                            </span>
-                          </td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </v-container>
-
-                  </v-form>
+                  <entidad-contactos
+                    tabindex="23"
+                    :opciones="opciones.contacto"
+                    v-model="solicitud.entidad.contactos"
+                  ></entidad-contactos>
                 </v-card-text>
               </v-card>
+
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="28"
               >Continuar</v-btn>
               <v-btn flat @click.native="prevStep" class="right">Volver</v-btn>
@@ -495,72 +272,11 @@
             <v-stepper-content step="5">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_condafip" lazy-validation>
-
-                  <v-container>
-                    <v-layout row>
-                      <v-flex xs4 class="mx-2">
-                        <v-select
-                          tabindex="29"
-                          autocomplete
-                          single-line bottom
-                          :items="opciones.condicionafip"
-                          item-text="valor"
-                          item-value="id"
-                          v-model="nueva_condafip.condicion_afip"
-                          label="Condición Impositiva"
-                          :rules="[rules.required]"
-                        >
-                        </v-select>
-                      </v-flex>
-
-                      <v-flex xs7 class="mx-2">
-                        <input-texto
-                          tabindex="30"
-                          label="Descripción"
-                          uppercase
-                          v-model="nueva_condafip.descripcion"
-                        ></input-texto>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-layout row wrap>
-                      <v-flex xs12>
-                        <v-btn class="right" light @click="addCondAfip" tabindex="31">
-                          {{ condafip_edit != null ? 'Guardar' : 'Agregar' }}
-                        </v-btn>
-                        <v-btn class="right" light v-show="condafip_edit != null" @click="cancelarEditCondAfip">
-                          Cancelar
-                        </v-btn>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-data-table
-                      :headers="headers.condafip"
-                      :items="solicitud.entidad.condiciones_afip"
-                      hide-actions
-                      class="elevation-1 mt-4"
-                      no-data-text="No hay datos"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <tr :active="props.index == condafip_edit">
-                          <td class="justify-center layout px-0">
-                            <v-btn icon small class="mx-0" @click="removeElem('condiciones_afip', props.index)">
-                              <v-icon color="red">delete</v-icon>
-                            </v-btn>
-
-                            <v-btn icon small class="mx-3" @click="editCondAfip(props.index)">
-                              <v-icon color="deep-purple">mode_edit</v-icon>
-                            </v-btn>
-                          </td>
-                          <td>{{ getCondicionAfip(props.item.condicion_afip) }}</td>
-                          <td>{{ props.item.descripcion }}</td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </v-container>
-
-                  </v-form>
+                  <entidad-condicion-afip
+                    tabindex="29"
+                    :opciones="opciones.condicionafip"
+                    v-model="solicitud.entidad.condiciones_afip"
+                  ></entidad-condicion-afip>
                 </v-card-text>
               </v-card>
               <v-btn blue darken-1 @click.native="nextStep" class="right" tabindex="32">Continuar</v-btn>
@@ -579,155 +295,15 @@
             <v-stepper-content step="6">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_formacion" lazy-validation>
+                  <profesional-formaciones
+                    tabindex="33"
+                    :niveles="opciones.niveles_titulos"
+                    v-model="solicitud.entidad.formaciones"
+                  ></profesional-formaciones>
 
-                  <v-container>
-                    <v-layout row>
-                      <v-flex xs6 class="mx-4">
-                        <v-select
-                          tabindex="33"
-                          autocomplete
-                          :items="instituciones"
-                          item-value="id"
-                          item-text="nombre"
-                          label="Institución"
-                          v-model="nueva_formacion.institucion"
-                          :rules="[rules.required]"
-                          :filter="filterInstitucion"
-                          @input="updateTitulos"
-                        >
-                          <template slot="item" slot-scope="data">
-                              <v-list-tile-action>
-                                <v-icon class="green--text" v-if="data.item.valida">check_circle</v-icon>
-                                <v-icon class="red--text" v-else>block</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
-                                <v-list-tile-sub-title>CUE: {{ data.item.cue }}</v-list-tile-sub-title>
-                              </v-list-tile-content>
-                          </template>
-                        </v-select>
-
-                         <v-select                        
-                          tabindex="34"
-                          autocomplete
-                          :items="opciones.niveles_titulos"
-                          item-text="valor"
-                          item-value="id"
-                          label="Nivel Educativo"
-                          single-line bottom
-                          v-model="nueva_formacion.nivel"
-                          :rules="[rules.required]"
-                          @input="updateTitulos"
-                        ></v-select>
-
-                        <v-select
-                          tabindex="35"
-                          autocomplete single-line bottom
-                          item-text="nombre"
-                          item-value="id"
-                          :items="titulos"
-                          label="Título"
-                          v-model="nueva_formacion.titulo"
-                          :rules="[rules.required]"
-                        >
-                          <template slot="item" slot-scope="data">
-                            <template>
-                              <v-list-tile-action>
-                                <v-icon class="green--text" v-if="data.item.valido">check_circle</v-icon>
-                                <v-icon class="red--text" v-else>block</v-icon>
-                              </v-list-tile-action>
-                              <v-list-tile-content>
-                                <v-list-tile-title>{{ data.item.nombre }}</v-list-tile-title>
-                              </v-list-tile-content>
-                            </template>
-                          </template>
-                        </v-select>
-
-                        <v-checkbox
-                          label="Título Principal" 
-                          tabindex="38"
-                          class="my-2" 
-                          v-model="nueva_formacion.principal"
-                          :disabled="existeTituloPrincipal && !nueva_formacion.principal"
-                        ></v-checkbox>                        
-                      </v-flex>
-
-                      <v-flex xs6 class="mx-4">
-                        <input-fecha
-                          tabindex="36"
-                          v-model="nueva_formacion.fechaEmision"
-                          label="Fecha Emisión"
-                          :rules="[rules.fecha]"
-                          @change="chgFechaEmision"
-                        >
-                        </input-fecha>
-
-                        <input-fecha
-                          tabindex="37"
-                          v-model="nueva_formacion.fechaEgreso"
-                          label="Fecha Egreso"
-                          :rules="[rules.required, rules.fecha]"
-                        >
-                        </input-fecha>
-
-                        <v-text-field
-                          label="Lapso desde Emisión"
-                          readonly
-                          v-model="nueva_formacion.tiempoEmision"
-                        ></v-text-field>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-layout class="mb-4">
-                      <v-flex xs12>
-                        <v-btn class="right" light @click="addFormacion" tabindex="39">
-                          {{ formacion_edit != null ? 'Guardar' : 'Agregar' }}
-                        </v-btn>
-                        <v-btn class="right" light v-show="formacion_edit != null" @click="cancelarEditFormacion">
-                          Cancelar
-                        </v-btn>
-                      </v-flex>
-                    </v-layout>
-
-                    <v-data-table
-                      :headers="headers.formacion"
-                      :items="solicitud.entidad.formaciones"
-                      hide-actions
-                      class="elevation-1 mt-4"
-                      no-data-text="No hay formaciones"
-                      style="margin-top:30px"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <tr :active="props.index == formacion_edit">
-                          <td class="justify-center layout px-0">
-                            <v-btn icon small class="mx-0" @click="removeElem('formaciones', props.index)">
-                              <v-icon color="red">delete</v-icon>
-                            </v-btn>
-
-                            <v-btn icon small class="mx-3" @click="editFormacion(props.index)">
-                              <v-icon color="deep-purple">mode_edit</v-icon>
-                            </v-btn>
-                          </td>
-                          <td>{{ getTitulo(props.item) }}</td>
-                          <td>{{ getInstitucion(props.item) }}</td>
-                          <td>{{ props.item.fechaEgreso | fecha }}</td>
-                          <td>{{ props.item.fechaEmision | fecha }}</td>
-                          <td>{{ props.item.tiempoEmision }}</td>
-                          <td>{{ props.item.principal | boolean }}</td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-
-                    <br>
-
-                    <v-alert color="error" icon="priority_high" :value="!valid_formaciones">
+                  <v-alert color="error" icon="priority_high" :value="!valid_formaciones">
                       Debe ingresar al menos un título para el profesional
-                    </v-alert>
-
-
-                  </v-container>
-                  </v-form>
+                  </v-alert>                  
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="40"
@@ -765,17 +341,17 @@
                       <input-texto
                         tabindex="42"
                         maxlength="100"
-                        label="Empresa" 
+                        label="Empresa"
                         uppercase
-                        :disabled="!solicitud.entidad.relacionDependencia" 
+                        :disabled="!solicitud.entidad.relacionDependencia"
                         v-model="solicitud.entidad.empresa"
                       ></input-texto>
-                      
+
                       <input-texto
                         tabindex="44"
-                        label="Servicios Prestados" 
+                        label="Servicios Prestados"
                         uppercase
-                        :disabled="!solicitud.entidad.independiente" 
+                        :disabled="!solicitud.entidad.independiente"
                         v-model="solicitud.entidad.serviciosPrestados"
                       ></input-texto>
                     </v-flex>
@@ -803,51 +379,10 @@
                     class="ml-4 mb-4"
                   ></v-checkbox>
 
-
-                  <v-form lazy-validation ref="form_beneficiario" @submit.prevent>
-
-                  <v-layout row>
-                     <v-flex xs5 class="mx-4">
-                      <input-select-new
-                        tabindex="47"
-                        label="Nombre"
-                        maxlength="100"
-                        :items="cajas_previsionales_filter"
-                        item-text="nombre"
-                        item-value="id"
-                        v-model="nueva_caja"
-                        :rules="[rules.required]"
-                        return-object
-                      ></input-select-new>
-                    </v-flex>
-                     <v-flex xs3>
-                      <v-btn @click="addCaja" tabindex="48">Agregar</v-btn>
-                    </v-flex>
-                  </v-layout>
-
-                    <v-data-table
-                      :headers="headers.caja_previsional"
-                      :items="solicitud.entidad.cajas_previsionales"
-                      hide-actions
-                      class="elevation-1"
-                      no-data-text="No hay cajas agregadas"
-                      style="margin-top:30px"
-                    >
-                      <template slot="items" slot-scope="props">
-                        <td class="justify-center layout px-0">
-                          <v-btn icon small class="mx-0" @click="removeElem('cajas_previsionales', props.index)">
-                            <v-icon color="red">delete</v-icon>
-                          </v-btn>
-                        </td>
-                        <template v-if="props.item.caja">
-                          <td>{{ props.item.caja.nombre }}</td>
-                        </template>
-                        <template v-else>
-                          <td>{{ props.item.nombre }}</td>
-                        </template>
-                      </template>
-                    </v-data-table>
-                  </v-form>
+                  <profesional-cajas-previsionales
+                    tabindex="47"
+                    v-model="solicitud.entidad.cajas_previsionales"
+                  ></profesional-cajas-previsionales>
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="49">Continuar</v-btn>
@@ -866,94 +401,14 @@
             <v-stepper-content step="9">
               <v-card class="grey lighten-4 elevation-4 mb-2">
                 <v-card-text>
-                  <v-form ref="form_subsidiario" lazy-validation>
-                      <v-layout row>
-                        <v-flex xs6 class="ma-4">
-                          <input-numero
-                            tabindex="50"
-                            label="DNI"
-                            maxlength="8"
-                            v-model="nuevo_subsidiario.dni"
-                            :rules="[rules.required, rules.integer]"
-                          >
-                          </input-numero>
+                  <profesional-subsidiarios
+                    tabindex="50"
+                    v-model="solicitud.entidad.subsidiarios"
+                  ></profesional-subsidiarios>
 
-                          <input-texto
-                            tabindex="51"
-                            label="Apellido"
-                            maxlength="100"
-                            type="letras"
-                            uppercase
-                            v-model="nuevo_subsidiario.apellido"
-                            :rules="[rules.required]"
-                          >
-                          </input-texto>
-                        </v-flex>
-
-                        <v-flex xs6 class="ma-4">
-                          <input-texto
-                            tabindex="52"
-                            label="Nombre"
-                            maxlength="100"
-                            type="letras"
-                            uppercase
-                            v-model="nuevo_subsidiario.nombre"
-                            :rules="[rules.required]"
-                          >
-                          </input-texto>
-
-                          <input-numero
-                            tabindex="53"
-                            label="Porcentaje"
-                            decimal
-                            v-model="nuevo_subsidiario.porcentaje"
-                            :rules="[rules.required]"
-                          >
-                          </input-numero>
-                        </v-flex>
-                      </v-layout>
-
-                      <v-btn class="right mb-4" light @click="addSubsidiario" tabindex="54">
-                        {{ subsidiario_edit != null ? 'Guardar' : 'Agregar' }}
-                      </v-btn>
-                      <v-btn class="right" light v-show="subsidiario_edit != null" @click="cancelarEditSubsidiario">
-                        Cancelar
-                      </v-btn>
-
-                      <v-data-table
-                        :headers="headers.subsidiarios"
-                        :items="solicitud.entidad.subsidiarios"
-                        hide-actions
-                        class="elevation-1"
-                        no-data-text="No hay subsidiarios"
-                      >
-                        <template slot="items" slot-scope="props">
-                          <tr :active="props.index == subsidiario_edit">
-                            <td class="justify-center layout px-0">
-                              <v-btn icon small class="mx-0" @click="removeElem('subsidiarios', props.index)">
-                                <v-icon color="red">delete</v-icon>
-                              </v-btn>
-
-                              <v-btn icon small class="mx-3" @click="editSubsidiario(props.index)">
-                                <v-icon color="deep-purple">mode_edit</v-icon>
-                              </v-btn>
-                            </td>
-                            <td>{{ props.item.dni }}</td>
-                            <td>{{ props.item.apellido }}</td>
-                            <td>{{ props.item.nombre }}</td>
-                            <td>{{ props.item.porcentaje }}</td>
-                          </tr>
-                        </template>
-                      </v-data-table>
-
-                      <br>
-
-                      <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
-                        Los porcentajes deben sumar 100%
-                      </v-alert>
-
-                  </v-form>
-
+                  <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
+                  Los porcentajes deben sumar 100%
+                  </v-alert>                  
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="55">Continuar</v-btn>
@@ -1019,7 +474,7 @@
 
                   <br>
 
-                  <v-checkbox 
+                  <v-checkbox
                     tabindex="62"
                     class="ma-0 pa-0" label="Recibir Actualizaciones" v-model="solicitud.entidad.recibirActualizaciones"
                   ></v-checkbox>
@@ -1064,8 +519,8 @@
             <div><b>Apellido: </b> {{ solicitud.entidad.apellido }} </div>
             <div><b>DNI: </b> {{ solicitud.entidad.dni }} </div>
             <div><b>CUIT/CUIL: </b> {{ solicitud.entidad.cuit }} </div>
-            <div><b>Sexo: </b> {{ sexo_selected }} </div>
-            <div><b>Estado Civil: </b> {{ estado_civil_selected }} </div>
+            <div><b>Sexo: </b> {{ solicitud.entidad.sexo ? solicitud.entidad.sexo.valor : '' }} </div>
+            <div><b>Estado Civil: </b> {{ solicitud.entidad.estadoCivil ? solicitud.entidad.estadoCivil.valor : ''  }} </div>
             <div><b>Fecha de Nacimiento: </b> {{ solicitud.entidad.fechaNacimiento }} </div>
             <div><b>Lugar de Nacimiento: </b> {{ solicitud.entidad.lugarNacimiento }} </div>
             <div><b>Nacionalidad: </b> {{ solicitud.entidad.nacionalidad }} </div>
@@ -1079,7 +534,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import api from '@/services/api'
 import reports from '@/services/reports'
 import moment from 'moment'
@@ -1087,7 +541,6 @@ import rules from '@/validation/rules.js'
 import * as utils from '@/utils'
 import {
   Solicitud,
-  Formacion,
   Subsidiario,
   Header
 } from '@/model';
@@ -1095,12 +548,16 @@ import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
 import InputNumero from '@/components/base/InputNumero';
-import InputSelectNew from '@/components/base/InputSelectNew';
-import AddFoto from '@/components/solicitudes/AddFoto';
-import AddFirma from '@/components/solicitudes/AddFirma';
+import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
+import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
 import MixinValidator from '@/components/mixins/MixinValidator';
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
-import { impresionSolicitud } from '@/utils/PDFUtils'
+import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
+import EntidadContactos from '@/components/entidades/EntidadContactos'
+import EntidadCondicionAfip from '@/components/entidades/EntidadCondicionAfip'
+import ProfesionalFormaciones from '@/components/entidades/ProfesionalFormaciones'
+import ProfesionalCajasPrevisionales from '@/components/entidades/ProfesionalCajasPrevisionales'
+import ProfesionalSubsidiarios from '@/components/entidades/ProfesionalSubsidiarios'
 
 export default {
   name: 'nueva-solicitud',
@@ -1114,62 +571,35 @@ export default {
     InputFecha,
     InputTelefono,
     InputNumero,
-    InputSelectNew,
-    AddFoto,
-    AddFirma
+    ProfesionalAddFoto,
+    ProfesionalAddFirma,
+    EntidadDomicilios,
+    EntidadContactos,
+    EntidadCondicionAfip,
+    ProfesionalFormaciones,
+    ProfesionalCajasPrevisionales,
+    ProfesionalSubsidiarios
   },
 
   data() {
     return {
-      formacion_edit: null,
-      subsidiario_edit: null,
-      instituciones: [],
-      titulos: [],
-      cajas_previsionales: [],
       deAcuerdo: true,
       solicitud: new Solicitud('profesional'),
-      nueva_formacion: new Formacion(),
-      nuevo_subsidiario: new Subsidiario(),
-      nueva_caja: '',
       publicar_todos: false,
+      solicitar_caja: false,
       foto: null,
       firma: null,
-      valid: {
-        form_solicitud: false,
-        form_profesional: false
-      },
       show_imprimir: false,
       id_creada: null,
       guardando: false,
-      solicitar_caja: false,
-      rematriculado: false
+      valid: {
+        form_solicitud: false,
+        form_profesional: false
+      }      
     }
   },
 
   computed: {
-    sexo_selected: function() {
-      if (!this.solicitud.entidad.sexo) return '';
-      return this.opciones.sexo.find(i => i.id == this.solicitud.entidad.sexo).valor;
-    },
-
-    estado_civil_selected: function() {
-      if (!this.solicitud.entidad.estadoCivil) return '';
-      return this.opciones.estadocivil.find(i => i.id == this.solicitud.entidad.estadoCivil).valor;
-    },
-
-    existeTituloPrincipal: function() {
-      return this.solicitud.entidad.formaciones.find(f => f.principal) != undefined;
-    },
-
-    cajas_previsionales_filter: function() {
-      if (!this.solicitud.entidad.cajas_previsionales.length) return this.cajas_previsionales;
-      return this.cajas_previsionales.filter(c =>
-        !this.solicitud.entidad.cajas_previsionales.find(cp => {
-         return cp == c.nombre || cp == c.id || cp.nombre == c.nombre
-        })
-      );
-    },
-
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);
@@ -1197,21 +627,13 @@ export default {
 
   created: function() {
     Promise.all([
-        api.get('/paises'),
         api.get('/opciones?sort=valor'),
-        api.get('/delegaciones'),
-        api.get('/instituciones'),
-        api.get('/cajas-previsionales?sort=+nombre')
+        api.get('/delegaciones')
       ])
       .then(r => {
-        this.paises = r[0].data;
-        this.opciones = r[1].data;
-        this.delegaciones = r[2].data;
-        this.instituciones = r[3].data.resultados;
-        this.cajas_previsionales = r[4].data;
+        this.opciones = r[0].data;
+        this.delegaciones = r[1].data;
         this.datos_cargados = true;
-        this.nuevo_domicilio.domicilio.departamento = this.global_state.delegacion.domicilio.departamento;
-        this.nuevo_domicilio.domicilio.localidad = this.global_state.delegacion.domicilio.localidad;
         this.init();
       })
       .catch(e => console.error(e));
@@ -1222,16 +644,11 @@ export default {
     init: function() {
       this.step = 1;
       this.initForm().then(reset => {
-        return this.changePais()
-        .then(() => this.changeProvincia())
-        .then(() => this.changeDepartamento())
-        .then(() => {
           this.show_cargando = false;
           if (reset) {
             this.$refs.firma.reset();
             this.$refs.form_profesional.reset();
           }
-        });
       });
     },
 
@@ -1264,44 +681,10 @@ export default {
     },
 
     fillProfesional: function(entidad) {
-      this.solicitud.entidad.foto = entidad.foto;
-      this.solicitud.entidad.firma = entidad.firma;
-      this.solicitud.entidad.publicarEmail = entidad.publicarEmail;
-      this.solicitud.entidad.publicarDireccion = entidad.publicarDireccion;
-      this.solicitud.entidad.publicarAcervo = entidad.publicarAcervo;
-      this.solicitud.entidad.publicarCelular = entidad.publicarCelular;
-      this.solicitud.entidad.id = entidad.id;
-      this.solicitud.entidad.nombre = entidad.nombre;
-      this.solicitud.entidad.apellido = entidad.apellido;
-      this.solicitud.entidad.dni = entidad.dni;
-      this.solicitud.entidad.cuit = entidad.cuit;
-      let sexo = this.opciones.sexo.find(s => s.valor == entidad.sexo);
-      this.solicitud.entidad.sexo = sexo ? sexo.id : '';
-      this.solicitud.entidad.estadoCivil = this.opciones.estadocivil.find(s => s.valor == entidad.estadoCivil).id;
+      this.solicitud.entidad = utils.clone(entidad);
       this.solicitud.entidad.fechaNacimiento = utils.getFecha(entidad.fechaNacimiento)
-      this.solicitud.entidad.nacionalidad = entidad.nacionalidad;
-      this.solicitud.entidad.observaciones = entidad.observaciones;
-      this.solicitud.entidad.lugarNacimiento = entidad.lugarNacimiento;
 
-      this.solicitud.entidad.relacionDependencia = entidad.relacionDependencia;
-      this.solicitud.entidad.empresa = entidad.empresa;
-      this.solicitud.entidad.independiente = entidad.independiente;
-      this.solicitud.entidad.serviciosPrestados = entidad.serviciosPrestados;
-      console.log(JSON.parse(JSON.stringify(entidad.cajas_previsionales)))
-      this.solicitud.entidad.cajas_previsionales = entidad.cajas_previsionales;
-      this.solicitud.entidad.jubilado = entidad.jubilado;
-
-      this.solicitud.entidad.domicilios = entidad.domicilios;
-
-      this.solicitud.entidad.contactos = [];
-      for(let contacto of entidad.contactos) {
-        let contacto_nuevo = contacto;
-        contacto_nuevo.tipo = this.opciones.contacto.find(i => i.valor == contacto.tipo).id;
-        this.solicitud.entidad.contactos.push(contacto_nuevo);
-      }
-
-      this.solicitud.entidad.condiciones_afip = entidad.condiciones_afip;
-
+      this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = formacion;
         formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
@@ -1319,26 +702,6 @@ export default {
       }
     },
 
-    updateCajas: function() {
-      return api.get('/cajas-previsionales?sort=+nombre')
-      .then(r => this.cajas_previsionales = r.data)
-      .catch(e => console.error(e));
-    },
-
-    getInstitucion: function(item) {
-      if (item.titulo.institucion) return item.titulo.institucion.nombre;
-      return this.instituciones.find(i => item.institucion == i.id).nombre;
-    },
-
-    getTitulo: function(item) {
-      if (item.titulo.nombre) return item.titulo.nombre;
-      return item.titulo_nombre;
-    },
-
-    getVinculo: function(id) {
-      return this.opciones.vinculo.find(i => id == i.id).valor;
-    },
-
     chgDni: function() {
       return api.get(`/profesionales?dni=${this.solicitud.entidad.dni}`)
       .then(r => {
@@ -1347,14 +710,6 @@ export default {
         return;
       })
       .catch(e => console.error(e));
-    },
-
-    chgFechaEmision: function() {
-      this.nueva_formacion.tiempoEmision = '';
-      let fecha = moment(this.nueva_formacion.fechaEmision, 'DD/MM/YYYY', true);
-      if (fecha.isValid()) {
-          this.nueva_formacion.tiempoEmision = utils.diffDatesStr(fecha, moment());
-      }
     },
 
     chgPublicarTodos: function() {
@@ -1370,109 +725,6 @@ export default {
 
     chgFirma: function(firma) {
         this.firma = firma;
-    },
-
-    updateTitulos: function() {
-      if (this.nueva_formacion.institucion) {
-        let url = `/instituciones/${this.nueva_formacion.institucion}/titulos`;
-        if (this.nueva_formacion.nivel) url += `?nivel=${this.nueva_formacion.nivel}`;
-
-        return api.get(url)
-        .then(r => { 
-          this.titulos = r.data
-          if (!this.titulos.find(t => t.id == this.nueva_formacion.titulo))
-            this.nueva_formacion.titulo = null;
-        })
-        .catch(e => console.error(e));
-      }
-    },
-
-    addFormacion: function() {
-      if (!this.nueva_formacion.titulo.id) {
-        let titulo = this.titulos.find(t => t.id == this.nueva_formacion.titulo)
-        if (!titulo) this.nueva_formacion.titulo = '';
-        else this.nueva_formacion.titulo_nombre = titulo.nombre;
-      }
-
-      if (this.$refs.form_formacion.validate()) {
-        if (this.formacion_edit == null) {
-          this.solicitud.entidad.formaciones.push(this.nueva_formacion);
-        }
-        else {
-          Vue.set(this.solicitud.entidad.formaciones, this.formacion_edit, this.nueva_formacion);
-        }
-
-        this.nueva_formacion = new Formacion();
-        this.formacion_edit = null;
-        Vue.nextTick().then(() => {
-          this.$refs.form_formacion.reset();
-        });
-      }
-    },
-
-    editFormacion: function(index) {
-      this.formacion_edit = index;
-      this.nueva_formacion = utils.clone(this.solicitud.entidad.formaciones[index]);
-      if (this.nueva_formacion.titulo.institucion) this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion.id;
-      if (this.nueva_formacion.titulo.nivel) this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel.id;
-      if (this.nueva_formacion.titulo.id) this.nueva_formacion.titulo = this.nueva_formacion.titulo.id;
-
-      this.updateTitulos();
-    },
-
-    cancelarEditFormacion: function() {
-      this.formacion_edit = null;
-      this.nueva_formacion = new Formacion();
-      this.$refs.form_formacion.reset();
-    },
-
-    addSubsidiario: function() {
-      if (this.$refs.form_subsidiario.validate()) {
-        if (this.subsidiario_edit == null) {
-          this.solicitud.entidad.subsidiarios.push(this.nuevo_subsidiario);
-        }
-        else {
-          Vue.set(this.solicitud.entidad.subsidiarios, this.subsidiario_edit, this.nuevo_subsidiario);
-        }
-
-        this.nuevo_subsidiario = new Subsidiario();
-        this.$refs.form_subsidiario.reset();
-        this.subsidiario_edit = null;
-      }
-    },
-
-    editSubsidiario: function(index) {
-      this.subsidiario_edit = index;
-      this.nuevo_subsidiario = utils.clone(this.solicitud.entidad.subsidiarios[index]);
-    },
-
-    cancelarEditSubsidiario: function() {
-      this.subsidiario_edit = null;
-      this.nuevo_subsidiario = new Subsidiario();
-      this.$refs.form_subsidiario.reset();
-    },
-
-    addCaja: function() {
-      if (this.$refs.form_beneficiario.validate()) {
-        
-        if (typeof this.nueva_caja == 'object') {
-          this.solicitud.entidad.cajas_previsionales.push(this.nueva_caja);
-          this.nueva_caja = '';
-          this.$refs.form_beneficiario.reset();
-        }
-        else if (typeof this.nueva_caja == 'string') {
-          api.post('/cajas-previsionales', { nombre: this.nueva_caja })
-          .then(caja => {
-            this.updateCajas()
-            .then(() => {
-              this.solicitud.entidad.cajas_previsionales.push(caja.data);
-              this.nueva_caja = '';
-              this.$refs.form_beneficiario.reset();
-            })
-          })
-          .catch(e => console.log(e));
-        }
-      }
     },
 
     nextStep: function() {
@@ -1493,6 +745,9 @@ export default {
 
       let solicitud = utils.clone(this.solicitud);
 
+      solicitud.entidad.sexo = solicitud.entidad.sexo.id;
+      solicitud.entidad.estadoCivil = solicitud.entidad.estadoCivil.id;
+
       solicitud.entidad.domicilios.forEach(d => {
         d.domicilio.pais = d.domicilio.pais.id;
         d.domicilio.provincia = d.domicilio.provincia.id;
@@ -1500,20 +755,22 @@ export default {
         d.domicilio.localidad = d.domicilio.localidad.id;
       });
 
+      solicitud.entidad.contactos.forEach(c => {
+        c.tipo = c.tipo.id;
+      });
+
       solicitud.entidad.condiciones_afip.forEach(c => {
-        if (c.condicion_afip.id) c.condicion_afip = c.condicion_afip.id;
+        c.condicion_afip = c.condicion_afip.id;
       });
 
       solicitud.entidad.formaciones.forEach(f => {
-        if (f.titulo.id) f.titulo = f.titulo.id;
+        f.titulo = f.titulo.id;
       });
 
       solicitud.entidad.cajas_previsionales = solicitud.entidad.cajas_previsionales.map(c => {
         if (c.caja) return c;
         else return c.id;
       });
-
-      console.log(solicitud.entidad.cajas_previsionales)
 
       form_data.append('solicitud', JSON.stringify(solicitud));
       return form_data;
@@ -1597,13 +854,6 @@ export default {
 
     cancelarImpresion: function() {
       this.$router.replace('/solicitudes/lista');
-    },
-
-    filterInstitucion: function(item, queryText) {
-      if (!queryText || !queryText.length) return true;
-      if (item.cue && item.cue.includes(queryText)) return true;
-      if (item.nombre.toLowerCase().includes(queryText.toLowerCase())) return true;
-      return false;
     }
   }
 }

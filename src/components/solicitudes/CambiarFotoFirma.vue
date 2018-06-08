@@ -2,21 +2,21 @@
 <v-container ref="main">
     <v-layout row wrap class="mt-4">
         <v-flex md6 xs12>
-            <add-foto
+            <profesional-add-foto
                 ref="foto"
                 edit
                 :url="url_foto"
                 @change="chgFoto"
-            ></add-foto>           
+            ></profesional-add-foto>           
         </v-flex>
 
         <v-flex md6 xs12>
-            <add-firma
+            <profesional-add-firma
                 ref="firma"
                 edit
                 :url="url_firma"
                 @change="chgFirma"            
-            ></add-firma>
+            ></profesional-add-firma>
         </v-flex>
     </v-layout>
 
@@ -44,8 +44,8 @@
 <script>
 import api from '@/services/api'
 import Store from '@/stores/Global'
-import AddFoto from '@/components/solicitudes/AddFoto'
-import AddFirma from '@/components/solicitudes/AddFirma'
+import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto'
+import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma'
 
 
 export default {
@@ -53,8 +53,8 @@ export default {
     props: ['profesional'],
 
     components: {
-        AddFoto,
-        AddFirma
+        ProfesionalAddFoto,
+        ProfesionalAddFirma
     },
 
     data() {

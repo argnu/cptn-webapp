@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-4">
+  <v-container>
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
@@ -22,7 +22,7 @@
           </v-data-table>
         </v-flex>
       </v-layout>      
-  </v-card>
+  </v-container>
 </template>
 
 <script>

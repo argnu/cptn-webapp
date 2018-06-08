@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-container>
       <detalle-dialog :item="item_selected" ref="show_detalle">
       </detalle-dialog>
 
@@ -62,7 +62,7 @@
           </v-data-table>
         </v-flex>
       </v-layout>    
-    </v-card>
+    </v-container>
 </template>
 
 <script>
