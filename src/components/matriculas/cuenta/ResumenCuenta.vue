@@ -112,13 +112,13 @@ export default {
   computed: {
     totales_debe: function() {
       return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.tipo == 'boleta' ? act.total : 0), 0)
+        this.resumen.reduce((prev, act) => prev + (act.debe || 0), 0)
         : 0;
     },
 
     totales_haber: function() {
       return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.tipo == 'comprobante' ? act.importe_cancelado : 0), 0)
+        this.resumen.reduce((prev, act) => prev + (act.haber || 0), 0)
         : 0;
     },
 
@@ -161,25 +161,29 @@ export default {
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&vencido=true`;
+      let url_exenciones = `/comprobantes-exenciones?matricula=${this.id}&sort=+fecha`;
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
         url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
         url_volantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_exenciones  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
       if (this.rules.fecha(this.filtros.fecha_hasta)) {
         url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
         url_volantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_exenciones += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
 
       Promise.all([
         api.get(url_boletas),
         api.get(url_comprobantes),
-        api.get(url_volantes)
+        api.get(url_volantes),
+        api.get(url_exenciones)
       ])
-     .then(([boletas, comprobantes, volantes]) => {
+     .then(([boletas, comprobantes, volantes, exenciones]) => {
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
@@ -194,6 +198,11 @@ export default {
          c.tipo = 'volante';
          c.haber = c.importe_total;
          c.descripcion = 'Volante de Pago';
+         return c;
+       })).concat(exenciones.data.map(c => {
+         c.haber = c.importe;
+         c.descripcion = c.tipo.descripcion;
+         c.tipo = 'exencion';
          return c;
        }));
 
