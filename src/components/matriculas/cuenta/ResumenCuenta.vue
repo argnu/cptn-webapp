@@ -31,8 +31,8 @@
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
-                <td>{{ props.item.debe }}</td>
-                <td>{{ props.item.haber }}</td>
+                <td>{{ props.item.debe | round }}</td>
+                <td>{{ props.item.haber | round }}</td>
                 <td class="justify-center layout px-0">
                   <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
                     <v-icon color="primary">launch</v-icon>
