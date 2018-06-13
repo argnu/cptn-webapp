@@ -74,12 +74,13 @@
                     :rules="[rules.required]"
                   >
                 </v-select>
-                  <v-text-field
+                  <input-texto
                     label="Titular Cuenta"
+                    uppercase
                     v-model="nueva_forma_pago.titular_cuenta"
                     :rules="[rules.required]"
                   >
-                  </v-text-field>
+                  </input-texto>
                 </v-flex>
               </v-layout>
             </v-form>
@@ -103,30 +104,22 @@
         <v-layout row>
           <v-flex xs12>
             <v-data-table
-                :headers="header_pagos"
+                :headers="$options.headers"
                 :items="items_pago"
                 class="elevation-1"
                 no-data-text="No hay pagos"
                 hide-actions
               >
-              <template slot="headers" slot-scope="props">
-                <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-                  <b>{{ header.text }}</b>
-                </th>
-                <th></th>
-              </template>
               <template slot="items" slot-scope="props">
-                <tr>
+                  <td class="justify-center layout px-0">
+                    <v-btn small icon class="mx-0"  @click="borrarPago(props.index)">
+                      <v-icon color="red">delete</v-icon>
+                    </v-btn>           
+                  </td>                 
                   <td>{{ getTipoPago(props.item.forma_pago) }}</td>
                   <td>${{ props.item.importe | round }}</td>
                   <td>{{ props.item.numero_cheque }}</td>
-                  <td>{{ getBanco(props.item.banco) }}</td>
-                  <td>
-                    <v-btn fab class="grey" dark small @click="borrarPago(props.index)">
-                      <v-icon>delete</v-icon>
-                    </v-btn>
-                  </td>
-                </tr>
+                  <td>{{ getBanco(props.item.banco) }}</td>                 
               </template>
             </v-data-table>
 
@@ -167,6 +160,7 @@
 import api from '@/services/api'
 import { Header } from '@/model'
 import * as utils from '@/utils'
+import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -189,13 +183,6 @@ class ComprobantePagoCheque extends ComprobantePago {
   }
 }
 
-const header_pagos = [
-  Header('Forma de Pago', 'forma'),
-  Header('Importe', 'importe'),
-  Header('N° Cheque', 'numero_cheque'),
-  Header('Banco', 'banco')
-]
-
 const formatPago = (p) => `${p.cuenta} - ${p.nombre.trim()}`;
 
 export default {
@@ -213,8 +200,18 @@ export default {
   },
 
   components: {
-    InputFecha, InputNumero
+    InputTexto,
+    InputFecha, 
+    InputNumero
   },
+
+  headers: [
+    Header('', 'borrar'),
+    Header('Forma de Pago', 'forma'),
+    Header('Importe', 'importe'),
+    Header('N° Cheque', 'numero_cheque'),
+    Header('Banco', 'banco')
+  ],
 
   data () {
     return {
@@ -230,10 +227,6 @@ export default {
   },
 
   computed: {
-    header_pagos: function() {
-      return header_pagos;
-    },
-
     esCheque: function() {
       if (!this.nueva_forma_pago.forma_pago) return false;
       let forma_pago = this.tipos_pago.find(f => f.id == this.nueva_forma_pago.forma_pago);
@@ -254,6 +247,12 @@ export default {
     }
   },
 
+  watch: {
+    importe: function(importe_nuevo) {
+      this.nueva_forma_pago.importe = importe_nuevo;
+    }
+  },
+
   created: function() {
     Promise.all([
       api.get('/opciones?sort=+valor'),
@@ -268,8 +267,10 @@ export default {
 
   methods: {
     chgFormaPago: function(tipo) {
+      let importe_guardar = this.nueva_forma_pago.importe;
       if (this.esCheque) this.nueva_forma_pago = new ComprobantePagoCheque(tipo);
       else this.nueva_forma_pago = new ComprobantePago(tipo);
+      this.nueva_forma_pago.importe = importe_guardar;
     },
 
     addItem: function() {
@@ -277,6 +278,7 @@ export default {
       this.nueva_forma_pago = new ComprobantePago();
       this.$refs.form_basico.reset();
       if (this.$refs.form_cheque) this.$refs.form_cheque.reset();
+      this.nueva_forma_pago.importe = this.importe - this.total;
     },
 
     addItemPago: function() {
@@ -315,8 +317,13 @@ export default {
     },
 
     cancelar: function() {
-      this.items_pago = [];
+      this.reset();
       this.$emit('cancelar');
+    },
+
+    reset: function() {
+      this.items_pago = [];
+      this.nueva_forma_pago.importe = this.importe;
     }
   },
 

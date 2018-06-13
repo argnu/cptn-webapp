@@ -24,7 +24,7 @@
                     <div class="mb-2">Apellido: {{ matricula.entidad.apellido }}</div>
                     <div class="mb-2">Nombre: {{ matricula.entidad.nombre }}</div>
                   </template>         
-                  <div class="mb-2">Estado: {{ matricula.estado }}</div>
+                  <div class="mb-2">Estado: {{ matricula.estado.valor }}</div>
                 </v-flex>
                 
                 <v-flex xs2>                    

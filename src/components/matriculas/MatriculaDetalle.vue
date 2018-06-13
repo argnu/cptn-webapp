@@ -1,31 +1,6 @@
 <template>
     <v-layout row wrap v-if="matricula.entidad">
         <span class="ma-2"></span>
-        <v-expansion-panel expand>
-          <v-expansion-panel-content v-model="expand.basicos" class="blue lighten-4 grey--text text--darken-3">
-            <div slot="header"><b>Datos Básicos</b></div>
-            <v-card class="white">
-              <v-card-text>
-                <v-layout row wrap class="mx-5">
-                  <v-flex xs6>
-                    <div class="mb-3">
-                      Número de Matrícula: {{ matricula.numeroMatricula }}
-                    </div>
-                  </v-flex>
-
-                  <v-flex xs6>
-                    <div class="mb-3">
-                      Estado: {{ matricula.estado }}
-                    </div>
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <br>
-
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
           <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Datos de la Empresa</b></div>
@@ -66,7 +41,15 @@
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'profesional'">
           <v-expansion-panel-content v-model="expand.detalle" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Datos del Profesional</b></div>
-            <v-card >
+            <v-card>
+              <!-- <v-btn 
+                class="right primary" 
+                v-if="user.admin"
+                @click.native="$emit('editProfesional')"
+              >
+                <v-icon dark class="mr-2">edit</v-icon>
+                Modificar Datos
+              </v-btn>               -->
               <v-card-text>
                 <v-layout row wrap class="mx-5">
                   <v-flex xs6>
@@ -95,10 +78,10 @@
                       Nacionalidad: {{ matricula.entidad.nacionalidad }}
                     </div>
                     <div class="mb-3">
-                      Sexo: {{ matricula.entidad.sexo }}
+                      Sexo: {{ matricula.entidad.sexo.valor }}
                     </div>
                     <div class="mb-3">
-                      Estado Civil: {{ matricula.entidad.estadoCivil }}
+                      Estado Civil: {{ matricula.entidad.estadoCivil.valor }}
                     </div>
                     <div class="mb-3">
                       Observaciones: {{ matricula.entidad.observaciones }}
@@ -174,7 +157,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Contactos"
+                  :headers="$options.headers.Contactos"
                   :items="matricula.entidad.contactos"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -203,7 +186,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.CondicionesAfip"
+                  :headers="$options.headers.CondicionesAfip"
                   :items="matricula.entidad.condiciones_afip"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -227,7 +210,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Formaciones"
+                  :headers="$options.headers.Formaciones"
                   :items="matricula.entidad.formaciones"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -287,7 +270,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Subsidiarios"
+                  :headers="$options.headers.Subsidiarios"
                   :items="matricula.entidad.subsidiarios"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -319,7 +302,7 @@
             <v-card class="white">
               <v-card-text >
                 <v-data-table
-                  :headers="headers.Representantes"
+                  :headers="$options.headers.Representantes"
                   :items="matricula.entidad.representantes"
                   hide-actions
                   class="elevation-1 mt-4"
@@ -354,11 +337,12 @@ export default {
   name: 'MatriculaDetalle',
   props: ['matricula'],
 
+  headers: headers,
+
   data() {
     return {
       expand: {
-        basicos: true,
-        detalle: false,
+        detalle: true,
         domicilios: false,
         contactos: false,
         formaciones: false,
@@ -370,10 +354,6 @@ export default {
   },
 
   computed: {
-    headers: function() {
-      return headers;
-    },
-
     domicilioReal: function() {
       if (!this.matricula.entidad.domicilios.length) return null;
       let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'real');
@@ -391,11 +371,7 @@ export default {
       let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'especial');
       return dom ? dom.domicilio : null;
     }
-  },
-
-  methods: {
-
-  },
+  }
 
 }
 </script>

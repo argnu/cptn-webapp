@@ -9,13 +9,14 @@ import DelegacionSeleccion from '@/components/DelegacionSeleccion'
 
 import NuevaSolicitudEmpresa from '@/components/solicitudes/nueva/NuevaSolicitudEmpresa'
 import NuevaSolicitudProfesional from '@/components/solicitudes/nueva/NuevaSolicitudProfesional'
-import ListaSolicitud from '@/components/solicitudes/ListaSolicitud'
+import SolicitudLista from '@/components/solicitudes/SolicitudLista'
 
 import MatriculaMain from '@/components/matriculas/MatriculaMain'
 import Matricula from '@/components/matriculas/Matricula'
 import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
+import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
 
 import Cobranza from '@/components/cobranzas/Cobranza'
 import Legajo from '@/components/matriculas/legajos/Legajo'
@@ -79,8 +80,8 @@ export default new Router({
         },
         {
           path: '/solicitudes/lista',
-          name: 'ListaSolicitud',
-          component: ListaSolicitud
+          name: 'SolicitudLista',
+          component: SolicitudLista
         },
         {
           path: '/solicitudes/empresas/nueva',
@@ -121,6 +122,12 @@ export default new Router({
             },
           ]
         },
+        {
+          path: '/profesionales/:id/modificar',
+          name: 'ProfesionalModificar',
+          component: ProfesionalModificar,
+          props: true
+        },          
         {
           path: '/legajos/:id_legajo',
           name: 'Legajo',

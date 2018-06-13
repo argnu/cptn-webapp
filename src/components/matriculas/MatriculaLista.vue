@@ -47,12 +47,12 @@
               </v-flex>
 
               <v-flex xs3 class="mx-4">
-                <v-text-field
+                <input-numero
                   v-model="cambio_estado.documento.numero"
                   label="N° Resolución/Acta"
                   :rules="[rules.required, rules.integer]"
                 >
-                </v-text-field>
+                </input-numero>
               </v-flex>
             </v-layout>
 
@@ -204,7 +204,7 @@
             <td>{{ props.item.entidad.nombre }}</td>
             <td>{{ props.item.entidad.cuit }}</td>
           </template>
-        <td>{{ props.item.estado }}</td>
+        <td>{{ props.item.estado.valor }}</td>
         <td>
           <v-menu>
             <v-btn icon slot="activator">
@@ -212,7 +212,7 @@
             </v-btn>
             
             <v-list>
-              <v-list-tile v-if="props.item.estado == 'Habilitado'">
+              <v-list-tile v-if="props.item.estado.id == 13">
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>
                     <div slot="activator">
@@ -268,6 +268,7 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
+import InputNumero from '@/components/base/InputNumero'
 import { Matricula, Header} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -287,6 +288,11 @@ class CambioEstado {
 export default {
   name: 'MatriculaLista',
   mixins: [MixinValidator],
+
+  components: {
+    InputNumero,
+    InputFecha
+  },  
 
   headers: {
     empresa: [
@@ -471,16 +477,12 @@ export default {
       reports.open({
         'jsp-source': 'certificado_matriculado_habilitado.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula}-${Date.now()}`,
+        'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula} - ${Date.now()}`,
         'jsp-only-gen': false,
         'id_matricula': item.id
       });      
     }
 
-  },
-
-  components: {
-    InputFecha
   }
 
 }

@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-container>
       <detalle-dialog :item="item_selected" ref="show_detalle">
       </detalle-dialog>
 
@@ -18,7 +18,7 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
-              :headers="$options.headers_resumen"
+              :headers="$options.headers"
               :items="resumen"
               class="elevation-1"
               no-data-text="No hay datos"
@@ -31,8 +31,8 @@
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
-                <td>{{ props.item.debe }}</td>
-                <td>{{ props.item.haber }}</td>
+                <td>{{ props.item.debe | round }}</td>
+                <td>{{ props.item.haber | round }}</td>
                 <td class="justify-center layout px-0">
                   <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
                     <v-icon color="primary">launch</v-icon>
@@ -43,7 +43,7 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row wrap>
+      <v-layout row wrap v-if="resumen.length > 0">
         <v-flex xs6>
         </v-flex>
         <v-flex xs6>
@@ -54,14 +54,15 @@
               hide-headers
           >
             <template slot="items" slot-scope="props">
-              <td>{{props.item.t}}</td>
-              <td>{{props.item.d}}</td>
-              <td>{{props.item.h}}</td>
+              <td>{{props.item.t }}</td>
+              <td v-if="props.item.d">{{props.item.d | round }}</td>
+              <td v-else></td>
+              <td>{{props.item.h | round }}</td>
             </template>
           </v-data-table>
         </v-flex>
       </v-layout>    
-    </v-card>
+    </v-container>
 </template>
 
 <script>
@@ -80,7 +81,7 @@ export default {
   props: ['id'],
   mixins: [MixinValidator],
 
-  headers_resumen: [
+  headers: [
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
@@ -111,13 +112,13 @@ export default {
   computed: {
     totales_debe: function() {
       return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.tipo == 'boleta' ? act.total : 0), 0)
+        this.resumen.reduce((prev, act) => prev + (act.debe || 0), 0)
         : 0;
     },
 
     totales_haber: function() {
       return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.tipo == 'comprobante' ? act.importe_cancelado : 0), 0)
+        this.resumen.reduce((prev, act) => prev + (act.haber || 0), 0)
         : 0;
     },
 
@@ -159,22 +160,30 @@ export default {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&vencido=true`;
+      let url_exenciones = `/comprobantes-exenciones?matricula=${this.id}&sort=+fecha`;
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
         url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_volantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_exenciones  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
       if (this.rules.fecha(this.filtros.fecha_hasta)) {
         url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_volantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_exenciones += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
 
       Promise.all([
         api.get(url_boletas),
-        api.get(url_comprobantes)
+        api.get(url_comprobantes),
+        api.get(url_volantes),
+        api.get(url_exenciones)
       ])
-     .then(([boletas, comprobantes]) => {
+     .then(([boletas, comprobantes, volantes, exenciones]) => {
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
@@ -185,7 +194,18 @@ export default {
          c.haber = c.importe_cancelado;
          c.descripcion = 'Recibo';
          return c;
+       })).concat(volantes.data.map(c => {
+         c.tipo = 'volante';
+         c.haber = c.importe_total;
+         c.descripcion = 'Volante de Pago';
+         return c;
+       })).concat(exenciones.data.map(c => {
+         c.haber = c.importe;
+         c.descripcion = c.tipo.descripcion;
+         c.tipo = 'exencion';
+         return c;
        }));
+
        this.resumen = resumen;
        this.resumen_original = utils.clone(resumen);
        this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));

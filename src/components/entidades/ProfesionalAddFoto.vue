@@ -66,11 +66,17 @@ export default {
         }
     },
 
+    watch: {
+        tipo_foto: function(new_val) {
+            if (new_val == 'capturar') {               
+                if (navigator.getUserMedia) navigator.getUserMedia({video: true}, this.handleVideo, this.videoError);
+            }
+        }
+    },
+
     created: function() {
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia 
             || navigator.msGetUserMedia || navigator.oGetUserMedia;
-        
-        if (navigator.getUserMedia) navigator.getUserMedia({video: true}, this.handleVideo, this.videoError);
     },
 
     methods: {

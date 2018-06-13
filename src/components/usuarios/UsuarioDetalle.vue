@@ -23,11 +23,13 @@
         <v-layout row>
             <v-flex xs12 md3 class="mx-5 mb-3">
                 <template v-if="edit">
-                    <v-text-field
+                    <input-texto
                         label="Usuario"
+                        type="letras"
+                        uppercase
                         v-model="usuario.username"
                         :rules="[rules.required]"
-                    ></v-text-field>
+                    ></input-texto>
                 </template>
                 <template v-else>
                     <div class="mb-3">
@@ -52,11 +54,13 @@
 
             <v-flex xs12 md3 class="mx-5 mb-3">
                     <template v-if="edit">
-                        <v-text-field
+                        <input-texto
                             label="Nombre"
+                            type="letras"
+                            uppercase
                             v-model="usuario.nombre"
                             :rules="[rules.required]"
-                        ></v-text-field>
+                        ></input-texto>
                     </template>
                     <template v-else>
                         <div>
@@ -80,11 +84,13 @@
 
             <v-flex xs12 md3 class="mx-5 mb-3">
                     <template v-if="edit">
-                        <v-text-field
+                        <input-texto
+                            type="letras"
                             label="Apellido"
+                            uppercase
                             v-model="usuario.apellido"
                             :rules="[rules.required]"
-                        ></v-text-field>
+                        ></input-texto>
                     </template>
                     <template v-else>
                         <div>
@@ -163,6 +169,7 @@ import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import InputTexto from '@/components/base/InputTexto'
 
 
 export default {
@@ -170,6 +177,10 @@ export default {
     props: ['id'],
 
     mixins: [MixinValidator],
+
+    components: {
+        InputTexto
+    },
 
     headers: [
         Header('Borrar', 'borrar'),

@@ -2,7 +2,7 @@
   <v-container v-if="comprobante">
     <v-layout row wrap>
       <v-flex xs6>
-        Número: {{ comprobante.numero }}<br>
+        Comprobante N°: {{ comprobante.numero }}<br>
       </v-flex>
 
       <v-flex xs6>
@@ -19,12 +19,7 @@
         class="elevation-1"
         no-data-text="No hay items"
         hide-actions
-        >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
+    >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.item }}</td>
         <td>{{ props.item.descripcion }}</td>
@@ -40,15 +35,14 @@
         no-data-text="No hay pagos"
         hide-actions
     >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
       <template slot="items" slot-scope="props">
         <td>{{ getFormaPago(props.item.forma_pago) }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
         <td>{{ props.item.importe | round  }}</td>
+      </template>
+      <template slot="footer">
+        <td colspan="2" style="text-align:right;font-size:13px"><strong>Total Comprobante</strong></td>
+        <td style="font-size:13px">{{ total | round }}</td>
       </template>
     </v-data-table>
   </v-container>
@@ -57,6 +51,7 @@
 <script>
 import api from '@/services/api'
 import * as utils from '@/utils';
+import { Header } from '@/model'
 
 let formas_pago = [];
 
@@ -72,15 +67,15 @@ export default {
 
   headers: {
     comprobante: [
-      { text: 'N°', value: 'item' },
-      { text: 'Descripción', value: 'descripcion' },
-      { text: 'Importe', value: 'importe' }
+      Header('N°', 'item' ),
+      Header('Descripción', 'descripcion'),
+      Header('Importe', 'importe')
     ],
 
     pago: [
-      { text: 'Forma de Pago', value: 'forma_pago' },
-      { text: 'Fecha', value: 'fecha' },
-      { text: 'Importe', value: 'importe' }
+      Header('Forma de Pago', 'forma_pago'),
+      Header('Fecha', 'fecha'),
+      Header('Importe', 'importe')
     ]
   },
 
@@ -90,6 +85,12 @@ export default {
       this.formas_pago = r.data.formaPago;
     })
     .catch(e => console.error(e));
+  },
+
+  computed: {
+    total: function() {
+      return this.comprobante.pagos.reduce((prev, act) => prev + +act.importe, 0);
+    }
   },
 
   methods: {

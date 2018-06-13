@@ -62,7 +62,7 @@
                                 </td>
                                 <td>{{ props.item.nombre }}</td>
                                 <td>{{ props.item.nivel.valor }}</td>
-                                <td>{{ props.item.tipo_matricula }}</td>
+                                <td>{{ props.item.tipo_matricula.valor }}</td>
                                 <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
                                 <td>{{ props.item.valido | boolean }}</td>
                             </template>
@@ -87,12 +87,13 @@
                 <v-form ref="form_titulo" lazy-validation>
                     <v-layout>
                         <v-flex xs12 md3 class="mx-4">
-                            <v-text-field
+                            <input-texto
                                 label="Nombre"
+                                uppercase
                                 v-model="nuevo_titulo.nombre"
                                 :rules="[rules.required]"
                             >
-                            </v-text-field>
+                            </input-texto>
 
                             <v-select
                                 label="Incumbencias"
@@ -101,6 +102,7 @@
                                 item-value="id"
                                 v-model="nuevo_titulo.incumbencias"
                                 multiple
+                                return-object
                                 max-height="400"
                                 hint="Seleccione las incumbencias"
                                 persistent-hint
@@ -111,6 +113,7 @@
                             <v-select
                                 label="Nivel"
                                 autocomplete
+                                return-object
                                 :items="opciones.niveles_titulos"
                                 item-value="id"
                                 item-text="valor"
@@ -130,9 +133,12 @@
                             <v-select
                                 label="Tipo de Matrícula"
                                 autocomplete
-                                :items="$options.tipos_matricula"
+                                clearable
+                                return-object
+                                item-text="valor"
+                                item-value="id"
+                                :items="opciones.matricula"
                                 v-model="nuevo_titulo.tipo_matricula"
-                                :rules="[rules.required]"
                             >
                             </v-select>
                         </v-flex>
@@ -168,6 +174,7 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
+import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
 
@@ -178,6 +185,10 @@ export default {
 
     mixins: [MixinValidator],
 
+    components: {
+        InputTexto
+    },
+
     headers: [
         Header('', 'acciones'),
         Header('Nombre', 'nombre'),
@@ -185,12 +196,6 @@ export default {
         Header('Tipo de Matrícula', 'tipo_matricula'),
         Header('Incumbencias', 'incumbencias'),
         Header('Válido', 'valido')
-    ],
-
-    tipos_matricula: [
-        { text: 'TECA', value: 'TECA' },
-        { text: 'TEC-', value: 'TEC-' },
-        { text: 'IDO', value: 'IDO' }
     ],
 
     filters: {
@@ -230,15 +235,20 @@ export default {
 
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
+                let titulo = utils.clone(this.nuevo_titulo);
+                if (titulo.tipo_matricula) titulo.tipo_matricula = titulo.tipo_matricula.id;
+                titulo.nivel = titulo.nivel.id;
+                titulo.incumbencias = titulo.incumbencias.map(i => i.id);
+
                 if (this.titulo_edit == null) {
-                    api.post(`/instituciones/${this.id}/titulos`, this.nuevo_titulo)
+                    api.post(`/instituciones/${this.id}/titulos`, titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
                     })
                 }
                 else {
-                    api.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, this.nuevo_titulo)
+                    api.put(`/instituciones/${this.id}/titulos/${this.titulo_edit}`, titulo)
                     .then(r => {
                         this.update();
                         this.resetNuevoTitulo();
@@ -250,9 +260,10 @@ export default {
         editTitulo: function(titulo) {
             this.titulo_edit = titulo.id;
             this.nuevo_titulo.nombre = titulo.nombre;
-            this.nuevo_titulo.nivel = titulo.nivel.id;
+            this.nuevo_titulo.nivel = titulo.nivel;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
+            console.log(titulo.incumbencias.map(i => i.incumbencia))
             this.nuevo_titulo.valido = titulo.valido;
             this.show_formtitulo = true;
         },

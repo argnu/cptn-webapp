@@ -102,8 +102,7 @@ export default {
 
   computed: {
     input_val: function() {
-      let item = this.items ? this.items.find(i => i[this.itemValue] == this.value) : null;
-      return item ? item[this.itemText] : this.value;
+      return this.items.indexOf(this.value) == -1 ? this.value : this.value[this.itemText];
     }
   },
 
@@ -126,7 +125,7 @@ export default {
     setText: function(item) {
       if (item) {
         this.show_items = false;
-        this.$emit('input', item[this.itemValue]);
+        this.$emit('input', item);
         this.$emit('change');
       }
     },

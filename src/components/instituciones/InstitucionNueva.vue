@@ -12,23 +12,28 @@
         <v-form ref="form_basico" v-model="valid_basico">
         <v-layout row>
             <v-flex xs4 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
+                    tabindex="1"
                     label="Nombre"
+                    uppercase
                     v-model="institucion.nombre"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
             </v-flex>
 
             <v-flex xs4 class="mx-5 mb-3">
-                <v-text-field
+                <input-texto
+                    tabindex="2"
                     label="CUE"
+                    uppercase
                     v-model="institucion.cue"
                     :rules="[rules.required]"
-                ></v-text-field>
+                ></input-texto>
             </v-flex>
 
             <v-flex xs4 class="mx-5 mb-3">
                 <v-checkbox
+                    tabindex="3"
                     label="Institución Válida"
                     v-model="institucion.valida"
                 ></v-checkbox>
@@ -45,6 +50,7 @@
                 <v-layout row>
                     <v-flex xs6 class="ml-5">
                         <v-select
+                            tabindex="4"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -56,6 +62,7 @@
                         </v-select>
 
                         <v-select
+                            tabindex="6"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -69,6 +76,7 @@
 
                     <v-flex xs6 class="mx-5">
                         <v-select
+                            tabindex="5"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -80,6 +88,7 @@
                         </v-select>
 
                         <v-select
+                            tabindex="7"
                             autocomplete single-line bottom
                             item-text="nombre"
                             item-value="id"
@@ -92,11 +101,13 @@
                 </v-layout>
 
                 <v-layout xs12 class="mx-5">
-                    <v-text-field
+                    <input-texto
+                        tabindex="8"
                         label="Dirección"
+                        uppercase
                         v-model="institucion.domicilio.direccion"
                     >
-                    </v-text-field>
+                    </input-texto>
                 </v-layout>
             </v-flex>
         </v-layout>
@@ -109,23 +120,30 @@
 
         <v-layout row>
             <v-flex xs5 class="mx-5">
-                <v-text-field
+                <input-texto
+                    tabindex="9"
                     label="Nombre"
+                    uppercase
                     v-model="nuevo_titulo.nombre"
                     :rules="[rules.required]"
                 >
-                </v-text-field>
+                </input-texto>
 
                 <v-select
+                    tabindex="10"
                     label="Tipo de Matrícula"
                     autocomplete
-                    :items="$options.tipos_matricula"
+                    clearable
+                    return-object
+                    item-text="valor"
+                    item-value="id"
+                    :items="opciones.matricula"
                     v-model="nuevo_titulo.tipo_matricula"
-                    :rules="[rules.required]"
                 >
                 </v-select>
 
                 <v-checkbox
+                    tabindex="13"
                     label="Título Válido"
                     v-model="nuevo_titulo.valido"
                 ></v-checkbox>
@@ -133,8 +151,10 @@
 
             <v-flex xs5 class="mx-5">
                 <v-select
+                    tabindex="11"
                     label="Nivel"
                     autocomplete
+                    return-object
                     :items="opciones.niveles_titulos"
                     item-value="id"
                     item-text="valor"
@@ -144,15 +164,17 @@
                 </v-select>
 
                 <v-select
+                    tabindex="12"
                     label="Incumbencias"
                     :items="opciones.incumbencia"
                     item-text="valor"
                     item-value="id"
                     v-model="nuevo_titulo.incumbencias"
-                    multiple
                     max-height="400"
                     hint="Seleccione las incumbencias"
                     persistent-hint
+                    return-object
+                    multiple
                 ></v-select>
             </v-flex>
         </v-layout>
@@ -161,7 +183,7 @@
 
         <v-layout row>
             <v-flex xs12 class="mx-5">
-                <v-btn class="right mb-4" light @click="addTitulo">
+                <v-btn class="right mb-4" light @click="addTitulo" tabindex="14">
                     {{ titulo_edit != null ? 'Guardar' : 'Agregar' }}
                 </v-btn>
                 <v-btn class="right" light v-show="titulo_edit != null" @click="cancelarEditTitulo">
@@ -181,17 +203,18 @@
                 >
                     <template slot="items" slot-scope="props">
                         <td class="justify-center layout px-0">
-                        <v-btn small icon class="mx-0" @click="borrarTitulo(props.index)">
-                            <v-icon color="red">delete</v-icon>
-                        </v-btn>
+                            <v-btn small icon class="mx-0" @click="borrarTitulo(props.index)">
+                                <v-icon color="red">delete</v-icon>
+                            </v-btn>
 
-                        <v-btn small icon class="mx-4" @click="editTitulo(props.index)">
-                            <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>          
+                            <v-btn small icon class="mx-4" @click="editTitulo(props.index)">
+                                <v-icon color="deep-purple">edit</v-icon>
+                            </v-btn>          
                         </td>                        
                         <td>{{ props.item.nombre }}</td>
-                        <td>{{ getNivelTitulo(props.item.nivel) }}</td>
-                        <td>{{ props.item.tipo_matricula }}</td>
+                        <td>{{ props.item.nivel.valor }}</td>
+                        <td>{{ props.item.tipo_matricula ? props.item.tipo_matricula.valor : '' }}</td>
+                        <td>{{ props.item.incumbencias | lista_incumbencias }}</td>
                         <td>{{ props.item.valido | boolean }}</td>
                     </template>
                 </v-data-table>
@@ -206,6 +229,7 @@
                     @click.native="submit"
                     :disabled="!valid_basico || submitted"
                     :loading="submitted"
+                    tabindex="15"
                 >
                     Guardar
                     <v-icon dark right>check_circle</v-icon>
@@ -228,6 +252,7 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
+import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
 
@@ -238,11 +263,16 @@ export default {
 
     mixins: [MixinValidator],
 
+    components: {
+        InputTexto
+    },
+
     headers: [
         Header('', 'acciones'),
         Header('Nombre', 'nombre'),
         Header('Nivel', 'nivel'),
         Header('Tipo de Matrícula', 'tipo_matricula'),
+        Header('Incumbencias', 'incumbencias'),
         Header('Válido', 'valido'),
     ],
 
@@ -264,6 +294,12 @@ export default {
             localidades: [],
             valid_basico: false,
             submitted: false
+        }
+    },
+
+    filters: {
+        lista_incumbencias: function(incumbencias) {
+            return incumbencias.map(i => i.valor).join(',');
         }
     },
 
@@ -291,7 +327,7 @@ export default {
                         this.changePais().then(() => this.changeProvincia());
                     }
                     for(let titulo of r.data.titulos) {
-                        titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia.id);
+                        titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
                         this.institucion.titulos.push(titulo);
                     }
                     
@@ -350,11 +386,6 @@ export default {
             }
         },
 
-        getNivelTitulo: function(nivel) {
-            let id = (typeof nivel == 'object') ? nivel.id : nivel;
-            return this.opciones.niveles_titulos.find(n => n.id == id).valor;
-        },
-
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
                 let titulo = utils.clone(this.nuevo_titulo);
@@ -388,9 +419,15 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
+                let institucion = utils.clone(this.institucion);
+                institucion.titulos.forEach(t => {
+                    t.incumbencias = t.incumbencias.map(i => i.id);
+                    t.nivel = t.nivel.id;
+                    t.tipo_matricula = t.tipo_matricula ? t.tipo_matricula.id : null;
+                })
 
                 if (this.id) {
-                    api.put(`/instituciones/${this.id}`, this.institucion)
+                    api.put(`/instituciones/${this.id}`, institucion)
                     .then(r => {
                         this.submitted = false;
                         this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
@@ -408,7 +445,7 @@ export default {
                     })
                 }
                 else {
-                    api.post('/instituciones', this.institucion)
+                    api.post('/instituciones', institucion)
                     .then(r => {
                         this.submitted = false;
                         this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';

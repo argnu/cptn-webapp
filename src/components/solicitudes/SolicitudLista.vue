@@ -35,12 +35,12 @@
               </v-flex>
 
               <v-flex xs4 class="mx-2">
-                <v-text-field
+                <input-numero
                   v-model="matricula.documento.numero"
                   label="N° Acta"
                   :rules="[rules.required, rules.integer]"
                 >
-                </v-text-field>
+                </input-numero>
               </v-flex>
 
               <v-flex xs4 class="mx-2">
@@ -336,6 +336,7 @@ import * as _ from 'lodash'
 import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
 import { impresionSolicitud } from '@/utils/PDFUtils'
+import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
@@ -485,31 +486,23 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
-      if (this.filtros.tipoEntidad == 'empresa') {
-        axios.get(`/solicitudes/${item.id}`)
-            .then(s => {
-              let solicitud = s.data;
-              let pdf = impresionSolicitud(solicitud);
-              pdf.save(`Solicitud N° ${solicitud.numero}.pdf`)
-            })
-            .catch(e => console.error(e));
-      }
-      else {
-        reports.open({
-          'jsp-source': 'solicitud_matricula_profesional.jasper',
-          'jsp-format': 'PDF',
-          'jsp-output-file': `Solicitud ${item.entidad.apellido}-${Date.now()}`,
-          'jsp-only-gen': false,
-          'solicitud_id': item.id
-        });
-      }
+      if (this.filtros.tipoEntidad == 'empresa') nombre_reporte = 'solicitud_matricula_empresa';
+      else  nombre_reporte = 'solicitud_matricula_profesional';
+      
+      reports.open({
+        'jsp-source': `${nombre_reporte}.jasper`,
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Solicitud ${item.numero} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'solicitud_id': item.id
+      });
     },
 
     imprimirCertificado: function(item) {
       reports.open({
         'jsp-source': 'certificado_matricula.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Certificado ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-output-file': `Certificado Matricula en Tramite Sol. ${item.numero} - ${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
       });
@@ -519,7 +512,7 @@ export default {
       reports.open({
         'jsp-source': 'anexo_caja_previsional.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Anexo Caja ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-output-file': `Anexo Caja Sol. ${item.numero} - ${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
       });
@@ -529,7 +522,7 @@ export default {
       reports.open({
         'jsp-source': 'certificado_baja_para_caja.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Certificado Baja Caja Previsional ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-output-file': `Certificado Baja Caja Previsional Sol. ${item.numero} - ${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
       });
@@ -539,7 +532,7 @@ export default {
       reports.open({
         'jsp-source': 'aceptacion_difusion.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Aceptacion Difusion Datos ${item.entidad.apellido}-${Date.now()}`,
+        'jsp-output-file': `Aceptacion Difusion Datos Sol. ${item.numero} - ${Date.now()}`,
         'jsp-only-gen': false,
         'solicitud_id': item.id
       });
@@ -555,7 +548,7 @@ export default {
           reports.open({
             'jsp-source': 'certificado_matriculado_habilitado.jasper',
             'jsp-format': 'PDF',
-            'jsp-output-file': `Cert. Habilitación Matrícula ${r.data.numeroMatricula}-${Date.now()}`,
+            'jsp-output-file': `Cert. Habilitacion Matricula ${r.data.numeroMatricula} - ${Date.now()}`,
             'jsp-only-gen': false,
             'id_matricula': r.data.id
           });        
@@ -610,6 +603,7 @@ export default {
 
   components: {
     InputFecha,
+    InputNumero,
     CambiarFotoFirma
   }
 

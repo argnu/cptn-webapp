@@ -2,7 +2,7 @@
   <div v-if="boleta">
     <v-layout row wrap>
       <v-flex xs6>
-        Número: {{ boleta.numero }}<br>
+        Boleta N°: {{ boleta.numero }}<br>
         Fecha: {{ boleta.fecha | fecha }} <br>
         Estado: {{ boleta.estado.valor }} <br>
         Fecha de Vencimiento: {{ boleta.fecha_vencimiento | fecha }}<br>
@@ -24,34 +24,47 @@
         class="elevation-1"
         no-data-text="No hay items"
         hide-actions
-        >
-      <template slot="headers" slot-scope="props">
-        <th v-for="header of props.headers" :key="header.value" class="pa-3 text-xs-left">
-          <b>{{ header.text }}</b>
-        </th>
-      </template>
+    >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.item }}</td>
-        <td>{{ props.item.descripcion }}</td>
-        <td>{{ props.item.importe | round }}</td>
+        <tr>
+          <td>{{ props.item.item }}</td>
+          <td>{{ props.item.descripcion }}</td>
+          <td>{{ props.item.importe | round }}</td>
+        </tr>
       </template>
+      <template slot="footer">
+        <tr v-if="boleta.interes && boleta.interes > 0">
+          <td></td>
+          <td style="font-size:13px">Intereses</td>
+          <td style="font-size:13px">{{ boleta.interes | round }}</td>          
+        </tr>        
+        <tr>
+          <td colspan="2" style="text-align:right;font-size:13px"><strong>Total Boleta</strong></td>
+          <td style="font-size:13px">{{ total | round }}</td>
+        </tr>
+      </template>      
     </v-data-table>
   </div>
 </template>
 
 <script>
-import * as utils from '@/utils';
+import { Header } from '@/model'
 
 export default {
   name: 'DetalleBoleta',
   props: ['boleta'],
 
   headers: [
-    { text: 'N°', value: 'item' },
-    { text: 'Descripción', value: 'descripcion' },
-    { text: 'Importe', value: 'importe' }
+    Header('N°', 'item'),
+    Header('Descripción', 'descripcion'),
+    Header('Importe', 'importe' )
   ],
 
+  computed: {
+    total: function() {
+      return this.boleta.items.reduce((prev, act) => prev + +act.importe, 0);
+    }
+  },  
 }
 </script>
 
