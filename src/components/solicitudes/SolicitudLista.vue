@@ -486,6 +486,8 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
+      let nombre_reporte;
+      
       if (this.filtros.tipoEntidad == 'empresa') nombre_reporte = 'solicitud_matricula_empresa';
       else  nombre_reporte = 'solicitud_matricula_profesional';
       
