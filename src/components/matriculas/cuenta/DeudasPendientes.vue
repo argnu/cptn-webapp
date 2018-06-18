@@ -32,6 +32,7 @@
               <td>${{ props.item.interes | round }}</td>
               <td class="justify-center layout px-0">
                 <v-btn
+                  v-if="props.item.tipo == 'volante'"
                   small icon
                   class="mx-0"
                   title="Imprimir"
@@ -373,8 +374,10 @@ export default {
 
       api.post('volantespago', volante)
       .then(r => {
-        console.info(`Volante ${r.data.id} generado!`);
-        this.imprimirVolante(r.data.id);
+        let volante = r.data;
+        console.info(`Volante ${volante.id} generado!`);
+        volante.tipo = 'volante';
+        this.imprimir(volante);
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;
