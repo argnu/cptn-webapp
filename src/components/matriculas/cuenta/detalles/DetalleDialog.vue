@@ -14,6 +14,9 @@
         <template v-else-if="item.tipo == 'volante'">
           <detalle-volante-pago :volante="item"></detalle-volante-pago>
         </template>
+        <template v-else-if="item.tipo == 'exencion'">
+          <detalle-exencion :exencion="item"></detalle-exencion>
+        </template>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -30,6 +33,7 @@
 import DetalleBoleta from './DetalleBoleta';
 import DetalleComprobante from './DetalleComprobante';
 import DetalleVolantePago from './DetalleVolantePago';
+import DetalleExencion from './DetalleExencion';
 
 export default {
   name: 'DetalleDialog',
@@ -39,7 +43,8 @@ export default {
   components: {
     DetalleBoleta,
     DetalleComprobante,
-    DetalleVolantePago
+    DetalleVolantePago,
+    DetalleExencion
   },
 
   data () {
@@ -51,7 +56,9 @@ export default {
   computed: {
     titulo_tipo: function() {
       let [a, ...rest] = this.item.tipo;
-      return [a.toUpperCase()].concat(rest).join('');
+      if (this.item.tipo != 'exencion')
+        return [a.toUpperCase()].concat(rest).join('');
+      else return this.item.descripcion;
     }
   },
 
