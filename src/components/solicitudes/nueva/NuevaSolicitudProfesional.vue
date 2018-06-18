@@ -25,8 +25,7 @@
         <v-container>
           <v-progress-linear indeterminate v-show="show_cargando"></v-progress-linear>
 
-          <v-stepper v-model="step" vertical>
-
+          <v-stepper v-model="step" vertical v-if="!show_cargando">
             <!-- PASO 1: DATOS DE SOLICITUD -->
             <v-stepper-step step="1" edit-icon="check" editable :complete="valid.form_solicitud && step > 1" :rules="[() => step <= 1 || valid.form_solicitud]">
               Datos de la Solicitud
