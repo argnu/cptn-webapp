@@ -335,7 +335,6 @@ import reports from '@/services/reports'
 import * as _ from 'lodash'
 import { Matricula, Header } from '@/model'
 import * as utils from '@/utils'
-import { impresionSolicitud } from '@/utils/PDFUtils'
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -486,6 +485,7 @@ export default {
     },
 
     imprimirSolicitud: function(item) {
+      let nombre_reporte;
       if (this.filtros.tipoEntidad == 'empresa') nombre_reporte = 'solicitud_matricula_empresa';
       else  nombre_reporte = 'solicitud_matricula_profesional';
       
