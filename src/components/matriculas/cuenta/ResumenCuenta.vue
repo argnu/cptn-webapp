@@ -28,6 +28,17 @@
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
+              <td class="justify-center layout px-0">
+                <v-btn
+                  v-if="props.item.tipo != 'exencion'"
+                  small icon
+                  class="mx-0"
+                  title="Imprimir"
+                  @click="imprimir(props.item)"
+                >
+                  <v-icon color="secondary">print</v-icon>
+                </v-btn>
+              </td>
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
@@ -37,7 +48,7 @@
                   <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
                     <v-icon color="primary">launch</v-icon>
                   </v-btn>
-                </td>                
+                </td>
             </template>
           </v-data-table>
         </v-flex>
@@ -61,12 +72,13 @@
             </template>
           </v-data-table>
         </v-flex>
-      </v-layout>    
+      </v-layout>
     </v-container>
 </template>
 
 <script>
 import api from '@/services/api'
+import reports from '@/services/reports'
 import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
@@ -82,12 +94,13 @@ export default {
   mixins: [MixinValidator],
 
   headers: [
+    Header('', 'imprimir'),
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
     Header('Debe', 'debe', true),
     Header('Haber', 'haber', true),
-    Header('', 'detalle')
+    Header('Más info', 'detalle')
   ],
 
   data () {
@@ -217,6 +230,32 @@ export default {
     verDetalle: function(item) {
       this.item_selected = item;
       this.$refs.show_detalle.mostrar();
+    },
+
+    imprimir(item) {
+      let nombre_reporte = item.tipo;
+      let param_id = 'boleta_id';
+      let titulo = 'Boleta';
+      let numero = item.numero
+
+      if (item.tipo == 'volante') {
+        titulo = 'Volante de Pago';
+        param_id = 'volante_id';
+        numero = item.id;
+      }
+      else if (item.tipo == 'comprobante') {
+        nombre_reporte = 'recibo';
+        param_id = 'recibo_id';
+        titulo = 'Recibo';
+      }
+
+      reports.open({
+        'jsp-source': `${nombre_reporte}.jasper`,
+        'jsp-format': 'PDF',
+        'jsp-output-file': `${titulo} N° ${numero} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        [param_id]: item.id
+      });
     },
   },
 

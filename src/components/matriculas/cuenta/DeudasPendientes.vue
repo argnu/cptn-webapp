@@ -24,7 +24,7 @@
             <tr>
               <td class="justify-center layout px-0">
                 <v-checkbox v-model="props.item.checked"></v-checkbox>
-              </td>              
+              </td>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
               <td>{{ props.item.descripcion }}</td>
@@ -36,11 +36,11 @@
                   small icon
                   class="mx-0"
                   title="Imprimir"
-                  @click="imprimirVolante(props.item.id)"
+                  @click="imprimir(props.item)"
                 >
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
-              </td>              
+              </td>
             </tr>
           </template>
         </v-data-table>
@@ -154,6 +154,7 @@
 
 <script>
 import api from '@/services/api'
+import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Header } from '@/model'
@@ -161,7 +162,6 @@ import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
-import { impresionVolante } from '@/utils/PDFUtils'
 
 
 export default {
@@ -329,6 +329,15 @@ export default {
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;
         this.expand_pago = false;
+
+        reports.open({
+          'jsp-source': 'recibo.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Recibo N° ${r.data.numero} - ${Date.now()}`,
+          'jsp-only-gen': false,
+          'recibo_id': r.data.id
+        });        
+
         this.updateBoletas();
         this.$emit('update');
       })
@@ -365,8 +374,10 @@ export default {
 
       api.post('volantespago', volante)
       .then(r => {
-        console.info(`Volante ${r.data.id} generado!`);
-        this.imprimirVolante(r.data.id);
+        let volante = r.data;
+        console.info(`Volante ${volante.id} generado!`);
+        volante.tipo = 'volante';
+        this.imprimir(volante);
         this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
         this.global_state.snackbar.color = 'success';
         this.global_state.snackbar.show = true;
@@ -376,18 +387,24 @@ export default {
       .catch(e => console.error(e));
     },
 
-    imprimirVolante(id) {
-        api.get(`/volantespago/${id}`)
-        .then(v => {
-              let volante = v.data;
-              api.get(`/matriculas/${volante.matricula}`)
-              .then(m =>{
-                let matricula = m.data;
-                volante.matricula= matricula;
-                let pdf = impresionVolante(volante);
-                pdf.save(`Volante ${id}.pdf`);
-              })
-          });
+    imprimir(item) {
+      let titulo = 'Boleta';
+      let numero = item.numero;
+      let param_id = 'boleta_id';
+
+      if (item.tipo == 'volante') {
+        titulo = 'Volante de Pago';
+        numero = item.id;
+        param_id = 'volante_id';
+      }
+
+      reports.open({
+        'jsp-source': `${item.tipo}.jasper`,
+        'jsp-format': 'PDF',
+        'jsp-output-file': `${titulo} N° ${numero} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        [param_id]: item.id
+      });
     },
 
     showAddBoleta: function() {
