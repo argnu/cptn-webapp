@@ -9,9 +9,6 @@ while [ "$1" != "" ]; do
         -e | --env )           shift
                                 env=$1
                                 ;;
-        -u | --url )           shift
-                                url_api=$1
-                                ;;
         * )                     dir_webapp=$1
     esac
     shift
@@ -43,11 +40,6 @@ if [ "$dir_webapp" != "" ]; then
     fi
 
     #sed -i 's,/static/,/'"$dir_webapp"'/static/,g' "dist/index.html";
-
-    if [ "$url_api" != "" ]; then
-      echo "Reemplazando URL de la API por $url_api";
-      find dist/static/js -type f -exec sed -i 's,localhost:3400,'"$url_api"',g' {} \;
-    fi
 
     echo "Limpieza de archivos antiguos en /var/www/html/$dir_webapp"
     rm -r /var/www/html/$dir_webapp/*
