@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <v-layout row class="my-4">
+    <v-layout row class="my-4" v-if="botonNueva">
       <v-flex xs12>
         <v-btn class="green" dark @click="showAddBoleta">
           <v-icon class="mr-2">add</v-icon>
@@ -21,13 +21,20 @@
             no-data-text="No hay deudas pendientes"
         >
           <template slot="items" slot-scope="props">
-            <tr>
               <td class="justify-center layout px-0">
                 <v-checkbox v-model="props.item.checked"></v-checkbox>
               </td>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>{{ props.item.descripcion }}</td>
+              <td>
+                {{ props.item.descripcion }}
+                <template v-if="props.item.tipo_comprobante.id == 20">
+                  <br>
+                  Nomenclatura: {{ props.item.legajo.nomenclatura }} 
+                  <br>
+                  Comitentes: {{ props.item.legajo.comitentes | lista_comitentes }}
+                </template>
+              </td>
               <td>${{ props.item.total | round }}</td>
               <td>${{ props.item.interes | round }}</td>
               <td class="justify-center layout px-0">
@@ -41,7 +48,6 @@
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
               </td>
-            </tr>
           </template>
         </v-data-table>
       </v-flex>
@@ -166,7 +172,7 @@ import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
 
 export default {
   name: 'DeudasPendientes',
-  props: ['id'],
+  props: ['id', 'botonNueva'],
 
   components: {
     InputFecha,
@@ -178,9 +184,9 @@ export default {
     Header('Sel.', 'check'),
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
-    Header('Descripción', 'descripcion', true),
-    Header('Importe', 'total', true),
-    Header('Intereses', 'interes', true),
+    Header('Descripción', 'descripcion'),
+    Header('Importe', 'total'),
+    Header('Intereses', 'interes'),
     Header('', 'imprimir')
   ],
 
@@ -206,7 +212,11 @@ export default {
       if (str == 'boleta') return 'Boleta';
       if (str == 'volante') return 'Volante de Pago';
       return '';
-    }
+    },
+
+    lista_comitentes: function(lista) {
+      return lista.map(c => `${c.persona.nombre} ${c.persona.apellido}`).join(', ');
+    }    
   },
 
 

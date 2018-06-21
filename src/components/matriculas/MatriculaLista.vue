@@ -195,6 +195,7 @@
         </td>     
 
         <td>{{ props.item.numeroMatricula }}</td>
+        <td>{{ props.item.numero_solicitud ? props.item.numero_solicitud : props.item.idMigracion }}</td>
           <template v-if="filtros.tipoEntidad == 'profesional'">
             <td>{{ props.item.entidad.apellido }}</td>
             <td>{{ props.item.entidad.nombre }}</td>
@@ -298,6 +299,7 @@ export default {
     empresa: [
       Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
+      Header('N° Solicitud', 'numeroSolicitud', true),
       Header('Nombre', 'nombreEmpresa', true),
       Header('CUIT', 'cuit', true),
       Header('Estado', 'estado', true),
@@ -307,6 +309,7 @@ export default {
     profesional: [
       Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
+      Header('N° Solicitud', 'numeroSolicitud'),
       Header('Apellido', 'apellido', true),
       Header('Nombre', 'nombre', true),
       Header('DNI', 'dni', true),

@@ -57,6 +57,7 @@
             <deudas-pendientes
               v-if="tab_selected == 'tab-pendientes'"
               :id="matricula.id"
+              :boton-nueva="matricula.estado.id == 13"
             ></deudas-pendientes>
           </v-card>
         </v-tab-item>

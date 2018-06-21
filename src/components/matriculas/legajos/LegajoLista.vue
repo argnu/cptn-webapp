@@ -23,6 +23,8 @@
             <template slot="items" slot-scope="props">
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td>{{ props.item.descripcion }}</td>
+              <td>{{ props.item.nomenclatura }}</td>
+              <td>{{ props.item.comitentes | lista_comitentes }}</td>
               <td class="justify-center layout px-0">
                 <v-btn small icon class="mx-0" @click="imprimir(props.item.id)" title="Imprimir">
                   <v-icon color="secondary">print</v-icon>
@@ -60,8 +62,16 @@ export default {
   headers: [
     Header('Fecha', 'fecha_solicitud', true),
     Header('Descripción', 'descripcion', true),
+    Header('Nomenclatura', 'nomenclatura', true),
+    Header('Comitentes', 'comitentes'),
     Header('', 'acciones')
   ],
+
+  filters: {
+    lista_comitentes: function(lista) {
+      return lista.map(c => `${c.persona.nombre} ${c.persona.apellido}`).join(', ');
+    }
+  },
 
   data () {
     return {
