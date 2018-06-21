@@ -1,6 +1,6 @@
 {
   "name": "cptn-webapp",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Sistema de Gestión de Matrículas del Colegio Provincial de Técnicos del Neuquén",
   "author": "Martin Weingart <martinweingart@gmail.com>",
   "private": true,
