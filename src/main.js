@@ -10,14 +10,11 @@ import 'vuetify/dist/vuetify.min.css'
 import * as moment from 'moment'
 import * as Cookies from 'js-cookie'
 import * as utils from '@/utils'
-import { getTipoLegajo } from '@/utils/legajo'
 import Store from '@/stores/Global'
 
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
-
-Vue.filter('tipo_legajo', getTipoLegajo);
 
 Vue.filter('boolean', function (str) {
   return str ? 'Sí' : 'No';

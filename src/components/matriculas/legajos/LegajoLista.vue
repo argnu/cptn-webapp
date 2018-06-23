@@ -1,10 +1,53 @@
 <template>
 <v-container>
+  <v-layout row>
+    <v-flex xs4 class="mx-4">
+        <v-select
+          :items="[]"
+          v-model="filtros.tipo"
+          label="Tipo"
+          @input="updateList"
+          clearable
+        ></v-select>        
+    </v-flex>
+
+    <v-flex xs4 class="mx-4">
+        <v-text-field
+          v-model="filtros.nomenclatura"
+          label="Nomenclatura"
+          @input="updateList"
+          clearable
+        ></v-text-field>
+
+        <v-text-field
+          v-model="filtros.numero"
+          label="N°"
+          @input="updateList"
+          clearable
+        ></v-text-field>                
+    </v-flex>
+
+    <v-flex xs4 class="mx-4">
+        <v-text-field
+          v-model="filtros.comitente.nombre"
+          label="Nombre Comitente"
+          @input="updateList"
+          clearable
+        ></v-text-field>
+
+        <v-text-field
+          v-model="filtros.comitente.apellido"
+          label="Apellido Comitente"
+          @input="updateList"
+          clearable
+        ></v-text-field>
+    </v-flex>
+  </v-layout>
+
   <v-layout row wrap>
     <v-flex xs12>
       <v-card class="mt-5">
         <v-card-text>
-          <!--Solo si el estado es habilitado!-->
           <v-btn
             v-if="showAdd"
             absolute dark fab top right
@@ -22,7 +65,8 @@
           >
             <template slot="items" slot-scope="props">
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
-              <td>{{ props.item.descripcion }}</td>
+              <td>{{ props.item.tipo.valor }}</td>
+              <td>{{ props.item.numero_legajo }}</td>
               <td>{{ props.item.nomenclatura }}</td>
               <td>{{ props.item.comitentes | lista_comitentes }}</td>
               <td class="justify-center layout px-0">
@@ -32,8 +76,8 @@
 
                 <v-btn small icon class="mx-4"  @click="verDetalle(props.item.id)" title="Ver Detalle">
                   <v-icon color="primary">launch</v-icon>
-                </v-btn>            
-              </td>              
+                </v-btn>
+              </td>
             </template>
           </v-data-table>
         </v-card-text>
@@ -48,20 +92,20 @@ import api from '@/services/api';
 import * as utils from '@/utils'
 import { Header } from '@/model'
 import { impresionLegajo } from '@/utils/PDFUtils'
-import { getTipoLegajo } from '@/utils/legajo'
 
 export default {
 
   name: 'LegajoLista',
 
   props: {
-    id: Number, 
+    id: Number,
     showAdd: Boolean
   },
 
   headers: [
     Header('Fecha', 'fecha_solicitud', true),
-    Header('Descripción', 'descripcion', true),
+    Header('Tipo', 'tipo', true),
+    Header('N°', 'numero', true),
     Header('Nomenclatura', 'nomenclatura', true),
     Header('Comitentes', 'comitentes'),
     Header('', 'acciones')
@@ -69,43 +113,96 @@ export default {
 
   filters: {
     lista_comitentes: function(lista) {
-      return lista.map(c => `${c.persona.nombre} ${c.persona.apellido}`).join(', ');
+      return lista.map(c => `${c.persona.nombre} ${c.persona.tipo == 'fisica' ? c.persona.apellido : ''}`)
+                  .join(', ');
     }
   },
 
   data () {
     return {
       legajos: [],
-      legajos_original: [],
       loading: false,
+
+      filtros: {
+        fecha_desde: '',
+        fecha_hasta: '',
+        numero: '',
+        nomenclatura: '',
+        tipo: '',
+        comitente: {
+          cuit: '',
+          apellido: '',
+        },
+      },
+
+      pagination: {
+          page: 1,
+          rowsPerPage: 25,
+          descending: null,
+          sortBy: null
+      },
+
+      debouncedUpdate: null,
     }
   },
 
+
   watch: {
-    'pagination.sortBy': function(sortBy) {
-      if (sortBy) {
-        if (sortBy.includes('fecha')) this.legajos = this.legajos.sort(utils.sortByFecha(sortBy));
-        else if (sortBy == 'descripcion') this.legajos = this.legajos.sort(utils.sortByString(sortBy));
-      }
-      else this.legajos = utils.clone(this.legajos_original);
+    filtros: {
+      handler() {
+        this.pagination.page = 1;
+        this.updateLegajos();
+      },
+      deep: true,
+      inmediate: true
+    },
+
+    pagination: {
+      handler() {
+        this.updateLegajos();
+      },
+      deep: true,
+      inmediate: true
     }
   },
 
   created: function() {
-    this.loading = true;
-    api.get(`/matriculas/${this.id}/legajos`)
-    .then(r => {
-      this.legajos = r.data.map(l => {
-       l.descripcion = `${getTipoLegajo(l.tipo)} - N° ${l.numero_legajo}`;
-       return l;
-      });
-      this.legajos_original = utils.clone(this.legajos);
-      this.loading = false;
-    })
-    .catch(e => console.error(e));
+    this.debouncedUpdate = _.debounce(this.updateLegajos, 600, {
+      'maxWait': 1000
+    });
+    this.updateLegajos();
   },
 
   methods: {
+    updateList: function() {
+      this.debouncedUpdate();
+    },
+
+    updateLegajos: function() {
+      this.loading = true;
+      this.legajo = [];
+      let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+      let limit = this.pagination.rowsPerPage;
+      let url = `/matriculas/${this.id}/legajos?&limit=${limit}&offset=${offset}`;
+
+      if (this.filtros.numero) url += `&numero=${this.filtros.numero}`;
+      if (this.filtros.nomenclatura) url += `&nomenclatura=${this.filtros.nomenclatura}`;
+      if (this.filtros.comitente) {
+        for(let f in this.filtros.comitente) {
+          if (this.filtros.comitente[f]) url += `&comitente[${f}]=${this.filtros.comitente[f]}`;
+        }
+      } 
+
+      if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+
+      api.get(url)
+      .then(r => {
+        this.legajos = r.data;
+        this.loading = false;
+      })
+      .catch(e => console.error(e));
+    },
+
     verDetalle: function(id) {
       this.$router.push({ path: `/legajos/${id}` });
     },
@@ -122,7 +219,7 @@ export default {
       .then(([legajo, categorias]) => {
         let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))
         let pdf = impresionLegajo(legajo.data, categoria);
-        pdf.save(`${getTipoLegajo(legajo.data.tipo)} - N° ${legajo.data.numero_legajo}.pdf`)
+        pdf.save(`${legajo.data.tipo.valor} - N° ${legajo.data.numero_legajo}.pdf`)
       })
     }
   },

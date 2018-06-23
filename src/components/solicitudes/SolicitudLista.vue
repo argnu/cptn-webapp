@@ -283,14 +283,14 @@
 
 
 
-              <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="editSolicitud(props.item.id)">
+              <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="editSolicitud(props.item.id)">
                 <v-list-tile-title>
                   <v-icon color="deep-purple">edit</v-icon>
                   <span class="ml-2">Modificar</span>
                 </v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile v-show="props.item.estado != 'Rechazada'" @click="showCambiarImgs(props.item.entidad)">
+              <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="showCambiarImgs(props.item.entidad)">
                 <v-list-tile-title>
                   <v-icon color="deep-purple">add_a_photo</v-icon>
                   <span class="ml-2">Cambiar Foto y/o Firma</span>

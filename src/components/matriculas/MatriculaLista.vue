@@ -254,6 +254,14 @@
                 <v-icon class="blue--text mr-2">note_add</v-icon>
                 <v-list-tile-title>Rematricular</v-list-tile-title>
               </v-list-tile>
+
+              <v-list-tile
+                v-if="filtros.tipoEntidad == 'profesional'"
+                @click="modificarProfesional(props.item.entidad.id)"
+              >
+                <v-icon class="blue--text mr-2">edit</v-icon>
+                <v-list-tile-title>Modificar Datos Prof.</v-list-tile-title>
+              </v-list-tile>
             </v-list>
           </v-menu>
         </td>
@@ -374,6 +382,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
+    
     api.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
@@ -484,6 +493,10 @@ export default {
         'jsp-only-gen': false,
         'id_matricula': item.id
       });      
+    },
+
+    modificarProfesional: function(id) {
+      this.$router.push(`/profesionales/${id}/modificar`);
     }
 
   }

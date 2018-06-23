@@ -181,6 +181,7 @@
 
                       <input-texto
                         label="Observaciones"
+                        maxlength="5"
                         uppercase
                         v-model="solicitud.entidad.observaciones"
                         tabindex="12"
@@ -348,6 +349,7 @@
 
                       <input-texto
                         tabindex="44"
+                        maxlength="100"
                         label="Servicios Prestados"
                         uppercase
                         :disabled="!solicitud.entidad.independiente"

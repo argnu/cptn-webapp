@@ -1,8 +1,5 @@
 import * as jsPDF from 'jspdf'
 import * as moment from 'moment'
-import {
-  getTipoLegajo
-} from '@/utils/legajo'
 
 const img = new Image();
 img.src = "/static/logoImpresion.jpg";
@@ -99,7 +96,7 @@ export function impresionLegajo(legajo, categoria) {
   doc.setLineWidth(1);
   doc.line(20, 38, 190, 38);
   doc.setFontSize(14);
-  doc.text(25, 45, getTipoLegajo(legajo.tipo));
+  doc.text(25, 45, legajo.tipo.valor);
   doc.line(20, 50, 190, 50);
 
   let eje_y = 57;

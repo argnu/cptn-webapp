@@ -215,7 +215,8 @@ export default {
     },
 
     lista_comitentes: function(lista) {
-      return lista.map(c => `${c.persona.nombre} ${c.persona.apellido}`).join(', ');
+      return lista.map(c => `${c.persona.nombre} ${c.persona.tipo == 'fisica' ? c.persona.apellido : ''}`)
+                  .join(', ');
     }    
   },
 

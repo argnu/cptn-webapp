@@ -624,7 +624,6 @@ import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import { impresionLegajo } from '@/utils/PDFUtils'
-import { getTipoLegajo } from '@/utils/legajo'
 
 const tipos = [
   Header('Permiso de Construcción', 1),
@@ -958,7 +957,7 @@ export default {
       .then(r => {
         let legajo = r.data;
         let pdf = impresionLegajo(legajo, categoria);
-        pdf.save(`${getTipoLegajo(legajo.tipo)} - N° ${legajo.numero_legajo}.pdf`)
+        pdf.save(`${legajo.tipo.valor} - N° ${legajo.numero_legajo}.pdf`)
       })
     }
   },

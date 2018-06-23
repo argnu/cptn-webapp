@@ -73,6 +73,7 @@
                         <v-flex xs6 class="ma-4">
                           <input-texto
                             tabindex="4"
+                            maxlength="100"
                             label="Nombre"
                             uppercase
                             v-model="solicitud.entidad.nombre"
@@ -220,6 +221,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="N°"
+                              maxlength="30"
                               @input="updateList"
                               v-model="filtros.numero"
                             >
@@ -228,6 +230,7 @@
                           <v-flex xs3>
                             <v-text-field
                               label="Apellido"
+                              maxlength="50"
                               @input="updateList"
                               v-model="filtros.apellido"
                             >
@@ -236,7 +239,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
-                              maxlength="20"
+                              maxlength="8"
                               @input="updateList"
                               v-model="filtros.dni"
                             >
@@ -335,6 +338,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="N° Matrícula"
+                              maxlength="12"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.numero"
                             >
@@ -343,6 +347,7 @@
                           <v-flex xs3>
                             <v-text-field
                               label="Apellido"
+                              maxlength="30"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.apellido"
                             >
@@ -351,6 +356,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
+                              maxlength="8"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.dni"
                             >
