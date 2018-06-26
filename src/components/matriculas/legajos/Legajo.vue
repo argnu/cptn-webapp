@@ -614,6 +614,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
+import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Header, Domicilio, Comitente } from '@/model'
@@ -623,7 +624,6 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import { impresionLegajo } from '@/utils/PDFUtils'
 
 const tipos = [
   Header('Permiso de Construcción', 1),
@@ -952,13 +952,13 @@ export default {
     },
 
     imprimir: function() {
-      let categoria = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria))
-      api.get(`/legajos/${this.id_legajo}`)
-      .then(r => {
-        let legajo = r.data;
-        let pdf = impresionLegajo(legajo, categoria);
-        pdf.save(`${legajo.tipo.valor} - N° ${legajo.numero_legajo}.pdf`)
-      })
+      reports.open({
+        'jsp-source': 'legajos_tecnicos.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Legajo Técnico ${this.id_legajo} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'legajo_id': this.id_legajo
+      });
     }
   },
 

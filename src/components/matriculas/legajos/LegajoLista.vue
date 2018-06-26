@@ -8,7 +8,7 @@
           label="Tipo"
           @input="updateList"
           clearable
-        ></v-select>        
+        ></v-select>
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -24,7 +24,7 @@
           label="N°"
           @input="updateList"
           clearable
-        ></v-text-field>                
+        ></v-text-field>
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -89,9 +89,9 @@
 
 <script>
 import api from '@/services/api';
+import reports from '@/services/reports'
 import * as utils from '@/utils'
 import { Header } from '@/model'
-import { impresionLegajo } from '@/utils/PDFUtils'
 
 export default {
 
@@ -191,7 +191,7 @@ export default {
         for(let f in this.filtros.comitente) {
           if (this.filtros.comitente[f]) url += `&comitente[${f}]=${this.filtros.comitente[f]}`;
         }
-      } 
+      }
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
@@ -212,15 +212,13 @@ export default {
     },
 
     imprimir: function(id) {
-      Promise.all([
-        api.get(`/legajos/${id}`),
-        api.get('/tareas/categorias')
-      ])
-      .then(([legajo, categorias]) => {
-        let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))
-        let pdf = impresionLegajo(legajo.data, categoria);
-        pdf.save(`${legajo.data.tipo.valor} - N° ${legajo.data.numero_legajo}.pdf`)
-      })
+      reports.open({
+        'jsp-source': 'legajos_tecnicos.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Legajo Técnico ${id} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'legajo_id': id
+      });
     }
   },
 
