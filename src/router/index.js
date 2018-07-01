@@ -14,7 +14,6 @@ import SolicitudLista from '@/components/solicitudes/SolicitudLista'
 import MatriculaMain from '@/components/matriculas/MatriculaMain'
 import Matricula from '@/components/matriculas/Matricula'
 import MatriculaLista from '@/components/matriculas/MatriculaLista'
-import ResumenCuenta from '@/components/matriculas/cuenta/ResumenCuenta'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
 
@@ -29,6 +28,7 @@ import UsuarioLista from '@/components/usuarios/UsuarioLista'
 import UsuarioNuevo from '@/components/usuarios/UsuarioNuevo'
 import UsuarioDetalle from '@/components/usuarios/UsuarioDetalle'
 
+import BuscadorLegajo from '@/components/herramientas/BuscadorLegajo'
 import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 Vue.use(Router)
@@ -93,7 +93,7 @@ export default new Router({
           name: 'ModificarSolicitudEmpresa',
           component: NuevaSolicitudEmpresa,
           props: true
-        },        
+        },
         {
           path: '/matriculas',
           component: MatriculaMain,
@@ -127,7 +127,7 @@ export default new Router({
           name: 'ProfesionalModificar',
           component: ProfesionalModificar,
           props: true
-        },          
+        },
         {
           path: '/legajos/:id_legajo',
           name: 'Legajo',
@@ -176,12 +176,18 @@ export default new Router({
           beforeEnter: (to, from, next) => {
             if (to.params.id == Store.state.user.id || Store.state.user.admin) next();
             else next(false);
-          },          
+          },
+        },
+
+        {
+          path: '/herramientas/busqueda-legajo',
+          name: 'BuscadorLegajo',
+          component: BuscadorLegajo
         },
         {
           path: '/configuracion',
           name: 'SistemaConfiguracion',
-          component: SistemaConfiguracion          
+          component: SistemaConfiguracion
         }
       ]
     },

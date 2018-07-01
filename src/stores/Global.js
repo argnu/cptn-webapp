@@ -4,7 +4,8 @@ export default {
       show: false
     },
     user: null,
-    delegacion: null
+    delegacion: null,
+    opciones: null
   },
 
   setUser(user) {
@@ -13,6 +14,10 @@ export default {
 
   setDelegacion(delegacion) {
     this.state.delegacion = delegacion;
+  },
+
+  setOptions(opciones) {
+    this.state.opciones = opciones;
   },
 
   removeUser() {

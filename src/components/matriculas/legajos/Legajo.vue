@@ -123,7 +123,6 @@
                       maxlength="8"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer, rules.dni]"
-                      @change="chgDni"
                     ></input-numero>
 
                     <input-numero
@@ -131,7 +130,6 @@
                       tabindex="7"
                       maxlength="11"
                       v-model="nuevo_comitente.persona.cuit"
-                      @change="chgCuitComitente"
                       :rules="[rules.cuit]"
                     >
                     </input-numero>
@@ -153,7 +151,7 @@
                   Cancelar
                 </v-btn>
               </v-flex>
-            </v-layout>            
+            </v-layout>
 
             </v-form>
 
@@ -204,23 +202,34 @@
             <span class="subheading blue--text text--darken-4"><b>Ubicación del Trabajo</b></span>
           </v-card-title>
           <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12 class="mx-5">
+            <v-layout row wrap class="mx-5">
+              <v-flex xs5 class="mr-5">
                   <v-text-field
                     tabindex="11"
                     label="Nomenclatura"
+                    mask="##-##-###-####-####"
+                    return-masked-value
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
-                    :rules="[rules.required]"
-                  >
-                  </v-text-field>
+                    :rules="[rules.required, rules.nomenclatura_catastral]"
+                  ></v-text-field>
+              </v-flex>
+
+              <v-flex xs5 class="ml-4">
+                  <v-text-field
+                    tabindex="12"
+                    maxlength="45"
+                    label="N° Expediente Municipal"
+                    v-model="legajo.expediente_municipal"
+                    :disabled="legajo.id > 0"
+                  ></v-text-field>
               </v-flex>
             </v-layout>
 
             <v-layout row>
               <v-flex xs6 class="ml-5">
                 <v-select
-                  tabindex="12"
+                  tabindex="13"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -246,7 +255,7 @@
                 </v-select>
 
                 <v-text-field
-                  tabindex="16"
+                  tabindex="17"
                   label="Dirección"
                   v-model="legajo.domicilio.direccion"
                   :disabled="legajo.id > 0"
@@ -256,7 +265,7 @@
 
               <v-flex xs6 class="mx-5">
                 <v-select
-                  tabindex="13"
+                  tabindex="14"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -269,7 +278,7 @@
                 </v-select>
 
                 <v-select
-                  tabindex="15"
+                  tabindex="16"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -301,7 +310,7 @@
             <v-layout row wrap>
                 <v-flex xs3 class="ml-4">
                   <v-select
-                    tabindex="17"
+                    tabindex="18"
                     label="Categoría"
                     :items="categorias"
                     item-text="descripcion"
@@ -362,7 +371,7 @@
                   Cancelar
                 </v-btn>
               </v-flex>
-              
+
               <v-flex xs2 class="mx-3">
                 <v-btn
                   tabindex="21"
@@ -391,7 +400,7 @@
                         </v-btn>
                         <v-btn icon small class="mx-4" @click="editTareaItem(props.index)" v-if="!legajo.id">
                           <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
@@ -661,6 +670,7 @@ const Legajo = (matricula) => ({
   informacion_adicional: '',
   items: [],
   nomenclatura: '',
+  expediente_municipal: '',
   observaciones: '',
   plazo_cumplimiento: '',
   porcentaje_cumplimiento: '',
@@ -836,6 +846,7 @@ export default {
     },
 
     chgTipoComitente: function() {
+      this.$refs.form_comitente.reset();
       if (this.nuevo_comitente.persona.tipo == 'fisica') this.nuevo_comitente = new Comitente('fisica');
       else this.nuevo_comitente = new Comitente('juridica');
     },
@@ -849,9 +860,11 @@ export default {
       }
     },
 
-    chgDni: function() {
+    chgDni: function(e) {
+      console.log(e)
       if (this.nuevo_comitente.persona.dni) {
         if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+          console.log(this.nuevo_comitente.persona.dni)
           api.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
           .then(r => {
             if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
@@ -866,10 +879,10 @@ export default {
           Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
           this.comitente_edit = null;
         }
-        else { 
+        else {
           this.legajo.comitentes.push(this.nuevo_comitente);
         }
-        
+
         this.nuevo_comitente = new Comitente('fisica');
         this.$refs.form_comitente.reset();
       }
@@ -911,7 +924,7 @@ export default {
 
     editTareaItem: function(index) {
       this.tareaitem_edit = index;
-      this.nuevo_item = utils.clone(this.legajo.items[index]);  
+      this.nuevo_item = utils.clone(this.legajo.items[index]);
       if (this.legajo.items[index].item.descripcion) this.nuevo_item.item = this.legajo.items[index].item.descripcion;
     },
 

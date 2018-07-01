@@ -61,4 +61,7 @@ export default {
     : true,
 
   dia: value => value < 0 || value > 31 ? 'Número de día inválido' : true,
+
+  nomenclatura_catastral: value => value.length == 19 ?
+    true : 'Faltan caracteres'
 }
