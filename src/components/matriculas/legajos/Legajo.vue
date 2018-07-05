@@ -830,9 +830,14 @@ export default {
       .catch(e => console.error(e));
     },
 
-    chgSubcategoria: function() {
+    chgSubcategoria: function(e) {
       api.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
-           .then(r => this.items_predeterminados = r.data)
+           .then(r => { 
+             this.items_predeterminados = r.data;
+             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);             
+             if (item) this.nuevo_item.item = item.id;
+             else this.nuevo_item.item = '';
+           })
            .catch(e => console.error(e));
     },
 
