@@ -153,7 +153,7 @@
                   Cancelar
                 </v-btn>
               </v-flex>
-            </v-layout>            
+            </v-layout>
 
             </v-form>
 
@@ -362,7 +362,7 @@
                   Cancelar
                 </v-btn>
               </v-flex>
-              
+
               <v-flex xs2 class="mx-3">
                 <v-btn
                   tabindex="21"
@@ -391,7 +391,7 @@
                         </v-btn>
                         <v-btn icon small class="mx-4" @click="editTareaItem(props.index)" v-if="!legajo.id">
                           <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
@@ -614,6 +614,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
+import reports from '@/services/reports';
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Header, Domicilio, Comitente } from '@/model'
@@ -623,7 +624,6 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
 const tipos = [
@@ -867,10 +867,10 @@ export default {
           Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
           this.comitente_edit = null;
         }
-        else { 
+        else {
           this.legajo.comitentes.push(this.nuevo_comitente);
         }
-        
+
         this.nuevo_comitente = new Comitente('fisica');
         this.$refs.form_comitente.reset();
       }
@@ -912,7 +912,7 @@ export default {
 
     editTareaItem: function(index) {
       this.tareaitem_edit = index;
-      this.nuevo_item = utils.clone(this.legajo.items[index]);  
+      this.nuevo_item = utils.clone(this.legajo.items[index]);
       if (this.legajo.items[index].item.descripcion) this.nuevo_item.item = this.legajo.items[index].item.descripcion;
     },
 
@@ -953,12 +953,15 @@ export default {
     },
 
     imprimir: function() {
-      let categoria = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria))
       api.get(`/legajos/${this.id_legajo}`)
       .then(r => {
-        let legajo = r.data;
-        let pdf = impresionLegajo(legajo, categoria);
-        pdf.save(`${getTipoLegajo(legajo.tipo)} - N° ${legajo.numero_legajo}.pdf`)
+        reports.open({
+          'jsp-source': 'legajos_tecnicos.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Legajo N° ${r.data.numero_legajo} - ${Date.now()}`,
+          'jsp-only-gen': false,
+          'legajo_id': r.data.id
+        });
       })
     }
   },

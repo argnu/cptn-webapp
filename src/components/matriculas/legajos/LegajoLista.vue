@@ -24,7 +24,7 @@
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td>{{ props.item.descripcion }}</td>
               <td class="justify-center layout px-0">
-                <v-btn small icon class="mx-0" @click="imprimir(props.item.id)" title="Imprimir">
+                <v-btn small icon class="mx-0" @click="imprimir(props.item)" title="Imprimir">
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
 
@@ -43,9 +43,9 @@
 
 <script>
 import api from '@/services/api';
+import reports from '@/services/reports';
 import * as utils from '@/utils'
 import { Header } from '@/model'
-import { impresionLegajo } from '@/utils/PDFUtils'
 import { getTipoLegajo } from '@/utils/legajo'
 
 export default {
@@ -104,16 +104,14 @@ export default {
       this.$router.push({ path: `/matriculas/${this.id}/nuevo-legajo` });
     },
 
-    imprimir: function(id) {
-      Promise.all([
-        api.get(`/legajos/${id}`),
-        api.get('/tareas/categorias')
-      ])
-      .then(([legajo, categorias]) => {
-        let categoria = categorias.data.find(c => c.subcategorias.find(s => s.id == legajo.data.subcategoria))
-        let pdf = impresionLegajo(legajo.data, categoria);
-        pdf.save(`${getTipoLegajo(legajo.data.tipo)} - N° ${legajo.data.numero_legajo}.pdf`)
-      })
+    imprimir: function(legajo) {
+      reports.open({
+        'jsp-source': 'legajos_tecnicos.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Legajo N° ${legajo.numero_legajo} - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'legajo_id': legajo.id
+      });
     }
   },
 
