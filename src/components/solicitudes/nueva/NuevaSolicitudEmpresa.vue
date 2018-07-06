@@ -781,9 +781,9 @@ export default {
       if (this.tipo_representante == 'ext') url = `/matriculas-externas?limit=${limit}&offset=${offset}`;
       else url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.table_rep_sec.filtros.numero) url += `&numeroMatricula=${this.table_rep_sec.filtros.numero}`;
-      if (this.table_rep_sec.filtros.dni) url+=`&dni=${this.table_rep_sec.filtros.dni}`;
-      if (this.table_rep_sec.filtros.apellido) url+=`&apellido=${this.table_rep_sec.filtros.apellido}`;
+      if (this.table_rep_sec.filtros.numero) url += `&filtro[numeroMatricula]=${this.table_rep_sec.filtros.numero}`;
+      if (this.table_rep_sec.filtros.dni) url+=`&filtro[profesional.dni]=${this.table_rep_sec.filtros.dni}`;
+      if (this.table_rep_sec.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.table_rep_sec.filtros.apellido}`;
 
       api.get(url)
            .then(r => {
@@ -803,9 +803,9 @@ export default {
       // El estado '13' es 'Habilitado'
       let url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
-      if (this.filtros.dni) url+=`&dni=${this.filtros.dni}`;
-      if (this.filtros.apellido) url+=`&apellido=${this.filtros.apellido}`;
+      if (this.filtros.numero) url += `&filtro[numeroMatricula]=${this.filtros.numero}`;
+      if (this.filtros.dni) url+=`&filtro[profesional.dni]=${this.filtros.dni}`;
+      if (this.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.filtros.apellido}`;
 
       api.get(url)
            .then(r => {

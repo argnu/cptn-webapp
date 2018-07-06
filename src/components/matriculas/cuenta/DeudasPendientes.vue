@@ -28,7 +28,7 @@
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
               <td>
                 {{ props.item.descripcion }}
-                <template v-if="props.item.tipo_comprobante && props.item.tipo_comprobante.id == 20">
+                <template v-if="props.item.tipo_comprobante && props.item.tipo_comprobante.id == 20 && props.item.legajo">
                   <br>
                   Nomenclatura: {{ props.item.legajo.nomenclatura }} 
                   <br>

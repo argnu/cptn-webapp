@@ -16,15 +16,17 @@
 
         <v-flex xs3 class="mt-2 ml-4">
             <v-menu offset-y>
-            <v-btn slot="activator" :tabindex="tabindex+1">Copiar de...</v-btn>
-            <v-list>
-                <v-list-tile
-                    v-for="tipo of tipos_domicilio_cargados"
-                    :key="tipo.value" @click="copiarDomicilio(tipo.value)"
-                >
-                <v-list-tile-title>{{ tipo.text }}</v-list-tile-title>
-                </v-list-tile>
-            </v-list>
+                <v-btn slot="activator" :tabindex="tabindex+1" :disabled="!nuevo_domicilio.tipo.length">
+                    Copiar de...
+                </v-btn>
+                <v-list>
+                    <v-list-tile
+                        v-for="tipo of tipos_domicilio_cargados"
+                        :key="tipo.value" @click="copiarDomicilio(tipo.value)"
+                    >
+                    <v-list-tile-title>{{ tipo.text }}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
             </v-menu>
         </v-flex>
         </v-layout>
@@ -162,7 +164,7 @@ const tipos_domicilio = [
 ]
 
 const EntidadDomicilio = () => ({
-    tipo: 'real',
+    tipo: '',
     domicilio: new Domicilio()
 })
 

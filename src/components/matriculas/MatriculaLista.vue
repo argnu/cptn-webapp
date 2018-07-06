@@ -410,11 +410,11 @@ export default {
         let url = `/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
-        if (this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
-        if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
-        if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
-        if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        if (this.filtros.numero) url += `&filtros[numeroMatricula]=${this.filtros.numero}`;
+        if (this.filtros.profesional.dni) url += `&filtros[profesional.dni]=${this.filtros.profesional.dni}`;
+        if (this.filtros.profesional.apellido) url += `&filtros[profesional.apellido]=${this.filtros.profesional.apellido}`;
+        if (this.filtros.empresa.cuit) url += `&filtros[entidad.cuit]=${this.filtros.empresa.cuit}`;
+        if (this.filtros.empresa.nombre) url += `&filtros[empresa.nombre]=${this.filtros.empresa.nombre}`;
 
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 

@@ -82,7 +82,6 @@
                       tabindex="3"
                       label="Tipo"
                       :items="tipo_persona"
-                      v-model="nuevo_comitente.persona.tipo"
                       :rules="[rules.required]"
                       @change="chgTipoComitente"
                     ></v-select>
@@ -850,10 +849,9 @@ export default {
       }
     },
 
-    chgTipoComitente: function() {
-      this.$refs.form_comitente.reset();
-      if (this.nuevo_comitente.persona.tipo == 'fisica') this.nuevo_comitente = new Comitente('fisica');
-      else this.nuevo_comitente = new Comitente('juridica');
+    chgTipoComitente: function(e) {
+      if (e) this.nuevo_comitente = new Comitente(e);
+      else this.nuevo_comitente = new Comitente(e);
     },
 
     chgCuitComitente: function() {

@@ -102,14 +102,14 @@
           <v-layout row wrap>
             <v-flex xs12 md3 class="mx-3">
               <v-select
-                :items="select_items.tipo"
+                :items="$options.select_items.tipo"
                 label="Tipo de Entidad"
                 single-line bottom
                 v-model="filtros.tipoEntidad"
               ></v-select>
 
               <v-select
-                :items="select_items.estado"
+                :items="$options.select_items.estado"
                 label="Estado de Solicitud"
                 single-line bottom
                 clearable
@@ -342,17 +342,6 @@ import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/stores/Global'
 import ListaStore from '@/stores/listados/Solicitudes'
 
-const select_items = {
-  estado: [
-    { text: 'Pendiente', value: 'Pendiente' },
-    { text: 'Aprobada', value: 'Aprobada' },
-    { text: 'Rechazada', value: 'Rechazada' }
-  ],
-  tipo: [
-    { text: 'Profesionales', value: 'profesional' },
-    { text: 'Empresas', value: 'empresa' }
-  ]
-}
 
 export default {
   name: 'lista-solicitud',
@@ -363,6 +352,18 @@ export default {
     { text: 'TEC-', value: 'TEC-' },
     { text: 'IDO', value: 'IDO' }
   ],
+
+  select_items: {
+    estado: [
+      { text: 'Pendiente', value: 'Pendiente' },
+      { text: 'Aprobada', value: 'Aprobada' },
+      { text: 'Rechazada', value: 'Rechazada' }
+    ],
+    tipo: [
+      { text: 'Profesionales', value: 'profesional' },
+      { text: 'Empresas', value: 'empresa' }
+    ]
+  }, 
 
   headers: {
     empresa: [
@@ -414,12 +415,6 @@ export default {
     })
   },
 
-  computed: {
-    select_items: function() {
-      return select_items;
-    }
-  },
-
   watch: {
     filtros: {
       handler() {
@@ -455,11 +450,11 @@ export default {
         let url = `/solicitudes?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.numero && this.filtros.numero.length) url += `&numero=${this.filtros.numero}`;
-        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
-        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
-        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
-        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        if (this.filtros.numero && this.filtros.numero.length) url += `&filtros[numero]=${this.filtros.numero}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.dni) url += `&filtros[profesional.dni]=${this.filtros.profesional.dni}`;
+        if (this.filtros.tipoEntidad == 'profesional' && this.filtros.profesional.apellido) url += `&filtros[profesional.apellido]=${this.filtros.profesional.apellido}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.cuit) url += `&filtros[entidad.cuit]=${this.filtros.empresa.cuit}`;
+        if (this.filtros.tipoEntidad == 'empresa' && this.filtros.empresa.nombre) url += `&filtros[empresa.nombre]=${this.filtros.empresa.nombre}`;
 
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
