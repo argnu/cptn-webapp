@@ -32,9 +32,10 @@
                 <v-select
                   tabindex="1"
                   label="Tipo:"
-                  :items="tipos_legajos"
                   v-model="legajo.tipo"
-                  :disabled="legajo.id > 0"
+                  :items="$options.tipos_legajo"
+                  :disabled="legajo.id > 0 || !this.edit"
+                  return-object
                 >
                 </v-select>
               </v-flex>
@@ -53,7 +54,7 @@
                   tabindex="2"
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 || !this.edit"
                   :rules="[rules.required, rules.fecha]"
                 >
                 </input-fecha>
@@ -233,10 +234,11 @@
                   item-text="nombre"
                   item-value="id"
                   :items="paises"
-                  label="País"
-                  @input="changePais"
+                  label="País"                  
                   v-model="legajo.domicilio.pais"
                   :disabled="legajo.id > 0"
+                  return-object
+                  @input="changePais"
                 >
                 </v-select>
 
@@ -249,6 +251,7 @@
                   label="Departamento"
                   @input="changeDepartamento"
                   v-model="legajo.domicilio.departamento"
+                  return-object
                   :disabled="legajo.id > 0"
                 >
                 </v-select>
@@ -272,6 +275,7 @@
                   label="Provincia"
                   @input="changeProvincia"
                   v-model="legajo.domicilio.provincia"
+                  return-object
                   :disabled="legajo.id > 0"
                 >
                 </v-select>
@@ -284,6 +288,7 @@
                   :items="localidades"
                   label="Localidad"
                   v-model="legajo.domicilio.localidad"
+                  return-object
                   :disabled="legajo.id > 0"
                 >
                 </v-select>
@@ -633,12 +638,6 @@ import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
-const tipos = [
-  Header('Permiso de Construcción', 1),
-  Header('Orden de Trabajo', 2),
-  Header('Legajo Técnico', 3)
-]
-
 const tipo_persona = [
   Header('Física', 'fisica'),
   Header('Jurídica', 'juridica')
@@ -682,7 +681,14 @@ export default {
 
   name: 'Legajo',
 
-  props: ['id_legajo', 'id_matricula'],
+  props: {
+    id_legajo: [Number, String],
+    id_matricula: [Number, String],
+    edit: {
+      type: Boolean,
+      default: () => false
+    }
+  },
 
   mixins: [MixinValidator],
 
@@ -702,6 +708,12 @@ export default {
       Header('%', 'porcentaje', false)
     ]
   },
+
+  tipos_legajo: [
+    Header('Permiso de Construcción', 1),
+    Header('Orden de Trabajo', 2),
+    Header('Legajo Técnico', 3)
+  ],
 
   data () {
     return {
@@ -730,10 +742,6 @@ export default {
   },
 
   computed: {
-    tipos_legajos: function() {
-      return tipos;
-    },
-
     tipo_persona: function() {
       return tipo_persona;
     },
@@ -772,6 +780,12 @@ export default {
     }
   },
 
+/*   watch: {
+    '$route' (to, from) {
+      this.$refs.form_ubicacion.reset();
+    }
+  },  */
+
   created: function() {
     Promise.all([
       api.get('/paises'),
@@ -782,31 +796,24 @@ export default {
       this.categorias = r[1].data;
       if (this.id_legajo) {
         return api.get(`/legajos/${this.id_legajo}`)
-              .then(r => {
-                  this.legajo = r.data;
-                  if (this.legajo.domicilio) {
-                    this.paises = [this.legajo.domicilio.pais];
-                    this.provincias = [this.legajo.domicilio.provincia];
-                    this.departamentos = [this.legajo.domicilio.departamento];
-                    this.localidades = [this.legajo.domicilio.localidad];
-                  }
-                  else this.legajo.domicilio = new Domicilio();
-
-                  this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
-                  return api.get(`/matriculas/${this.legajo.matricula}`);
-              })
+        .then(r => {
+            this.legajo = r.data;
+            if (!this.legajo.domicilio) this.legajo.domicilio = new Domicilio();
+            this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
+            return Promise.resolve(this.legajo.matricula.id);
+        })
       }
       else {
-      this.legajo.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
-      this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
-      this.changePais()
-      .then(() => this.changeProvincia())
-      .then(() => this.changeDepartamento());
-
-      return api.get(`/matriculas/${this.id_matricula}`);
+        this.legajo.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+        this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+        return Promise.resolve(this.id_matricula);
       }
     })
-    .then(r => this.matricula = r.data)
+    .then((id_matricula) => {
+      this.changePais().then(() => this.changeProvincia()).then(() => this.changeDepartamento())
+      .then(() => api.get(`/matriculas/${id_matricula}`))
+      .then(r => this.matricula = r.data)
+    })
     .catch(e => console.error(e))
   },
 
@@ -831,9 +838,9 @@ export default {
 
     chgSubcategoria: function(e) {
       api.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
-           .then(r => { 
+           .then(r => {
              this.items_predeterminados = r.data;
-             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);             
+             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);
              if (item) this.nuevo_item.item = item.id;
              else this.nuevo_item.item = '';
            })
@@ -943,28 +950,33 @@ export default {
         return item.descripcion;
     },
 
-    submit: function() {
-      this.submitted = true;
-      this.legajo.delegacion = this.global_state.delegacion.id;
+    prepare: function() {
+      let legajo = utils.clone(this.legajo);
+      legajo.delegacion = this.global_state.delegacion.id;
+      if (legajo.domicilio.localidad.id) legajo.domicilio.localidad = legajo.domicilio.localidad.id;
+      return legajo;
+    },
 
-      api.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
-           .then(r => {
-             this.submitted = false;
-             this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
-             this.global_state.snackbar.color = 'success';
-             this.global_state.snackbar.show = true;
-             this.$router.go(-1);
-           })
-           .catch(e => {
-             this.submitted = false;
-             if (e.response && e.response.status != 500) {
-              let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-              this.global_state.snackbar.msg = msg;
-              this.global_state.snackbar.color = 'error';
-              this.global_state.snackbar.show = true;
-             }
-             else console.error(e);
-           });
+    submit: function() {
+      this.submitted = true;   
+      api.put(`/matriculas/${this.id_matricula}/legajos`, this.prepare())
+      .then(r => {
+        this.submitted = false;
+        this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
+        this.global_state.snackbar.color = 'success';
+        this.global_state.snackbar.show = true;
+        this.$router.go(-1);
+      })
+      .catch(e => {
+        this.submitted = false;
+        if (e.response && e.response.status != 500) {
+        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+        this.global_state.snackbar.msg = msg;
+        this.global_state.snackbar.color = 'error';
+        this.global_state.snackbar.show = true;
+        }
+        else console.error(e);
+      });
     },
 
     imprimir: function() {

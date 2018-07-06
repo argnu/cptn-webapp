@@ -83,7 +83,7 @@
               :loading="loading"
               :total-items="total_items"
           >
-            <template slot="items" slot-scope="props">
+            <template slot="items" slot-scope="props">        
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td v-if="allFilters">{{ props.item.matricula.numeroMatricula }}</td>
               <td>{{ props.item.tipo.valor }}</td>
@@ -92,11 +92,15 @@
               <td>{{ props.item.comitentes | lista_comitentes }}</td>
               <td v-if="allFilters">{{ props.item.domicilio.direccion }}</td>
               <td class="justify-center layout px-0">
-                <v-btn small icon class="mx-0" @click="imprimir(props.item.id)" title="Imprimir">
+                <v-btn small icon class="mx-0" @click="editar(props.item.id)" title="Modificar">
+                  <v-icon color="deep-purple">edit</v-icon>
+                </v-btn>
+
+                <v-btn small icon class="mx-4" @click="imprimir(props.item.id)" title="Imprimir">
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
 
-                <v-btn small icon class="mx-4"  @click="verDetalle(props.item.id)" title="Ver Detalle">
+                <v-btn small icon @click="verDetalle(props.item.id)" title="Ver Detalle">
                   <v-icon color="primary">launch</v-icon>
                 </v-btn>
               </td>
@@ -278,6 +282,10 @@ export default {
         'jsp-only-gen': false,
         'legajo_id': id
       });
+    },
+
+    editar: function(id) {
+      this.$router.push({ path: `/legajos/${id}/modificar` });
     }
   },
 
