@@ -237,17 +237,17 @@ export default {
       else url = `/legajos?&limit=${limit}&offset=${offset}`;
 
       if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
-      if (this.filtros.numero) url += `&numero=${this.filtros.numero}`;
-      if (this.filtros.nomenclatura) url += `&nomenclatura=${this.filtros.nomenclatura}`;
-      if (this.filtros.numero_matricula) url += `&matricula[numero]=${this.filtros.numero_matricula}`;
+      if (this.filtros.numero) url += `&filtros[numero]=${this.filtros.numero}`;
+      if (this.filtros.nomenclatura) url += `&filtros[nomenclatura]=${this.filtros.nomenclatura}`;
+      if (this.filtros.numero_matricula) url += `&filtros[matricula.numero]=${this.filtros.numero_matricula}`;
       if (this.filtros.comitente) {
         for(let f in this.filtros.comitente) {
-          if (this.filtros.comitente[f]) url += `&comitente[${f}]=${this.filtros.comitente[f]}`;
+          if (this.filtros.comitente[f]) url += `&filtros[comitente.${f}]=${this.filtros.comitente[f]}`;
         }
       }
       if (this.filtros.domicilio) {
         for(let f in this.filtros.domicilio) {
-          if (this.filtros.domicilio[f]) url += `&domicilio[${f}]=${this.filtros.domicilio[f]}`;
+          if (this.filtros.domicilio[f]) url += `&filtros[domicilio.${f}]=${this.filtros.domicilio[f]}`;
         }
       }
 

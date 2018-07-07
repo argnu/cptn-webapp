@@ -745,7 +745,7 @@ export default {
 
     suma_comitentes: function() {
       if (!this.legajo.comitentes.length) return 0;
-      return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
+      return this.legajo.comitentes.reduce((prev, act) => prev + utils.getFloat(act.porcentaje), 0);
     },
 
     valid_comitentes: function() {

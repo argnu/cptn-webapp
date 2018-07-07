@@ -146,8 +146,8 @@ export default {
 
       let url = `/instituciones?limit=${limit}&offset=${offset}`;
 
-      if (this.filtros.nombre) url += `&filter[nombre]=${this.filtros.nombre}`;
-      if (this.filtros.cue) url += `&filter[cue]=${this.filtros.cue}`;
+      if (this.filtros.nombre) url += `&filtros[nombre]=${this.filtros.nombre}`;
+      if (this.filtros.cue) url += `&filtros[cue]=${this.filtros.cue}`;
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
