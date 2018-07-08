@@ -793,7 +793,7 @@ export default {
                   else this.legajo.domicilio = new Domicilio();
 
                   this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
-                  return api.get(`/matriculas/${this.legajo.matricula}`);
+                  return api.get(`/matriculas/${this.legajo.matricula.id}`);
               })
       }
       else {
