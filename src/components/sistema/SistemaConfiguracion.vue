@@ -36,8 +36,8 @@
                     :headers="$options.headers"
                     :items="variable_historial"
                     class="elevation-1"
-                    no-data-text="No se encontraron datos"
-                    no-results-text="No se encontraron datos"
+                    :no-data-text="loading ? '' : 'No se encontraron datos'"
+                    :no-results-text="loading ? '' :  'No se encontraron datos'"
                     :loading="loading"
                     :rows-per-page-items="[25,30,35]"
                 >

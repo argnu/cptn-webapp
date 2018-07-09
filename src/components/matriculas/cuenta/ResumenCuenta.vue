@@ -21,14 +21,13 @@
               :headers="$options.headers"
               :items="resumen"
               class="elevation-1"
-              no-data-text="No hay datos"
-              no-results-text="No hay datos"
+              :no-data-text="loading ? '' : 'No hay datos'"
+              :no-results-text="loading ? '' : 'No hay datos'"
               :rows-per-page-items="[25,30,35]"
               :pagination.sync="pagination"
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
-              <tr :class="props.item.tipo == 'boleta' && props.item.estado.id == 1 ? 'red lighten-4' : ''">
                 <td class="justify-center layout px-0">
                   <v-btn
                     v-if="props.item.tipo != 'exencion'"
@@ -43,7 +42,9 @@
                   <td>{{ props.item.fecha | fecha }}</td>
                   <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                   <td>{{ props.item.descripcion }}</td>
-                  <td>{{ props.item.estado ? props.item.estado.valor : '' }}</td>
+                  <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
+                    {{ props.item.estado ? props.item.estado.valor : '' }}
+                  </td>
                   <td>{{ props.item.debe | round }}</td>
                   <td>{{ props.item.haber | round }}</td>
                   <td class="justify-center layout px-0">
@@ -51,7 +52,6 @@
                       <v-icon color="primary">launch</v-icon>
                     </v-btn>
                   </td>
-              </tr>
             </template>
           </v-data-table>
         </v-flex>
@@ -204,7 +204,7 @@ export default {
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
-         b.descripcion = b.tipo_comprobante.descripcion;
+         b.descripcion = b.items[0].descripcion;
          return b;
        }).concat(comprobantes.data.map(c => {
          c.tipo = 'comprobante';

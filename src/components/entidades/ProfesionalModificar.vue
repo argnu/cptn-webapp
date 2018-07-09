@@ -367,6 +367,7 @@
 
 <script>
 import Vue from 'vue'
+import moment from 'moment'
 import api from '@/services/api'
 import * as utils from '@/utils'
 import rules from '@/validation/rules.js'
@@ -451,7 +452,7 @@ export default {
             api.get('/delegaciones')
         ])
         .then(r => {
-            this.profesional = r[0].data;
+            this.profesional = utils.clone(r[0].data);
             this.profesional.fechaNacimiento = utils.getFecha(r[0].data.fechaNacimiento)
 
             this.profesional.formaciones = [];

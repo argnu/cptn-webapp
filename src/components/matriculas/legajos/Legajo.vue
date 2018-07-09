@@ -487,7 +487,7 @@
                 <v-flex xs3 class="ml-5">
                   <input-numero
                     tabindex="26"
-                    label="Honorarios Reales"
+                    label="Honorarios"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
                     decimal

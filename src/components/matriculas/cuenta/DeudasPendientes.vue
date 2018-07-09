@@ -18,7 +18,8 @@
             :items="boletas"
             class="elevation-1"
             :rows-per-page-items="[25,30,35]"
-            no-data-text="No hay deudas pendientes"
+            :no-data-text="loading ? '' : 'No hay deudas pendientes'"
+            :no-results-text="loading ? '' : 'No hay deudas pendientes'"
         >
           <template slot="items" slot-scope="props">
               <td class="justify-center layout px-0">
@@ -289,7 +290,7 @@ export default {
         boletas.data.forEach(b => {
           b.tipo = 'boleta';
           b.checked = false;
-          b.descripcion = b.tipo_comprobante.descripcion;
+          b.descripcion = b.items[0].descripcion;
           b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
           this.boletas.push(b);
         });
