@@ -149,7 +149,7 @@ export default {
 
     methods: {
         updateHistorial: function() {
-            api.get(`/valores_globales?variable=${this.variable_selected.id}`)
+            api.get(`/valores-globales?variable=${this.variable_selected.id}`)
             .then(r => {
                 this.variable_historial = r.data;
             })
@@ -157,7 +157,7 @@ export default {
         },
 
         eliminar: function(id) {
-            api.delete(`/valores_globales/${id}`)
+            api.delete(`/valores-globales/${id}`)
             .then(r => {
                 this.updateHistorial();
             })
@@ -197,7 +197,7 @@ export default {
                 variable.variable = variable.variable.id;
 
                 if (this.edit) {
-                    api.put(`/valores_globales/${this.edit}`, variable)
+                    api.put(`/valores-globales/${this.edit}`, variable)
                     .then(r => {
                         this.show_dialog = false;
                         this.error_msg = '';
@@ -206,7 +206,7 @@ export default {
                     .catch(e => console.error(e)); 
                 }
                 else {
-                    api.post('/valores_globales', variable)
+                    api.post('/valores-globales', variable)
                     .then(r => {
                         this.show_dialog = false;
                         this.error_msg = '';
