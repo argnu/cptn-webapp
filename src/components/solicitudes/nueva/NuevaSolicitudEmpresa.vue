@@ -73,6 +73,7 @@
                         <v-flex xs6 class="ma-4">
                           <input-texto
                             tabindex="4"
+                            maxlength="100"
                             label="Nombre"
                             uppercase
                             v-model="solicitud.entidad.nombre"
@@ -220,6 +221,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="N°"
+                              maxlength="30"
                               @input="updateList"
                               v-model="filtros.numero"
                             >
@@ -228,6 +230,7 @@
                           <v-flex xs3>
                             <v-text-field
                               label="Apellido"
+                              maxlength="50"
                               @input="updateList"
                               v-model="filtros.apellido"
                             >
@@ -236,7 +239,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
-                              maxlength="20"
+                              maxlength="8"
                               @input="updateList"
                               v-model="filtros.dni"
                             >
@@ -335,6 +338,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="N° Matrícula"
+                              maxlength="12"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.numero"
                             >
@@ -343,6 +347,7 @@
                           <v-flex xs3>
                             <v-text-field
                               label="Apellido"
+                              maxlength="30"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.apellido"
                             >
@@ -351,6 +356,7 @@
                           <v-flex xs3  class="mx-3">
                             <v-text-field
                               label="DNI"
+                              maxlength="8"
                               @input="updateListSec"
                               v-model="table_rep_sec.filtros.dni"
                             >
@@ -773,11 +779,11 @@ export default {
 
       let url;
       if (this.tipo_representante == 'ext') url = `/matriculas-externas?limit=${limit}&offset=${offset}`;
-      else url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
+      else url = `/matriculas?entidad[tipo]=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.table_rep_sec.filtros.numero) url += `&numeroMatricula=${this.table_rep_sec.filtros.numero}`;
-      if (this.table_rep_sec.filtros.dni) url+=`&dni=${this.table_rep_sec.filtros.dni}`;
-      if (this.table_rep_sec.filtros.apellido) url+=`&apellido=${this.table_rep_sec.filtros.apellido}`;
+      if (this.table_rep_sec.filtros.numero) url += `&filtro[numero]=${this.table_rep_sec.filtros.numero}`;
+      if (this.table_rep_sec.filtros.dni) url+=`&filtro[profesional.dni]=${this.table_rep_sec.filtros.dni}`;
+      if (this.table_rep_sec.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.table_rep_sec.filtros.apellido}`;
 
       api.get(url)
            .then(r => {
@@ -795,11 +801,11 @@ export default {
       let limit = this.pagination.rowsPerPage;
 
       // El estado '13' es 'Habilitado'
-      let url = `/matriculas?tipoEntidad=profesional&estado=13&limit=${limit}&offset=${offset}`;
+      let url = `/matriculas?entidad[tipo]=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
-      if (this.filtros.dni) url+=`&dni=${this.filtros.dni}`;
-      if (this.filtros.apellido) url+=`&apellido=${this.filtros.apellido}`;
+      if (this.filtros.numero) url += `&filtro[numeroMatricula]=${this.filtros.numero}`;
+      if (this.filtros.dni) url+=`&filtro[profesional.dni]=${this.filtros.dni}`;
+      if (this.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.filtros.apellido}`;
 
       api.get(url)
            .then(r => {

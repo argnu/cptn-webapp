@@ -2,6 +2,7 @@
     <v-text-field
         v-bind="$attrs"
         :value="value"
+        :maxlength="maxlength"
         @keypress="keypress($event)"
         @input="update($event)"
     ></v-text-field>
@@ -24,6 +25,11 @@ export default {
       uppercase: {
           type: Boolean,
           default: () => false
+      },
+
+      maxlength: {
+          type: [Number, String],
+          default: () => 100
       },
 
       type: {

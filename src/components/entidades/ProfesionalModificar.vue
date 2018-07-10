@@ -96,18 +96,18 @@
             ></v-select>
 
             <input-texto
-            label="Lugar Nacimiento"
-            uppercase
-            v-model="profesional.lugarNacimiento"
-            maxlength="100"
-            tabindex="10"
+                label="Lugar Nacimiento"
+                uppercase
+                v-model="profesional.lugarNacimiento"
+                maxlength="100"
+                tabindex="10"
             ></input-texto>
 
             <input-texto
-            label="Observaciones"
-            uppercase
-            v-model="profesional.observaciones"
-            tabindex="12"
+                label="Observaciones"
+                uppercase
+                v-model="profesional.observaciones"
+                tabindex="12"
             ></input-texto>
         </v-flex>
         </v-layout>
@@ -234,6 +234,7 @@
 
                 <input-texto
                     tabindex="31"
+                    maxlength="100"
                     label="Servicios Prestados"
                     uppercase
                     :disabled="!profesional.independiente"
@@ -289,13 +290,12 @@
                 <h3>Permitir la publicación de los datos:</h3>
 
                 <v-checkbox
-                tabindex="41"
-                class="mt-4"
-                label="Todos"
-                @change="chgPublicarTodos"
-                v-model="publicar_todos"
-                >
-                </v-checkbox>
+                    tabindex="41"
+                    class="mt-4"
+                    label="Todos"
+                    @change="chgPublicarTodos"
+                    v-model="publicar_todos"
+                ></v-checkbox>
 
                 <v-layout row class="mt-2">
                 <v-flex xs6>
@@ -367,6 +367,7 @@
 
 <script>
 import Vue from 'vue'
+import moment from 'moment'
 import api from '@/services/api'
 import * as utils from '@/utils'
 import rules from '@/validation/rules.js'
@@ -451,7 +452,7 @@ export default {
             api.get('/delegaciones')
         ])
         .then(r => {
-            this.profesional = r[0].data;
+            this.profesional = utils.clone(r[0].data);
             this.profesional.fechaNacimiento = utils.getFecha(r[0].data.fechaNacimiento)
 
             this.profesional.formaciones = [];

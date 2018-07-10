@@ -21,34 +21,37 @@
               :headers="$options.headers"
               :items="resumen"
               class="elevation-1"
-              no-data-text="No hay datos"
-              no-results-text="No hay datos"
+              :no-data-text="loading ? '' : 'No hay datos'"
+              :no-results-text="loading ? '' : 'No hay datos'"
               :rows-per-page-items="[25,30,35]"
               :pagination.sync="pagination"
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
-              <td class="justify-center layout px-0">
-                <v-btn
-                  v-if="props.item.tipo != 'exencion'"
-                  small icon
-                  class="mx-0"
-                  title="Imprimir"
-                  @click="imprimir(props.item)"
-                >
-                  <v-icon color="secondary">print</v-icon>
-                </v-btn>
-              </td>
-                <td>{{ props.item.fecha | fecha }}</td>
-                <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-                <td>{{ props.item.descripcion }}</td>
-                <td>{{ props.item.debe | round }}</td>
-                <td>{{ props.item.haber | round }}</td>
                 <td class="justify-center layout px-0">
-                  <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
-                    <v-icon color="primary">launch</v-icon>
+                  <v-btn
+                    v-if="props.item.tipo != 'exencion'"
+                    small icon
+                    class="mx-0"
+                    title="Imprimir"
+                    @click="imprimir(props.item)"
+                  >
+                    <v-icon color="secondary">print</v-icon>
                   </v-btn>
                 </td>
+                  <td>{{ props.item.fecha | fecha }}</td>
+                  <td>{{ props.item.fecha_vencimiento | fecha }}</td>
+                  <td>{{ props.item.descripcion }}</td>
+                  <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
+                    {{ props.item.estado ? props.item.estado.valor : '' }}
+                  </td>
+                  <td>{{ props.item.debe | round }}</td>
+                  <td>{{ props.item.haber | round }}</td>
+                  <td class="justify-center layout px-0">
+                    <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
+                      <v-icon color="primary">launch</v-icon>
+                    </v-btn>
+                  </td>
             </template>
           </v-data-table>
         </v-flex>
@@ -98,8 +101,9 @@ export default {
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
+    Header('Estado', 'estado', true),
     Header('Debe', 'debe', true),
-    Header('Haber', 'haber', true),
+    Header('Ha  ber', 'haber', true),
     Header('Más info', 'detalle')
   ],
 
@@ -112,8 +116,8 @@ export default {
       item_selected: null,
       loading: false,
       pagination: {
-        sortBy: 'fecha_vencimiento',
-        descending: false
+        sortBy: 'fecha',
+        descending: true
       },
       filtros: {
         fecha_desde: moment().startOf('year').format("DD/MM/YYYY"),
@@ -200,7 +204,7 @@ export default {
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
-         b.descripcion = b.tipo_comprobante.descripcion;
+         b.descripcion = b.items[0].descripcion;
          return b;
        }).concat(comprobantes.data.map(c => {
          c.tipo = 'comprobante';

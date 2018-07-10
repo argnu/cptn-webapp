@@ -21,6 +21,7 @@
                 <input-texto
                     :tabindex="tabindex+2"
                     label="Descripción"
+                    maxlength="150"
                     uppercase
                     v-model="nueva_condafip.descripcion"
                 ></input-texto>

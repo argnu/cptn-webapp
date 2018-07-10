@@ -82,7 +82,6 @@
                       tabindex="3"
                       label="Tipo"
                       :items="tipo_persona"
-                      v-model="nuevo_comitente.persona.tipo"
                       :rules="[rules.required]"
                       @change="chgTipoComitente"
                     ></v-select>
@@ -123,7 +122,6 @@
                       maxlength="8"
                       v-model="nuevo_comitente.persona.dni"
                       :rules="[rules.required, rules.integer, rules.dni]"
-                      @change="chgDni"
                     ></input-numero>
 
                     <input-numero
@@ -131,7 +129,6 @@
                       tabindex="7"
                       maxlength="11"
                       v-model="nuevo_comitente.persona.cuit"
-                      @change="chgCuitComitente"
                       :rules="[rules.cuit]"
                     >
                     </input-numero>
@@ -204,23 +201,34 @@
             <span class="subheading blue--text text--darken-4"><b>Ubicación del Trabajo</b></span>
           </v-card-title>
           <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12 class="mx-5">
+            <v-layout row wrap class="mx-5">
+              <v-flex xs5 class="mr-5">
                   <v-text-field
                     tabindex="11"
                     label="Nomenclatura"
+                    mask="##-##-###-####-####"
+                    return-masked-value
                     v-model="legajo.nomenclatura"
                     :disabled="legajo.id > 0"
-                    :rules="[rules.required]"
-                  >
-                  </v-text-field>
+                    :rules="[rules.required, rules.nomenclatura_catastral]"
+                  ></v-text-field>
+              </v-flex>
+
+              <v-flex xs5 class="ml-4">
+                  <v-text-field
+                    tabindex="12"
+                    maxlength="45"
+                    label="N° Expediente Municipal"
+                    v-model="legajo.expediente_municipal"
+                    :disabled="legajo.id > 0"
+                  ></v-text-field>
               </v-flex>
             </v-layout>
 
             <v-layout row>
               <v-flex xs6 class="ml-5">
                 <v-select
-                  tabindex="12"
+                  tabindex="13"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -246,7 +254,7 @@
                 </v-select>
 
                 <v-text-field
-                  tabindex="16"
+                  tabindex="17"
                   label="Dirección"
                   v-model="legajo.domicilio.direccion"
                   :disabled="legajo.id > 0"
@@ -256,7 +264,7 @@
 
               <v-flex xs6 class="mx-5">
                 <v-select
-                  tabindex="13"
+                  tabindex="14"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -269,7 +277,7 @@
                 </v-select>
 
                 <v-select
-                  tabindex="15"
+                  tabindex="16"
                   autocomplete single-line bottom
                   item-text="nombre"
                   item-value="id"
@@ -301,7 +309,7 @@
             <v-layout row wrap>
                 <v-flex xs3 class="ml-4">
                   <v-select
-                    tabindex="17"
+                    tabindex="18"
                     label="Categoría"
                     :items="categorias"
                     item-text="descripcion"
@@ -479,7 +487,7 @@
                 <v-flex xs3 class="ml-5">
                   <input-numero
                     tabindex="26"
-                    label="Honorarios Reales"
+                    label="Honorarios"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0"
                     decimal
@@ -614,7 +622,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
-import reports from '@/services/reports';
+import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import { Header, Domicilio, Comitente } from '@/model'
@@ -624,7 +632,6 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import { getTipoLegajo } from '@/utils/legajo'
 
 const tipos = [
   Header('Permiso de Construcción', 1),
@@ -662,6 +669,7 @@ const Legajo = (matricula) => ({
   informacion_adicional: '',
   items: [],
   nomenclatura: '',
+  expediente_municipal: '',
   observaciones: '',
   plazo_cumplimiento: '',
   porcentaje_cumplimiento: '',
@@ -737,7 +745,7 @@ export default {
 
     suma_comitentes: function() {
       if (!this.legajo.comitentes.length) return 0;
-      return this.legajo.comitentes.reduce((prev, act) => prev + +act.porcentaje, 0);
+      return this.legajo.comitentes.reduce((prev, act) => prev + utils.getFloat(act.porcentaje), 0);
     },
 
     valid_comitentes: function() {
@@ -785,7 +793,7 @@ export default {
                   else this.legajo.domicilio = new Domicilio();
 
                   this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
-                  return api.get(`/matriculas/${this.legajo.matricula}`);
+                  return api.get(`/matriculas/${this.legajo.matricula.id}`);
               })
       }
       else {
@@ -821,9 +829,14 @@ export default {
       .catch(e => console.error(e));
     },
 
-    chgSubcategoria: function() {
+    chgSubcategoria: function(e) {
       api.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
-           .then(r => this.items_predeterminados = r.data)
+           .then(r => { 
+             this.items_predeterminados = r.data;
+             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);             
+             if (item) this.nuevo_item.item = item.id;
+             else this.nuevo_item.item = '';
+           })
            .catch(e => console.error(e));
     },
 
@@ -836,9 +849,9 @@ export default {
       }
     },
 
-    chgTipoComitente: function() {
-      if (this.nuevo_comitente.persona.tipo == 'fisica') this.nuevo_comitente = new Comitente('fisica');
-      else this.nuevo_comitente = new Comitente('juridica');
+    chgTipoComitente: function(e) {
+      if (e) this.nuevo_comitente = new Comitente(e);
+      else this.nuevo_comitente = new Comitente(e);
     },
 
     chgCuitComitente: function() {
@@ -850,9 +863,11 @@ export default {
       }
     },
 
-    chgDni: function() {
+    chgDni: function(e) {
+      console.log(e)
       if (this.nuevo_comitente.persona.dni) {
         if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
+          console.log(this.nuevo_comitente.persona.dni)
           api.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
           .then(r => {
             if (r.data.length)  this.nuevo_comitente.persona = r.data[0];

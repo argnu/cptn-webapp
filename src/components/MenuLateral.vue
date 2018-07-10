@@ -68,6 +68,20 @@
       <v-divider></v-divider>
 
       <v-list-group
+        prepend-icon="build"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Herramientas</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/herramientas/busqueda-legajo')">
+          <v-list-tile-sub-title>Búsqueda de Legajos</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-group
         prepend-icon="account_circle"
         v-if="user.admin"
       >

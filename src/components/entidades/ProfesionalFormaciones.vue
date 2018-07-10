@@ -6,6 +6,7 @@
                 <v-select
                     :tabindex="tabindex"
                     autocomplete
+                    clearable
                     :items="instituciones"
                     item-value="id"
                     item-text="nombre"
@@ -14,7 +15,7 @@
                     v-model="nueva_formacion.institucion"
                     :rules="[rules.required]"
                     :filter="filterInstitucion"
-                    @input="updateTitulos"
+                    @input="chgInstitucion"
                 >
                     <template slot="item" slot-scope="data">
                         <v-list-tile-action>
@@ -31,19 +32,21 @@
                 <v-select
                     :tabindex="tabindex+1"
                     autocomplete
+                    clearable
                     :items="niveles"
                     item-text="valor"
                     item-value="id"
                     return-object
                     label="Nivel Educativo"
                     v-model="nueva_formacion.nivel"
-                    :rules="[rules.required]"
+                    :disabled="!nueva_formacion.institucion"
                     @input="updateTitulos"
             ></v-select>
 
             <v-select
                 :tabindex="tabindex+2"
                 autocomplete
+                clearable
                 item-text="nombre"
                 item-value="id"
                 return-object
@@ -149,7 +152,6 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import { Formacion, Header } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha';
 
 export default {
@@ -172,7 +174,6 @@ export default {
     mixins: [MixinValidator],
 
     components: {
-        InputTexto,
         InputFecha
     },
 
@@ -211,18 +212,22 @@ export default {
 
     methods: {
         updateTitulos: function() {
-            if (this.nueva_formacion.institucion) {
-                let url = `/instituciones/${this.nueva_formacion.institucion.id}/titulos`;
-                if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.id) url += `?nivel=${this.nueva_formacion.nivel.id}`;
+            let url = `/instituciones/${this.nueva_formacion.institucion.id}/titulos`;
+            if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.id) 
+                url += `?nivel=${this.nueva_formacion.nivel.id}`;
 
-                return api.get(url)
-                .then(r => {
-                    this.titulos = r.data;
-                    if (this.nueva_formacion.titulo && !this.titulos.find(t => t.id == this.nueva_formacion.titulo.id))
-                        this.nueva_formacion.titulo = null;
-                })
-                .catch(e => console.error(e));
-            }
+            return api.get(url)
+            .then(r => {
+                this.titulos = r.data;
+                if (this.nueva_formacion.titulo && !this.titulos.find(t => t.id == this.nueva_formacion.titulo.id))
+                    this.nueva_formacion.titulo = null;
+            })
+            .catch(e => console.error(e));
+        },
+
+        chgInstitucion: function() {
+            this.nueva_formacion.nivel = null;
+            this.updateTitulos();
         },
 
         guardar: function() {

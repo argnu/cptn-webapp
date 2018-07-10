@@ -179,8 +179,8 @@
       :headers="$options.headers[filtros.tipoEntidad]"
       :items="matriculas"
       class="elevation-1"
-      no-data-text="No se encontraron matriculados"
-      no-results-text="No se encontraron matriculados"
+      :no-data-text="loading ? '' : 'No se encontraron matriculados'"
+      :no-results-text="loading ? '' : 'No se encontraron matriculados'"
       :pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
@@ -195,6 +195,7 @@
         </td>     
 
         <td>{{ props.item.numeroMatricula }}</td>
+        <td>{{ props.item.numero_solicitud ? props.item.numero_solicitud : props.item.idMigracion }}</td>
           <template v-if="filtros.tipoEntidad == 'profesional'">
             <td>{{ props.item.entidad.apellido }}</td>
             <td>{{ props.item.entidad.nombre }}</td>
@@ -253,6 +254,14 @@
                 <v-icon class="blue--text mr-2">note_add</v-icon>
                 <v-list-tile-title>Rematricular</v-list-tile-title>
               </v-list-tile>
+
+              <v-list-tile
+                v-if="filtros.tipoEntidad == 'profesional'"
+                @click="modificarProfesional(props.item.entidad.id)"
+              >
+                <v-icon class="blue--text mr-2">edit</v-icon>
+                <v-list-tile-title>Modificar Datos Prof.</v-list-tile-title>
+              </v-list-tile>
             </v-list>
           </v-menu>
         </td>
@@ -298,6 +307,7 @@ export default {
     empresa: [
       Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
+      Header('N° Solicitud', 'numeroSolicitud', true),
       Header('Nombre', 'nombreEmpresa', true),
       Header('CUIT', 'cuit', true),
       Header('Estado', 'estado', true),
@@ -307,6 +317,7 @@ export default {
     profesional: [
       Header('', 'ver'),
       Header('N° Matrícula', 'numeroMatricula', true),
+      Header('N° Solicitud', 'numeroSolicitud'),
       Header('Apellido', 'apellido', true),
       Header('Nombre', 'nombre', true),
       Header('DNI', 'dni', true),
@@ -371,6 +382,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
+    
     api.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
@@ -395,14 +407,14 @@ export default {
         let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
         let limit = this.pagination.rowsPerPage;
 
-        let url = `/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
+        let url = `/matriculas?entidad[tipo]=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
-        if (this.filtros.numero) url += `&numeroMatricula=${this.filtros.numero}`;
-        if (this.filtros.profesional.dni) url += `&dni=${this.filtros.profesional.dni}`;
-        if (this.filtros.profesional.apellido) url += `&apellido=${this.filtros.profesional.apellido}`;
-        if (this.filtros.empresa.cuit) url += `&cuit=${this.filtros.empresa.cuit}`;
-        if (this.filtros.empresa.nombre) url += `&nombreEmpresa=${this.filtros.empresa.nombre}`;
+        if (this.filtros.numero) url += `&filtros[numeroMatricula]=${this.filtros.numero}`;
+        if (this.filtros.profesional.dni) url += `&filtros[profesional.dni]=${this.filtros.profesional.dni}`;
+        if (this.filtros.profesional.apellido) url += `&filtros[profesional.apellido]=${this.filtros.profesional.apellido}`;
+        if (this.filtros.empresa.cuit) url += `&filtros[entidad.cuit]=${this.filtros.empresa.cuit}`;
+        if (this.filtros.empresa.nombre) url += `&filtros[empresa.nombre]=${this.filtros.empresa.nombre}`;
 
         if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
@@ -481,6 +493,10 @@ export default {
         'jsp-only-gen': false,
         'id_matricula': item.id
       });      
+    },
+
+    modificarProfesional: function(id) {
+      this.$router.push(`/profesionales/${id}/modificar`);
     }
 
   }

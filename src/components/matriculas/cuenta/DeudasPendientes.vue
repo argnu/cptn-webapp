@@ -1,7 +1,7 @@
 <template>
   <v-container>
 
-    <v-layout row class="my-4">
+    <v-layout row class="my-4" v-if="botonNueva">
       <v-flex xs12>
         <v-btn class="green" dark @click="showAddBoleta">
           <v-icon class="mr-2">add</v-icon>
@@ -18,16 +18,24 @@
             :items="boletas"
             class="elevation-1"
             :rows-per-page-items="[25,30,35]"
-            no-data-text="No hay deudas pendientes"
+            :no-data-text="loading ? '' : 'No hay deudas pendientes'"
+            :no-results-text="loading ? '' : 'No hay deudas pendientes'"
         >
           <template slot="items" slot-scope="props">
-            <tr>
               <td class="justify-center layout px-0">
                 <v-checkbox v-model="props.item.checked"></v-checkbox>
               </td>
               <td>{{ props.item.fecha | fecha }}</td>
               <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-              <td>{{ props.item.descripcion }}</td>
+              <td>
+                {{ props.item.descripcion }}
+                <template v-if="props.item.tipo_comprobante && props.item.tipo_comprobante.id == 20 && props.item.legajo">
+                  <br>
+                  Nomenclatura: {{ props.item.legajo.nomenclatura }} 
+                  <br>
+                  Comitentes: {{ props.item.legajo.comitentes | lista_comitentes }}
+                </template>
+              </td>
               <td>${{ props.item.total | round }}</td>
               <td>${{ props.item.interes | round }}</td>
               <td class="justify-center layout px-0">
@@ -41,7 +49,6 @@
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
               </td>
-            </tr>
           </template>
         </v-data-table>
       </v-flex>
@@ -166,7 +173,7 @@ import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
 
 export default {
   name: 'DeudasPendientes',
-  props: ['id'],
+  props: ['id', 'botonNueva'],
 
   components: {
     InputFecha,
@@ -178,9 +185,9 @@ export default {
     Header('Sel.', 'check'),
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
-    Header('Descripción', 'descripcion', true),
-    Header('Importe', 'total', true),
-    Header('Intereses', 'interes', true),
+    Header('Descripción', 'descripcion'),
+    Header('Importe', 'total'),
+    Header('Intereses', 'interes'),
     Header('', 'imprimir')
   ],
 
@@ -206,7 +213,12 @@ export default {
       if (str == 'boleta') return 'Boleta';
       if (str == 'volante') return 'Volante de Pago';
       return '';
-    }
+    },
+
+    lista_comitentes: function(lista) {
+      return lista.map(c => `${c.persona.nombre} ${c.persona.tipo == 'fisica' ? c.persona.apellido : ''}`)
+                  .join(', ');
+    }    
   },
 
 
@@ -251,8 +263,8 @@ export default {
 
   created: function() {
     Promise.all([
-        api.get('/valores_globales?variable=3'), //Recupero tasa de interes(id=3) válido en la fecha
-        api.get('/valores_globales?variable=4')    //Recupero día de interés(id=4) válido en la fecha
+        api.get('/valores-globales?variable=3'), //Recupero tasa de interes(id=3) válido en la fecha
+        api.get('/valores-globales?variable=4')    //Recupero día de interés(id=4) válido en la fecha
     ])
 
     .then(r => {
@@ -278,7 +290,7 @@ export default {
         boletas.data.forEach(b => {
           b.tipo = 'boleta';
           b.checked = false;
-          b.descripcion = b.tipo_comprobante.descripcion;
+          b.descripcion = b.items[0].descripcion;
           b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
           this.boletas.push(b);
         });

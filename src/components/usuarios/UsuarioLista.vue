@@ -50,8 +50,8 @@
       :headers="$options.headers"
       :items="usuarios"
       class="elevation-1"
-      no-data-text="No se encontraron usuarios"
-      no-results-text="No se encontraron usuarios"
+      :no-data-text="loading ? '' :  'No se encontraron usuarios'"
+      :no-results-text="loading ? '' :  'No se encontraron usuarios'"
       :pagination.sync="pagination"
       :total-items="totalItems"
       :loading="loading"
@@ -154,10 +154,10 @@ export default {
 
       let url = `/usuarios?limit=${limit}&offset=${offset}`;
 
-      if (this.filtros.username) url += `&filter[username]=${this.filtros.username}`;
-      if (this.filtros.nombre) url += `&filter[nombre]=${this.filtros.nombre}`;
-      if (this.filtros.apellido) url += `&filter[apellido]=${this.filtros.apellido}`;
-      if (this.filtros.email) url += `&filter[email]=${this.filtros.email}`;
+      if (this.filtros.username) url += `&filtros[username]=${this.filtros.username}`;
+      if (this.filtros.nombre) url += `&filtros[nombre]=${this.filtros.nombre}`;
+      if (this.filtros.apellido) url += `&filtros[apellido]=${this.filtros.apellido}`;
+      if (this.filtros.email) url += `&filtros[email]=${this.filtros.email}`;
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
       else url+='&sort=+apellido';

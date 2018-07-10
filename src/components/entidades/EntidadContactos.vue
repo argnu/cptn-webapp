@@ -36,6 +36,7 @@
 
             <v-flex xs8 class="mx-2" v-else>
                 <v-text-field
+                    maxlength="255"
                     :tabindex="tabindex+3"
                     v-model="nuevo_contacto.valor"
                     :rules="rules_contacto"
@@ -139,6 +140,7 @@ export default {
 
     methods: {
         chgTipoContacto: function(e) {
+            this.nuevo_contacto.valor = '';
             if (e && e.id == 3) {
                 this.rules_contacto = [rules.required, rules.email];
                 this.placeholder_contacto = 'Ej. mweingart@argnu.org'

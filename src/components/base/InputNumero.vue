@@ -10,7 +10,8 @@
         :value="formatted"
         :maxlength="maxlength"
         @keypress="keypress($event)"
-        @input="update($event)"
+        @input="update($event, 'input')"
+        @change="update($event, 'change')"
     ></v-text-field>
 </template>
 
@@ -82,8 +83,8 @@ export default {
             }
         },
 
-        update: function(e) {
-            if (e) this.$emit('input', this.decimal ? e.replace('.', ',') : e);
+        update: function(e, type) {
+            if (e) this.$emit(type, this.decimal ? e.replace('.', ',') : e);
         }
     }
 
