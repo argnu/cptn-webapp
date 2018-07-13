@@ -9,7 +9,7 @@
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
-    <v-layout row v-if="legajo.id">
+    <v-layout row v-if="legajo.id && !edit">
       <v-flex xs12>
         <v-btn
           class="darken-1 white--text right" color="primary"
@@ -20,7 +20,6 @@
         </v-btn>
       </v-flex>
     </v-layout>
-
     <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
@@ -34,7 +33,9 @@
                   label="Tipo:"
                   v-model="legajo.tipo"
                   :items="$options.tipos_legajo"
-                  :disabled="legajo.id > 0 || !this.edit"
+                  item-text="valor"
+                  item-value="id"
+                  :disabled="legajo.id > 0 && !this.edit"
                   return-object
                 >
                 </v-select>
@@ -54,7 +55,7 @@
                   tabindex="2"
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
-                  :disabled="legajo.id > 0 || !this.edit"
+                  :disabled="legajo.id > 0 && !this.edit"
                   :rules="[rules.required, rules.fecha]"
                 >
                 </input-fecha>
@@ -77,7 +78,7 @@
           <v-card-text>
               <v-form lazy-validation ref="form_comitente">
 
-              <v-layout row v-if="!legajo.id">
+              <v-layout row v-if="!legajo.id || edit">
                   <v-flex xs6 class="mx-4">
                     <v-select
                       tabindex="3"
@@ -167,12 +168,14 @@
                 >
                   <template slot="items" slot-scope="props">
                       <td class="justify-center layout px-0">
-                        <v-btn icon small class="mx-0" @click="rmComitente(props.index)" v-if="!legajo.id">
-                          <v-icon color="red">delete</v-icon>
-                        </v-btn>
-                        <v-btn icon small class="mx-4" @click="editComitente(props.index)" v-if="!legajo.id">
-                          <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>
+                        <template v-if="!legajo.id || edit">
+                          <v-btn icon small class="mx-0" @click="rmComitente(props.index)">
+                            <v-icon color="red">delete</v-icon>
+                          </v-btn>
+                          <v-btn icon small class="mx-4" @click="editComitente(props.index)">
+                            <v-icon color="deep-purple">edit</v-icon>
+                          </v-btn>                          
+                        </template>
                       </td>
                       <td>{{ props.item.persona.cuit }}</td>
                       <td>{{ props.item.persona.nombre }}</td>
@@ -210,7 +213,7 @@
                     mask="##-##-###-####-####"
                     return-masked-value
                     v-model="legajo.nomenclatura"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     :rules="[rules.required, rules.nomenclatura_catastral]"
                   ></v-text-field>
               </v-flex>
@@ -221,7 +224,7 @@
                     maxlength="45"
                     label="N° Expediente Municipal"
                     v-model="legajo.expediente_municipal"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></v-text-field>
               </v-flex>
             </v-layout>
@@ -236,7 +239,7 @@
                   :items="paises"
                   label="País"                  
                   v-model="legajo.domicilio.pais"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   return-object
                   @input="changePais"
                 >
@@ -252,7 +255,7 @@
                   @input="changeDepartamento"
                   v-model="legajo.domicilio.departamento"
                   return-object
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
 
@@ -260,7 +263,7 @@
                   tabindex="17"
                   label="Dirección"
                   v-model="legajo.domicilio.direccion"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -276,7 +279,7 @@
                   @input="changeProvincia"
                   v-model="legajo.domicilio.provincia"
                   return-object
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
 
@@ -289,7 +292,7 @@
                   label="Localidad"
                   v-model="legajo.domicilio.localidad"
                   return-object
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
               </v-flex>
@@ -320,7 +323,7 @@
                     item-text="descripcion"
                     item-value="id"
                     v-model="categoria_selected"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-select>
                 </v-flex>
@@ -333,7 +336,7 @@
                     item-text="descripcion"
                     item-value="id"
                     v-model="legajo.subcategoria"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     @input="chgSubcategoria"
                     :rules="[rules.required]"
                   >
@@ -341,7 +344,7 @@
                 </v-flex>
             </v-layout>
 
-            <v-layout row wrap class="mt-3" v-if="!legajo.id">
+            <v-layout row wrap class="mt-3" v-if="!legajo.id || edit">
               <v-flex xs3 class="ml-4">
                 <typeahead
                   tabindex="19"
@@ -399,12 +402,14 @@
                 >
                   <template slot="items" slot-scope="props">
                       <td class="justify-center layout px-0">
-                        <v-btn icon small class="mx-0" @click="removeItem(props.index)" v-if="!legajo.id">
-                          <v-icon color="red">delete</v-icon>
-                        </v-btn>
-                        <v-btn icon small class="mx-4" @click="editTareaItem(props.index)" v-if="!legajo.id">
-                          <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>
+                        <template v-if="!legajo.id || edit">
+                          <v-btn icon small class="mx-0" @click="removeItem(props.index)">
+                            <v-icon color="red">delete</v-icon>
+                          </v-btn>
+                          <v-btn icon small class="mx-4" @click="editTareaItem(props.index)">
+                            <v-icon color="deep-purple">edit</v-icon>
+                          </v-btn>                          
+                        </template>
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
@@ -421,7 +426,7 @@
                   v-model="legajo.informacion_adicional"
                   textarea
                   rows="3"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -436,7 +441,7 @@
     </v-layout>
 
 
-    <v-layout row wrap v-if="legajo.tipo == 2">
+    <v-layout row wrap v-if="legajo.tipo.id == 2">
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-title>
@@ -448,7 +453,7 @@
                 <input-fecha
                   tabindex="23"
                   label="Plazo Cumplimiento"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   v-model="legajo.plazo_cumplimiento"
                 >
                 </input-fecha>
@@ -459,7 +464,7 @@
                   tabindex="24"
                   label="Honorarios Presupuestados"
                   v-model="legajo.honorarios_presupuestados"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   decimal
                 ></input-numero>
               </v-flex>
@@ -469,7 +474,7 @@
                   tabindex="25"
                   label="Forma de Pago"
                   v-model="legajo.forma_pago"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -480,7 +485,7 @@
     </v-layout>
 
 
-    <template v-if="legajo.tipo == 3">
+    <template v-if="legajo.tipo.id == 3">
       <v-layout row wrap>
         <v-flex xs12>
           <v-card class="ma-2 elevation-4">
@@ -494,7 +499,7 @@
                     tabindex="26"
                     label="Honorarios Reales"
                     v-model="legajo.honorarios_reales"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     decimal
                   ></input-numero>
 
@@ -502,7 +507,7 @@
                     tabindex="29"
                     label="Tarea Pública"
                     v-model="legajo.tarea_publica"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-checkbox>
                 </v-flex>
@@ -511,7 +516,7 @@
                   <input-fecha
                     tabindex="27"
                     label="Finalización Tarea"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     v-model="legajo.finalizacion_tarea"
                   >
                   </input-fecha>
@@ -520,7 +525,7 @@
                     tabindex="30"
                     label="Relación de Dependencia"
                     v-model="legajo.dependencia"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-checkbox>
                 </v-flex>
@@ -530,7 +535,7 @@
                     tabindex="28"
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     decimal
                   ></input-numero>
                 </v-flex>
@@ -557,7 +562,7 @@
                     label="Aporte Neto"
                     decimal
                     v-model="legajo.aporte_neto"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     :rules="[rules.required]"
                   ></input-numero>
 
@@ -565,7 +570,7 @@
                     tabindex="34"
                     label="Cantidad de Planos"
                     v-model="legajo.cantidad_planos"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
 
@@ -575,7 +580,7 @@
                     label="Aporte Bruto"
                     decimal
                     v-model="legajo.aporte_bruto"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
 
@@ -585,7 +590,7 @@
                     label="Aporte Neto Bonificación"
                     decimal
                     v-model="legajo.aporte_neto_bonificacion"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
               </v-layout>
@@ -598,7 +603,7 @@
                     v-model="legajo.observaciones"
                     textarea
                     rows="3"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-text-field>
                 </v-flex>
@@ -710,9 +715,9 @@ export default {
   },
 
   tipos_legajo: [
-    Header('Permiso de Construcción', 1),
-    Header('Orden de Trabajo', 2),
-    Header('Legajo Técnico', 3)
+    { id: 1, valor: 'Permiso de Construcción'},
+    { id: 2, valor: 'Orden de Trabajo'},
+    { id: 3, valor: 'Legajo Técnico'}
   ],
 
   data () {

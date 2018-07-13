@@ -131,18 +131,18 @@ export default new Router({
 
         {
           path: '/legajos/:id_legajo',
+          name: 'Legajo',
+          component: Legajo,
+          props: true
+        },        
+
+        {
+          path: '/legajos/:id_legajo/modificar',
           name: 'LegajoModificar',
           component: Legajo,
           props: (route) => {
             return { id_legajo: route.params.id_legajo, edit: true }
           }
-        },
-
-        {
-          path: '/legajos/:id_legajo/modificar',
-          name: 'Legajo',
-          component: Legajo,
-          props: true
         },
 
         {
