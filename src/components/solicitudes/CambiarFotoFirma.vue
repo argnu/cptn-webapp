@@ -42,95 +42,98 @@
 </template>
 
 <script>
-import api from '@/services/api'
-import Store from '@/stores/Global'
-import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto'
-import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma'
-
+import api from '@/services/api';
+import Store from '@/stores/Global';
+import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
+import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
 
 export default {
-    name: 'CambiarFotoFirma',
-    props: ['profesional'],
+  name: 'CambiarFotoFirma',
+  props: ['profesional'],
 
-    components: {
-        ProfesionalAddFoto,
-        ProfesionalAddFirma
+  components: {
+    ProfesionalAddFoto,
+    ProfesionalAddFirma
+  },
+
+  data() {
+    return {
+      global_state: Store.state,
+      foto: null,
+      firma: null
+    };
+  },
+
+  computed: {
+    url_foto: function() {
+      return this.profesional.foto
+        ? this.profesional.foto + '?' + new Date().getTime()
+        : '';
     },
 
-    data() {
-        return {
-            global_state: Store.state,
-            foto: null,
-            firma: null
-        }
-    },
-
-    computed: {
-        url_foto: function() {
-            return this.profesional.foto ? 
-                this.profesional.foto + '?' + new Date().getTime()
-            : '';
-        },
-
-        url_firma: function() {
-            return this.profesional.firma ? 
-                this.profesional.firma + '?' + new Date().getTime()
-            : '';
-        }
-    },
-
-    methods: {
-        reset: function() {
-            this.$refs.foto.reset();
-            this.$refs.firma.reset();
-        },
-
-        cerrar: function () {
-            this.$emit('cerrar');
-        },
-
-        chgFoto: function(foto) {
-            this.foto = foto;
-        },
-
-        chgFirma: function(firma) {
-            this.firma = firma;
-        },
-
-        guardar: function() {
-            let proms = [];
-            let form_data;
-            
-            if (this.foto) {
-                form_data = new FormData();
-                form_data.append('foto', this.foto);
-                proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, form_data));
-            }
-
-            if (this.firma) {
-                form_data = new FormData();
-                form_data.append('firma', this.firma);
-                proms.push(api.put(`/profesionales/${this.profesional.id}/firma`, form_data));
-            }
-
-            Promise.all(proms)
-            .then(r => {
-                this.global_state.snackbar.msg = 'Imagenes modificadas exitosamente!';
-                this.global_state.snackbar.color = 'success';
-                this.global_state.snackbar.show = true;
-                this.$emit('cerrar');
-            })
-            .catch(e => {
-                this.global_state.snackbar.msg = 'Error al modificar imágenes';
-                this.global_state.snackbar.color = 'error';
-                this.global_state.snackbar.show = true;
-            });
-        },
+    url_firma: function() {
+      return this.profesional.firma
+        ? this.profesional.firma + '?' + new Date().getTime()
+        : '';
     }
+  },
 
-}
+  methods: {
+    reset: function() {
+      this.$refs.foto.reset();
+      this.$refs.firma.reset();
+    },
+
+    cerrar: function() {
+      this.$emit('cerrar');
+    },
+
+    chgFoto: function(foto) {
+      this.foto = foto;
+    },
+
+    chgFirma: function(firma) {
+      this.firma = firma;
+    },
+
+    guardar: function() {
+      let proms = [];
+      let form_data;
+
+      if (this.foto) {
+
+        let data = {
+          foto: this.foto[0],
+          filename: this.foto[1]
+        };
+
+        proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, data));
+      }
+
+      if (this.firma) {
+        form_data = new FormData();
+        form_data.append('firma', this.firma);
+        proms.push(
+          api.put(`/profesionales/${this.profesional.id}/firma`, form_data)
+        );
+      }
+
+      Promise.all(proms)
+        .then(r => {
+          this.global_state.snackbar.msg = 'Imágenes modificadas exitosamente';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$emit('cerrar');
+        })
+        .catch(e => {
+          this.global_state.snackbar.msg = 'Error al modificar imágenes';
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+        });
+    }
+  }
+};
 </script>
 
 <style>
-
 </style>
