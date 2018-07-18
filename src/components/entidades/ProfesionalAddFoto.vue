@@ -5,7 +5,7 @@
 
         <div>
             <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url" 
-              style="height:480px; width:360px" 
+              style="max-height:480px; max-width:360px" 
               alt="No Existe"
             />
 
