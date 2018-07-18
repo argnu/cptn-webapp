@@ -3,39 +3,52 @@
         <v-icon>photo_camera</v-icon>
         <b>Foto:</b>
 
-
-        <v-radio-group v-model="tipo_foto" row>
-            <v-radio label="Imagen" value="imagen" ></v-radio>
-            <v-radio label="Capturar" value="capturar"></v-radio>
-        </v-radio-group>
-
-        <div v-show="tipo_foto == 'imagen'">
-            <img
-                ref="img"
-                :src="url"
-                alt=""
+        <div>
+            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url" 
+              style="height:480px; width:360px" 
+              alt="No Existe"
             />
-            <v-btn
-                v-show="crop_ready"
-                dark
-                ref="aplicar"
-                class="green"
-                @click.native="aplicarCrop"
-            >
-                Aplicar recorte
-            </v-btn>
-            <v-icon v-show="crop_done" color="success">check_circle</v-icon>
-            <template v-if="edit">
-                <br><br>
-                <v-icon>add_a_photo</v-icon>
-                <b>Cambiar:</b>
-                <input type="file" ref="archivo" name="foto" id="foto" @change="showImage('foto')">
-            </template>            
+
+            <v-progress-circular
+              v-show="show_cargandofoto"
+              indeterminate
+              color="primary"
+              class="ma-5"
+            ></v-progress-circular>            
+
+            <div v-show="show_crop">
+              <img ref="img_crop" style="height:480px; width:360px"/>
+              <v-btn
+                  dark
+                  ref="aplicar"
+                  class="green"
+                  @click.native="aplicarCrop"
+              >
+                  Aplicar recorte
+              </v-btn>
+            </div>
+
+            <input
+              style="display:none"
+              type="file"
+              ref="archivo"
+              name="foto"
+              id="foto"
+              @change="selectImage"
+            />
         </div>
 
-        <div v-show="tipo_foto == 'capturar'">
-            <video autoplay="true" ref="video_elem" id="video-elem">
-            </video>   
+        <div v-show="show_capturar">
+            <video autoplay="true" ref="video_elem" id="video-elem"></video>
+            <v-btn
+                outline
+                color="error"
+                dark
+                @click.native="show_capturar = false"
+            >
+                <v-icon class="mr-2">block</v-icon>
+                Cancelar
+            </v-btn>
             <v-btn
                 outline
                 color="primary"
@@ -44,8 +57,30 @@
             >
                 <v-icon class="mr-2">add_a_photo</v-icon>
                 Capturar
-            </v-btn>         
+            </v-btn>
         </div>
+
+        <v-layout row v-if="edit && !show_capturar && !show_crop" class="mt-3">
+            <v-flex xs12>
+                <v-btn
+                    color="primary"
+                    @click.native="seleccionarArchivo"
+                >
+                    <v-icon>attach_file</v-icon>
+                    Seleccionar Archivo
+                </v-btn>
+            </v-flex>
+
+            <v-flex xs12>
+                <v-btn
+                    color="primary"
+                    @click.native="show_capturar = true"
+                >
+                    <v-icon>camera</v-icon>
+                    Capturar
+                </v-btn>
+            </v-flex>
+        </v-layout>
     </v-card>
 </template>
 
@@ -56,6 +91,8 @@
 <script>
 import * as utils from '@/utils';
 import Cropper from 'cropperjs';
+
+let cropper;
 
 export default {
   name: 'AddFoto',
@@ -75,16 +112,17 @@ export default {
 
   data() {
     return {
-      tipo_foto: 'imagen',
       show_error: false,
-      crop_ready: false,
-      crop_done: false
+      show_capturar: false,
+      show_crop: false,
+      show_cargandofoto: false,
+      cropper: null
     };
   },
 
   watch: {
-    tipo_foto: function(new_val) {
-      if (new_val == 'capturar') {
+    show_capturar: function(new_val) {
+      if (new_val) {
         if (navigator.getUserMedia)
           navigator.getUserMedia(
             { video: true },
@@ -104,6 +142,14 @@ export default {
       navigator.oGetUserMedia;
   },
 
+  mounted: function() {
+    let self = this;
+    cropper = new Cropper(this.$refs.img_crop, {
+      initialAspectRatio: 3 / 4,
+      aspectRatio: 3 / 4
+    });
+  },
+
   methods: {
     handleVideo: function(stream) {
       window.mediaStream = stream;
@@ -112,7 +158,6 @@ export default {
           track.stop();
         });
         this.getVideoTracks().forEach(function(track) {
-          //in case... :)
           track.stop();
         });
       };
@@ -123,35 +168,24 @@ export default {
       this.show_error = true;
     },
 
-    showImage: function() {
-      let self = this;
-
+    selectImage: function() {
       let input = this.$refs.archivo;
       if (input.files && input.files[0]) {
         let reader = new FileReader();
         reader.readAsDataURL(input.files[0]);
         reader.onload = e => {
-          let imgTag = this.$refs.img;
-          imgTag.setAttribute('src', e.target.result);
-          imgTag.onload = function() {
-            window.cropper = new Cropper(imgTag, {
-              initialAspectRatio: 3 / 4,
-              aspectRatio: 3 / 4,
-              crop(event) {
-                self.crop_done = false;
-                self.crop_ready = true;
-              }
-            });
-          };
+          cropper.replace(e.target.result);
+          this.show_crop = true;
         };
       }
     },
 
     aplicarCrop: function() {
       let self = this;
+      this.show_cargandofoto = true;
       let input = this.$refs.archivo;
 
-      window.cropper.getCroppedCanvas().toBlob(blob => {
+      cropper.getCroppedCanvas().toBlob(blob => {
         let reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = function() {
@@ -160,10 +194,15 @@ export default {
             input && input.files.length
               ? input.files[0].name
               : 'foto-' + new Date().getTime() + '.png';
+
+          self.$refs.img.setAttribute('src', base64data);
+          self.show_cargandofoto = false;
+          self.show_crop = false;
           self.$emit('change', [base64data, filename]);
         };
       });
-      this.crop_done = true;
+
+      this.show_crop = false;
     },
 
     reset: function() {
@@ -172,36 +211,23 @@ export default {
     },
 
     capturarFoto: function() {
+      this.show_capturar = false;
+      this.show_crop = true;
       let self = this;
       let canvas = document.createElement('canvas');
       canvas.width = 480;
       canvas.height = 360;
 
       let context = canvas.getContext('2d');
-      context.drawImage(
-        this.$refs.video_elem,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+      context.drawImage(this.$refs.video_elem, 0, 0, canvas.width, canvas.height);
 
-      let dataURI = canvas.toDataURL('image/png');
-      let imgTag = this.$refs.img;
-      imgTag.setAttribute('src', dataURI);
-      imgTag.onload = function() {
-        window.cropper = new Cropper(imgTag, {
-          initialAspectRatio: 3 / 4,
-          aspectRatio: 3 / 4,
-          crop(event) {
-            self.crop_done = false;
-            self.crop_ready = true;
-          }
-        });
-        window.mediaStream.stop();
-      };
-      this.tipo_foto = 'imagen';
-    }
+      let data_uri = canvas.toDataURL('image/png');
+      cropper.replace(data_uri);
+    },
+
+    seleccionarArchivo: function() {
+      this.$refs.archivo.click();
+    },
   }
 };
 </script>

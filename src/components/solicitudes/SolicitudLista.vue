@@ -10,7 +10,7 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobacion">
 
-            <v-layout row>
+            <v-layout row v-if="filtros.tipoEntidad == 'profesional'">
               <v-flex xs4 class="mx-2">
                 <v-select
                   label="Tipo de Matrícula:"
