@@ -236,7 +236,7 @@
 
                   <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_domicilios">
                       Debe ingresar al menos un domicilio
-                  </v-alert>                  
+                  </v-alert>
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="22">Continuar</v-btn>
@@ -303,7 +303,7 @@
 
                   <v-alert color="error" icon="priority_high" :value="!valid_formaciones">
                       Debe ingresar al menos un título para el profesional
-                  </v-alert>                  
+                  </v-alert>
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="40"
@@ -409,7 +409,7 @@
 
                   <v-alert color="error" icon="priority_high" :value="!valid_subsidiarios">
                   Los porcentajes deben sumar 100%
-                  </v-alert>                  
+                  </v-alert>
                 </v-card-text>
               </v-card>
               <v-btn color="primary" darken-1 @click.native="nextStep" class="right" tabindex="55">Continuar</v-btn>
@@ -596,7 +596,7 @@ export default {
       valid: {
         form_solicitud: false,
         form_profesional: false
-      }      
+      }
     }
   },
 

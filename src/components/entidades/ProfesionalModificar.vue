@@ -499,8 +499,7 @@ export default {
             let form_data = new FormData();
 
             if (this.foto) {
-                form_data.append('foto', this.foto[0]);
-                form_data.append('foto_filename', this.foto[1]);
+                form_data.append('foto', this.foto);
             }
             if (this.firma)
                 form_data.append('firma', this.firma);

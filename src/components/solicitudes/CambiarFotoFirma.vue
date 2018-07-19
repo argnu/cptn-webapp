@@ -101,13 +101,7 @@ export default {
       let form_data;
 
       if (this.foto) {
-
-        let data = {
-          foto: this.foto[0],
-          filename: this.foto[1]
-        };
-
-        proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, data));
+        proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, { foto: this.foto }));
       }
 
       if (this.firma) {

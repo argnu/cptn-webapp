@@ -190,15 +190,10 @@ export default {
         reader.readAsDataURL(blob);
         reader.onloadend = function() {
           let base64data = reader.result;
-          let filename =
-            input && input.files.length
-              ? input.files[0].name
-              : 'foto-' + new Date().getTime() + '.png';
-
           self.$refs.img.setAttribute('src', base64data);
           self.show_cargandofoto = false;
           self.show_crop = false;
-          self.$emit('change', [base64data, filename]);
+          self.$emit('change', base64data);
         };
       });
 

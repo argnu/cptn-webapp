@@ -212,17 +212,20 @@ export default {
 
     methods: {
         updateTitulos: function() {
-            let url = `/instituciones/${this.nueva_formacion.institucion.id}/titulos`;
-            if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.id) 
-                url += `?nivel=${this.nueva_formacion.nivel.id}`;
+            if (this.nueva_formacion.institucion) {
+                let url = `/instituciones/${this.nueva_formacion.institucion.id}/titulos`;
+                if (this.nueva_formacion.nivel && this.nueva_formacion.nivel.id) 
+                    url += `?nivel=${this.nueva_formacion.nivel.id}`;
 
-            return api.get(url)
-            .then(r => {
-                this.titulos = r.data;
-                if (this.nueva_formacion.titulo && !this.titulos.find(t => t.id == this.nueva_formacion.titulo.id))
-                    this.nueva_formacion.titulo = null;
-            })
-            .catch(e => console.error(e));
+                return api.get(url)
+                .then(r => {
+                    this.titulos = r.data;
+                    if (this.nueva_formacion.titulo && !this.titulos.find(t => t.id == this.nueva_formacion.titulo.id))
+                        this.nueva_formacion.titulo = null;
+                })
+                .catch(e => console.error(e));
+            }
+            else this.titulos = [];
         },
 
         chgInstitucion: function() {
