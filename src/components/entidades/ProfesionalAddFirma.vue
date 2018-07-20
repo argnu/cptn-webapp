@@ -4,7 +4,7 @@
         <b>Firma:</b>
 
         <div>
-            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No Existe"/>
+            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No hay firma asociada"/>
             <input style="display:none" type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">
         </div>
 
@@ -36,17 +36,17 @@
         </div>
 
         <v-layout row v-if="edit && !show_dibujar" class="mt-3">
-            <v-flex xs12>
+            <v-flex md4 xs12>
                 <v-btn
                     color="primary"
                     @click.native="seleccionarArchivo"
                 >
                     <v-icon>attach_file</v-icon>
-                    Seleccionar Archivo
+                    Archivo
                 </v-btn>
             </v-flex>
 
-            <v-flex xs12>
+            <v-flex md4 xs12>
                 <v-btn
                     color="primary"
                     @click.native="show_dibujar = true"
