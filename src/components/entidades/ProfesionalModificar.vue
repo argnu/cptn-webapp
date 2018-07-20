@@ -498,8 +498,9 @@ export default {
         makeFormData: function() {
             let form_data = new FormData();
 
-            if (this.foto)
+            if (this.foto) {
                 form_data.append('foto', this.foto);
+            }
             if (this.firma)
                 form_data.append('firma', this.firma);
 

@@ -1,52 +1,62 @@
 <template>
     <v-card class="pa-4 mx-4 elevation-1">
         <v-icon>perm_identity</v-icon>
-        <b>Firma:</b>                
+        <b>Firma:</b>
 
-        <v-radio-group v-model="tipo_firma" row>
-            <v-radio label="Imagen" value="imagen" ></v-radio>
-            <v-radio label="Dibujar" value="dibujar"></v-radio>
-        </v-radio-group>
-
-        <div v-show="tipo_firma == 'imagen'">
-                <img
-                    :src="url"  
-                    ref="img" 
-                    alt="" 
-                    style="max-width:180px"
-                />
-                <template v-if="edit">
-                    <br><br>
-                    <v-icon>person_add</v-icon>
-                    <b>Cambiar:</b> 
-                    <input type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">                    
-                </template>
+        <div>
+            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No Existe"/>
+            <input style="display:none" type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">
         </div>
 
-        <div v-show="tipo_firma == 'dibujar'">
+        <div v-show="show_dibujar">
             <canvas ref="lienzo" width="426" height="320" style="border:1px solid #000000;padding:0;margin:0">
             </canvas>
             <br>
                 <v-btn
-                    outline
-                    color="primary"
-                    dark
+                    color="primary" outline dark
                     @click.native="limpiarCanvas"
                 >
                     <v-icon>clear</v-icon>
                     Limpiar
                 </v-btn>
                 <v-btn
-                    outline
-                    color="primary"
-                    dark
+                    color="error" outline dark
+                    @click.native="show_dibujar = false"
+                >
+                    <v-icon>block</v-icon>
+                    Cancelar
+                </v-btn>
+                <v-btn
+                    color="success" outline dark
                     @click.native="guardar"
                 >
                     <v-icon>save</v-icon>
                     Guardar
                 </v-btn>
         </div>
-    </v-card>  
+
+        <v-layout row v-if="edit && !show_dibujar" class="mt-3">
+            <v-flex xs12>
+                <v-btn
+                    color="primary"
+                    @click.native="seleccionarArchivo"
+                >
+                    <v-icon>attach_file</v-icon>
+                    Seleccionar Archivo
+                </v-btn>
+            </v-flex>
+
+            <v-flex xs12>
+                <v-btn
+                    color="primary"
+                    @click.native="show_dibujar = true"
+                >
+                    <v-icon>border_color</v-icon>
+                    Dibujar
+                </v-btn>
+            </v-flex>
+        </v-layout>
+    </v-card>
 </template>
 
 <script>
@@ -75,7 +85,7 @@ export default {
 
     data() {
         return {
-            tipo_firma: 'imagen',
+            show_dibujar: false,
             pulsado: false,
             movimientos: []
         }
@@ -85,11 +95,11 @@ export default {
         let canvas = this.$refs.lienzo;
 
         canvas.onmousedown = e => {
-            let rect = canvas.getBoundingClientRect(), 
-                scaleX = canvas.width / rect.width,    
+            let rect = canvas.getBoundingClientRect(),
+                scaleX = canvas.width / rect.width,
                 scaleY = canvas.height / rect.height;
 
-            let x =  (e.clientX - rect.left) * scaleX,   
+            let x =  (e.clientX - rect.left) * scaleX,
                 y = (e.clientY - rect.top) * scaleY;
 
             this.pulsado = true;
@@ -98,11 +108,11 @@ export default {
         };
 
         canvas.ontouchstart = e => {
-            let rect = canvas.getBoundingClientRect(), 
-                scaleX = canvas.width / rect.width,    
+            let rect = canvas.getBoundingClientRect(),
+                scaleX = canvas.width / rect.width,
                 scaleY = canvas.height / rect.height;
 
-            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,   
+            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,
                 y = (e.targetTouches[0].clientY - rect.top) * scaleY;
 
             e.preventDefault();
@@ -114,11 +124,11 @@ export default {
 
         canvas.onmousemove = e => {
           if (this.pulsado) {
-            let rect = canvas.getBoundingClientRect(), 
-                scaleX = canvas.width / rect.width,    
+            let rect = canvas.getBoundingClientRect(),
+                scaleX = canvas.width / rect.width,
                 scaleY = canvas.height / rect.height;
 
-            let x =  (e.clientX - rect.left) * scaleX,   
+            let x =  (e.clientX - rect.left) * scaleX,
                 y = (e.clientY - rect.top) * scaleY;
 
               this.movimientos.push([x, y, true]);
@@ -127,13 +137,13 @@ export default {
         };
 
         canvas.ontouchmove = e => {
-            let rect = canvas.getBoundingClientRect(), 
-                scaleX = canvas.width / rect.width,    
+            let rect = canvas.getBoundingClientRect(),
+                scaleX = canvas.width / rect.width,
                 scaleY = canvas.height / rect.height;
 
-            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,   
+            let x =  (e.targetTouches[0].clientX - rect.left) * scaleX,
                 y = (e.targetTouches[0].clientY - rect.top) * scaleY;
-                
+
             if (this.pulsado) {
                 this.movimientos.push([x, y, true]);
                 this.repinta();
@@ -143,7 +153,7 @@ export default {
         canvas.onmouseup = e => this.pulsado = false;
         canvas.onmouseleave = e => this.pulsado = false;
         canvas.ontouchend = e => this.pulsado = false;
-    },        
+    },
 
     methods: {
         limpiarCanvas: function() {
@@ -156,7 +166,7 @@ export default {
             this.tipo_firma = 'imagen';
             this.limpiarCanvas();
             this.$refs.archivo.value = null;
-            this.$refs.img.setAttribute('src', '');            
+            this.$refs.img.setAttribute('src', '');
         },
 
         showImage: function() {
@@ -169,7 +179,7 @@ export default {
                 reader.readAsDataURL(input.files[0]);
                 this.$emit('change', input.files[0])
             }
-        },  
+        },
 
         repinta: function() {
             let context = this.$refs.lienzo.getContext("2d");
@@ -190,16 +200,21 @@ export default {
                 context.stroke();
             }
         },
-        
-        guardar: function() {           
+
+        seleccionarArchivo: function() {
+            this.$refs.archivo.click();
+        },
+
+        guardar: function() {
             let dataURI = this.$refs.lienzo.toDataURL('image/png');
-            this.$refs.img.setAttribute('src', dataURI);     
+            this.$refs.img.setAttribute('src', dataURI);
             this.tipo_firma = 'imagen';
             this.$emit('change', utils.dataURItoBlob(dataURI));
             this.limpiarCanvas();
+            this.show_dibujar = false;
 
         }
-        
+
     }
 
 }

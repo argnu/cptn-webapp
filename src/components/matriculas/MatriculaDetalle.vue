@@ -24,10 +24,10 @@
 
                   <v-flex xs6>
                     <div class="mb-3">
-                      Tipo de Empresa: {{ matricula.entidad.tipoEmpresa }}
+                      Tipo de Empresa: {{ matricula.entidad.tipoEmpresa.valor }}
                     </div>
                     <div class="mb-3">
-                      Tipo de Sociedad: {{ matricula.entidad.tipoSociedad }}
+                      Tipo de Sociedad: {{ matricula.entidad.tipoSociedad.valor }}
                     </div>
                   </v-flex>
                 </v-layout>
@@ -169,7 +169,7 @@
                           </th>
                         </template>
                   <template slot="items" slot-scope="props">
-                          <td>{{ props.item.tipo }}</td>
+                          <td>{{ props.item.tipo.valor }}</td>
                           <td>{{ props.item.valor }}</td>
                         </template>
                 </v-data-table>
