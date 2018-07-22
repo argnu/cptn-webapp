@@ -26,6 +26,7 @@
             <v-btn
                 dark
                 class="green right"
+                :loading="submitted"
                 @click="guardar"
             >
                 Guardar Cambios
@@ -60,7 +61,8 @@ export default {
     return {
       global_state: Store.state,
       foto: null,
-      firma: null
+      firma: null,
+      submitted: false
     };
   },
 
@@ -99,6 +101,7 @@ export default {
     guardar: function() {
       let proms = [];
       let form_data;
+      this.submitted = true;
 
       if (this.foto) {
         proms.push(api.put(`/profesionales/${this.profesional.id}/foto`, { foto: this.foto }));
@@ -114,12 +117,14 @@ export default {
 
       Promise.all(proms)
         .then(r => {
+          this.submitted = false;
           this.global_state.snackbar.msg = 'Imágenes modificadas exitosamente';
           this.global_state.snackbar.color = 'success';
           this.global_state.snackbar.show = true;
           this.$emit('cerrar');
         })
         .catch(e => {
+          this.submitted = false;
           this.global_state.snackbar.msg = 'Error al modificar imágenes';
           this.global_state.snackbar.color = 'error';
           this.global_state.snackbar.show = true;
