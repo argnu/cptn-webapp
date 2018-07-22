@@ -4,9 +4,9 @@
         <b>Foto:</b>
 
         <div>
-            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url" 
-              style="max-height:480px; max-width:360px" 
-              alt="No Existe"
+            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url"
+              style="max-height:480px; width: 360px; max-width:100%"
+              alt="No hay foto asociada"
             />
 
             <v-progress-circular
@@ -14,7 +14,7 @@
               indeterminate
               color="primary"
               class="ma-5"
-            ></v-progress-circular>            
+            ></v-progress-circular>
 
             <div v-show="show_crop">
               <img ref="img_crop" style="height:480px; width:360px"/>
@@ -40,6 +40,7 @@
 
         <div v-show="show_capturar">
             <video autoplay="true" ref="video_elem" id="video-elem"></video>
+            <br>
             <v-btn
                 outline
                 color="error"
@@ -60,18 +61,28 @@
             </v-btn>
         </div>
 
-        <v-layout row v-if="edit && !show_capturar && !show_crop" class="mt-3">
-            <v-flex xs12>
+        <v-layout row wrap v-if="edit && !show_capturar && !show_crop" class="mt-3">
+            <v-flex md4 xs12 v-if="url && show_recortar">
+                <v-btn
+                    color="primary"
+                    @click.native="recortarActual"
+                >
+                    <v-icon>crop_free</v-icon>
+                    Recortar
+                </v-btn>
+            </v-flex>
+
+            <v-flex md4 xs12>
                 <v-btn
                     color="primary"
                     @click.native="seleccionarArchivo"
                 >
                     <v-icon>attach_file</v-icon>
-                    Seleccionar Archivo
+                    Archivo
                 </v-btn>
             </v-flex>
 
-            <v-flex xs12>
+            <v-flex md4 xs12 v-if="!$options.isMobile()">
                 <v-btn
                     color="primary"
                     @click.native="show_capturar = true"
@@ -81,6 +92,8 @@
                 </v-btn>
             </v-flex>
         </v-layout>
+
+        <canvas ref="canvas_convert" style="display:none"/>
     </v-card>
 </template>
 
@@ -89,8 +102,9 @@
 </style>
 
 <script>
-import * as utils from '@/utils';
-import Cropper from 'cropperjs';
+import * as utils from '@/utils'
+import Cropper from 'cropperjs'
+import axios from 'axios'
 
 let cropper;
 
@@ -110,8 +124,11 @@ export default {
     }
   },
 
+  isMobile: utils.isMobile,
+
   data() {
     return {
+      show_recortar: true,
       show_error: false,
       show_capturar: false,
       show_crop: false,
@@ -140,6 +157,16 @@ export default {
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia ||
       navigator.oGetUserMedia;
+
+      if (this.url) {
+        axios.get(this.url)
+        .then(r => {
+          this.show_recortar = true;
+        })
+        .catch(e => {
+          this.show_recortar = false;
+        })
+      }
   },
 
   mounted: function() {
@@ -218,6 +245,27 @@ export default {
 
       let data_uri = canvas.toDataURL('image/png');
       cropper.replace(data_uri);
+    },
+
+    recortarActual: function() {
+      let src = this.$refs.img.getAttribute('src');
+      //Si la img actual es la que está guardada
+      if (src.includes('http://')) {
+        axios.get(src, { responseType: "blob" })
+        .then(r => {
+          let reader = new FileReader();
+          reader.readAsDataURL(r.data);
+          reader.onload = () => {
+              cropper.replace(reader.result);
+              this.show_crop = true;
+          }
+        })
+      }
+      //Sino la imagen fue cargada ahora
+      else {
+        cropper.replace(src);
+        this.show_crop = true;
+      }
     },
 
     seleccionarArchivo: function() {

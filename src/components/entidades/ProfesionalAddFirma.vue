@@ -4,13 +4,17 @@
         <b>Firma:</b>
 
         <div>
-            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No Existe"/>
+            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No hay firma asociada"/>
             <input style="display:none" type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">
         </div>
 
         <div v-show="show_dibujar">
-            <canvas ref="lienzo" width="426" height="320" style="border:1px solid #000000;padding:0;margin:0">
-            </canvas>
+            <canvas 
+                ref="lienzo" 
+                width="426" 
+                height="320" 
+                style="border:1px solid #000000;padding:0;margin:0;max-width:100%"
+            ></canvas>
             <br>
                 <v-btn
                     color="primary" outline dark
@@ -35,18 +39,18 @@
                 </v-btn>
         </div>
 
-        <v-layout row v-if="edit && !show_dibujar" class="mt-3">
-            <v-flex xs12>
+        <v-layout row wrap v-if="edit && !show_dibujar" class="mt-3">
+            <v-flex md4 xs12>
                 <v-btn
                     color="primary"
                     @click.native="seleccionarArchivo"
                 >
                     <v-icon>attach_file</v-icon>
-                    Seleccionar Archivo
+                    Archivo
                 </v-btn>
             </v-flex>
 
-            <v-flex xs12>
+            <v-flex md4 xs12>
                 <v-btn
                     color="primary"
                     @click.native="show_dibujar = true"
@@ -172,12 +176,12 @@ export default {
         showImage: function() {
             let input = this.$refs.archivo;
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
+                let reader = new FileReader();
+                reader.readAsDataURL(input.files[0]);
                 reader.onload = (e) => {
                     this.$refs.img.setAttribute('src', e.target.result);
+                    this.$emit('change', e.target.result)
                 };
-                reader.readAsDataURL(input.files[0]);
-                this.$emit('change', input.files[0])
             }
         },
 
@@ -206,10 +210,10 @@ export default {
         },
 
         guardar: function() {
-            let dataURI = this.$refs.lienzo.toDataURL('image/png');
-            this.$refs.img.setAttribute('src', dataURI);
+            let data_uri = this.$refs.lienzo.toDataURL('image/png');
+            this.$refs.img.setAttribute('src', data_uri);
             this.tipo_firma = 'imagen';
-            this.$emit('change', utils.dataURItoBlob(dataURI));
+            this.$emit('change', data_uri);
             this.limpiarCanvas();
             this.show_dibujar = false;
 

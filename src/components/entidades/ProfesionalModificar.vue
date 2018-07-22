@@ -14,7 +14,7 @@
             <input-numero
                 label="DNI"
                 v-model="profesional.dni"
-                :rules="[rules.required, rules.integer]"
+                :rules="[rules.required, rules.integer, rules.dni]"
                 tabindex="3"
                 maxlength="10"
                 clearable
@@ -344,14 +344,14 @@
         <v-layout row wrap>
           <v-flex xs12 class="ma-4">
             <v-btn
-              :dark="valid_form"
+              :dark="!(!valid_form || guardando)"
               class="green right"
               :disabled="!valid_form || guardando"
               :loading="guardando"
               @click="submit"
             >
               Guardar
-              <v-icon dark right>check_circle</v-icon>
+              <v-icon right>check_circle</v-icon>
             </v-btn>
 
             <v-btn dark class="red right" @click="$router.go(-1)">
@@ -496,15 +496,10 @@ export default {
         },
 
         makeFormData: function() {
-            let form_data = new FormData();
-
-            if (this.foto) {
-                form_data.append('foto', this.foto);
-            }
-            if (this.firma)
-                form_data.append('firma', this.firma);
-
             let profesional = utils.clone(this.profesional);
+            
+            if (this.foto) profesional.foto = this.foto;
+            if (this.firma) profesional.firma = this.firma;
 
             profesional.sexo = profesional.sexo.id;
             profesional.estadoCivil = profesional.estadoCivil.id;
@@ -533,8 +528,7 @@ export default {
                 else return c.id;
             });
 
-            form_data.append('profesional', JSON.stringify(profesional));
-            return form_data;
+            return profesional;
         },
 
         submit: function() {
