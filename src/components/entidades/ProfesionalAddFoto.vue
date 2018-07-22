@@ -81,7 +81,7 @@
                 </v-btn>
             </v-flex>
 
-            <v-flex md4 xs12 v-if="!$options.isMobile">
+            <v-flex md4 xs12 v-if="!$options.isMobile()">
                 <v-btn
                     color="primary"
                     @click.native="show_capturar = true"
