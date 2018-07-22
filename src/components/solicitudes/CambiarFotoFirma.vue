@@ -100,7 +100,6 @@ export default {
 
     guardar: function() {
       let proms = [];
-      let form_data;
       this.submitted = true;
 
       if (this.foto) {
@@ -108,11 +107,7 @@ export default {
       }
 
       if (this.firma) {
-        form_data = new FormData();
-        form_data.append('firma', this.firma);
-        proms.push(
-          api.put(`/profesionales/${this.profesional.id}/firma`, form_data)
-        );
+        proms.push(api.put(`/profesionales/${this.profesional.id}/firma`, { firma: this.firma }));
       }
 
       Promise.all(proms)

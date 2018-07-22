@@ -176,12 +176,12 @@ export default {
         showImage: function() {
             let input = this.$refs.archivo;
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
+                let reader = new FileReader();
+                reader.readAsDataURL(input.files[0]);
                 reader.onload = (e) => {
                     this.$refs.img.setAttribute('src', e.target.result);
+                    this.$emit('change', e.target.result)
                 };
-                reader.readAsDataURL(input.files[0]);
-                this.$emit('change', input.files[0])
             }
         },
 
@@ -210,10 +210,10 @@ export default {
         },
 
         guardar: function() {
-            let dataURI = this.$refs.lienzo.toDataURL('image/png');
-            this.$refs.img.setAttribute('src', dataURI);
+            let data_uri = this.$refs.lienzo.toDataURL('image/png');
+            this.$refs.img.setAttribute('src', data_uri);
             this.tipo_firma = 'imagen';
-            this.$emit('change', utils.dataURItoBlob(dataURI));
+            this.$emit('change', data_uri);
             this.limpiarCanvas();
             this.show_dibujar = false;
 

@@ -738,13 +738,10 @@ export default {
     },
 
     makeFormData: function() {
-      let form_data = new FormData();
-      if (this.foto)
-        form_data.append('foto', this.foto);
-      if (this.firma)
-        form_data.append('firma', this.firma);
-
       let solicitud = utils.clone(this.solicitud);
+
+      if (this.foto) solicitud.entidad.foto = this.foto;
+      if (this.firma) solicitud.entidad.firma = this.firma;
 
       solicitud.entidad.sexo = solicitud.entidad.sexo.id;
       solicitud.entidad.estadoCivil = solicitud.entidad.estadoCivil.id;
@@ -773,8 +770,7 @@ export default {
         else return c.id;
       });
 
-      form_data.append('solicitud', JSON.stringify(solicitud));
-      return form_data;
+      return solicitud;
     },
 
     submit: function() {
