@@ -9,8 +9,12 @@
         </div>
 
         <div v-show="show_dibujar">
-            <canvas ref="lienzo" width="426" height="320" style="border:1px solid #000000;padding:0;margin:0">
-            </canvas>
+            <canvas 
+                ref="lienzo" 
+                width="426" 
+                height="320" 
+                style="border:1px solid #000000;padding:0;margin:0;max-width:100%"
+            ></canvas>
             <br>
                 <v-btn
                     color="primary" outline dark
@@ -35,7 +39,7 @@
                 </v-btn>
         </div>
 
-        <v-layout row v-if="edit && !show_dibujar" class="mt-3">
+        <v-layout row wrap v-if="edit && !show_dibujar" class="mt-3">
             <v-flex md4 xs12>
                 <v-btn
                     color="primary"

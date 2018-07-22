@@ -4,8 +4,8 @@
         <b>Foto:</b>
 
         <div>
-            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url" 
-              style="max-height:480px; max-width:360px" 
+            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url"
+              style="max-height:480px; width: 360px; max-width:100%"
               alt="No hay foto asociada"
             />
 
@@ -14,7 +14,7 @@
               indeterminate
               color="primary"
               class="ma-5"
-            ></v-progress-circular>            
+            ></v-progress-circular>
 
             <div v-show="show_crop">
               <img ref="img_crop" style="height:480px; width:360px"/>
@@ -60,7 +60,7 @@
             </v-btn>
         </div>
 
-        <v-layout row v-if="edit && !show_capturar && !show_crop" class="mt-3">
+        <v-layout row wrap v-if="edit && !show_capturar && !show_crop" class="mt-3">
             <v-flex md4 xs12>
                 <v-btn
                     color="primary"
@@ -81,7 +81,7 @@
                 </v-btn>
             </v-flex>
 
-            <v-flex md4 xs12>
+            <v-flex md4 xs12 v-if="!$options.isMobile">
                 <v-btn
                     color="primary"
                     @click.native="show_capturar = true"
@@ -122,6 +122,8 @@ export default {
       note: 'Url de la foto'
     }
   },
+
+  isMobile: utils.isMobile,
 
   data() {
     return {
@@ -240,7 +242,7 @@ export default {
         axios.get(src, { responseType: "blob" })
         .then(r => {
           let reader = new FileReader();
-          reader.readAsDataURL(r.data); 
+          reader.readAsDataURL(r.data);
           reader.onload = () => {
               cropper.replace(reader.result);
               this.show_crop = true;
@@ -250,7 +252,7 @@ export default {
       //Sino la imagen fue cargada ahora
       else {
         cropper.replace(src);
-        this.show_crop = true;        
+        this.show_crop = true;
       }
     },
 
