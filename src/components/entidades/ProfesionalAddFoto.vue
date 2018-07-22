@@ -40,6 +40,7 @@
 
         <div v-show="show_capturar">
             <video autoplay="true" ref="video_elem" id="video-elem"></video>
+            <br>
             <v-btn
                 outline
                 color="error"
@@ -61,7 +62,7 @@
         </div>
 
         <v-layout row wrap v-if="edit && !show_capturar && !show_crop" class="mt-3">
-            <v-flex md4 xs12>
+            <v-flex md4 xs12 v-if="url && show_recortar">
                 <v-btn
                     color="primary"
                     @click.native="recortarActual"
@@ -127,6 +128,7 @@ export default {
 
   data() {
     return {
+      show_recortar: true,
       show_error: false,
       show_capturar: false,
       show_crop: false,
@@ -155,6 +157,16 @@ export default {
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia ||
       navigator.oGetUserMedia;
+
+      if (this.url) {
+        axios.get(this.url)
+        .then(r => {
+          this.show_recortar = true;
+        })
+        .catch(e => {
+          this.show_recortar = false;
+        })
+      }
   },
 
   mounted: function() {
