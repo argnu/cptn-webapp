@@ -7,11 +7,11 @@ export function getFloat(value) {
 
 export function getFecha(fecha) {
   if (!fecha) return moment(fecha).format('DD/MM/YYYY');
-  if (typeof fecha == 'object') 
+  if (typeof fecha == 'object')
     return moment(fecha).isValid() ? moment(fecha).format('DD/MM/YYYY') : '';
   else if (fecha.indexOf('/') == -1)
     return moment(fecha, 'YYYY-MM-DD').isValid() ? moment(fecha, 'YYYY-MM-DD').format('DD/MM/YYYY') : '';
-  else 
+  else
     return fecha;
 }
 
@@ -130,6 +130,28 @@ export function diffDatesStr(d1, d2) {
 }
 
 
-export function isMobile(){ 
+export function isMobile(){
   return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}
+
+export function resizeBase64Img(base64, width, height) {
+  return new Promise(function(resolve, reject) {
+    let canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    let context = canvas.getContext("2d");
+    let image = new Image();
+
+    image.onload = function() {
+      context.scale(width/this.width,  height/this.height);
+      context.drawImage(this, 0, 0);
+      resolve(canvas.toDataURL());
+    };
+
+    image.onerror = function(e) {
+      reject(e)
+    }
+
+    image.src = base64;
+  });
 }

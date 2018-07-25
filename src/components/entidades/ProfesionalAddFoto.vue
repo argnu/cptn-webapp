@@ -19,9 +19,18 @@
             <div v-show="show_crop">
               <img ref="img_crop" style="height:480px; width:360px"/>
               <v-btn
-                  dark
+                  outline dark
+                  color="error"
+                  @click.native="show_crop = false"
+              >
+                  <v-icon class="mr-2">block</v-icon>
+                  Cancelar
+              </v-btn>
+
+              <v-btn
+                  otuline dark
                   ref="aplicar"
-                  class="green"
+                  color="green"
                   @click.native="aplicarCrop"
               >
                   Aplicar recorte
@@ -220,7 +229,8 @@ export default {
           self.$refs.img.setAttribute('src', base64data);
           self.show_cargandofoto = false;
           self.show_crop = false;
-          self.$emit('change', base64data);
+          utils.resizeBase64Img(base64data, 360, 480)
+          .then(base64 => self.$emit('change', base64));
         };
       });
 

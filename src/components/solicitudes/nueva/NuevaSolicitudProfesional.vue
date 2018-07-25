@@ -741,7 +741,9 @@ export default {
       let solicitud = utils.clone(this.solicitud);
 
       if (this.foto) solicitud.entidad.foto = this.foto;
+      else solicitud.entidad.foto = null;
       if (this.firma) solicitud.entidad.firma = this.firma;
+      else solicitud.entidad.firma = null;
 
       solicitud.entidad.sexo = solicitud.entidad.sexo.id;
       solicitud.entidad.estadoCivil = solicitud.entidad.estadoCivil.id;

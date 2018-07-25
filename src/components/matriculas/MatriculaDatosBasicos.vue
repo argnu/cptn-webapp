@@ -14,7 +14,7 @@
                     size="100px"
                     class="grey lighten-4"
                   >
-                    <img :src="matricula.entidad.foto" alt="Foto">
+                    <img :src="matricula.entidad.foto + '?' + Date.now()" alt="Foto">
                   </v-avatar>
                 </v-flex>
 
@@ -31,7 +31,7 @@
                 <v-flex xs2>                    
                   <img 
                     v-if="matricula.entidad.firma" 
-                    :src="matricula.entidad.firma" 
+                    :src="matricula.entidad.firma  + '?' + Date.now()" 
                     alt="Firma"
                     style="max-width:200px"
                   >

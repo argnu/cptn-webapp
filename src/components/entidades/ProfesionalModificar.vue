@@ -116,7 +116,7 @@
         <v-flex xs12 class="mx-4">
             <profesional-add-foto
                 edit
-                :url="profesional.foto ? profesional.foto : ''"
+                :url="profesional.foto ? profesional.foto + '?' + Date.now() : ''"
                 @change="chgFoto"
             ></profesional-add-foto>
         </v-flex>
@@ -126,7 +126,7 @@
         <v-flex xs12 class="mt-4">
             <profesional-add-firma
             edit
-            :url="profesional.firma ? profesional.firma : ''"
+            :url="profesional.firma ? profesional.firma + '?' + Date.now : ''"
             @change="chgFirma"
             ref="firma"
             ></profesional-add-firma>
@@ -499,7 +499,9 @@ export default {
             let profesional = utils.clone(this.profesional);
             
             if (this.foto) profesional.foto = this.foto;
+            else profesional.foto = null;
             if (this.firma) profesional.firma = this.firma;
+            else profesional.firma = null;
 
             profesional.sexo = profesional.sexo.id;
             profesional.estadoCivil = profesional.estadoCivil.id;

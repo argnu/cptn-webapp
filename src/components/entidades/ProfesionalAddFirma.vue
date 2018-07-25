@@ -195,9 +195,9 @@ export default {
             for(var i=0; i < this.movimientos.length; i++) {
                 context.beginPath();
                 if(this.movimientos[i][2] && i){
-                context.moveTo(this.movimientos[i-1][0], this.movimientos[i-1][1]);
+                    context.moveTo(this.movimientos[i-1][0], this.movimientos[i-1][1]);
                 }else{
-                context.moveTo(this.movimientos[i][0], this.movimientos[i][1]);
+                    context.moveTo(this.movimientos[i][0], this.movimientos[i][1]);
                 }
                 context.lineTo(this.movimientos[i][0], this.movimientos[i][1]);
                 context.closePath();
