@@ -4,15 +4,44 @@
         <b>Firma:</b>
 
         <div>
-            <img v-show="!show_dibujar" :src="url" ref="img" style="max-width:180px" alt="No hay firma asociada"/>
-            <input style="display:none" type="file" ref="archivo" name="firma" id="firma" @change="showImage('firma')">
-        </div>
+            <img v-show="!show_dibujar  && !show_crop && !show_cargandofoto" :src="url" ref="img" style="max-width:180px" alt="No hay firma asociada"/>
+            <input style="display:none" type="file" ref="archivo" name="firma" id="firma" @change="selectImage">
+
+            <v-progress-circular
+              v-show="show_cargandofoto"
+              indeterminate
+              color="primary"
+              class="ma-5"
+            ></v-progress-circular>
+
+            <div v-show="show_crop">
+              <img ref="img_crop" style="height:315px; width:420"/>
+              <br>
+              <v-btn
+                  outline dark
+                  color="error"
+                  @click.native="show_crop = false"
+              >
+                  <v-icon class="mr-2">block</v-icon>
+                  Cancelar
+              </v-btn>
+
+              <v-btn
+                  otuline dark
+                  ref="aplicar"
+                  color="green"
+                  @click.native="aplicarCrop"
+              >
+                  Aplicar recorte
+              </v-btn>
+            </div>            
+        </div>        
 
         <div v-show="show_dibujar">
             <canvas 
                 ref="lienzo" 
-                width="426" 
-                height="320" 
+                width="420" 
+                height="315" 
                 style="border:1px solid #000000;padding:0;margin:0;max-width:100%"
             ></canvas>
             <br>
@@ -40,6 +69,15 @@
         </div>
 
         <v-layout row wrap v-if="edit && !show_dibujar" class="mt-3">
+            <v-flex md4 xs12 v-if="url && show_recortar">
+                <v-btn
+                    color="primary"
+                    @click.native="recortarActual"
+                >
+                    <v-icon>crop_free</v-icon>
+                    Recortar
+                </v-btn>
+            </v-flex>            
             <v-flex md4 xs12>
                 <v-btn
                     color="primary"
@@ -64,7 +102,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import * as utils from '@/utils'
+import Cropper from 'cropperjs'
+
+let cropper;
 
 function isCanvasBlank(canvas) {
     let blank = document.createElement('canvas');
@@ -90,12 +132,34 @@ export default {
     data() {
         return {
             show_dibujar: false,
+            show_recortar: true,
+            show_crop: false,
+            show_cargandofoto: false,
+            cropper: null,            
             pulsado: false,
             movimientos: []
         }
     },
 
+    created: function() {
+      if (this.url) {
+        axios.get(this.url)
+        .then(r => {
+          this.show_recortar = true;
+        })
+        .catch(e => {
+          this.show_recortar = false;
+        })
+      }
+    },
+
     mounted: function() {
+        let self = this;
+        cropper = new Cropper(this.$refs.img_crop, {
+            initialAspectRatio: 4/3,
+            aspectRatio: 4/3
+        });
+
         let canvas = this.$refs.lienzo;
 
         canvas.onmousedown = e => {
@@ -173,17 +237,26 @@ export default {
             this.$refs.img.setAttribute('src', '');
         },
 
-        showImage: function() {
-            let input = this.$refs.archivo;
-            if (input.files && input.files[0]) {
+        recortarActual: function() {
+            let src = this.$refs.img.getAttribute('src');
+            //Si la img actual es la que está guardada
+            if (src.includes('http://')) {
+                axios.get(src, { responseType: "blob" })
+                .then(r => {
                 let reader = new FileReader();
-                reader.readAsDataURL(input.files[0]);
-                reader.onload = (e) => {
-                    this.$refs.img.setAttribute('src', e.target.result);
-                    this.$emit('change', e.target.result)
-                };
+                reader.readAsDataURL(r.data);
+                reader.onload = () => {
+                    cropper.replace(reader.result);
+                    this.show_crop = true;
+                }
+                })
             }
-        },
+            //Sino la imagen fue cargada ahora
+            else {
+                cropper.replace(src);
+                this.show_crop = true;
+            }
+        },        
 
         repinta: function() {
             let context = this.$refs.lienzo.getContext("2d");
@@ -217,7 +290,40 @@ export default {
             this.limpiarCanvas();
             this.show_dibujar = false;
 
-        }
+        },
+
+        selectImage: function() {
+            let input = this.$refs.archivo;
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.readAsDataURL(input.files[0]);
+                reader.onload = e => {
+                    cropper.replace(e.target.result);
+                    this.show_crop = true;
+                };
+            }
+        },        
+
+        aplicarCrop: function() {
+            let self = this;
+            this.show_cargandofoto = true;
+            let input = this.$refs.archivo;
+
+            cropper.getCroppedCanvas().toBlob(blob => {
+                let reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = function() {
+                    let base64data = reader.result;
+                    self.$refs.img.setAttribute('src', base64data);
+                    self.show_cargandofoto = false;
+                    self.show_crop = false;
+                    utils.resizeBase64Img(base64data, 420, 315)
+                    .then(base64 => self.$emit('change', base64));
+                };
+            });
+
+            this.show_crop = false;
+        },        
 
     }
 

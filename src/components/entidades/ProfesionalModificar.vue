@@ -116,7 +116,7 @@
         <v-flex xs12 class="mx-4">
             <profesional-add-foto
                 edit
-                :url="profesional.foto ? profesional.foto + '?' + Date.now() : ''"
+                :url="foto_profesional"
                 @change="chgFoto"
             ></profesional-add-foto>
         </v-flex>
@@ -126,7 +126,7 @@
         <v-flex xs12 class="mt-4">
             <profesional-add-firma
             edit
-            :url="profesional.firma ? profesional.firma + '?' + Date.now : ''"
+            :url="firma_profesional"
             @change="chgFirma"
             ref="firma"
             ></profesional-add-firma>
@@ -423,6 +423,14 @@ export default {
     },
 
     computed: {
+        foto_profesional: function() {
+            return this.profesional.foto ? this.profesional.foto + '?' + Date.now() : '';
+        },
+
+        firma_profesional: function() {
+            return this.profesional.firma ? this.profesional.firma + '?' + Date.now() : '';
+        },
+
         valid_domicilios: function() {
             return this.profesional.domicilios.length > 0;
         }, 
