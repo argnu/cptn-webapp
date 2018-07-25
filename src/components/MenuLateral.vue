@@ -77,6 +77,10 @@
         <v-list-tile @click="goto('/herramientas/busqueda-legajo')">
           <v-list-tile-sub-title>Búsqueda de Legajos</v-list-tile-sub-title>
         </v-list-tile>
+
+        <v-list-tile @click="goto('/herramientas/arqueo')">
+          <v-list-tile-sub-title>Arqueo</v-list-tile-sub-title>
+        </v-list-tile>
       </v-list-group>
 
       <v-divider></v-divider>

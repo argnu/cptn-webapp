@@ -118,21 +118,21 @@ export default {
     filtros: {
       handler() {
         this.pagination.page = 1;
-        this.udpateUsuarios();
+        this.updateUsuarios();
       },
       deep: true
     },
 
     pagination: {
       handler() {
-        this.udpateUsuarios();
+        this.updateUsuarios();
       },
       deep: true
     }
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.udpateUsuarios, 600, {
+    this.debouncedUpdate = _.debounce(this.updateUsuarios, 600, {
       'maxWait': 1000
     });
   },
@@ -146,7 +146,7 @@ export default {
       this.debouncedUpdate();
     },
 
-    udpateUsuarios: function() {
+    updateUsuarios: function() {
       this.loading = true;
       this.usuarios = [];
       let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
@@ -179,7 +179,7 @@ export default {
       let msg = `Está seguro/a que desea ${usuario.activo ? 'desactivar' : 'activar'} al usuario?`;
         if (confirm(msg)) {
             api.patch(`/usuarios/${usuario.id}`, { activo: !usuario.activo })
-            .then(r => this.udpateUsuarios())
+            .then(r => this.updateUsuarios())
             .catch(e => console.error(e));
         }
     }

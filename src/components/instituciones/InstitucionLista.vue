@@ -110,21 +110,21 @@ export default {
     filtros: {
       handler() {
         this.pagination.page = 1;
-        this.udpateInstituciones();
+        this.updateInstituciones();
       },
       deep: true
     },
 
     pagination: {
       handler() {
-        this.udpateInstituciones();
+        this.updateInstituciones();
       },
       deep: true
     }
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.udpateInstituciones, 600, {
+    this.debouncedUpdate = _.debounce(this.updateInstituciones, 600, {
       'maxWait': 1000
     });
   },
@@ -138,7 +138,7 @@ export default {
       this.debouncedUpdate();
     },
 
-    udpateInstituciones: function() {
+    updateInstituciones: function() {
       this.loading = true;
       this.instituciones = [];
       let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
