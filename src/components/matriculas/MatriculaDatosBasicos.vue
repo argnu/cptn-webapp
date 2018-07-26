@@ -14,7 +14,7 @@
                     size="100px"
                     class="grey lighten-4"
                   >
-                    <img :src="matricula.entidad.foto" alt="Foto">
+                    <img :src="profesional_foto" alt="Foto">
                   </v-avatar>
                 </v-flex>
 
@@ -31,7 +31,7 @@
                 <v-flex xs2>                    
                   <img 
                     v-if="matricula.entidad.firma" 
-                    :src="matricula.entidad.firma" 
+                    :src="profesional_firma" 
                     alt="Firma"
                     style="max-width:200px"
                   >
@@ -49,6 +49,16 @@ export default {
   name: 'MatriculaDatosBasicos',
 
   props: ['matricula'],
+
+  computed: {
+        profesional_foto: function() {
+            return `${this.matricula.entidad.foto}?${Date.now()}`;
+        },
+
+        profesional_firma: function() {
+            return `${this.matricula.entidad.firma}?${Date.now()}`;
+        },
+  },
   
   methods: {
     habilitar: function() {
