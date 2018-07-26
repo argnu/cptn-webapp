@@ -220,7 +220,8 @@ export default {
           self.$refs.img.setAttribute('src', base64data);
           self.show_cargandofoto = false;
           self.show_crop = false;
-          self.$emit('change', base64data);
+          utils.resizeBase64Img(base64data, 540, 720)
+          .then(base64 => self.$emit('change', base64));
         };
       });
 

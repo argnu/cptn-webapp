@@ -133,3 +133,25 @@ export function diffDatesStr(d1, d2) {
 export function isMobile(){ 
   return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
 }
+
+export function resizeBase64Img(base64, width, height) {
+  return new Promise(function(resolve, reject) {
+    let canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    let context = canvas.getContext("2d");
+    let image = new Image();
+
+    image.onload = function() {
+      context.scale(width/this.width,  height/this.height);
+      context.drawImage(this, 0, 0);
+      resolve(canvas.toDataURL());
+    };
+
+    image.onerror = function(e) {
+      reject(e)
+    }
+
+    image.src = base64;
+  });
+}
