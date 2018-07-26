@@ -5,7 +5,8 @@ export default {
     },
     user: null,
     delegacion: null,
-    opciones: null
+    opciones: null,
+    cursor_wait: false 
   },
 
   setUser(user) {

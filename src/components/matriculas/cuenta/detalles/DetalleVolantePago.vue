@@ -3,7 +3,7 @@
     <v-layout row wrap>
       <v-flex xs6>
         <div>
-            Volante de Pago N°: {{ volante.id }}
+            N°: {{ volante.id }}
         </div>
         
         <div class="my-1">

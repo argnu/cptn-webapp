@@ -2,16 +2,16 @@
   <div v-if="boleta">
     <v-layout row wrap>
       <v-flex xs6>
-        Boleta N°: {{ boleta.numero }}<br>
+        N°: {{ boleta.numero }}<br>
         Fecha: {{ boleta.fecha | fecha }} <br>
-        Estado: {{ boleta.estado.valor }} <br>
+        Estado: {{ boleta.estado ? boleta.estado.valor : '' }} <br>
         Fecha de Vencimiento: {{ boleta.fecha_vencimiento | fecha }}<br>
       </v-flex>
 
       <v-flex xs6>
-        Tipo de Comprobante: {{ boleta.tipo_comprobante.abreviatura }}<br>
+        Tipo de Comprobante: {{ boleta.tipo_comprobante ? boleta.tipo_comprobante.abreviatura : '' }}<br>
         Fecha de Pago: 
-          <span v-if="boleta.estado.id == 2">{{ boleta.fecha_update | fecha }}
+          <span v-if="boleta.estado && boleta.estado.id == 2">{{ boleta.fecha_update | fecha }}
           </span><br>
       </v-flex>
     </v-layout>
@@ -19,6 +19,7 @@
     <br>
 
     <v-data-table
+        v-if="boleta.items"
         :headers="$options.headers"
         :items="boleta.items"
         class="elevation-1"

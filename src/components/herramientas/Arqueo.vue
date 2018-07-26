@@ -34,7 +34,7 @@
       </v-flex>
   </v-layout>
 
-    <v-card>        
+    <v-card>
             <div>
         <v-btn
             absolute dark fab top right small
@@ -47,21 +47,21 @@
 
         <v-data-table
             class="elevation-1 mt-4"
-            no-data-text="No hay datos"  
+            no-data-text="No hay datos"
             :headers="$options.headers"
             :items="comprobantes"
             :loading="loading"
             :pagination.sync="pagination"
             :total-items="totalItems"
-            :rows-per-page-items="[25,30,35]"        
+            :rows-per-page-items="[25,30,35]"
         >
             <template slot="items" slot-scope="props">
                 <td>{{ props.item.numero }}</td>
                 <td>{{ props.item.matricula.numero }}</td>
                 <td>{{ props.item.matricula | detalle_matricula }}</td>
-                <td>{{ props.item.importe_total }}</td>
+                <td style="text-align:right">{{ props.item.importe_total }}</td>
             </template>
-        ></v-data-table>              
+        ></v-data-table>
         </div>
     </v-card>
 
@@ -74,7 +74,7 @@
             </tr>
         </thead>
         <tbody>
-        </tbody>    
+        </tbody>
     </table>
 
 
@@ -97,10 +97,10 @@ export default {
     },
 
     headers: [
-        Header('N° Recibo', 'numero_recibo'),
-        Header('N° Matrícula', 'numero_matricula'),
+        Header('N° Recibo', 'numero', true),
+        Header('N° Matrícula', 'matricula.numero', true),
         Header('Detalle Matrícula', 'detalle_matricula'),
-        Header('Importe', 'importe')
+        Header('Importe', 'importe_total', true, 'right')
     ],
 
     filters: {
@@ -108,7 +108,7 @@ export default {
             if (!matricula) return '';
             return `${matricula.entidad.nombre} ${matricula.entidad.apellido || ''}`
         }
-    },    
+    },
 
     data() {
         return {
@@ -120,7 +120,10 @@ export default {
                 delegacion: null
             },
             pagination: {
-                
+                descending: null,
+                sortBy: null,
+                page: 1,
+                rowsPerPage: 25
             },
             totalItems: 0,
             loading: false,
@@ -143,7 +146,7 @@ export default {
             },
             deep: true
         }
-    },    
+    },
 
     created: function() {
         this.debouncedUpdate = _.debounce(this.update, 600, {
@@ -166,12 +169,16 @@ export default {
             if (this.filtros.delegacion) {
                 this.loading = true;
                 let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
-                let limit = this.pagination.rowsPerPage;            
+                let limit = this.pagination.rowsPerPage;
 
                 let url = `/comprobantes?limit=${limit}&offset=${offset}`;
                 url += `&fecha[desde]=${this.filtros.fecha_desde}`
                 url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
                 url += `&delegacion=${this.filtros.delegacion}`;
+
+                if (this.pagination.sortBy) {
+                    url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+                }
 
                 api.get(url)
                 .then(r => {
@@ -185,11 +192,16 @@ export default {
         },
 
         exportar: function() {
+            this.global_state.cursor_wait = true;
             let tabla = this.$refs.tabla_export;
             let url = `/comprobantes?`;
             url += `&fecha[desde]=${this.filtros.fecha_desde}`
             url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
             url += `&delegacion=${this.filtros.delegacion}`;
+
+            if (this.pagination.sortBy) {
+                url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+            }
 
             api.get(url)
             .then(r => {
@@ -212,14 +224,16 @@ export default {
                         <td colspan="3" style="text-align:right"><b>Total</b></td>
                         <td style="mso-number-format:'0\.00';text-align:right">${utils.round(total, 2).toString().replace('.', ',')}</td>
                     </tr>
-                    `;                
+                    `;
 
                 tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-                window.open('data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML))
+                utils.download(`Arqueo (${this.filtros.fecha_desde.replace(/\//g, '-')} a ${this.filtros.fecha_hasta.replace(/\//g, '-')})`, 
+                    'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
+                this.global_state.cursor_wait = false;
             })
             .catch(e => {
                 console.error(e);
-            })            
+            })
         }
     }
 

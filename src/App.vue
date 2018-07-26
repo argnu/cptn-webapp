@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="global_state.cursor_wait ? 'cursor:wait' : ''">
     <v-snackbar
       :timeout="6000"
       bottom

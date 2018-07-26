@@ -2,18 +2,18 @@
   <v-container v-if="comprobante">
     <v-layout row wrap>
       <v-flex xs6>
-        Comprobante N°: {{ comprobante.numero }}<br>
+        N°: {{ comprobante.numero }}<br>
       </v-flex>
 
       <v-flex xs6>
         Fecha: {{ comprobante.fecha | fecha }} <br>
-        <!-- Tipo de Comprobante: {{ comprobante.tipo_comprobante.abreviatura }}<br> -->
       </v-flex>
     </v-layout>
 
     <br>
 
     <v-data-table
+        v-if="comprobante.items"
         :headers="$options.headers.comprobante"
         :items="comprobante.items"
         class="elevation-1"
@@ -29,6 +29,7 @@
 
     <br>
     <v-data-table
+        v-if="comprobante.pagos"
         :headers="$options.headers.pago"
         :items="comprobante.pagos"
         class="elevation-1"
@@ -36,7 +37,7 @@
         hide-actions
     >
       <template slot="items" slot-scope="props">
-        <td>{{ getFormaPago(props.item.forma_pago) }}</td>
+        <td>{{ props.item.forma_pago.nombre }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
         <td>{{ props.item.importe | round  }}</td>
       </template>
@@ -91,15 +92,7 @@ export default {
     total: function() {
       return this.comprobante.pagos.reduce((prev, act) => prev + +act.importe, 0);
     }
-  },
-
-  methods: {
-    getFormaPago: function(id) {
-      if (!id) return '';
-      let forma_pago = this.formas_pago.find(f => f.id == id);
-      return forma_pago ? forma_pago.nombre : '';
-    }
-  },
+  }
 
 }
 </script>

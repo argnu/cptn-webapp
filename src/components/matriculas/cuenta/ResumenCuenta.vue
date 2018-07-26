@@ -1,7 +1,11 @@
 <template>
     <v-container>
-      <detalle-dialog :item="item_selected" ref="show_detalle">
-      </detalle-dialog>
+      <detalle-dialog 
+        ref="show_detalle"
+        :tipo="detalle.tipo"
+        :id="detalle.id"
+        :titulo="detalle.titulo"
+      ></detalle-dialog>
 
       <v-layout row wrap class="mt-4">
         <v-flex xs1 class="mt-5 mx-5">
@@ -42,11 +46,26 @@
                   <td>{{ props.item.fecha | fecha }}</td>
                   <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                   <td>{{ props.item.descripcion }}</td>
-                  <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
-                    {{ props.item.estado ? props.item.estado.valor : '' }}
+                  <template v-if="props.item.tipo == 'boleta'">
+                    <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
+                        {{ props.item.estado ? props.item.estado.valor : '' }}
+                    </td>                    
+                  </template>
+                  <template v-else-if="props.item.tipo == 'volante'">
+                    <td class="red lighten-4">
+                        Vencido
+                    </td>                    
+                  </template>
+
+                  <td>
+                    <span v-if="props.item.debe">
+                      {{ props.item.debe | round }}
+                    </span>
+                  <td>
+                    <span v-if="props.item.haber">
+                      {{ props.item.haber | round }}
+                    </span>
                   </td>
-                  <td>{{ props.item.debe | round }}</td>
-                  <td>{{ props.item.haber | round }}</td>
                   <td class="justify-center layout px-0">
                     <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
                       <v-icon color="primary">launch</v-icon>
@@ -123,6 +142,11 @@ export default {
         fecha_desde: moment().startOf('year').format("DD/MM/YYYY"),
         fecha_hasta: moment().endOf('year').format("DD/MM/YYYY")
       },
+      detalle: {
+        id: null,
+        tipo: null,
+        titulo: ''
+      }
     }
   },
 
@@ -182,15 +206,15 @@ export default {
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
-        url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
-        url_volantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_comprobantes  += `&fecha_vencimiento[desde]=${this.filtros.fecha_desde}`;
+        url_volantes  += `&fecha_vencimiento[desde]=${this.filtros.fecha_desde}`;
         url_exenciones  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
       if (this.rules.fecha(this.filtros.fecha_hasta)) {
-        url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_boletas += `&fecha_vencimiento[hasta]=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
-        url_volantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_volantes += `&fecha_vencimiento[hasta]=${this.filtros.fecha_hasta}`;
         url_exenciones += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
 
@@ -209,12 +233,12 @@ export default {
        }).concat(comprobantes.data.map(c => {
          c.tipo = 'comprobante';
          c.haber = c.importe_cancelado;
-         c.descripcion = 'Recibo';
+         c.descripcion = `Recibo N° ${c.numero}`;
          return c;
        })).concat(volantes.data.map(c => {
          c.tipo = 'volante';
-         c.haber = c.importe_total;
-         c.descripcion = 'Volante de Pago';
+        //  c.debe = c.importe_total;
+         c.descripcion = `Volante de Pago N° ${c.id}`;
          return c;
        })).concat(exenciones.data.map(c => {
          c.haber = c.importe;
@@ -232,7 +256,11 @@ export default {
     },
 
     verDetalle: function(item) {
-      this.item_selected = item;
+      this.detalle = {
+        titulo: item.descripcion,
+        id: item.id,
+        tipo: item.tipo
+      }
       this.$refs.show_detalle.mostrar();
     },
 
