@@ -25,6 +25,8 @@
       <v-flex xs4 class="mx-4">
         <v-select
             label="Delegación:"
+            clearable
+            autocomplete
             v-model="filtros.delegacion"
             :items="delegaciones"
             item-text="nombre"
@@ -166,30 +168,28 @@ export default {
         },
 
         update: function() {
-            if (this.filtros.delegacion) {
-                this.loading = true;
-                let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
-                let limit = this.pagination.rowsPerPage;
+            this.loading = true;
+            let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
+            let limit = this.pagination.rowsPerPage;
 
-                let url = `/comprobantes?limit=${limit}&offset=${offset}`;
-                url += `&fecha[desde]=${this.filtros.fecha_desde}`
-                url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
-                url += `&delegacion=${this.filtros.delegacion}`;
+            let url = `/comprobantes?limit=${limit}&offset=${offset}`;
+            url += `&fecha[desde]=${this.filtros.fecha_desde}`
+            url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
+            if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
 
-                if (this.pagination.sortBy) {
-                    url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
-                }
-
-                api.get(url)
-                .then(r => {
-                    this.loading = false;
-                    this.comprobantes = r.data.resultados;
-                    this.totalItems = r.data.totalQuery;
-                })
-                .catch(e => {
-                    console.error(e);
-                })
+            if (this.pagination.sortBy) {
+                url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
             }
+
+            api.get(url)
+            .then(r => {
+                this.loading = false;
+                this.comprobantes = r.data.resultados;
+                this.totalItems = r.data.totalQuery;
+            })
+            .catch(e => {
+                console.error(e);
+            })
         },
 
         exportar: function() {
@@ -198,7 +198,7 @@ export default {
             let url = `/comprobantes?`;
             url += `&fecha[desde]=${this.filtros.fecha_desde}`
             url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
-            url += `&delegacion=${this.filtros.delegacion}`;
+            if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
 
             if (this.pagination.sortBy) {
                 url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
@@ -228,7 +228,7 @@ export default {
                     `;
 
                 tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-                utils.download(`Arqueo (${this.filtros.fecha_desde.replace(/\//g, '-')} a ${this.filtros.fecha_hasta.replace(/\//g, '-')}).xlsx`,
+                utils.download(`Arqueo.xlsx`,
                     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
                 this.global_state.cursor_wait = false;
             })
