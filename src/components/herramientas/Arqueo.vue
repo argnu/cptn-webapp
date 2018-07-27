@@ -183,7 +183,8 @@ export default {
                 api.get(url)
                 .then(r => {
                     this.loading = false;
-                    this.comprobantes = r.data;
+                    this.comprobantes = r.data.resultados;
+                    this.totalItems = r.data.totalQuery;
                 })
                 .catch(e => {
                     console.error(e);
@@ -207,7 +208,7 @@ export default {
             .then(r => {
                 let rows = '';
                 let total = 0;
-                for(let comprobante of r.data) {
+                for(let comprobante of r.data.resultados) {
                     rows += `
                     <tr>
                         <td style="mso-number-format:'0'">${comprobante.numero}</td>
@@ -227,7 +228,7 @@ export default {
                     `;
 
                 tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-                utils.download(`Arqueo (${this.filtros.fecha_desde.replace(/\//g, '-')} a ${this.filtros.fecha_hasta.replace(/\//g, '-')})`, 
+                utils.download(`Arqueo (${this.filtros.fecha_desde.replace(/\//g, '-')} a ${this.filtros.fecha_hasta.replace(/\//g, '-')}).xlsx`,
                     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
                 this.global_state.cursor_wait = false;
             })

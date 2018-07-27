@@ -56,6 +56,9 @@
                         Vencido
                     </td>                    
                   </template>
+                  <template v-else>
+                    <td></td>
+                  </template>
 
                   <td>
                     <span v-if="props.item.debe">
@@ -230,7 +233,7 @@ export default {
          b.debe = b.total;
          b.descripcion = b.items[0].descripcion;
          return b;
-       }).concat(comprobantes.data.map(c => {
+       }).concat(comprobantes.data.resultados.map(c => {
          c.tipo = 'comprobante';
          c.haber = c.importe_cancelado;
          c.descripcion = `Recibo N° ${c.numero}`;
