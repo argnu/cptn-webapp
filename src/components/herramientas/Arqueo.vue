@@ -228,8 +228,9 @@ export default {
                     `;
 
                 tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-                utils.download(`Arqueo.xlsx`,
-                    'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
+                // utils.download(`Arqueo.xlsx`,
+                //     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
+                window.open('data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
                 this.global_state.cursor_wait = false;
             })
             .catch(e => {
