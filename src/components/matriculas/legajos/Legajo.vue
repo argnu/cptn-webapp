@@ -968,13 +968,16 @@ export default {
     },
 
     imprimir: function() {
-      reports.open({
-        'jsp-source': 'legajos_tecnicos.jasper',
-        'jsp-format': 'PDF',
-        'jsp-output-file': `Legajo Técnico ${this.id_legajo} - ${Date.now()}`,
-        'jsp-only-gen': false,
-        'legajo_id': this.id_legajo
-      });
+      api.get(`/legajos/${this.id_legajo}`)
+      .then(r => {
+        reports.open({
+          'jsp-source': 'legajos_tecnicos.jasper',
+          'jsp-format': 'PDF',
+          'jsp-output-file': `Legajo N° ${r.data.numero_legajo} - ${Date.now()}`,
+          'jsp-only-gen': false,
+          'legajo_id': r.data.id
+        });
+      })
     }
   },
 

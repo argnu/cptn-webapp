@@ -103,7 +103,7 @@
               <td>{{ props.item.comitentes | lista_comitentes }}</td>
               <td v-if="allFilters">{{ props.item.domicilio.direccion }}</td>
               <td class="justify-center layout px-0">
-                <v-btn small icon class="mx-0" @click="imprimir(props.item.id)" title="Imprimir">
+                <v-btn small icon class="mx-0" @click="imprimir(props.item)" title="Imprimir">
                   <v-icon color="secondary">print</v-icon>
                 </v-btn>
 
@@ -288,13 +288,13 @@ export default {
       this.$router.push({ path: `/matriculas/${this.id}/nuevo-legajo` });
     },
 
-    imprimir: function(id) {
+    imprimir: function(legajo) {
       reports.open({
         'jsp-source': 'legajos_tecnicos.jasper',
         'jsp-format': 'PDF',
-        'jsp-output-file': `Legajo Técnico ${id} - ${Date.now()}`,
+        'jsp-output-file': `Legajo N° ${legajo.numero_legajo} - ${Date.now()}`,
         'jsp-only-gen': false,
-        'legajo_id': id
+        'legajo_id': legajo.id
       });
     }
   },

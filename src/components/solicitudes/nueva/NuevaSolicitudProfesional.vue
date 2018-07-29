@@ -193,7 +193,7 @@
                     <v-flex xs12 class="mx-4">
                       <profesional-add-foto
                           edit
-                          :url="solicitud.entidad.foto ? solicitud.entidad.foto : ''"
+                          :url="profesional_foto"
                           @change="chgFoto"
                       ></profesional-add-foto>
                     </v-flex>
@@ -203,7 +203,7 @@
                     <v-flex xs12 class="mt-4">
                       <profesional-add-firma
                         edit
-                        :url="solicitud.entidad.firma ? solicitud.entidad.firma : ''"
+                        :url="profesional_firma"
                         @change="chgFirma"
                         ref="firma"
                       ></profesional-add-firma>
@@ -601,6 +601,14 @@ export default {
   },
 
   computed: {
+    profesional_foto: function() {
+        return this.solicitud.entidad.foto ? `${this.solicitud.entidad.foto}?${Date.now()}` : '';
+    },    
+
+    profesional_firma: function() {
+        return this.solicitud.entidad.firma ? `${this.solicitud.entidad.firma}?${Date.now()}` : '';
+    },    
+
     suma_subsidiarios: function() {
       if (!this.solicitud.entidad.subsidiarios.length) return 0;
       return this.solicitud.entidad.subsidiarios.reduce((prev, act) => prev + +act.porcentaje, 0);

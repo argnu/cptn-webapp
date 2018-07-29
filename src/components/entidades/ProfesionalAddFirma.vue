@@ -34,14 +34,14 @@
               >
                   Aplicar recorte
               </v-btn>
-            </div>            
-        </div>        
+            </div>
+        </div>
 
         <div v-show="show_dibujar">
-            <canvas 
-                ref="lienzo" 
-                width="420" 
-                height="315" 
+            <canvas
+                ref="lienzo"
+                width="420"
+                height="315"
                 style="border:1px solid #000000;padding:0;margin:0;max-width:100%"
             ></canvas>
             <br>
@@ -77,7 +77,7 @@
                     <v-icon>crop_free</v-icon>
                     Recortar
                 </v-btn>
-            </v-flex>            
+            </v-flex>
             <v-flex md4 xs12>
                 <v-btn
                     color="primary"
@@ -135,7 +135,7 @@ export default {
             show_recortar: true,
             show_crop: false,
             show_cargandofoto: false,
-            cropper: null,            
+            cropper: null,
             pulsado: false,
             movimientos: []
         }
@@ -256,7 +256,7 @@ export default {
                 cropper.replace(src);
                 this.show_crop = true;
             }
-        },        
+        },
 
         repinta: function() {
             let context = this.$refs.lienzo.getContext("2d");
@@ -283,7 +283,7 @@ export default {
         },
 
         guardar: function() {
-            let data_uri = this.$refs.lienzo.toDataURL('image/png');
+            let data_uri = utils.getCanvasJPEG(this.$refs.lienzo);
             this.$refs.img.setAttribute('src', data_uri);
             this.tipo_firma = 'imagen';
             this.$emit('change', data_uri);
@@ -302,28 +302,23 @@ export default {
                     this.show_crop = true;
                 };
             }
-        },        
+        },
 
         aplicarCrop: function() {
             let self = this;
             this.show_cargandofoto = true;
             let input = this.$refs.archivo;
+            let base64data = cropper.getCroppedCanvas({
+                fillColor: 'white',
+                maxWidth: 420,
+                maxHeight: 315
+            })
+            .toDataURL('image/jpeg');
 
-            cropper.getCroppedCanvas().toBlob(blob => {
-                let reader = new FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = function() {
-                    let base64data = reader.result;
-                    self.$refs.img.setAttribute('src', base64data);
-                    self.show_cargandofoto = false;
-                    self.show_crop = false;
-                    utils.resizeBase64Img(base64data, 420, 315)
-                    .then(base64 => self.$emit('change', base64));
-                };
-            });
-
+            this.$refs.img.setAttribute('src', base64data);
+            this.$emit('change', base64data)
             this.show_crop = false;
-        },        
+        },
 
     }
 

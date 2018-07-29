@@ -145,7 +145,7 @@ export function resizeBase64Img(base64, width, height) {
     image.onload = function() {
       context.scale(width/this.width,  height/this.height);
       context.drawImage(this, 0, 0);
-      resolve(canvas.toDataURL());
+      resolve(canvas.toDataURL('image/jpeg'));
     };
 
     image.onerror = function(e) {
@@ -164,4 +164,24 @@ export function download(nombre, contenido) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);  
+}
+
+export function getCanvasJPEG(canvas) {
+    let w = canvas.width;
+    let h = canvas.height;
+    let context = canvas.getContext("2d");
+    let data = context.getImageData(0, 0, w, h);
+
+    let compositeOperation = context.globalCompositeOperation;
+
+    context.globalCompositeOperation = "destination-over";
+    context.fillStyle = 'white';
+    context.fillRect(0,0,w,h);
+
+    let imageData = canvas.toDataURL("image/jpeg");
+
+    context.clearRect (0,0,w,h);
+    context.putImageData(data, 0,0);
+    context.globalCompositeOperation = compositeOperation;
+    return imageData;
 }

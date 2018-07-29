@@ -4,17 +4,10 @@
         <b>Foto:</b>
 
         <div>
-            <img v-show="!show_capturar && !show_crop && !show_cargandofoto" ref="img" :src="url"
+            <img v-show="!show_capturar && !show_crop" ref="img" :src="url"
               style="max-height:480px; width: 360px; max-width:100%"
               alt="No hay foto asociada"
             />
-
-            <v-progress-circular
-              v-show="show_cargandofoto"
-              indeterminate
-              color="primary"
-              class="ma-5"
-            ></v-progress-circular>
 
             <div v-show="show_crop">
               <img ref="img_crop" style="height:480px; width:360px"/>
@@ -142,7 +135,6 @@ export default {
       show_error: false,
       show_capturar: false,
       show_crop: false,
-      show_cargandofoto: false,
       cropper: null
     };
   },
@@ -218,24 +210,17 @@ export default {
     },
 
     aplicarCrop: function() {
-      let self = this;
-      this.show_cargandofoto = true;
       let input = this.$refs.archivo;
+      let base64data = cropper.getCroppedCanvas({
+        fillColor: 'white',
+        maxWidth: 540,
+        maxHeight: 720
+      })
+      .toDataURL('image/jpeg');
 
-      cropper.getCroppedCanvas().toBlob(blob => {
-        let reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = function() {
-          let base64data = reader.result;
-          self.$refs.img.setAttribute('src', base64data);
-          self.show_cargandofoto = false;
-          self.show_crop = false;
-          utils.resizeBase64Img(base64data, 540, 720)
-          .then(base64 => self.$emit('change', base64));
-        };
-      });
-
+      this.$refs.img.setAttribute('src', base64data);
       this.show_crop = false;
+      this.$emit('change', base64data)
     },
 
     reset: function() {
@@ -254,7 +239,7 @@ export default {
       let context = canvas.getContext('2d');
       context.drawImage(this.$refs.video_elem, 0, 0, canvas.width, canvas.height);
 
-      let data_uri = canvas.toDataURL('image/png');
+      let data_uri = canvas.toDataURL('image/jpeg');
       cropper.replace(data_uri);
     },
 
