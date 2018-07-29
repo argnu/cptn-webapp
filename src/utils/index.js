@@ -7,11 +7,11 @@ export function getFloat(value) {
 
 export function getFecha(fecha) {
   if (!fecha) return moment(fecha).format('DD/MM/YYYY');
-  if (typeof fecha == 'object') 
+  if (typeof fecha == 'object')
     return moment(fecha).isValid() ? moment(fecha).format('DD/MM/YYYY') : '';
   else if (fecha.indexOf('/') == -1)
     return moment(fecha, 'YYYY-MM-DD').isValid() ? moment(fecha, 'YYYY-MM-DD').format('DD/MM/YYYY') : '';
-  else 
+  else
     return fecha;
 }
 
@@ -130,7 +130,7 @@ export function diffDatesStr(d1, d2) {
 }
 
 
-export function isMobile(){ 
+export function isMobile(){
   return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
 }
 
@@ -145,7 +145,7 @@ export function resizeBase64Img(base64, width, height) {
     image.onload = function() {
       context.scale(width/this.width,  height/this.height);
       context.drawImage(this, 0, 0);
-      resolve(canvas.toDataURL());
+      resolve(canvas.toDataURL('image/jpeg'));
     };
 
     image.onerror = function(e) {
@@ -154,4 +154,24 @@ export function resizeBase64Img(base64, width, height) {
 
     image.src = base64;
   });
+}
+
+export function getCanvasJPEG(canvas) {
+    let w = canvas.width;
+    let h = canvas.height;
+    let context = canvas.getContext("2d");
+    let data = context.getImageData(0, 0, w, h);
+
+    let compositeOperation = context.globalCompositeOperation;
+
+    context.globalCompositeOperation = "destination-over";
+    context.fillStyle = 'white';
+    context.fillRect(0,0,w,h);
+
+    let imageData = canvas.toDataURL("image/jpeg");
+
+    context.clearRect (0,0,w,h);
+    context.putImageData(data, 0,0);
+    context.globalCompositeOperation = compositeOperation;
+    return imageData;
 }

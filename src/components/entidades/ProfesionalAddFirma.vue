@@ -13,7 +13,7 @@
                 ref="lienzo" 
                 width="426" 
                 height="320" 
-                style="border:1px solid #000000;padding:0;margin:0;max-width:100%"
+                style="border:1px solid #000000;padding:0;margin:0;max-width:100%;background-color:white"
             ></canvas>
             <br>
                 <v-btn
@@ -210,13 +210,12 @@ export default {
         },
 
         guardar: function() {
-            let data_uri = this.$refs.lienzo.toDataURL('image/png');
+            let data_uri = utils.getCanvasJPEG(this.$refs.lienzo);
             this.$refs.img.setAttribute('src', data_uri);
             this.tipo_firma = 'imagen';
             this.$emit('change', data_uri);
             this.limpiarCanvas();
             this.show_dibujar = false;
-
         }
 
     }
