@@ -16,9 +16,9 @@
 
     <v-divider class="my-3"></v-divider>
 
-    <detalle-boleta
-        :boleta="exencion.boleta"
-    ></detalle-boleta>
+    <template v-if="exencion.boleta">
+      <detalle-boleta :id="exencion.boleta.id"></detalle-boleta>
+    </template>
   </v-container>
 </template>
 
@@ -29,11 +29,36 @@ import DetalleBoleta from './DetalleBoleta'
 
 export default {
   name: 'DetalleExencion',
-  props: ['exencion'],
+  props: ['id'],
 
   components: {
       DetalleBoleta
-  }
+  },
+
+  data () {
+    return {
+      exencion: {}
+    }
+  },
+
+  created: function() {
+    this.update();
+  },
+
+  methods: {
+    update: function() {
+      let url = `/comprobantes-exenciones/${this.id}`;
+
+      api.get(url)
+      .then(r => { 
+        this.exencion = r.data;
+        console.log(utils.clone(this.exencion))
+      })
+      .catch(e => {
+        console.error(e);
+      })
+    }
+  }  
 }
 </script>
 

@@ -2,7 +2,7 @@
   <v-container v-if="comprobante">
     <v-layout row wrap>
       <v-flex xs6>
-        N°: {{ comprobante.numero }}<br>
+        N° Recibo: {{ comprobante.numero }}<br>
       </v-flex>
 
       <v-flex xs6>
@@ -58,10 +58,11 @@ let formas_pago = [];
 
 export default {
   name: 'DetalleComprobante',
-  props: ['comprobante'],
+  props: ['id'],
 
   data () {
     return {
+      comprobante: {},
       formas_pago: []
     }
   },
@@ -80,18 +81,38 @@ export default {
     ]
   },
 
-  created: function() {
-    api.get('/opciones?sort=+valor')
-    .then(r => {
-      this.formas_pago = r.data.formaPago;
-    })
-    .catch(e => console.error(e));
-  },
+
+  watch: {
+    id: function() {
+      this.update();
+    }
+  },  
 
   computed: {
     total: function() {
       return this.comprobante.pagos.reduce((prev, act) => prev + +act.importe, 0);
     }
+  },  
+
+  created: function() {
+    api.get('/opciones?sort=+valor')
+    .then(r => {
+      this.formas_pago = r.data.formaPago;
+      this.update();
+    })
+    .catch(e => console.error(e));
+  },
+
+  methods: {
+    update: function() {
+      let url = `/comprobantes/${this.id}`;
+
+      api.get(url)
+      .then(r => this.comprobante = r.data)
+      .catch(e => {
+        console.error(e);
+      })
+    }     
   }
 
 }
