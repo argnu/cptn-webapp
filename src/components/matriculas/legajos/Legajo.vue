@@ -24,7 +24,7 @@
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-text>
-            <v-form v-model="valid.basicos">
+            <v-form ref="form_basico" v-model="valid.basicos">
 
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
@@ -498,7 +498,7 @@
                 <v-flex xs3 class="ml-5">
                   <input-numero
                     tabindex="26"
-                    label="Honorarios Reales"
+                    label="Honorarios"
                     v-model="legajo.honorarios_reales"
                     :disabled="legajo.id > 0 && !this.edit"
                     decimal
@@ -619,7 +619,8 @@
     <v-btn
       class="green darken-1 white--text right"
       @click.native="submit"
-      :disabled="!valid_form || legajo.id > 0 || submitted"
+      :disabled="(legajo.id > 0 && !edit) || submitted"
+      :loading="submitted"
       tabindex="36"
     >
       Guardar Legajo
@@ -805,6 +806,7 @@ export default {
         return api.get(`/legajos/${this.id_legajo}`)
         .then(r => {
             this.legajo = r.data;
+            this.legajo.fecha_solicitud = moment(this.legajo.fecha_solicitud, 'YYYY-MM-DD').format('DD/MM/YYYY');
             if (!this.legajo.domicilio) this.legajo.domicilio = new Domicilio();
             this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
             return Promise.resolve(this.legajo.matricula.id);
@@ -959,31 +961,69 @@ export default {
 
     prepare: function() {
       let legajo = utils.clone(this.legajo);
-      legajo.delegacion = this.global_state.delegacion.id;
       if (legajo.domicilio.localidad.id) legajo.domicilio.localidad = legajo.domicilio.localidad.id;
+      legajo.delegacion = this.global_state.delegacion.id;
+      legajo.tipo = legajo.tipo.id;
+      legajo.aporte_bruto = utils.getFloat(legajo.aporte_bruto);
+      legajo.aporte_neto = utils.getFloat(legajo.aporte_neto);
+      legajo.aporte_neto_bonificacion = utils.getFloat(legajo.aporte_neto_bonificacion);
+      legajo.honorarios_presupuestados = utils.getFloat(legajo.honorarios_presupuestados);
+      legajo.honorarios_reales = utils.getFloat(legajo.honorarios_reales);
+      legajo.porcentaje_cumplimiento = utils.getFloat(legajo.porcentaje_cumplimiento);
+      legajo.items.forEach(i => {
+        if (i.item.id) i.item = i.item.id;
+      })
+
       return legajo;
     },
 
     submit: function() {
-      this.submitted = true;   
-      api.put(`/matriculas/${this.id_matricula}/legajos`, this.prepare())
-      .then(r => {
-        this.submitted = false;
-        this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
-        this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;
-        this.$router.go(-1);
-      })
-      .catch(e => {
-        this.submitted = false;
-        if (e.response && e.response.status != 500) {
-        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-        this.global_state.snackbar.msg = msg;
-        this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;
-        }
-        else console.error(e);
-      });
+      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate() 
+        || !this.$refs.form_aportes.validate()) return alert('El formulario contiene errores. Por favor revisar');
+      if (!this.valid_form) return alert('El formulario contiene errores. Por favor revisar');
+
+      this.submitted = true; 
+
+      if (this.edit) {
+        api.put(`/legajos/${this.legajo.id}`, this.prepare())
+        .then(r => {
+          this.submitted = false;
+          this.global_state.snackbar.msg = 'Legajo modificado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$router.go(-1);
+        })
+        .catch(e => {
+          this.submitted = false;
+          if (e.response && e.response.status != 500) {
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          }
+          else console.error(e);
+        });
+      }
+      else {
+        api.put(`/matriculas/${this.id_matricula}/legajos`, this.prepare())
+        .then(r => {
+          this.submitted = false;
+          this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$router.go(-1);
+        })
+        .catch(e => {
+          this.submitted = false;
+          if (e.response && e.response.status != 500) {
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          }
+          else console.error(e);
+        });
+      } 
     },
 
     imprimir: function() {
