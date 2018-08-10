@@ -85,6 +85,7 @@
                       label="Tipo"
                       :items="tipo_persona"
                       :rules="[rules.required]"
+                      v-model="tipo_comitente"
                       @change="chgTipoComitente"
                     ></v-select>
 
@@ -723,6 +724,7 @@ export default {
   data () {
     return {
       legajo: Legajo(),
+      tipo_comitente: 'fisica',
       valid: {
         basicos: false,
         ubicacion: false,
@@ -876,7 +878,6 @@ export default {
     },
 
     chgDni: function(e) {
-      console.log(e)
       if (this.nuevo_comitente.persona.dni) {
         if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
           console.log(this.nuevo_comitente.persona.dni)
@@ -911,6 +912,7 @@ export default {
       this.$refs.form_comitente.reset();
       this.comitente_edit = index;
       this.nuevo_comitente = utils.clone(this.legajo.comitentes[index]);
+      this.tipo_comitente = this.nuevo_comitente.persona.tipo;
     },
 
     cancelarEditComitente: function() {
