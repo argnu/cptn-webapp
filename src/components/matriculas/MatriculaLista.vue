@@ -407,7 +407,7 @@ export default {
         let offset = (this.pagination.page - 1) * this.pagination.rowsPerPage;
         let limit = this.pagination.rowsPerPage;
 
-        let url = `/matriculas?tipoEntidad=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
+        let url = `/matriculas?entidad[tipo]=${this.filtros.tipoEntidad}&limit=${limit}&offset=${offset}`;
 
         if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
         if (this.filtros.numero) url += `&filtros[numeroMatricula]=${this.filtros.numero}`;

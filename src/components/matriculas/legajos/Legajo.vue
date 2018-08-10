@@ -143,7 +143,7 @@
                 </v-flex>
             </v-layout>
 
-            <v-layout row>
+            <v-layout row v-if="!legajo.id || edit">
               <v-flex xs12>
                 <v-btn class="right" @click="guardarComitente" tabindex="10">
                   {{ comitente_edit != null ? 'Guardar' : 'Agregar' }}
