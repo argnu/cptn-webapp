@@ -88,6 +88,7 @@ import moment from 'moment'
 import * as _ from 'lodash'
 import * as utils from '@/utils'
 import api from '@/services/api'
+import reports from '@/services/reports'
 import { Header } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 
@@ -193,49 +194,58 @@ export default {
         },
 
         exportar: function() {
-            this.global_state.cursor_wait = true;
-            let tabla = this.$refs.tabla_export;
-            let url = `/comprobantes?`;
-            url += `&fecha[desde]=${this.filtros.fecha_desde}`
-            url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
-            if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
+            reports.open({
+                'jsp-source': 'arqueo_diario.jasper',
+                'jsp-format': 'PDF',
+                'jsp-output-file': `Arqueo - ${Date.now()}`,
+                'jsp-only-gen': false,
+                'fecha_inicio': moment(this.filtros.fecha_desde, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                'fecha_fin': moment(this.filtros.fecha_hasta, 'DD/MM/YYYY').format('YYYY-MM-DD')
+            });
 
-            if (this.pagination.sortBy) {
-                url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
-            }
+            // this.global_state.cursor_wait = true;
+            // let tabla = this.$refs.tabla_export;
+            // let url = `/comprobantes?`;
+            // url += `&fecha[desde]=${this.filtros.fecha_desde}`
+            // url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
+            // if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
 
-            api.get(url)
-            .then(r => {
-                let rows = '';
-                let total = 0;
-                for(let comprobante of r.data.resultados) {
-                    rows += `
-                    <tr>
-                        <td style="mso-number-format:'0'">${comprobante.numero}</td>
-                        <td style="mso-number-format:'\@'">${comprobante.matricula.numero}</td>
-                        <td style="mso-number-format:'\@';white-space:nowrap;">${this.$options.filters.detalle_matricula(comprobante.matricula)}</td>
-                        <td style="mso-number-format:'0\.00';text-align:right">${comprobante.importe_total.toString().replace('.', ',')}</td>
-                    </tr>
-                    `;
-                    total += comprobante.importe_total;
-                }
+            // if (this.pagination.sortBy) {
+            //     url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+            // }
 
-                rows += `
-                    <tr>
-                        <td colspan="3" style="text-align:right"><b>Total</b></td>
-                        <td style="mso-number-format:'0\.00';text-align:right">${utils.round(total, 2).toString().replace('.', ',')}</td>
-                    </tr>
-                    `;
+            // api.get(url)
+            // .then(r => {
+            //     let rows = '';
+            //     let total = 0;
+            //     for(let comprobante of r.data.resultados) {
+            //         rows += `
+            //         <tr>
+            //             <td style="mso-number-format:'0'">${comprobante.numero}</td>
+            //             <td style="mso-number-format:'\@'">${comprobante.matricula.numero}</td>
+            //             <td style="mso-number-format:'\@';white-space:nowrap;">${this.$options.filters.detalle_matricula(comprobante.matricula)}</td>
+            //             <td style="mso-number-format:'0\.00';text-align:right">${comprobante.importe_total.toString().replace('.', ',')}</td>
+            //         </tr>
+            //         `;
+            //         total += comprobante.importe_total;
+            //     }
 
-                tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-                // utils.download(`Arqueo.xlsx`,
-                //     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
-                window.open('data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
-                this.global_state.cursor_wait = false;
-            })
-            .catch(e => {
-                console.error(e);
-            })
+            //     rows += `
+            //         <tr>
+            //             <td colspan="3" style="text-align:right"><b>Total</b></td>
+            //             <td style="mso-number-format:'0\.00';text-align:right">${utils.round(total, 2).toString().replace('.', ',')}</td>
+            //         </tr>
+            //         `;
+
+            //     tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
+            //     // utils.download(`Arqueo.xlsx`,
+            //     //     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
+            //     window.open('data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
+            //     this.global_state.cursor_wait = false;
+            // })
+            // .catch(e => {
+            //     console.error(e);
+            // })
         }
     }
 
