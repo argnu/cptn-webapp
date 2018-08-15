@@ -51,13 +51,13 @@ export default {
   props: ['matricula'],
 
   computed: {
-        profesional_foto: function() {
-            return `${this.matricula.entidad.foto}?${Date.now()}`;
-        },
+    profesional_foto: function() {
+        return `${this.matricula.entidad.foto}?${Date.now()}`;
+    },
 
-        profesional_firma: function() {
-            return `${this.matricula.entidad.firma}?${Date.now()}`;
-        },
+    profesional_firma: function() {
+        return `${this.matricula.entidad.firma}?${Date.now()}`;
+    }
   },
   
   methods: {

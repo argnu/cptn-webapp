@@ -3,7 +3,7 @@
   <v-layout row>
     <v-flex xs4 class="mx-4">
         <v-select
-          :items="tipos_legajo"
+          :items="legajo_tipos"
           item-text="valor"
           item-value="id"
           v-model="filtros.tipo"
@@ -20,13 +20,15 @@
           clearable
         ></v-text-field>        
 
-        <v-text-field
-          v-if="allFilters"
-          v-model="filtros.domicilio.direccion"
-          label="Dirección"
-          @input="updateList"
+        <v-select
+          :items="legajo_estados"
+          item-text="valor"
+          item-value="id"
+          label="Estado"
           clearable
-        ></v-text-field>        
+          v-model="filtros.estado"
+          @input="updateList"
+        ></v-select>      
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -43,6 +45,14 @@
           @input="updateList"
           clearable
         ></v-text-field>
+
+        <v-text-field
+          v-if="allFilters"
+          v-model="filtros.domicilio.direccion"
+          label="Dirección"
+          @input="updateList"
+          clearable
+        ></v-text-field>         
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -87,6 +97,7 @@
               <td>{{ props.item.fecha_solicitud | fecha }}</td>
               <td v-if="allFilters">{{ props.item.matricula.numeroMatricula }}</td>
               <td>{{ props.item.tipo.valor }}</td>
+              <td>{{ props.item.estado.valor }}</td>
               <td>{{ props.item.numero_legajo }}</td>
               <td>{{ props.item.nomenclatura }}</td>
               <td>{{ props.item.comitentes | lista_comitentes }}</td>
@@ -119,6 +130,7 @@ function getHeaders(all) {
   let headers = [
       Header('Fecha', 'fecha_solicitud', true),
       Header('Tipo', 'tipo', true),
+      Header('Estado', 'estado', true),
       Header('N° Legajo', 'numero', true),
       Header('Nomenclatura', 'nomenclatura', true),
       Header('Comitentes', 'comitentes'),
@@ -159,7 +171,8 @@ export default {
       headers: getHeaders(this.allFilters),
       legajos: [],
       loading: false,
-      tipos_legajo: [],
+      legajo_tipos: [],
+      legajo_estados: [],
 
       filtros: {
         fecha_desde: '',
@@ -175,6 +188,7 @@ export default {
           cuit: '',
           apellido: '',
         },
+        estado: ''
       },
 
       total_items: 0,
@@ -215,7 +229,10 @@ export default {
     });
 
     api.get('/opciones')
-    .then(r => this.tipos_legajo = r.data.legajo);
+    .then(r => { 
+      this.legajo_tipos = r.data.legajo
+      this.legajo_estados = r.data.estadoLegajo;
+    });
 
     this.updateLegajos();
   },
@@ -237,6 +254,7 @@ export default {
       else url = `/legajos?&limit=${limit}&offset=${offset}`;
 
       if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
+      if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
       if (this.filtros.numero) url += `&filtros[numero]=${this.filtros.numero}`;
       if (this.filtros.nomenclatura) url += `&filtros[nomenclatura]=${this.filtros.nomenclatura}`;
       if (this.filtros.numero_matricula) url += `&filtros[matricula.numero]=${this.filtros.numero_matricula}`;

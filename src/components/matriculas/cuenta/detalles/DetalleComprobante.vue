@@ -2,18 +2,18 @@
   <v-container v-if="comprobante">
     <v-layout row wrap>
       <v-flex xs6>
-        Comprobante N°: {{ comprobante.numero }}<br>
+        N° Recibo: {{ comprobante.numero }}<br>
       </v-flex>
 
       <v-flex xs6>
         Fecha: {{ comprobante.fecha | fecha }} <br>
-        <!-- Tipo de Comprobante: {{ comprobante.tipo_comprobante.abreviatura }}<br> -->
       </v-flex>
     </v-layout>
 
     <br>
 
     <v-data-table
+        v-if="comprobante.items"
         :headers="$options.headers.comprobante"
         :items="comprobante.items"
         class="elevation-1"
@@ -29,6 +29,7 @@
 
     <br>
     <v-data-table
+        v-if="comprobante.pagos"
         :headers="$options.headers.pago"
         :items="comprobante.pagos"
         class="elevation-1"
@@ -36,7 +37,7 @@
         hide-actions
     >
       <template slot="items" slot-scope="props">
-        <td>{{ getFormaPago(props.item.forma_pago) }}</td>
+        <td>{{ props.item.forma_pago.nombre }}</td>
         <td>{{ props.item.fecha_pago | fecha }}</td>
         <td>{{ props.item.importe | round  }}</td>
       </template>
@@ -57,10 +58,11 @@ let formas_pago = [];
 
 export default {
   name: 'DetalleComprobante',
-  props: ['comprobante'],
+  props: ['id'],
 
   data () {
     return {
+      comprobante: {},
       formas_pago: []
     }
   },
@@ -79,27 +81,39 @@ export default {
     ]
   },
 
-  created: function() {
-    api.get('/opciones?sort=+valor')
-    .then(r => {
-      this.formas_pago = r.data.formaPago;
-    })
-    .catch(e => console.error(e));
-  },
+
+  watch: {
+    id: function() {
+      this.update();
+    }
+  },  
 
   computed: {
     total: function() {
       return this.comprobante.pagos.reduce((prev, act) => prev + +act.importe, 0);
     }
+  },  
+
+  created: function() {
+    api.get('/opciones?sort=+valor')
+    .then(r => {
+      this.formas_pago = r.data.formaPago;
+      this.update();
+    })
+    .catch(e => console.error(e));
   },
 
   methods: {
-    getFormaPago: function(id) {
-      if (!id) return '';
-      let forma_pago = this.formas_pago.find(f => f.id == id);
-      return forma_pago ? forma_pago.nombre : '';
-    }
-  },
+    update: function() {
+      let url = `/comprobantes/${this.id}`;
+
+      api.get(url)
+      .then(r => this.comprobante = r.data)
+      .catch(e => {
+        console.error(e);
+      })
+    }     
+  }
 
 }
 </script>

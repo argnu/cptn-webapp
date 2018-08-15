@@ -3,9 +3,9 @@
     <v-layout row wrap>
       <v-flex xs6>
         <div>
-            Volante de Pago N°: {{ volante.id }}
+            N° Volante: {{ volante.id }}
         </div>
-        
+
         <div class="my-1">
             Fecha de Venc.: {{ volante.fecha_vencimiento | fecha }} <br>
         </div>
@@ -28,7 +28,7 @@
     <template v-for="boleta of volante.boletas">
         <detalle-boleta
             :key="'boleta' + boleta.id"
-            :boleta="boleta"
+            :id="boleta.id"
         ></detalle-boleta>
         <v-divider class="my-3" :key="'divider' + boleta.id"></v-divider>
     </template>
@@ -60,17 +60,39 @@ import DetalleBoleta from './DetalleBoleta'
 
 export default {
   name: 'DetalleVolantePago',
-  props: ['volante'],
+  props: ['id'],
 
   components: {
       DetalleBoleta
   },
 
   headers: [
-      Header('N°', 'item' ),
-      Header('Descripción', 'descripcion'),
-      Header('Importe', 'importe')
-    ]
+    Header('N°', 'item' ),
+    Header('Descripción', 'descripcion'),
+    Header('Importe', 'importe')
+  ],
+
+  data () {
+    return {
+      volante: {}
+    }
+  },
+
+  created: function() {
+    this.update();
+  },
+
+  methods: {
+    update: function() {
+      let url = `/volantespago/${this.id}`;
+
+      api.get(url)
+      .then(r => this.volante = r.data)
+      .catch(e => {
+        console.error(e);
+      })
+    }
+  }
 }
 </script>
 

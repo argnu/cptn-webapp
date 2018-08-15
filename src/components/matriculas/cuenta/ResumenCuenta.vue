@@ -1,8 +1,5 @@
 <template>
     <v-container>
-      <detalle-dialog :item="item_selected" ref="show_detalle">
-      </detalle-dialog>
-
       <v-layout row wrap class="mt-4">
         <v-flex xs1 class="mt-5 mx-5">
           <b>Filtrar:</b>
@@ -28,6 +25,7 @@
               :loading="loading"
           >
             <template slot="items" slot-scope="props">
+              <tr>
                 <td class="justify-center layout px-0">
                   <v-btn
                     v-if="props.item.tipo != 'exencion'"
@@ -39,39 +37,63 @@
                     <v-icon color="secondary">print</v-icon>
                   </v-btn>
                 </td>
-                  <td>{{ props.item.fecha | fecha }}</td>
-                  <td>{{ props.item.fecha_vencimiento | fecha }}</td>
-                  <td>{{ props.item.descripcion }}</td>
-                  <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
-                    {{ props.item.estado ? props.item.estado.valor : '' }}
+
+                <td>
+                  {{ props.item.fecha | fecha }}
+                </td>
+                <td>{{ props.item.fecha_vencimiento | fecha }}</td>
+                <td>{{ props.item.descripcion }}</td>
+                  <template v-if="props.item.tipo == 'boleta'">
+                    <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
+                        {{ props.item.estado ? props.item.estado.valor : '' }}
+                    </td>                    
+                  </template>
+                  <template v-else-if="props.item.tipo == 'volante'">
+                    <td class="red lighten-4">
+                        Vencido
+                    </td>                    
+                  </template>
+                  <template v-else>
+                    <td></td>
+                  </template>
+
+                  <td>
+                    <span v-if="props.item.debe">
+                      {{ props.item.debe | round }}
+                    </span>
+                  <td>
+                    <span v-if="props.item.haber">
+                      {{ props.item.haber | round }}
+                    </span>
                   </td>
-                  <td>{{ props.item.debe | round }}</td>
-                  <td>{{ props.item.haber | round }}</td>
                   <td class="justify-center layout px-0">
-                    <v-btn small icon class="mx-0"  @click="verDetalle(props.item)" title="Ver Detalle">
-                      <v-icon color="primary">launch</v-icon>
+                    <v-btn small icon class="mx-0" title="Ver Detalle" @click="expand(props.index)">
+                      <v-icon color="primary">{{ paneles[props.index] ? 'expand_less' : 'expand_more' }}</v-icon>
                     </v-btn>
                   </td>
-            </template>
-          </v-data-table>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap v-if="resumen.length > 0">
-        <v-flex xs6>
-        </v-flex>
-        <v-flex xs6>
-          <v-data-table
-              :items="[{ t: 'Totales', d: totales_debe, h: totales_haber }, { t: 'Saldo Deudor', h: saldo_deudor }]"
-              class="elevation-1"
-              hide-actions
-              hide-headers
-          >
-            <template slot="items" slot-scope="props">
-              <td>{{props.item.t }}</td>
-              <td v-if="props.item.d">{{props.item.d | round }}</td>
-              <td v-else></td>
-              <td>{{props.item.h | round }}</td>
+                </tr>
+                <tr>
+                  <td colspan="8" v-show="paneles[props.index]">
+                    <v-expansion-panel class="my-4">
+                      <v-expansion-panel-content :value="paneles[props.index]">
+                        <v-card>
+                        <template v-if="props.item.tipo == 'boleta'">
+                          <detalle-boleta :id="props.item.id"></detalle-boleta>
+                        </template>
+                        <template v-else-if="props.item.tipo == 'comprobante'">
+                          <detalle-comprobante :id="props.item.id"></detalle-comprobante>
+                        </template>
+                        <template v-else-if="props.item.tipo == 'volante'">
+                          <detalle-volante-pago :id="props.item.id"></detalle-volante-pago>
+                        </template>
+                        <template v-else-if="props.item.tipo == 'exencion'">
+                          <detalle-exencion :id="props.item.id"></detalle-exencion>
+                        </template>                        
+                        </v-card>
+                      </v-expansion-panel-content>                    
+                    </v-expansion-panel>
+                  </td>
+                </tr>
             </template>
           </v-data-table>
         </v-flex>
@@ -80,13 +102,17 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import api from '@/services/api'
 import reports from '@/services/reports'
 import * as utils from '@/utils'
 import moment from 'moment'
 import { Header } from '@/model'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
-import DetalleDialog from '@/components/matriculas/cuenta/detalles/DetalleDialog';
+import DetalleBoleta from '@/components/matriculas/cuenta/detalles/DetalleBoleta'
+import DetalleComprobante from '@/components/matriculas/cuenta/detalles/DetalleComprobante'
+import DetalleVolantePago from '@/components/matriculas/cuenta/detalles/DetalleVolantePago'
+import DetalleExencion from '@/components/matriculas/cuenta/detalles/DetalleExencion'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
 import MixinValidator from '@/components/mixins/MixinValidator';
@@ -94,7 +120,17 @@ import MixinValidator from '@/components/mixins/MixinValidator';
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
+
   mixins: [MixinValidator],
+
+  components: {
+    MatriculaDatosBasicos,
+    DetalleExencion,
+    DetalleBoleta,
+    DetalleComprobante,
+    DetalleVolantePago,
+    InputFecha
+  },  
 
   headers: [
     Header('', 'imprimir'),
@@ -102,13 +138,14 @@ export default {
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
     Header('Estado', 'estado', true),
-    Header('Debe', 'debe', true),
-    Header('Ha  ber', 'haber', true),
+    Header('-', 'debe', true),
+    Header('+', 'haber', true),
     Header('Más info', 'detalle')
   ],
 
   data () {
     return {
+      paneles: [],
       resumen: [],
       resumen_original: [],
       boletas: [],
@@ -123,26 +160,12 @@ export default {
         fecha_desde: moment().startOf('year').format("DD/MM/YYYY"),
         fecha_hasta: moment().endOf('year').format("DD/MM/YYYY")
       },
+      detalle: {
+        id: null,
+        tipo: null,
+        titulo: ''
+      }
     }
-  },
-
-  computed: {
-    totales_debe: function() {
-      return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.debe || 0), 0)
-        : 0;
-    },
-
-    totales_haber: function() {
-      return this.resumen.length ?
-        this.resumen.reduce((prev, act) => prev + (act.haber || 0), 0)
-        : 0;
-    },
-
-    saldo_deudor: function() {
-      return this.totales_debe - this.totales_haber;
-    },
-
   },
 
   watch: {
@@ -182,15 +205,15 @@ export default {
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
         url_boletas += `&fecha_desde=${this.filtros.fecha_desde}`;
-        url_comprobantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
-        url_volantes  += `&fecha_desde=${this.filtros.fecha_desde}`;
+        url_comprobantes  += `&fecha_vencimiento[desde]=${this.filtros.fecha_desde}`;
+        url_volantes  += `&fecha_vencimiento[desde]=${this.filtros.fecha_desde}`;
         url_exenciones  += `&fecha_desde=${this.filtros.fecha_desde}`;
       }
 
       if (this.rules.fecha(this.filtros.fecha_hasta)) {
-        url_boletas += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_boletas += `&fecha_vencimiento[hasta]=${this.filtros.fecha_hasta}`;
         url_comprobantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
-        url_volantes += `&fecha_hasta=${this.filtros.fecha_hasta}`;
+        url_volantes += `&fecha_vencimiento[hasta]=${this.filtros.fecha_hasta}`;
         url_exenciones += `&fecha_hasta=${this.filtros.fecha_hasta}`;
       }
 
@@ -206,15 +229,15 @@ export default {
          b.debe = b.total;
          b.descripcion = b.items[0].descripcion;
          return b;
-       }).concat(comprobantes.data.map(c => {
+       }).concat(comprobantes.data.resultados.map(c => {
          c.tipo = 'comprobante';
          c.haber = c.importe_cancelado;
-         c.descripcion = 'Recibo';
+         c.descripcion = `Recibo N° ${c.numero}`;
          return c;
        })).concat(volantes.data.map(c => {
          c.tipo = 'volante';
-         c.haber = c.importe_total;
-         c.descripcion = 'Volante de Pago';
+         c.debe = c.importe_total;
+         c.descripcion = `Volante de Pago N° ${c.id}`;
          return c;
        })).concat(exenciones.data.map(c => {
          c.haber = c.importe;
@@ -224,6 +247,7 @@ export default {
        }));
 
        this.resumen = resumen;
+       this.paneles = resumen.map(r => false);
        this.resumen_original = utils.clone(resumen);
        this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));
        this.loading = false;
@@ -232,7 +256,11 @@ export default {
     },
 
     verDetalle: function(item) {
-      this.item_selected = item;
+      this.detalle = {
+        titulo: item.descripcion,
+        id: item.id,
+        tipo: item.tipo
+      }
       this.$refs.show_detalle.mostrar();
     },
 
@@ -261,12 +289,10 @@ export default {
         [param_id]: item.id
       });
     },
-  },
 
-  components: {
-    MatriculaDatosBasicos,
-    DetalleDialog,
-    InputFecha
+    expand: function(index) {
+      Vue.set(this.paneles, index, !this.paneles[index]);
+    }
   }
 
 }

@@ -16,7 +16,7 @@
                 v-model="profesional.dni"
                 :rules="[rules.required, rules.integer, rules.dni]"
                 tabindex="3"
-                maxlength="10"
+                maxlength="8"
                 clearable
             >
             </input-numero>
@@ -344,9 +344,9 @@
         <v-layout row wrap>
           <v-flex xs12 class="ma-4">
             <v-btn
-              :dark="!(!valid_form || guardando)"
+              :dark="!guardando"
               class="green right"
-              :disabled="!valid_form || guardando"
+              :disabled="guardando"
               :loading="guardando"
               @click="submit"
             >
@@ -542,19 +542,25 @@ export default {
         },
 
         submit: function() {
-            this.guardando = true;
-            api.put(`/profesionales/${this.id}`, this.makeFormData())
-            .then(r => {
-                this.guardando = false;
-                this.global_state.snackbar.msg = 'Profesional actualizado exitosamente!';
-                this.global_state.snackbar.color = 'success';
-                this.global_state.snackbar.show = true;
-                this.$router.go(-1);
-            })
-            .catch(e => {
-                this.submitError(e);
-                this.guardando = false;
-            });
+            if (this.$refs.form_profesional.validate()) {
+                if (this.valid_form) {
+                    this.guardando = true;
+                    api.put(`/profesionales/${this.id}`, this.makeFormData())
+                    .then(r => {
+                        this.guardando = false;
+                        this.global_state.snackbar.msg = 'Profesional actualizado exitosamente!';
+                        this.global_state.snackbar.color = 'success';
+                        this.global_state.snackbar.show = true;
+                        this.$router.go(-1);
+                    })
+                    .catch(e => {
+                        this.submitError(e);
+                        this.guardando = false;
+                    });
+                }
+                else alert("El formulario es inválido. Por favor revise los datos ingresados")
+            }
+            else alert("El formulario es inválido. Por favor revise los datos ingresados")
         },
     }
 

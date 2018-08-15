@@ -2,26 +2,26 @@
   <div v-if="boleta">
     <v-layout row wrap>
       <v-flex xs6>
-        Boleta N°: {{ boleta.numero }}<br>
+        N° Boleta: {{ boleta.numero }}<br>
         Fecha: {{ boleta.fecha | fecha }} <br>
-        Estado: {{ boleta.estado.valor }} <br>
-        Fecha de Vencimiento: {{ boleta.fecha_vencimiento | fecha }}<br>
+        Estado: {{ boleta.estado ? boleta.estado.valor : '' }} <br>
       </v-flex>
 
       <v-flex xs6>
-        Tipo de Comprobante: {{ boleta.tipo_comprobante.abreviatura }}<br>
-        Fecha de Pago: 
-          <span v-if="boleta.estado.id == 2">{{ boleta.fecha_update | fecha }}
-          </span><br>
+        Tipo de Comprobante: {{ boleta.tipo_comprobante ? boleta.tipo_comprobante.abreviatura : '' }}<br>
+        Fecha de Vencimiento: {{ boleta.fecha_vencimiento | fecha }}<br>
+        <span v-if="boleta.estado && boleta.estado.id == 2">
+          Fecha de Pago: {{ boleta.fecha_update | fecha }}
+        </span><br>
       </v-flex>
     </v-layout>
 
     <br>
 
     <v-data-table
+        v-if="boleta.items"
         :headers="$options.headers"
         :items="boleta.items"
-        class="elevation-1"
         no-data-text="No hay items"
         hide-actions
     >
@@ -48,11 +48,12 @@
 </template>
 
 <script>
+import api from '@/services/api'
 import { Header } from '@/model'
 
 export default {
   name: 'DetalleBoleta',
-  props: ['boleta'],
+  props: ['id'],
 
   headers: [
     Header('N°', 'item'),
@@ -60,11 +61,33 @@ export default {
     Header('Importe', 'importe' )
   ],
 
+  data() {
+    return {
+      boleta: {}
+    }
+  },
+
   computed: {
     total: function() {
       return this.boleta.items.reduce((prev, act) => prev + +act.importe, 0);
     }
-  },  
+  },
+
+  created: function() {
+    this.update();
+  },
+
+  methods: {
+    update: function() {
+      let url = `/boletas/${this.id}`;
+
+      api.get(url)
+      .then(r => this.boleta = r.data)
+      .catch(e => {
+        console.error(e);
+      })
+    } 
+  } 
 }
 </script>
 

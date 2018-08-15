@@ -156,6 +156,16 @@ export function resizeBase64Img(base64, width, height) {
   });
 }
 
+export function download(nombre, contenido) {
+  let a = document.createElement('a');
+  a.setAttribute('href', contenido);
+  a.setAttribute('download', nombre);
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);  
+}
+
 export function getCanvasJPEG(canvas) {
     let w = canvas.width;
     let h = canvas.height;

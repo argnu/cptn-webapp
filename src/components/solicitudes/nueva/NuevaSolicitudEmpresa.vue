@@ -263,12 +263,8 @@
                               <template slot="items" slot-scope="props">
                                 <tr>
                                   <td class="justify-center layout px-0">
-                                    <v-btn icon small class="mx-0" @click="selectRepresentantePrimario(props.item)">
+                                    <v-btn icon small class="mx-0" @click="selectRepresentantePrimario(props.item)" title="Seleccionar">
                                       <v-icon color="primary">check</v-icon>
-                                    </v-btn>
-
-                                    <v-btn icon small class="mx-3" @click="editDomicilio(props.index)">
-                                      <v-icon color="deep-purple">mode_edit</v-icon>
                                     </v-btn>
                                   </td>                                  
                                   <td>{{ props.item.numeroMatricula }}</td>
@@ -592,6 +588,7 @@ export default {
       guardando: false,
 
       pagination_sec: {
+        page: 1,
         rowsPerPage: 5
       },
 
@@ -631,7 +628,14 @@ export default {
       deep: true
     },
 
-    'table_rep_sec.pagination': {
+    pagination_sec: {
+      handler () {
+        this.updateMatriculasSec();
+      },
+      deep: true
+    },
+
+    'table_rep_sec.filtros': {
       handler () {
         this.updateMatriculasSec();
       },
@@ -781,9 +785,9 @@ export default {
       if (this.tipo_representante == 'ext') url = `/matriculas-externas?limit=${limit}&offset=${offset}`;
       else url = `/matriculas?entidad[tipo]=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.table_rep_sec.filtros.numero) url += `&filtro[numero]=${this.table_rep_sec.filtros.numero}`;
-      if (this.table_rep_sec.filtros.dni) url+=`&filtro[profesional.dni]=${this.table_rep_sec.filtros.dni}`;
-      if (this.table_rep_sec.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.table_rep_sec.filtros.apellido}`;
+      if (this.table_rep_sec.filtros.numero) url += `&filtros[numero]=${this.table_rep_sec.filtros.numero}`;
+      if (this.table_rep_sec.filtros.dni) url+=`&filtros[profesional.dni]=${this.table_rep_sec.filtros.dni}`;
+      if (this.table_rep_sec.filtros.apellido) url+=`&filtros[profesional.apellido]=${this.table_rep_sec.filtros.apellido}`;
 
       api.get(url)
            .then(r => {
@@ -803,9 +807,9 @@ export default {
       // El estado '13' es 'Habilitado'
       let url = `/matriculas?entidad[tipo]=profesional&estado=13&limit=${limit}&offset=${offset}`;
 
-      if (this.filtros.numero) url += `&filtro[numeroMatricula]=${this.filtros.numero}`;
-      if (this.filtros.dni) url+=`&filtro[profesional.dni]=${this.filtros.dni}`;
-      if (this.filtros.apellido) url+=`&filtro[profesional.apellido]=${this.filtros.apellido}`;
+      if (this.filtros.numero) url += `&filtros[numeroMatricula]=${this.filtros.numero}`;
+      if (this.filtros.dni) url+=`&filtros[profesional.dni]=${this.filtros.dni}`;
+      if (this.filtros.apellido) url+=`&filtros[profesional.apellido]=${this.filtros.apellido}`;
 
       api.get(url)
            .then(r => {

@@ -11,10 +11,20 @@
 
             <div v-show="show_crop">
               <img ref="img_crop" style="height:480px; width:360px"/>
+              <br>
               <v-btn
-                  dark
+                  outline dark
+                  color="error"
+                  @click.native="show_crop = false"
+              >
+                  <v-icon class="mr-2">block</v-icon>
+                  Cancelar
+              </v-btn>
+
+              <v-btn
+                  otuline dark
                   ref="aplicar"
-                  class="green"
+                  color="green"
                   @click.native="aplicarCrop"
               >
                   Aplicar recorte

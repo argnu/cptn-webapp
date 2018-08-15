@@ -29,6 +29,7 @@ import UsuarioNuevo from '@/components/usuarios/UsuarioNuevo'
 import UsuarioDetalle from '@/components/usuarios/UsuarioDetalle'
 
 import BuscadorLegajo from '@/components/herramientas/BuscadorLegajo'
+import Arqueo from '@/components/herramientas/Arqueo'
 import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 Vue.use(Router)
@@ -184,6 +185,12 @@ export default new Router({
           name: 'BuscadorLegajo',
           component: BuscadorLegajo
         },
+        {
+          path: '/herramientas/arqueo',
+          name: 'Arqueo',
+          component: Arqueo
+        },
+
         {
           path: '/configuracion',
           name: 'SistemaConfiguracion',
