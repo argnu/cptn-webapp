@@ -46,7 +46,7 @@
   <v-layout row>
     <v-flex xs4 class="mx-4">
         <v-select
-          :items="legajo_tipos"
+          :items="tipos_legajo"
           item-text="valor"
           item-value="id"
           v-model="filtros.tipo"
@@ -205,7 +205,6 @@ import { Header } from '@/model'
 function getHeaders(all) {
   let headers = [
       Header('Fecha', 'fecha_solicitud', true),
-      Header('Estado', 'estado', true),
       Header('Tipo', 'tipo', true),
       Header('Estado', 'estado', true),
       Header('N° Legajo', 'numero', true),

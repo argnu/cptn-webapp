@@ -236,6 +236,8 @@ export default {
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
                 let titulo = utils.clone(this.nuevo_titulo);
+                titulo.nombre = titulo.nombre.toUpperCase();
+
                 if (titulo.tipo_matricula) titulo.tipo_matricula = titulo.tipo_matricula.id;
                 titulo.nivel = titulo.nivel.id;
                 titulo.incumbencias = titulo.incumbencias.map(i => i.id);
@@ -263,7 +265,6 @@ export default {
             this.nuevo_titulo.nivel = titulo.nivel;
             this.nuevo_titulo.tipo_matricula = titulo.tipo_matricula;
             this.nuevo_titulo.incumbencias = titulo.incumbencias.map(i => i.incumbencia);
-            console.log(titulo.incumbencias.map(i => i.incumbencia))
             this.nuevo_titulo.valido = titulo.valido;
             this.show_formtitulo = true;
         },

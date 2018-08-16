@@ -192,6 +192,7 @@ export default {
 
         addItem: function() {
             if (this.$refs.form_item.validate()) {
+                this.boleta_item.descripcion = this.boleta_item.descripcion.toUpperCase();
                 this.boleta.items.push(this.boleta_item);
                 this.boleta_item = new BoletaItem();
                 this.$refs.form_item.reset();

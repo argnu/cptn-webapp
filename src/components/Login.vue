@@ -122,6 +122,8 @@ export default {
       this.submitted = true;
       this.auth_error = 'Usuario/contraseña inválidos'
       this.submit_error = false;
+      this.usuario.username = this.usuario.username.toUpperCase();
+
       api.post('/usuarios/auth', this.usuario)
       .then(r => {
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);

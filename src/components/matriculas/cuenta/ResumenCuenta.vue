@@ -37,6 +37,7 @@
                 </td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
+                
                   <template v-if="props.item.tipo == 'boleta'">
                     <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
                         {{ props.item.estado ? props.item.estado.valor : '' }}
@@ -49,6 +50,9 @@
                   </template>
                   <template v-else-if="props.item.tipo == 'comprobante' && props.item.anulado == 1">
                     <td>Anulado</td>
+                  </template>
+                  <template v-else>
+                    <td></td>
                   </template>
 
                   <td>

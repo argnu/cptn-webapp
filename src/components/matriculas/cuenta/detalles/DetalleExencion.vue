@@ -52,7 +52,6 @@ export default {
       api.get(url)
       .then(r => { 
         this.exencion = r.data;
-        console.log(utils.clone(this.exencion))
       })
       .catch(e => {
         console.error(e);

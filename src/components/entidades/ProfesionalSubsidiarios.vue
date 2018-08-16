@@ -155,6 +155,8 @@ export default {
     methods: {
         guardar: function() {
             if (this.$refs.form_subsidiario.validate()) {
+                this.nuevo_subsidiario.nombre = this.nuevo_subsidiario.nombre.toUpperCase()
+                this.nuevo_subsidiario.apellido = this.nuevo_subsidiario.apellido.toUpperCase();
                 let subsidiarios = utils.clone(this.value);
 
                 if (this.subsidiario_edit == null) subsidiarios.push(this.nuevo_subsidiario);

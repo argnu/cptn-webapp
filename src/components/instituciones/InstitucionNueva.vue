@@ -389,6 +389,7 @@ export default {
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
                 let titulo = utils.clone(this.nuevo_titulo);
+                titulo.nombre = titulo.nombre.toUpperCase();
 
                 if (this.titulo_edit == null) {
                     this.institucion.titulos.push(titulo);
@@ -420,6 +421,11 @@ export default {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
                 let institucion = utils.clone(this.institucion);
+                institucion.nombre = institucion.nombre.toUpperCase();
+                institucion.cue = institucion.cue.toUpperCase();
+                if (institucion.domicilio.localidad.id) institucion.domicilio.localidad = institucion.domicilio.localidad.id;
+                institucion.domicilio.direccion = institucion.domicilio.direccion.toUpperCase();
+
                 institucion.titulos.forEach(t => {
                     t.incumbencias = t.incumbencias.map(i => i.id);
                     t.nivel = t.nivel.id;

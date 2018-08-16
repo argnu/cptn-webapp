@@ -112,6 +112,7 @@ export default {
     methods: {
         guardar: function () {
             if (this.$refs.form_condafip.validate()) {
+                this.nueva_condafip.descripcion = this.nueva_condafip.descripcion.toUpperCase();
                 let condiciones_afip = utils.clone(this.value);
 
                 if (this.condafip_edit == null) condiciones_afip.push(this.nueva_condafip);

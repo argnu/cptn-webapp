@@ -282,6 +282,8 @@ export default {
     },
 
     addItemPago: function() {
+      this.nueva_forma_pago.titular_cuenta = this.nueva_forma_pago.titular_cuenta.toUpperCase();
+
       if (this.supera_importe) return;
       
       if (this.esCheque) {

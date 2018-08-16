@@ -159,6 +159,9 @@ export default {
             this.submitted = true;
             if (this.valid_basico && this.valid_pass) {
                 let usuario = utils.clone(this.usuario);
+                usuario.username = usuario.username.toUpperCase();
+                usuario.nombre = usuario.nombre.toUpperCase();
+                usuario.apellido = usuario.apellido.toUpperCase();
                 usuario.delegaciones = usuario.delegaciones.map(d => d.id);
 
                 api.post('/usuarios', usuario)
