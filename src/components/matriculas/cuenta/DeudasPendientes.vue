@@ -221,18 +221,6 @@ export default {
     }    
   },
 
-
-  watch: {
-    'pagination.sortBy': function(sortBy) {
-      if (sortBy) {
-        if (sortBy.includes('fecha')) this.boletas = this.boletas.sort(utils.sortByFecha(sortBy));
-        else if (sortBy == 'descripcion') this.boletas = this.boletas.sort(utils.sortByString(sortBy));
-        else this.boletas = this.boletas.sort(utils.sortByNumber(sortBy));
-      }
-      else this.boletas = utils.clone(this.boletas_original);
-    }
-  },
-
   computed: {
     subtotal: function() {
       if (!this.boletas.length) return 0;
