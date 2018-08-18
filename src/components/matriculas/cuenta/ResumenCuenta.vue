@@ -37,16 +37,16 @@
                 </td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
-                
+
                   <template v-if="props.item.tipo == 'boleta'">
                     <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
                         {{ props.item.estado ? props.item.estado.valor : '' }}
-                    </td>                    
+                    </td>
                   </template>
                   <template v-else-if="props.item.tipo == 'volante'">
                     <td class="red lighten-4">
                         Vencido
-                    </td>                    
+                    </td>
                   </template>
                   <template v-else-if="props.item.tipo == 'comprobante' && props.item.anulado == 1">
                     <td>Anulado</td>
@@ -70,28 +70,28 @@
                       <v-btn icon slot="activator">
                         <v-icon class="blue--text">more_vert</v-icon>
                       </v-btn>
-                      
+
                       <v-list>
                         <v-list-tile
                           v-if="props.item.tipo != 'exencion'"
                           title="Imprimir"
-                          @click="imprimir(props.item)"                      
-                        >        
+                          @click="imprimir(props.item)"
+                        >
                           <v-icon class="mr-2" color="secondary">print</v-icon>
                           Imprimir
-                        </v-list-tile>  
+                        </v-list-tile>
 
                         <v-list-tile
                           v-if="props.item.estado && props.item.estado.id == 1 || props.item.anulado == 0"
                           title="Anular"
-                          @click="anular(props.item)"                     
-                        >        
+                          @click="anular(props.item)"
+                        >
                           <v-icon class="mr-2" color="error">cancel_presentation</v-icon>
                           Anular
-                        </v-list-tile>          
+                        </v-list-tile>
                       </v-list>
                     </v-menu>
-                  </td>                  
+                  </td>
 
                 </tr>
                 <tr>
@@ -110,9 +110,9 @@
                         </template>
                         <template v-else-if="props.item.tipo == 'exencion'">
                           <detalle-exencion :id="props.item.id"></detalle-exencion>
-                        </template>                        
+                        </template>
                         </v-card>
-                      </v-expansion-panel-content>                    
+                      </v-expansion-panel-content>
                     </v-expansion-panel>
                   </td>
                 </tr>
@@ -152,7 +152,7 @@ export default {
     DetalleComprobante,
     DetalleVolantePago,
     InputFecha
-  },  
+  },
 
   headers: [
     Header('+', 'detalle'),
@@ -337,7 +337,7 @@ export default {
             this.global_state.snackbar.color = 'error';
             this.global_state.snackbar.show = true;
             console.error(e)
-          });             
+          });
         }
         else if (item.tipo == 'comprobante') {
           api.post(`/comprobantes/${item.id}/anular`)
@@ -353,7 +353,7 @@ export default {
             this.global_state.snackbar.color = 'error';
             this.global_state.snackbar.show = true;
             console.error(e)
-          });            
+          });
         }
       }
     }
