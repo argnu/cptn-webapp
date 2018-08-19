@@ -383,7 +383,6 @@ export default {
         boletas,
         matricula: this.id,
         fecha: moment(),
-        fecha_vencimiento: moment().add(15, 'days'),
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
