@@ -45,7 +45,7 @@
                   </template>
                   <template v-else-if="props.item.tipo == 'volante'">
                     <td class="red lighten-4">
-                        Vencido
+                        {{ props.item.vencido ? 'Vencido' : 'Anulado' }}
                     </td>
                   </template>
                   <template v-else-if="props.item.tipo == 'comprobante' && props.item.anulado == 1">
@@ -222,7 +222,7 @@ export default {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
-      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&vencido=true`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_exenciones = `/comprobantes-exenciones?matricula=${this.id}&sort=+fecha`;
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
@@ -246,6 +246,9 @@ export default {
         api.get(url_exenciones)
       ])
      .then(([boletas, comprobantes, volantes, exenciones]) => {
+       //Sólo volantes vencidos o anulados
+       volantes = volantes.data.filter(v => v.vencido || v.estado.id == 11);
+
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
@@ -256,7 +259,7 @@ export default {
          c.haber = c.importe_cancelado;
          c.descripcion = `Recibo N° ${c.numero}`;
          return c;
-       })).concat(volantes.data.map(c => {
+       })).concat(volantes.map(c => {
          c.tipo = 'volante';
          c.debe = c.importe_total;
          c.descripcion = `Volante de Pago N° ${c.id}`;
