@@ -82,7 +82,7 @@
                         </v-list-tile>
 
                         <v-list-tile
-                          v-if="props.item.estado && props.item.estado.id == 1 || props.item.anulado == 0"
+                          v-if="props.item.estado && props.item.estado.id == 1 || !props.item.anulado"
                           title="Anular"
                           @click="anular(props.item)"
                         >
