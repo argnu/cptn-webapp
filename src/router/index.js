@@ -185,7 +185,7 @@ export default new Router({
           component: UsuarioDetalle,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (to.params.id == Store.state.user.id || Store.state.user.admin) next();
+            if (to.params.id == Store.state.user.id || this.$can('manage', 'Usuario')) next();
             else next(false);
           },
         },

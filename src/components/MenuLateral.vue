@@ -87,7 +87,7 @@
 
       <v-list-group
         prepend-icon="account_circle"
-        v-if="user.admin"
+        v-if="$can('manage', 'Usuario')"
       >
         <v-list-tile slot="activator">
           <v-list-tile-title>Usuarios</v-list-tile-title>
@@ -105,7 +105,7 @@
 
       <v-list-group
         prepend-icon="settings"
-        v-if="user.admin"
+        v-if="$can('manage', 'ValoresGlobales')"
       >
         <v-list-tile slot="activator">
           <v-list-tile-title>Sistema</v-list-tile-title>

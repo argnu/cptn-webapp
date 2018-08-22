@@ -84,6 +84,7 @@
 <script>
 import api from '@/services/api'
 import * as Cookies from 'js-cookie'
+import * as utils from '@/utils'
 import Store from '@/stores/Global'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -126,6 +127,8 @@ export default {
 
       api.post('/usuarios/auth', this.usuario)
       .then(r => {
+        this.$ability.update(r.data.rules);
+
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);
         Store.setUser(r.data);
         api.defaults.headers.common['Authorization'] = `JWT ${r.data.token}`;
@@ -140,6 +143,7 @@ export default {
         .catch(e => console.error(e));        
       })
       .catch(e => {
+        console.error(e);
         this.submit_error = true;
         if (e.response.status != 403) console.error(e);
       });
