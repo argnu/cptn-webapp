@@ -142,7 +142,6 @@
               <td v-if="allFilters">{{ props.item.matricula.numeroMatricula }}</td>
               <td>{{ props.item.estado.valor }}</td>
               <td>{{ props.item.tipo.valor }}</td>
-              <td>{{ props.item.estado.valor }}</td>
               <td>{{ props.item.numero_legajo }}</td>
               <td>{{ props.item.nomenclatura }}</td>
               <td>{{ props.item.comitentes | lista_comitentes }}</td>
@@ -205,8 +204,8 @@ import { Header } from '@/model'
 function getHeaders(all) {
   let headers = [
       Header('Fecha', 'fecha_solicitud', true),
-      Header('Tipo', 'tipo', true),
       Header('Estado', 'estado', true),
+      Header('Tipo', 'tipo', true),
       Header('N° Legajo', 'numero', true),
       Header('Nomenclatura', 'nomenclatura', true),
       Header('Comitentes', 'comitentes'),

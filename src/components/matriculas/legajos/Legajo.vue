@@ -563,7 +563,7 @@
                     label="Aporte Neto"
                     decimal
                     v-model="legajo.aporte_neto"
-                    :disabled="legajo.id > 0 && !this.edit"
+                    :disabled="legajo.id > 0"
                     :rules="[rules.required]"
                   ></input-numero>
 
