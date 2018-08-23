@@ -258,6 +258,9 @@ export default {
         guardar: function() {
             if (this.$refs.form_basico.validate()) {
                 let patch_usuario = utils.clone(this.usuario);
+                patch_usuario.username = patch_usuario.username.toUpperCase();
+                patch_usuario.nombre = patch_usuario.nombre.toUpperCase();
+                patch_usuario.apellido = patch_usuario.apellido.toUpperCase();
                 api.put(`/usuarios/${this.id}`, patch_usuario)
                 .then(r => {
                     this.edit = false;

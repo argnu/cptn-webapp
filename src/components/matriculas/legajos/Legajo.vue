@@ -9,7 +9,7 @@
       <v-toolbar-title class="white--text">Legajo</v-toolbar-title>
     </v-toolbar>
 
-    <v-layout row v-if="legajo.id">
+    <v-layout row v-if="legajo.id && !edit">
       <v-flex xs12>
         <v-btn
           class="darken-1 white--text right" color="primary"
@@ -20,21 +20,23 @@
         </v-btn>
       </v-flex>
     </v-layout>
-
     <v-layout row wrap>
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-text>
-            <v-form v-model="valid.basicos">
+            <v-form ref="form_basico" v-model="valid.basicos">
 
             <v-layout row wrap>
               <v-flex xs3 class="ml-5">
                 <v-select
                   tabindex="1"
                   label="Tipo:"
-                  :items="tipos_legajos"
                   v-model="legajo.tipo"
-                  :disabled="legajo.id > 0"
+                  :items="$options.tipos_legajo"
+                  item-text="valor"
+                  item-value="id"
+                  :disabled="legajo.id > 0 && !this.edit"
+                  return-object
                 >
                 </v-select>
               </v-flex>
@@ -53,7 +55,7 @@
                   tabindex="2"
                   label="Fecha"
                   v-model="legajo.fecha_solicitud"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   :rules="[rules.required, rules.fecha]"
                 >
                 </input-fecha>
@@ -76,13 +78,14 @@
           <v-card-text>
               <v-form lazy-validation ref="form_comitente">
 
-              <v-layout row v-if="!legajo.id">
+              <v-layout row v-if="!legajo.id || edit">
                   <v-flex xs6 class="mx-4">
                     <v-select
                       tabindex="3"
                       label="Tipo"
                       :items="tipo_persona"
                       :rules="[rules.required]"
+                      v-model="tipo_comitente"
                       @change="chgTipoComitente"
                     ></v-select>
 
@@ -141,7 +144,7 @@
                 </v-flex>
             </v-layout>
 
-            <v-layout row>
+            <v-layout row v-if="!legajo.id || edit">
               <v-flex xs12>
                 <v-btn class="right" @click="guardarComitente" tabindex="10">
                   {{ comitente_edit != null ? 'Guardar' : 'Agregar' }}
@@ -166,12 +169,14 @@
                 >
                   <template slot="items" slot-scope="props">
                       <td class="justify-center layout px-0">
-                        <v-btn icon small class="mx-0" @click="rmComitente(props.index)" v-if="!legajo.id">
-                          <v-icon color="red">delete</v-icon>
-                        </v-btn>
-                        <v-btn icon small class="mx-4" @click="editComitente(props.index)" v-if="!legajo.id">
-                          <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>
+                        <template v-if="!legajo.id || edit">
+                          <v-btn icon small class="mx-0" @click="rmComitente(props.index)">
+                            <v-icon color="red">delete</v-icon>
+                          </v-btn>
+                          <v-btn icon small class="mx-4" @click="editComitente(props.index)">
+                            <v-icon color="deep-purple">edit</v-icon>
+                          </v-btn>                          
+                        </template>
                       </td>
                       <td>{{ props.item.persona.cuit }}</td>
                       <td>{{ props.item.persona.nombre }}</td>
@@ -209,7 +214,7 @@
                     mask="##-##-###-####-####"
                     return-masked-value
                     v-model="legajo.nomenclatura"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     :rules="[rules.required, rules.nomenclatura_catastral]"
                   ></v-text-field>
               </v-flex>
@@ -220,7 +225,7 @@
                     maxlength="45"
                     label="N° Expediente Municipal"
                     v-model="legajo.expediente_municipal"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></v-text-field>
               </v-flex>
             </v-layout>
@@ -233,10 +238,11 @@
                   item-text="nombre"
                   item-value="id"
                   :items="paises"
-                  label="País"
-                  @input="changePais"
+                  label="País"                  
                   v-model="legajo.domicilio.pais"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
+                  return-object
+                  @input="changePais"
                 >
                 </v-select>
 
@@ -249,7 +255,8 @@
                   label="Departamento"
                   @input="changeDepartamento"
                   v-model="legajo.domicilio.departamento"
-                  :disabled="legajo.id > 0"
+                  return-object
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
 
@@ -257,7 +264,7 @@
                   tabindex="17"
                   label="Dirección"
                   v-model="legajo.domicilio.direccion"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -272,7 +279,8 @@
                   label="Provincia"
                   @input="changeProvincia"
                   v-model="legajo.domicilio.provincia"
-                  :disabled="legajo.id > 0"
+                  return-object
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
 
@@ -284,7 +292,8 @@
                   :items="localidades"
                   label="Localidad"
                   v-model="legajo.domicilio.localidad"
-                  :disabled="legajo.id > 0"
+                  return-object
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-select>
               </v-flex>
@@ -315,7 +324,7 @@
                     item-text="descripcion"
                     item-value="id"
                     v-model="categoria_selected"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-select>
                 </v-flex>
@@ -328,7 +337,7 @@
                     item-text="descripcion"
                     item-value="id"
                     v-model="legajo.subcategoria"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     @input="chgSubcategoria"
                     :rules="[rules.required]"
                   >
@@ -336,7 +345,7 @@
                 </v-flex>
             </v-layout>
 
-            <v-layout row wrap class="mt-3" v-if="!legajo.id">
+            <v-layout row wrap class="mt-3" v-if="!legajo.id || edit">
               <v-flex xs3 class="ml-4">
                 <typeahead
                   tabindex="19"
@@ -394,12 +403,14 @@
                 >
                   <template slot="items" slot-scope="props">
                       <td class="justify-center layout px-0">
-                        <v-btn icon small class="mx-0" @click="removeItem(props.index)" v-if="!legajo.id">
-                          <v-icon color="red">delete</v-icon>
-                        </v-btn>
-                        <v-btn icon small class="mx-4" @click="editTareaItem(props.index)" v-if="!legajo.id">
-                          <v-icon color="deep-purple">edit</v-icon>
-                        </v-btn>
+                        <template v-if="!legajo.id || edit">
+                          <v-btn icon small class="mx-0" @click="removeItem(props.index)">
+                            <v-icon color="red">delete</v-icon>
+                          </v-btn>
+                          <v-btn icon small class="mx-4" @click="editTareaItem(props.index)">
+                            <v-icon color="deep-purple">edit</v-icon>
+                          </v-btn>                          
+                        </template>
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
                       <td>{{ props.item.valor }}</td>
@@ -416,7 +427,7 @@
                   v-model="legajo.informacion_adicional"
                   textarea
                   rows="3"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -431,7 +442,7 @@
     </v-layout>
 
 
-    <v-layout row wrap v-if="legajo.tipo == 2">
+    <v-layout row wrap v-if="legajo.tipo.id == 2">
       <v-flex xs12>
         <v-card class="ma-2 elevation-4">
           <v-card-title>
@@ -443,7 +454,7 @@
                 <input-fecha
                   tabindex="23"
                   label="Plazo Cumplimiento"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   v-model="legajo.plazo_cumplimiento"
                 >
                 </input-fecha>
@@ -454,7 +465,7 @@
                   tabindex="24"
                   label="Honorarios Presupuestados"
                   v-model="legajo.honorarios_presupuestados"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                   decimal
                 ></input-numero>
               </v-flex>
@@ -464,7 +475,7 @@
                   tabindex="25"
                   label="Forma de Pago"
                   v-model="legajo.forma_pago"
-                  :disabled="legajo.id > 0"
+                  :disabled="legajo.id > 0 && !this.edit"
                 >
                 </v-text-field>
               </v-flex>
@@ -475,7 +486,7 @@
     </v-layout>
 
 
-    <template v-if="legajo.tipo == 3">
+    <template v-if="legajo.tipo.id == 3">
       <v-layout row wrap>
         <v-flex xs12>
           <v-card class="ma-2 elevation-4">
@@ -489,7 +500,7 @@
                     tabindex="26"
                     label="Honorarios"
                     v-model="legajo.honorarios_reales"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     decimal
                   ></input-numero>
 
@@ -497,7 +508,7 @@
                     tabindex="29"
                     label="Tarea Pública"
                     v-model="legajo.tarea_publica"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-checkbox>
                 </v-flex>
@@ -506,7 +517,7 @@
                   <input-fecha
                     tabindex="27"
                     label="Finalización Tarea"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     v-model="legajo.finalizacion_tarea"
                   >
                   </input-fecha>
@@ -515,7 +526,7 @@
                     tabindex="30"
                     label="Relación de Dependencia"
                     v-model="legajo.dependencia"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-checkbox>
                 </v-flex>
@@ -525,7 +536,7 @@
                     tabindex="28"
                     label="Porcentaje Cumplimiento"
                     v-model="legajo.porcentaje_cumplimiento"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                     decimal
                   ></input-numero>
                 </v-flex>
@@ -560,7 +571,7 @@
                     tabindex="34"
                     label="Cantidad de Planos"
                     v-model="legajo.cantidad_planos"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
 
@@ -570,7 +581,7 @@
                     label="Aporte Bruto"
                     decimal
                     v-model="legajo.aporte_bruto"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
 
@@ -580,7 +591,7 @@
                     label="Aporte Neto Bonificación"
                     decimal
                     v-model="legajo.aporte_neto_bonificacion"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   ></input-numero>
                 </v-flex>
               </v-layout>
@@ -593,7 +604,7 @@
                     v-model="legajo.observaciones"
                     textarea
                     rows="3"
-                    :disabled="legajo.id > 0"
+                    :disabled="legajo.id > 0 && !this.edit"
                   >
                   </v-text-field>
                 </v-flex>
@@ -608,7 +619,8 @@
     <v-btn
       class="green darken-1 white--text right"
       @click.native="submit"
-      :disabled="!valid_form || legajo.id > 0 || submitted"
+      :disabled="(legajo.id > 0 && !edit) || submitted"
+      :loading="submitted"
       tabindex="36"
     >
       Guardar Legajo
@@ -632,12 +644,6 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
-
-const tipos = [
-  Header('Permiso de Construcción', 1),
-  Header('Orden de Trabajo', 2),
-  Header('Legajo Técnico', 3)
-]
 
 const tipo_persona = [
   Header('Física', 'fisica'),
@@ -682,7 +688,14 @@ export default {
 
   name: 'Legajo',
 
-  props: ['id_legajo', 'id_matricula'],
+  props: {
+    id_legajo: [Number, String],
+    id_matricula: [Number, String],
+    edit: {
+      type: Boolean,
+      default: () => false
+    }
+  },
 
   mixins: [MixinValidator],
 
@@ -703,9 +716,16 @@ export default {
     ]
   },
 
+  tipos_legajo: [
+    { id: 1, valor: 'Permiso de Construcción'},
+    { id: 2, valor: 'Orden de Trabajo'},
+    { id: 3, valor: 'Legajo Técnico'}
+  ],
+
   data () {
     return {
       legajo: Legajo(),
+      tipo_comitente: 'fisica',
       valid: {
         basicos: false,
         ubicacion: false,
@@ -730,10 +750,6 @@ export default {
   },
 
   computed: {
-    tipos_legajos: function() {
-      return tipos;
-    },
-
     tipo_persona: function() {
       return tipo_persona;
     },
@@ -772,6 +788,12 @@ export default {
     }
   },
 
+/*   watch: {
+    '$route' (to, from) {
+      this.$refs.form_ubicacion.reset();
+    }
+  },  */
+
   created: function() {
     Promise.all([
       api.get('/paises'),
@@ -782,31 +804,25 @@ export default {
       this.categorias = r[1].data;
       if (this.id_legajo) {
         return api.get(`/legajos/${this.id_legajo}`)
-              .then(r => {
-                  this.legajo = r.data;
-                  if (this.legajo.domicilio) {
-                    this.paises = [this.legajo.domicilio.pais];
-                    this.provincias = [this.legajo.domicilio.provincia];
-                    this.departamentos = [this.legajo.domicilio.departamento];
-                    this.localidades = [this.legajo.domicilio.localidad];
-                  }
-                  else this.legajo.domicilio = new Domicilio();
-
-                  this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
-                  return api.get(`/matriculas/${this.legajo.matricula.id}`);
-              })
+        .then(r => {
+            this.legajo = r.data;
+            this.legajo.fecha_solicitud = moment(this.legajo.fecha_solicitud, 'YYYY-MM-DD').format('DD/MM/YYYY');
+            if (!this.legajo.domicilio) this.legajo.domicilio = new Domicilio();
+            this.categoria_selected = this.categorias.find(c => c.subcategorias.find(s => s.id == this.legajo.subcategoria)).id;
+            return Promise.resolve(this.legajo.matricula.id);
+        })
       }
       else {
-      this.legajo.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
-      this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
-      this.changePais()
-      .then(() => this.changeProvincia())
-      .then(() => this.changeDepartamento());
-
-      return api.get(`/matriculas/${this.id_matricula}`);
+        this.legajo.domicilio.departamento = this.global_state.delegacion.domicilio.departamento.id;
+        this.legajo.domicilio.localidad = this.global_state.delegacion.domicilio.localidad.id;
+        return Promise.resolve(this.id_matricula);
       }
     })
-    .then(r => this.matricula = r.data)
+    .then((id_matricula) => {
+      this.changePais().then(() => this.changeProvincia()).then(() => this.changeDepartamento())
+      .then(() => api.get(`/matriculas/${id_matricula}`))
+      .then(r => this.matricula = r.data)
+    })
     .catch(e => console.error(e))
   },
 
@@ -831,9 +847,9 @@ export default {
 
     chgSubcategoria: function(e) {
       api.get(`/tareas/subcategorias/${this.legajo.subcategoria}/items`)
-           .then(r => { 
+           .then(r => {
              this.items_predeterminados = r.data;
-             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);             
+             let item = r.data.find(i => i.descripcion.indexOf('Superficie') != -1);
              if (item) this.nuevo_item.item = item.id;
              else this.nuevo_item.item = '';
            })
@@ -864,7 +880,6 @@ export default {
     },
 
     chgDni: function(e) {
-      console.log(e)
       if (this.nuevo_comitente.persona.dni) {
         if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
           console.log(this.nuevo_comitente.persona.dni)
@@ -878,6 +893,9 @@ export default {
 
     guardarComitente: function() {
       if (this.$refs.form_comitente.validate()) {
+        this.nuevo_comitente.persona.nombre = this.nuevo_comitente.persona.nombre.toUpperCase();
+        this.nuevo_comitente.persona.apellido = this.nuevo_comitente.persona.apellido.toUpperCase();
+        
         if (this.comitente_edit != null) {
           Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
           this.comitente_edit = null;
@@ -899,6 +917,7 @@ export default {
       this.$refs.form_comitente.reset();
       this.comitente_edit = index;
       this.nuevo_comitente = utils.clone(this.legajo.comitentes[index]);
+      this.tipo_comitente = this.nuevo_comitente.persona.tipo;
     },
 
     cancelarEditComitente: function() {
@@ -943,28 +962,71 @@ export default {
         return item.descripcion;
     },
 
-    submit: function() {
-      this.submitted = true;
-      this.legajo.delegacion = this.global_state.delegacion.id;
+    prepare: function() {
+      let legajo = utils.clone(this.legajo);
+      if (legajo.domicilio.localidad.id) legajo.domicilio.localidad = legajo.domicilio.localidad.id;
+      legajo.delegacion = this.global_state.delegacion.id;
+      legajo.tipo = legajo.tipo.id;
+      legajo.aporte_bruto = utils.getFloat(legajo.aporte_bruto);
+      legajo.aporte_neto = utils.getFloat(legajo.aporte_neto);
+      legajo.aporte_neto_bonificacion = utils.getFloat(legajo.aporte_neto_bonificacion);
+      legajo.honorarios_presupuestados = utils.getFloat(legajo.honorarios_presupuestados);
+      legajo.honorarios_reales = utils.getFloat(legajo.honorarios_reales);
+      legajo.porcentaje_cumplimiento = utils.getFloat(legajo.porcentaje_cumplimiento);
+      legajo.items.forEach(i => {
+        if (i.item.id) i.item = i.item.id;
+      })
 
-      api.put(`/matriculas/${this.id_matricula}/legajos`, this.legajo)
-           .then(r => {
-             this.submitted = false;
-             this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
-             this.global_state.snackbar.color = 'success';
-             this.global_state.snackbar.show = true;
-             this.$router.go(-1);
-           })
-           .catch(e => {
-             this.submitted = false;
-             if (e.response && e.response.status != 500) {
-              let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-              this.global_state.snackbar.msg = msg;
-              this.global_state.snackbar.color = 'error';
-              this.global_state.snackbar.show = true;
-             }
-             else console.error(e);
-           });
+      return legajo;
+    },
+
+    submit: function() {
+      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate() 
+        || !this.$refs.form_aportes.validate()) return alert('El formulario contiene errores. Por favor revisar');
+      if (!this.valid_form) return alert('El formulario contiene errores. Por favor revisar');
+
+      this.submitted = true; 
+
+      if (this.edit) {
+        api.put(`/legajos/${this.legajo.id}`, this.prepare())
+        .then(r => {
+          this.submitted = false;
+          this.global_state.snackbar.msg = 'Legajo modificado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$router.go(-1);
+        })
+        .catch(e => {
+          this.submitted = false;
+          if (e.response && e.response.status != 500) {
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          }
+          else console.error(e);
+        });
+      }
+      else {
+        api.put(`/matriculas/${this.id_matricula}/legajos`, this.prepare())
+        .then(r => {
+          this.submitted = false;
+          this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+          this.$router.go(-1);
+        })
+        .catch(e => {
+          this.submitted = false;
+          if (e.response && e.response.status != 500) {
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          }
+          else console.error(e);
+        });
+      } 
     },
 
     imprimir: function() {

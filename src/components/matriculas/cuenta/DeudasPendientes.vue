@@ -31,23 +31,41 @@
                 {{ props.item.descripcion }}
                 <template v-if="props.item.tipo_comprobante && props.item.tipo_comprobante.id == 20 && props.item.legajo">
                   <br>
-                  Nomenclatura: {{ props.item.legajo.nomenclatura }} 
+                  Nomenclatura: {{ props.item.legajo.nomenclatura }}
                   <br>
                   Comitentes: {{ props.item.legajo.comitentes | lista_comitentes }}
                 </template>
               </td>
               <td>${{ props.item.total | round }}</td>
               <td>${{ props.item.interes | round }}</td>
-              <td class="justify-center layout px-0">
-                <v-btn
-                  v-if="props.item.tipo == 'volante'"
-                  small icon
-                  class="mx-0"
-                  title="Imprimir"
-                  @click="imprimir(props.item)"
-                >
-                  <v-icon color="secondary">print</v-icon>
-                </v-btn>
+
+              <td>
+                <v-menu>
+                  <v-btn icon slot="activator">
+                    <v-icon class="blue--text">more_vert</v-icon>
+                  </v-btn>
+
+                  <v-list>
+                    <v-list-tile
+                      v-if="props.item.tipo == 'volante'"
+                      small icon
+                      class="mx-0"
+                      title="Imprimir"
+                      @click="imprimir(props.item)"
+                    >
+                      <v-icon class="mr-2" color="secondary">print</v-icon>
+                      Imprimir
+                    </v-list-tile>
+
+                    <v-list-tile
+                      title="Anular"
+                      @click="anular(props.item)"
+                    >
+                      <v-icon class="mr-2" color="error">cancel_presentation</v-icon>
+                      Anular
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
               </td>
           </template>
         </v-data-table>
@@ -188,7 +206,7 @@ export default {
     Header('Descripción', 'descripcion'),
     Header('Importe', 'total'),
     Header('Intereses', 'interes'),
-    Header('', 'imprimir')
+    Header('', 'acciones')
   ],
 
   data () {
@@ -218,18 +236,6 @@ export default {
     lista_comitentes: function(lista) {
       return lista.map(c => `${c.persona.nombre} ${c.persona.tipo == 'fisica' ? c.persona.apellido : ''}`)
                   .join(', ');
-    }    
-  },
-
-
-  watch: {
-    'pagination.sortBy': function(sortBy) {
-      if (sortBy) {
-        if (sortBy.includes('fecha')) this.boletas = this.boletas.sort(utils.sortByFecha(sortBy));
-        else if (sortBy == 'descripcion') this.boletas = this.boletas.sort(utils.sortByString(sortBy));
-        else this.boletas = this.boletas.sort(utils.sortByNumber(sortBy));
-      }
-      else this.boletas = utils.clone(this.boletas_original);
     }
   },
 
@@ -279,7 +285,7 @@ export default {
     updateBoletas: function() {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento&estado=1`;
-      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&pagado=false&vencido=false`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&estado=1&vencido=false`;
 
       Promise.all([
         api.get(url_boletas),
@@ -348,7 +354,7 @@ export default {
           'jsp-output-file': `Recibo N° ${r.data.numero} - ${Date.now()}`,
           'jsp-only-gen': false,
           'recibo_id': r.data.id
-        });        
+        });
 
         this.updateBoletas();
         this.$emit('update');
@@ -377,7 +383,6 @@ export default {
         boletas,
         matricula: this.id,
         fecha: moment(),
-        fecha_vencimiento: moment().add(15, 'days'),
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
@@ -432,7 +437,49 @@ export default {
     cerrarVentanaPago: function() {
       this.expand_pago = false;
       this.$refs.cobranza.reset();
-    }
+    },
+
+    anular: function(item) {
+      let tipo = item.tipo == 'boleta' ? 'la boleta' : 'el volante';
+
+      if (confirm(`Está segura/o que desea anular ${tipo}?`)) {
+        if (item.tipo == 'boleta') {
+          api.patch(`/boletas/${item.id}`, {
+            estado: 11
+          })
+          .then(r => {
+            this.updateBoletas();
+            this.global_state.snackbar.msg = 'Boleta anulada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+          })
+          .catch(e => {
+            this.submit_cambio = false;
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
+            console.error(e)
+          });
+        }
+        else if (item.tipo == 'volante') {
+          api.post(`/volantespago/${item.id}/anular`)
+          .then(r => {
+            this.updateBoletas();
+            this.global_state.snackbar.msg = 'Volante anulado exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+          })
+          .catch(e => {
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
+            console.error(e)
+          });
+        }        
+      }
+    }    
   },
 
 }

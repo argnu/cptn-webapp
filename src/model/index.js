@@ -14,3 +14,8 @@ export const Header = (text, value, sortable, align, width) => ({
     align: align ? align : 'left',
     width: width ? width : null
 })
+
+export const Item = (text, value) => ({
+    text, 
+    value
+})

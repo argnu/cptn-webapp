@@ -290,6 +290,8 @@ export default {
 
         guardar: function () {
             if (this.$refs.form_domicilio.validate()) {
+                this.nuevo_domicilio.domicilio.direccion = this.nuevo_domicilio.domicilio.direccion.toUpperCase();
+
                 let domicilios = utils.clone(this.value);
 
                 if (this.domicilio_edit != null && this.value[this.domicilio_edit]) {

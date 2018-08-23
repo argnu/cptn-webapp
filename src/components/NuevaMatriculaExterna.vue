@@ -136,6 +136,11 @@ export default {
         submit: function() {
             this.submitted = true;
             if (this.$refs.form_matricula.validate()) {
+                this.matricula.persona.nombre = this.matricula.persona.nombre.toUpperCase();
+                this.matricula.persona.apellido = this.matricula.persona.apellido.toUpperCase();
+                this.matricula.nombreInstitucion = this.matricula.nombreInstitucion.toUpperCase();
+                this.matricula.numeroMatricula = this.matricula.numeroMatricula.toUpperCase();
+
                 api.post('/matriculas-externas', this.matricula)
                 .then(r => {
                     if (r.status == 201) {

@@ -745,8 +745,16 @@ export default {
       if (next) this.step = +this.step + 1;
     },
 
-    makeFormData: function() {
+    prepare: function() {
       let solicitud = utils.clone(this.solicitud);
+
+      solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
+      solicitud.entidad.nacionalidad = solicitud.entidad.nacionalidad.toUpperCase();
+      solicitud.entidad.apellido = solicitud.entidad.apellido.toUpperCase();
+      solicitud.entidad.lugarNacimiento = solicitud.entidad.lugarNacimiento.toUpperCase();
+      solicitud.entidad.observaciones = solicitud.entidad.observaciones.toUpperCase();
+      solicitud.entidad.empresa = solicitud.entidad.empresa.toUpperCase();
+      solicitud.entidad.serviciosPrestados = solicitud.entidad.serviciosPrestados.toUpperCase();
 
       if (this.foto) solicitud.entidad.foto = this.foto;
       else solicitud.entidad.foto = null;
@@ -787,7 +795,7 @@ export default {
       this.guardando = true;
 
       if (!this.id) {
-        api.post('/solicitudes', this.makeFormData())
+        api.post('/solicitudes', this.prepare())
           .then(r => {
             this.guardando = false;
             this.id_creada = r.data.id;
@@ -800,7 +808,7 @@ export default {
           .catch(e => this.submitError(e));
       }
       else {
-        api.put(`/solicitudes/${this.id}`, this.makeFormData())
+        api.put(`/solicitudes/${this.id}`, this.prepare())
           .then(r => {
             this.guardando = false;
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';

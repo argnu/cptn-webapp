@@ -717,6 +717,7 @@ export default {
       this.guardando = true;
 
       let solicitud = utils.clone(this.solicitud);
+      solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.tipoEmpresa = solicitud.entidad.tipoEmpresa.id;
       solicitud.entidad.tipoSociedad = solicitud.entidad.tipoSociedad.id;
 

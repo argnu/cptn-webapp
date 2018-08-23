@@ -503,8 +503,17 @@ export default {
             this.profesional.publicarCelular = this.publicar_todos;
         },
 
-        makeFormData: function() {
+        prepare: function() {
             let profesional = utils.clone(this.profesional);
+
+            profesional.nombre = profesional.nombre.toUpperCase();
+            profesional.nacionalidad = profesional.nacionalidad.toUpperCase();
+            profesional.apellido = profesional.apellido.toUpperCase();
+            profesional.lugarNacimiento = profesional.lugarNacimiento.toUpperCase();
+            profesional.observaciones = profesional.observaciones.toUpperCase();
+            profesional.empresa = profesional.empresa.toUpperCase();
+            profesional.serviciosPrestados = profesional.serviciosPrestados.toUpperCase();
+
             
             if (this.foto) profesional.foto = this.foto;
             else profesional.foto = null;
@@ -545,7 +554,7 @@ export default {
             if (this.$refs.form_profesional.validate()) {
                 if (this.valid_form) {
                     this.guardando = true;
-                    api.put(`/profesionales/${this.id}`, this.makeFormData())
+                    api.put(`/profesionales/${this.id}`, this.prepare())
                     .then(r => {
                         this.guardando = false;
                         this.global_state.snackbar.msg = 'Profesional actualizado exitosamente!';

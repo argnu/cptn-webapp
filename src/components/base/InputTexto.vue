@@ -1,10 +1,13 @@
 <template>
     <v-text-field
+        :class="uppercase ? 'uppercase' : ''"
         v-bind="$attrs"
         :value="value"
         :maxlength="maxlength"
+        @input="$emit('input', $event)"
         @keypress="keypress($event)"
-        @input="update($event)"
+        @blur="active = false"
+        @focus="active = true"
     ></v-text-field>
 </template>
 
@@ -15,7 +18,7 @@ import { isMobile } from '@/utils'
 export default {
     name: 'InputTexto',
     inheritAttrs: false,
-    
+
     props: {
       value: {
         //   type: String,
@@ -37,6 +40,12 @@ export default {
       }
     },
 
+    data: function() {
+        return {
+            active: false
+        }
+    },
+
     methods: {
         keypress: function(e) {
             if (!this.type) return true;
@@ -47,17 +56,6 @@ export default {
 
             if (regexp.test(e.key)) return true
             else e.preventDefault();
-        },
-
-        update: function(e) {
-            if (isMobile()) this.$emit('input', e);
-            else this.$emit('input', this.format(e));
-        },
-
-        format: function(e) {
-            if (!e) return '';
-            else if (this.uppercase) return e.toUpperCase();
-            else return e;
         }
     }
 
@@ -65,5 +63,7 @@ export default {
 </script>
 
 <style>
-
+.uppercase input {
+    text-transform: uppercase
+}
 </style>

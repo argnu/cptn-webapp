@@ -27,14 +27,8 @@
             <template slot="items" slot-scope="props">
               <tr>
                 <td class="justify-center layout px-0">
-                  <v-btn
-                    v-if="props.item.tipo != 'exencion'"
-                    small icon
-                    class="mx-0"
-                    title="Imprimir"
-                    @click="imprimir(props.item)"
-                  >
-                    <v-icon color="secondary">print</v-icon>
+                  <v-btn small icon class="mx-0" title="Ver Detalle" @click="expand(props.index)">
+                    <v-icon color="primary">{{ paneles[props.index] ? 'expand_less' : 'expand_more' }}</v-icon>
                   </v-btn>
                 </td>
 
@@ -43,15 +37,19 @@
                 </td>
                 <td>{{ props.item.fecha_vencimiento | fecha }}</td>
                 <td>{{ props.item.descripcion }}</td>
+
                   <template v-if="props.item.tipo == 'boleta'">
                     <td :class="props.item.estado && props.item.estado.id == 1 ? 'red lighten-4' : ''">
                         {{ props.item.estado ? props.item.estado.valor : '' }}
-                    </td>                    
+                    </td>
                   </template>
                   <template v-else-if="props.item.tipo == 'volante'">
                     <td class="red lighten-4">
-                        Vencido
-                    </td>                    
+                        {{ props.item.vencido ? 'Vencido' : 'Anulado' }}
+                    </td>
+                  </template>
+                  <template v-else-if="props.item.tipo == 'comprobante' && props.item.anulado == 1">
+                    <td>Anulado</td>
                   </template>
                   <template v-else>
                     <td></td>
@@ -66,11 +64,35 @@
                       {{ props.item.haber | round }}
                     </span>
                   </td>
-                  <td class="justify-center layout px-0">
-                    <v-btn small icon class="mx-0" title="Ver Detalle" @click="expand(props.index)">
-                      <v-icon color="primary">{{ paneles[props.index] ? 'expand_less' : 'expand_more' }}</v-icon>
-                    </v-btn>
+
+                  <td>
+                    <v-menu>
+                      <v-btn icon slot="activator">
+                        <v-icon class="blue--text">more_vert</v-icon>
+                      </v-btn>
+
+                      <v-list>
+                        <v-list-tile
+                          v-if="props.item.tipo != 'exencion'"
+                          title="Imprimir"
+                          @click="imprimir(props.item)"
+                        >
+                          <v-icon class="mr-2" color="secondary">print</v-icon>
+                          Imprimir
+                        </v-list-tile>
+
+                        <v-list-tile
+                          v-if="props.item.estado && props.item.estado.id == 1 || !props.item.anulado"
+                          title="Anular"
+                          @click="anular(props.item)"
+                        >
+                          <v-icon class="mr-2" color="error">cancel_presentation</v-icon>
+                          Anular
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
                   </td>
+
                 </tr>
                 <tr>
                   <td colspan="8" v-show="paneles[props.index]">
@@ -88,9 +110,9 @@
                         </template>
                         <template v-else-if="props.item.tipo == 'exencion'">
                           <detalle-exencion :id="props.item.id"></detalle-exencion>
-                        </template>                        
+                        </template>
                         </v-card>
-                      </v-expansion-panel-content>                    
+                      </v-expansion-panel-content>
                     </v-expansion-panel>
                   </td>
                 </tr>
@@ -130,17 +152,17 @@ export default {
     DetalleComprobante,
     DetalleVolantePago,
     InputFecha
-  },  
+  },
 
   headers: [
-    Header('', 'imprimir'),
+    Header('+', 'detalle'),
     Header('Fecha', 'fecha', true),
     Header('Fecha de Venc.', 'fecha_vencimiento', true),
     Header('Descripción', 'descripcion', true),
     Header('Estado', 'estado', true),
-    Header('-', 'debe', true),
-    Header('+', 'haber', true),
-    Header('Más info', 'detalle')
+    Header('Deudor', 'debe', true),
+    Header('Acre.', 'haber', true),
+    Header('', 'acciones')
   ],
 
   data () {
@@ -200,7 +222,7 @@ export default {
       this.loading = true;
       let url_boletas = `/boletas?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_comprobantes = `/comprobantes?matricula=${this.id}&sort=+fecha_vencimiento`;
-      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento&vencido=true`;
+      let url_volantes = `/volantespago?matricula=${this.id}&sort=+fecha_vencimiento`;
       let url_exenciones = `/comprobantes-exenciones?matricula=${this.id}&sort=+fecha`;
 
       if (this.rules.fecha(this.filtros.fecha_desde)) {
@@ -224,6 +246,9 @@ export default {
         api.get(url_exenciones)
       ])
      .then(([boletas, comprobantes, volantes, exenciones]) => {
+       //Sólo volantes vencidos o anulados
+       volantes = volantes.data.filter(v => v.vencido || v.estado.id == 11);
+
        let resumen = boletas.data.map(b => {
          b.tipo = 'boleta';
          b.debe = b.total;
@@ -234,7 +259,7 @@ export default {
          c.haber = c.importe_cancelado;
          c.descripcion = `Recibo N° ${c.numero}`;
          return c;
-       })).concat(volantes.data.map(c => {
+       })).concat(volantes.map(c => {
          c.tipo = 'volante';
          c.debe = c.importe_total;
          c.descripcion = `Volante de Pago N° ${c.id}`;
@@ -292,6 +317,48 @@ export default {
 
     expand: function(index) {
       Vue.set(this.paneles, index, !this.paneles[index]);
+    },
+
+    anular: function(item) {
+      let tipo = item.tipo == 'boleta' ? 'la boleta' : 'el recibo';
+
+      if (confirm(`Está segura/o que desea anular ${tipo}?`)) {
+        if (item.tipo == 'boleta') {
+          api.patch(`/boletas/${item.id}`, {
+            estado: 11
+          })
+          .then(r => {
+            this.updateBoletas();
+            this.global_state.snackbar.msg = 'Boleta anulada exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+          })
+          .catch(e => {
+            this.submit_cambio = false;
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
+            console.error(e)
+          });
+        }
+        else if (item.tipo == 'comprobante') {
+          api.post(`/comprobantes/${item.id}/anular`)
+          .then(r => {
+            this.updateBoletas();
+            this.global_state.snackbar.msg = 'Recibo anulado exitosamente!';
+            this.global_state.snackbar.color = 'success';
+            this.global_state.snackbar.show = true;
+          })
+          .catch(e => {
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
+            console.error(e)
+          });
+        }
+      }
     }
   }
 

@@ -24,8 +24,8 @@
             <v-flex xs5>
                 <input-fecha
                     label="Fecha de Vencimiento"
-                    v-model="boleta.fecha_vencimiento"
-                    :rules="[rules.required, rules.fecha]"
+                    :value="boleta.fecha_vencimiento"
+                    disabled
                 ></input-fecha>
             </v-flex>
         </v-layout>
@@ -118,7 +118,6 @@ import Store from '@/stores/Global'
 class Boleta {
     constructor() {
         this.fecha = moment();
-        this.fecha_vencimiento = moment(this.fecha).add(15, 'days');
         this.tipo_comprobante = '';
         this.matricula = '';
         this.total = '';
@@ -163,7 +162,8 @@ export default {
             boleta: new Boleta(),
             boleta_item: new BoletaItem(1),
             tipos_comprobante: [],
-            submitted: false
+            submitted: false,
+            dias_vencimiento: 0
         }
     },
 
@@ -174,15 +174,22 @@ export default {
     },
 
     created: function() {
-        api.get('/opciones?sort=+valor')
+        Promise.all([
+            api.get('/opciones?sort=+valor'),
+            api.get('/valores-globales?variable=6') //Variable días de vencimiento
+        ])        
         .then(r => {
-            this.tipos_comprobante = r.data.comprobante;
+            this.tipos_comprobante = r[0].data.comprobante;
+            this.dias_vencimiento = r[1].data[0].valor;
+            this.chgFecha(this.boleta.fecha);
         })
     },
 
     methods: {
         chgFecha: function(fecha) {
-            this.boleta.fecha_vencimiento = moment(fecha, 'DD/MM/YYYY').add(15, 'days').format('DD/MM/YYYY');
+            this.boleta.fecha_vencimiento = moment(this.boleta.fecha, 'DD/MM/YYYY')
+                                            .add(this.dias_vencimiento, 'days')
+                                            .format('DD/MM/YYYY');
         },
 
         removeItem: function(index) {
@@ -192,6 +199,7 @@ export default {
 
         addItem: function() {
             if (this.$refs.form_item.validate()) {
+                this.boleta_item.descripcion = this.boleta_item.descripcion.toUpperCase();
                 this.boleta.items.push(this.boleta_item);
                 this.boleta_item = new BoletaItem();
                 this.$refs.form_item.reset();
