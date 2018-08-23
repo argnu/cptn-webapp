@@ -507,12 +507,12 @@ export default {
             let profesional = utils.clone(this.profesional);
 
             profesional.nombre = profesional.nombre.toUpperCase();
-            profesional.nacionalidad = profesional.nacionalidad.toUpperCase();
+            profesional.nacionalidad = profesional.nacionalidad ? profesional.nacionalidad.toUpperCase() : null;
             profesional.apellido = profesional.apellido.toUpperCase();
-            profesional.lugarNacimiento = profesional.lugarNacimiento.toUpperCase();
-            profesional.observaciones = profesional.observaciones.toUpperCase();
-            profesional.empresa = profesional.empresa.toUpperCase();
-            profesional.serviciosPrestados = profesional.serviciosPrestados.toUpperCase();
+            profesional.lugarNacimiento = profesional.lugarNacimiento ? profesional.lugarNacimiento.toUpperCase() : null;
+            profesional.observaciones = profesional.observaciones ? profesional.observaciones.toUpperCase() : null;
+            profesional.empresa = profesional.empresa ? profesional.empresa.toUpperCase() : null;
+            profesional.serviciosPrestados = profesional.serviciosPrestados ? profesional.serviciosPrestados.toUpperCase() : null;
 
             
             if (this.foto) profesional.foto = this.foto;

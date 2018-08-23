@@ -749,12 +749,12 @@ export default {
       let solicitud = utils.clone(this.solicitud);
 
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
-      solicitud.entidad.nacionalidad = solicitud.entidad.nacionalidad.toUpperCase();
+      solicitud.entidad.nacionalidad = solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad.toUpperCase() : null;
       solicitud.entidad.apellido = solicitud.entidad.apellido.toUpperCase();
-      solicitud.entidad.lugarNacimiento = solicitud.entidad.lugarNacimiento.toUpperCase();
-      solicitud.entidad.observaciones = solicitud.entidad.observaciones.toUpperCase();
-      solicitud.entidad.empresa = solicitud.entidad.empresa.toUpperCase();
-      solicitud.entidad.serviciosPrestados = solicitud.entidad.serviciosPrestados.toUpperCase();
+      solicitud.entidad.lugarNacimiento = solicitud.entidad.lugarNacimiento ? solicitud.entidad.lugarNacimiento.toUpperCase() : null;
+      solicitud.entidad.observaciones = solicitud.entidad.observaciones ? solicitud.entidad.observaciones.toUpperCase() : null;
+      solicitud.entidad.empresa = solicitud.entidad.empresa ? solicitud.entidad.empresa.toUpperCase() : null;
+      solicitud.entidad.serviciosPrestados = solicitud.entidad.serviciosPrestados ? solicitud.entidad.serviciosPrestados.toUpperCase() : null;
 
       if (this.foto) solicitud.entidad.foto = this.foto;
       else solicitud.entidad.foto = null;

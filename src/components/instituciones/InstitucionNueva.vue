@@ -424,7 +424,7 @@ export default {
                 institucion.nombre = institucion.nombre.toUpperCase();
                 institucion.cue = institucion.cue.toUpperCase();
                 if (institucion.domicilio.localidad.id) institucion.domicilio.localidad = institucion.domicilio.localidad.id;
-                institucion.domicilio.direccion = institucion.domicilio.direccion.toUpperCase();
+                institucion.domicilio.direccion = institucion.domicilio.direccion ? institucion.domicilio.direccion.toUpperCase() : null;
 
                 institucion.titulos.forEach(t => {
                     t.incumbencias = t.incumbencias.map(i => i.id);
