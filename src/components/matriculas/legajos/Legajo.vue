@@ -894,7 +894,7 @@ export default {
     guardarComitente: function() {
       if (this.$refs.form_comitente.validate()) {
         this.nuevo_comitente.persona.nombre = this.nuevo_comitente.persona.nombre.toUpperCase();
-        this.nuevo_comitente.persona.apellido = this.nuevo_comitente.persona.apellido.toUpperCase();
+        this.nuevo_comitente.persona.apellido = this.nuevo_comitente.persona.apellido ? this.nuevo_comitente.persona.apellido.toUpperCase() : null;
         
         if (this.comitente_edit != null) {
           Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
