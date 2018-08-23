@@ -379,7 +379,7 @@ export default {
         'jsp-format': 'PDF',
         'jsp-output-file': `Legajo N° ${legajo.numero_legajo} - ${Date.now()}`,
         'jsp-only-gen': false,
-        'legajo_id': legajo.id
+        'legajo_id': legajo
       });
     },
 
