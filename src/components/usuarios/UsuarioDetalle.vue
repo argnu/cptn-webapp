@@ -78,7 +78,7 @@
                         v-model="usuario.delegaciones"
                         :items="opciones_delegacion"
                         :rules="[rules.required]"
-                        :readonly="!edit || !user.admin"
+                        :readonly="!edit || !$can('update', 'Usuario')"
                     ></v-select>                    
             </v-flex>
 
