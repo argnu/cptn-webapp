@@ -32,6 +32,8 @@ import BuscadorLegajo from '@/components/herramientas/BuscadorLegajo'
 import Arqueo from '@/components/herramientas/Arqueo'
 import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
+import SolicitudSuspensionLista from '@/components/listados/SolicitudSuspensionLista'
+
 Vue.use(Router)
 
 export default new Router({
@@ -205,6 +207,12 @@ export default new Router({
           path: '/configuracion',
           name: 'SistemaConfiguracion',
           component: SistemaConfiguracion
+        },
+
+        {
+          path: '/listados/solicitudes-suspension',
+          name: 'SolicitudSuspensionLista',
+          component: SolicitudSuspensionLista
         }
       ]
     },

@@ -17,6 +17,7 @@
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.estado.valor }}</td>
                 <td>{{ props.item.documento.tipo.valor }} N° {{ props.item.documento.numero }}</td>
+                <td>{{ props.item.documento.fecha | fecha }}</td>
               </tr>
             </template>
           </v-data-table>
@@ -36,7 +37,8 @@ export default {
     headers: [
         Header('Fecha', 'fecha'),
         Header('Estado', 'estado'),
-        Header('Documento', 'tipo_doc')
+        Header('Documento', 'tipo_doc'),
+        Header('Fecha Doc.', 'fecha_doc'),
     ],
 
     data() {

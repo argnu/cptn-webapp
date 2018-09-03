@@ -64,6 +64,20 @@
           <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
+      
+      <v-divider></v-divider>
+
+      <v-list-group
+        prepend-icon="list"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Listados</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/listados/solicitudes-suspension')">
+          <v-list-tile-sub-title>Solicitudes de Suspensión</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
 
       <v-divider></v-divider>
 
