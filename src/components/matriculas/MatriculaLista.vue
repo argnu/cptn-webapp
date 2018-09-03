@@ -117,7 +117,7 @@
                   Guardar
                   <v-icon dark right>check_circle</v-icon>
                 </v-btn>
-                <v-btn class="right red white--text" @click.native="submit_suspension = false">
+                <v-btn class="right red white--text" @click.native="show_suspension = false">
                   Cancelar
                   <v-icon dark right>block</v-icon>
                 </v-btn>
