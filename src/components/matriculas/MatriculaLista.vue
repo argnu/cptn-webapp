@@ -19,40 +19,40 @@
                   v-model="cambio_estado.estado"
                   item-text="valor"
                   item-value="id"
+                  :rules="[rules.required]"
                 >
                 </v-select>
               </v-flex>
-            </v-layout>
 
-            <v-layout row class="mt-4">
               <v-flex xs3 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
                   :items="select_items.t_documento"
-                  v-model="cambio_estado.documento.tipo"
                   item-text="valor"
                   item-value="id"
+                  @change="chgTipoDoc"
                 >
                 </v-select>
               </v-flex>
 
               <v-flex xs4 class="mx-4">
-                <input-fecha
-                  v-model="cambio_estado.documento.fecha"
-                  label="Fecha de Resolución/Acta"
-                  :rules="[rules.required, rules.fecha]"
-
+                <v-select
+                    autocomplete
+                    clearable
+                    :items="documentos"
+                    item-value="id"
+                    item-text="numero"
+                    label="Documento"
+                    v-model="cambio_estado.documento"
+                    :rules="[rules.required]"
                 >
-                </input-fecha>
-              </v-flex>
-
-              <v-flex xs3 class="mx-4">
-                <input-numero
-                  v-model="cambio_estado.documento.numero"
-                  label="N° Resolución/Acta"
-                  :rules="[rules.required, rules.integer]"
-                >
-                </input-numero>
+                    <template slot="item" slot-scope="data">
+                        <v-list-tile-content>
+                        <v-list-tile-title>N°: {{ data.item.numero }}</v-list-tile-title>
+                        <v-list-tile-sub-title>Fecha: {{ data.item.fecha | fecha }}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </template>
+                </v-select>
               </v-flex>
             </v-layout>
 
@@ -342,13 +342,8 @@ import MixinValidator from '@/components/mixins/MixinValidator'
 
 class CambioEstado {
   constructor() {
-    this.estado = '';
-    this.matricula = '';
-    this.documento = {
-      tipo: '',
-      numero: '',
-      fecha: ''
-    }
+    this.estado = null;
+    this.documento = null;
   }
 }
 
@@ -424,6 +419,7 @@ export default {
       show_cambio: false,
       submit_cambio: false,
       cambio_estado: new CambioEstado(),
+      documentos: [],
 
       show_suspension: false,
       submit_suspension: false,
@@ -511,7 +507,7 @@ export default {
       if (this.$refs.form_cambioestado.validate()) {
         this.submit_cambio = true;
 
-        api.post('/matriculas/cambiar-estado', this.cambio_estado)
+        api.post(`/matriculas/${this.cambio_estado.matricula}/cambiar-estado`, utils.clone(this.cambio_estado))
         .then(r => {
           this.submit_cambio = false;
           this.updateMatriculas();
@@ -624,8 +620,14 @@ export default {
           console.error(e)
         });
       }
-    }
+    },
 
+    chgTipoDoc: function(tipo) {
+      if (tipo) { 
+        api.get(`/documentos?tipo=${tipo}&sort=-fecha`)
+        .then(r => this.documentos = r.data.resultados);
+      }
+    }
   }
 
 }

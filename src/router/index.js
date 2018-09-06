@@ -34,6 +34,9 @@ import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 import SolicitudSuspensionLista from '@/components/listados/SolicitudSuspensionLista'
 
+import DocumentoLista from '@/components/documentos/DocumentoLista'
+import DocumentoNuevo from '@/components/documentos/DocumentoNuevo'
+
 Vue.use(Router)
 
 export default new Router({
@@ -213,6 +216,23 @@ export default new Router({
           path: '/listados/solicitudes-suspension',
           name: 'SolicitudSuspensionLista',
           component: SolicitudSuspensionLista
+        },
+
+        {
+          path: '/documentos/lista',
+          name: 'DocumentoLista',
+          component: DocumentoLista
+        },
+        {
+          path: '/documentos/nuevo',
+          name: 'DocumentoNuevo',
+          component: DocumentoNuevo
+        },
+        {
+          path: '/documentos/:id/modificar',
+          name: 'DocumentoModificar',
+          component: DocumentoNuevo,
+          props: true
         }
       ]
     },

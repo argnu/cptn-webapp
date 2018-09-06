@@ -1,6 +1,6 @@
 <template>
 <v-container class="grey lighten-3">
-  <v-dialog v-model="show_aprobar" persistent max-width="70%">
+  <v-dialog v-model="show_aprobar" persistent max-width="40%">
     <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Aprobar Solicitud</v-toolbar-title>
     </v-toolbar>
@@ -9,34 +9,34 @@
         <v-container>
           <v-form lazy-validation ref="form_aprobar">
             <v-layout row class="mt-4">
-              <v-flex xs3 class="mx-4">
+              <v-flex xs5 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
                   :items="tipos_doc"
-                  v-model="documento.tipo"
                   item-text="valor"
                   item-value="id"
-                  :rules="[rules.required]"
+                  @change="chgTipoDoc"
                 ></v-select>
               </v-flex>
 
-              <v-flex xs4 class="mx-4">
-                <input-fecha
-                  v-model="documento.fecha"
-                  label="Fecha de Resolución/Acta"
-                  :rules="[rules.required, rules.fecha]"
-
+              <v-flex xs5 class="mx-4">
+                <v-select
+                    autocomplete
+                    clearable
+                    :items="documentos"
+                    item-value="id"
+                    item-text="numero"
+                    label="Documento"
+                    v-model="documento"
+                    :rules="[rules.required]"
                 >
-                </input-fecha>
-              </v-flex>
-
-              <v-flex xs3 class="mx-4">
-                <input-numero
-                  v-model="documento.numero"
-                  label="N° Resolución/Acta"
-                  :rules="[rules.required, rules.integer]"
-                >
-                </input-numero>
+                    <template slot="item" slot-scope="data">
+                        <v-list-tile-content>
+                        <v-list-tile-title>N°: {{ data.item.numero }}</v-list-tile-title>
+                        <v-list-tile-sub-title>Fecha: {{ data.item.fecha | fecha }}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </template>
+                </v-select>
               </v-flex>
             </v-layout>
 
@@ -217,14 +217,6 @@ import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
 
-class Documento {
-  constructor() {
-    this.tipo = null;
-    this.numero = null;
-    this.fecha = null;
-  }
-}
- 
 
 export default {
     name: 'SolicitudSuspensionLista',
@@ -276,7 +268,8 @@ export default {
             tipos_doc: [],
             show_aprobar: false,
             submit_aprobar: false,
-            documento: new Documento()
+            documento: null,
+            documentos: []
         }
     },
 
@@ -415,11 +408,11 @@ export default {
         aprobar: function() {
             this.submit_aprobar = true;
             if (this.$refs.form_aprobar.validate()) {
-                api.post(`/solicitudes-suspension/${this.selected.id}/aprobar`, utils.clone(this.documento))
+                api.post(`/solicitudes-suspension/${this.selected.id}/aprobar`, { documento: this.documento })
                 .then(r => {
                     this.submit_aprobar = false;
                     this.show_aprobar = false;
-                    this.documento = new Documento();
+                    this.documento = null;
                     this.update();
                     this.global_state.snackbar.msg = 'Solicitud de suspensión aprobada exitosamente!';
                     this.global_state.snackbar.color = 'success';
@@ -442,7 +435,14 @@ export default {
                     console.error(e)
                 });            
             }
-        }
+        },
+
+        chgTipoDoc: function(tipo) {
+            if (tipo) { 
+                api.get(`/documentos?tipo=${tipo}&sort=-fecha`)
+                .then(r => this.documentos = r.data.resultados);
+            }
+        }         
     }
 
 }

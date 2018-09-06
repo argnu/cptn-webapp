@@ -68,6 +68,23 @@
       <v-divider></v-divider>
 
       <v-list-group
+        prepend-icon="description"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Documentos</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/documentos/nuevo')">
+          <v-list-tile-sub-title>Agregar Nuevo</v-list-tile-sub-title>
+        </v-list-tile>
+        <v-list-tile @click="goto('/documentos/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+      
+      <v-divider></v-divider>
+
+      <v-list-group
         prepend-icon="list"
       >
         <v-list-tile slot="activator">
