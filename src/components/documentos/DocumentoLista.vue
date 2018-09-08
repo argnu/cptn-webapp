@@ -229,11 +229,15 @@ export default {
                 this.global_state.snackbar.show = true;
             })
             .catch(e => {
-                let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                this.global_state.snackbar.msg = msg;
-                this.global_state.snackbar.color = 'error';
-                this.global_state.snackbar.show = true;
-                console.error(e)
+                if (e.response.status == 409)
+                    alert('No es posible eliminar el documento. Existen elementos relacionados al mismo');
+                else {
+                  let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+                  this.global_state.snackbar.msg = msg;
+                  this.global_state.snackbar.color = 'error';
+                  this.global_state.snackbar.show = true;
+                  console.error(e)
+                }
             })
         }
     },
