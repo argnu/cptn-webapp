@@ -137,13 +137,13 @@
                     <td>{{ props.item.matricula.numero }}</td>
                     <td>{{ props.item.matricula | detalle_matricula }}</td>
                     <td>
-                        <v-menu>
+                        <v-menu v-if="props.item.estado.id == 1">
                             <v-btn icon slot="activator">
                             <v-icon class="blue--text">more_vert</v-icon>
                             </v-btn>
 
                             <v-list>
-                                <v-list-tile v-if="props.item.estado.id == 1">
+                                <v-list-tile>
                                     <v-list-tile-title>
                                     <v-menu open-on-hover top offset-x left>
                                         <div slot="activator">
