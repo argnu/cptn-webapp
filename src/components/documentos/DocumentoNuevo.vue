@@ -32,6 +32,7 @@
                 <input-numero
                     label="N°"
                     v-model="documento.numero"
+                    maxlength="9"
                     :rules="[rules.required, rules.number]"
                 ></input-numero>
             </v-flex>
