@@ -1,3 +1,5 @@
+import { Ability } from '@casl/ability'
+
 export default {
   state: {
     snackbar: {
@@ -6,11 +8,13 @@ export default {
     user: null,
     delegacion: null,
     opciones: null,
-    cursor_wait: false 
+    cursor_wait: false,
+    ability: null
   },
 
   setUser(user) {
     this.state.user = user;
+    this.state.ability = new Ability(user.rules);
   },
 
   setDelegacion(delegacion) {

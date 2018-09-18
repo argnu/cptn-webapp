@@ -72,34 +72,64 @@ export default new Router({
           name: 'DelegacionSeleccion',
           component: DelegacionSeleccion,
         },
+
         {
           path: '/solicitudes/profesionales/nueva',
           name: 'NuevaSolicitudProfesional',
           component: NuevaSolicitudProfesional,
-          props: (route) => ({ dni: route.query.dni ? route.query.dni : null })
+          props: (route) => ({ dni: route.query.dni ? route.query.dni : null }),
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Solicitud')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
+
         {
           path: '/solicitudes/profesionales/modificar/:id',
           name: 'ModificarSolicitudProfesional',
           component: NuevaSolicitudProfesional,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Solicitud') ) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
+
         {
           path: '/solicitudes/lista',
           name: 'SolicitudLista',
-          component: SolicitudLista
+          component: SolicitudLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Solicitud')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
+
         {
           path: '/solicitudes/empresas/nueva',
           name: 'NuevaSolicitudEmpresa',
-          component: NuevaSolicitudEmpresa
+          component: NuevaSolicitudEmpresa,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Solicitud')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
         {
           path: '/solicitudes/empresas/modificar/:id',
           name: 'ModificarSolicitudEmpresa',
           component: NuevaSolicitudEmpresa,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Solicitud')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
+
         {
           path: '/matriculas',
           component: MatriculaMain,
@@ -108,39 +138,61 @@ export default new Router({
               path: 'lista',
               name: 'MatriculaLista',
               component: MatriculaLista,
+              beforeEnter: (to, from, next) => {
+                if (Store.state.ability.can('read', 'Matricula')) next();
+                alert('No tiene permisos para ingresar!')
+                next(false);
+              }
             },
+
             {
               path: ':id_matricula',
               component: Matricula,
-              props: true
+              props: true,
+              beforeEnter: (to, from, next) => {
+                if (Store.state.ability.can('read', 'Matricula')) next();
+                alert('No tiene permisos para ingresar!')
+                next(false);
+              }
             },
-            {
-              path: ':id/deudas',
-              name: 'DeudasPendientes',
-              component: DeudasPendientes,
-              props: true
-            },
+
             {
               path: ':id_matricula/nuevo-legajo',
               name: 'NuevoLegajo',
               component: Legajo,
-              props: true
+              props: true,
+              beforeEnter: (to, from, next) => {
+                if (Store.state.ability.can('update', 'Matricula') && Store.state.ability.can('create', 'Legajo')) next();
+                alert('No tiene permisos para ingresar!')
+                next(false);
+              }
             },
           ]
         },
+
         {
           path: '/profesionales/:id/modificar',
           name: 'ProfesionalModificar',
           component: ProfesionalModificar,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Profesional')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         },
 
         {
           path: '/legajos/:id_legajo',
           name: 'Legajo',
           component: Legajo,
-          props: true
-        },        
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Legajo')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }             
+        },
 
         {
           path: '/legajos/:id_legajo/modificar',
@@ -148,42 +200,82 @@ export default new Router({
           component: Legajo,
           props: (route) => {
             return { id_legajo: route.params.id_legajo, edit: true }
-          }
+          },
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Legajo')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }             
         },
 
         {
           path: '/instituciones/lista',
           name: 'InstitucionLista',
-          component: InstitucionLista
+          component: InstitucionLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Institucion')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }             
         },
+
         {
           path: '/instituciones/nueva',
           name: 'InstitucionNueva',
-          component: InstitucionNueva
+          component: InstitucionNueva,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Institucion')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }             
         },
+
         {
           path: '/instituciones/:id',
           name: 'InstitucionDetalle',
           component: InstitucionDetalle,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Institucion')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }             
         },
+
         {
           path: '/instituciones/modificar/:id',
           name: 'InstitucionEdit',
           component: InstitucionNueva,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Institucion')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
 
         {
           path: '/usuarios/lista',
           name: 'UsuarioLista',
-          component: UsuarioLista
+          component: UsuarioLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Usuario')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
+
         {
           path: '/usuarios/nuevo',
           name: 'UsuarioNuevo',
-          component: UsuarioNuevo
+          component: UsuarioNuevo,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Usuario')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
+
         {
           path: '/usuarios/:id',
           name: 'UsuarioDetalle',
@@ -198,41 +290,79 @@ export default new Router({
         {
           path: '/herramientas/busqueda-legajo',
           name: 'BuscadorLegajo',
-          component: BuscadorLegajo
+          component: BuscadorLegajo,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Legajo')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
+
         {
           path: '/herramientas/arqueo',
           name: 'Arqueo',
-          component: Arqueo
+          component: Arqueo,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Comprobante')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
 
         {
           path: '/configuracion',
           name: 'SistemaConfiguracion',
-          component: SistemaConfiguracion
+          component: SistemaConfiguracion,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('manage', 'ValoresGlobales')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
 
         {
           path: '/listados/solicitudes-suspension',
           name: 'SolicitudSuspensionLista',
-          component: SolicitudSuspensionLista
+          component: SolicitudSuspensionLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'SolicitudSuspension')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
 
         {
           path: '/documentos/lista',
           name: 'DocumentoLista',
-          component: DocumentoLista
+          component: DocumentoLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Documento')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
+
         {
           path: '/documentos/nuevo',
           name: 'DocumentoNuevo',
-          component: DocumentoNuevo
+          component: DocumentoNuevo,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Documento')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         },
+
         {
           path: '/documentos/:id/modificar',
           name: 'DocumentoModificar',
           component: DocumentoNuevo,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('udpate', 'Documento')) next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
         }
       ]
     },
