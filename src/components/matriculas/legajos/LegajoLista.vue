@@ -149,11 +149,11 @@
 
               <td>
                 <v-menu>
-                  <v-btn icon slot="activator">
+                  <v-btn icon slot="activator" :disabled="!$can('update', 'Legajo')">
                     <v-icon class="blue--text">more_vert</v-icon>
                   </v-btn>
                   
-                  <v-list>
+                  <v-list v-if="$can('update', 'Legajo')">
                     <v-list-tile @click="imprimir(props.item.id)" title="Imprimir">
                       <v-icon class="text--darken-2 mr-2">print</v-icon>
                       <v-list-tile-title>Imprimir</v-list-tile-title>

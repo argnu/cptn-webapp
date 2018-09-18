@@ -23,13 +23,13 @@
           <v-list-tile-title>Solicitudes</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/solicitudes/profesionales/nueva')">
+        <v-list-tile v-if="$can('create', 'Solicitud')" @click="goto('/solicitudes/profesionales/nueva')">
           <v-list-tile-sub-title>Nuevo Profesional</v-list-tile-sub-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/solicitudes/empresas/nueva')">
+        <v-list-tile v-if="$can('create', 'Solicitud')" @click="goto('/solicitudes/empresas/nueva')">
           <v-list-tile-sub-title>Nueva Empresa</v-list-tile-sub-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/solicitudes/lista')">
+        <v-list-tile v-if="$can('read', 'Solicitud')" @click="goto('/solicitudes/lista')">
           <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
@@ -37,6 +37,7 @@
       <v-divider></v-divider>
 
       <v-list-group
+        v-if="$can('read', 'Matricula')"
         prepend-icon="assignment"
       >
         <v-list-tile slot="activator">
@@ -57,10 +58,10 @@
           <v-list-tile-title>Instituciones</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/instituciones/nueva')">
+        <v-list-tile v-if="$can('create', 'Institucion')" @click="goto('/instituciones/nueva')">
           <v-list-tile-sub-title>Agregar Nueva</v-list-tile-sub-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/instituciones/lista')">
+        <v-list-tile v-if="$can('read', 'Institucion')" @click="goto('/instituciones/lista')">
           <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
@@ -74,10 +75,10 @@
           <v-list-tile-title>Documentos</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/documentos/nuevo')">
+        <v-list-tile v-if="$can('create', 'Documento')" @click="goto('/documentos/nuevo')">
           <v-list-tile-sub-title>Agregar Nuevo</v-list-tile-sub-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/documentos/lista')">
+        <v-list-tile v-if="$can('read', 'Documento')" @click="goto('/documentos/lista')">
           <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
@@ -91,7 +92,7 @@
           <v-list-tile-title>Listados</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/listados/solicitudes-suspension')">
+        <v-list-tile v-if="$can('read', 'SolicitudSuspension')" @click="goto('/listados/solicitudes-suspension')">
           <v-list-tile-sub-title>Solicitudes de Suspensión</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
@@ -105,11 +106,11 @@
           <v-list-tile-title>Herramientas</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/herramientas/busqueda-legajo')">
+        <v-list-tile v-if="$can('read', 'Legajo')" @click="goto('/herramientas/busqueda-legajo')">
           <v-list-tile-sub-title>Búsqueda de Legajos</v-list-tile-sub-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/herramientas/arqueo')">
+        <v-list-tile v-if="$can('read', 'Comprobante')" @click="goto('/herramientas/arqueo')">
           <v-list-tile-sub-title>Arqueo</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
@@ -124,10 +125,10 @@
           <v-list-tile-title>Usuarios</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-tile @click="goto('/usuarios/nuevo')">
+        <v-list-tile v-if="$can('create', 'Usuario')" @click="goto('/usuarios/nuevo')">
           <v-list-tile-sub-title>Agregar Nuevo</v-list-tile-sub-title>
         </v-list-tile>
-        <v-list-tile @click="goto('/usuarios/lista')">
+        <v-list-tile v-if="$can('read', 'Usuario')" @click="goto('/usuarios/lista')">
           <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>

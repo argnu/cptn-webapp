@@ -35,6 +35,7 @@
                 <v-card class="elevation-0">
                     <div>
                         <v-btn
+                            v-if="$can('update', 'Institucion') && $can('create', 'InstitucionTitulo')"
                             absolute dark fab top right small
                             color="green"
                             @click="show_formtitulo = true"
@@ -52,11 +53,15 @@
                         >
                             <template slot="items" slot-scope="props">
                                 <td class="justify-center layout px-0">
-                                    <v-btn small icon class="mx-0" @click="borrarTitulo(props.item.id)">
+                                    <v-btn 
+                                        v-if="$can('update', 'Institucion') && $can('delete', 'InstitucionTitulo')"
+                                        small icon class="mx-0" @click="borrarTitulo(props.item.id)">
                                         <v-icon color="red">delete</v-icon>
                                     </v-btn>
 
-                                    <v-btn small icon class="mx-4" @click="editTitulo(props.item)">
+                                    <v-btn 
+                                        v-if="$can('update', 'Institucion') && $can('update', 'InstitucionTitulo')"
+                                        small icon class="mx-4" @click="editTitulo(props.item)">
                                         <v-icon color="deep-purple">edit</v-icon>
                                     </v-btn>
                                 </td>

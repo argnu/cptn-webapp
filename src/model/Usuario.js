@@ -7,5 +7,6 @@ export class Usuario {
         this.password = '';
         this.password_re = '';
         this.delegaciones = [];
+        this.rol = '';
     }
 }

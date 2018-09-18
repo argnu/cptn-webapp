@@ -13,6 +13,7 @@
         <v-layout row>
             <v-flex xs12 md3 class="mx-5 mb-3">
                 <input-texto
+                    tabindex="1"
                     label="Usuario"
                     type="letras"
                     uppercase
@@ -21,6 +22,7 @@
                 ></input-texto>
 
                 <v-text-field
+                    tabindex="4"
                     label="Contraseña"
                     type="password"
                     v-model="usuario.password"
@@ -30,6 +32,7 @@
 
             <v-flex xs12 md3 class="mx-5 mb-3">
                 <input-texto
+                    tabindex="2"
                     type="letras"
                     label="Nombre"
                     uppercase
@@ -38,6 +41,7 @@
                 ></input-texto>
 
                 <v-text-field
+                    tabindex="5"
                     label="Repetir Contraseña"
                     type="password"
                     v-model="usuario.password_re"
@@ -50,6 +54,7 @@
 
             <v-flex xs12 md3 class="mx-5 mb-3">
                 <input-texto
+                    tabindex="3"
                     label="Apellido"
                     type="letras"
                     uppercase
@@ -58,6 +63,7 @@
                 ></input-texto>
 
                 <v-text-field
+                    tabindex="6"
                     label="Email"
                     v-model="usuario.email"
                     :rules="[rules.email]"
@@ -68,11 +74,10 @@
 
         <br>
 
-        <span class="subheading blue--text text--darken-4 ml-5 mb-4"><b>Delegaciones</b></span>
-
         <v-layout row>
-            <v-flex xs12 md7 class="mx-5">
+            <v-flex xs12 md3 class="mx-5">
                 <v-select
+                    tabindex="7"
                     label="Delegaciones"
                     autocomplete
                     multiple
@@ -82,6 +87,17 @@
                     item-text="nombre"
                     :rules="[rules.required]"
                     v-model="usuario.delegaciones"
+                ></v-select>
+            </v-flex>
+
+            <v-flex xs12 md3 class="mx-5">
+                <v-select
+                    tabindex="8"
+                    v-if="$can('manage', 'Usuario')"
+                    label="Rol"
+                    :items="$options.roles"
+                    :rules="[rules.required]"
+                    v-model="usuario.rol"
                 ></v-select>
             </v-flex>
         </v-layout>
@@ -127,6 +143,12 @@ export default {
     components: {
         InputTexto
     },
+
+    roles: [
+        { text: 'Administrador', value: 'admin' },
+        { text: 'Usuario Sistema CPTN', value: 'usuario_cptn' },
+        { text: 'Moderador Títulos', value: 'moderador_titulos' }
+    ],
 
     headers: [
         Header('Borrar', 'borrar'),

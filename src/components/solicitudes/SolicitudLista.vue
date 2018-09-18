@@ -209,11 +209,11 @@
         <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
-            <v-btn icon slot="activator">
+            <v-btn icon slot="activator" :disabled="!$can('update', 'Solicitud')">
               <v-icon class="blue--text">more_vert</v-icon>
             </v-btn>            
 
-            <v-list>
+            <v-list v-if="$can('update', 'Solicitud')">
               <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="selectSolicitud(props.item)">
                 <v-list-tile-title>
                   <v-icon class="green--text text--darken-2">check_circle</v-icon>

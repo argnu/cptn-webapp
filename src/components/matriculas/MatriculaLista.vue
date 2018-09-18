@@ -258,11 +258,11 @@
         <td>{{ props.item.estado.valor }}</td>
         <td>
           <v-menu>
-            <v-btn icon slot="activator">
+            <v-btn icon slot="activator" :disabled="!$can('update', 'Matricula')">
               <v-icon class="blue--text">more_vert</v-icon>
             </v-btn>
 
-            <v-list>
+            <v-list v-if="$can('update', 'Matricula')">
               <v-list-tile v-if="props.item.estado.id == 13">
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>

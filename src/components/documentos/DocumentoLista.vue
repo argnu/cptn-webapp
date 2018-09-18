@@ -61,6 +61,7 @@
 <v-card class="mt-5 elevation-0">
     <v-card-text>
         <v-btn
+            v-if="$can('create', 'Documento')"
             absolute dark fab top right
             color="green"
             @click="$router.push('/documentos/nuevo')"
@@ -82,11 +83,15 @@
 
             <template slot="items" slot-scope="props">
                 <td class="justify-center layout px-0">
-                    <v-btn small icon class="mx-0"  @click="eliminar(props.item.id)" title="Eliminar">
+                    <v-btn 
+                      v-if="$can('delete', 'Documento')"
+                      small icon class="mx-0"  @click="eliminar(props.item.id)" title="Eliminar">
                         <v-icon color="red">delete</v-icon>
                     </v-btn>
 
-                    <v-btn small icon class="mx-4" @click="editar(props.item.id)" title="Modificar">
+                    <v-btn 
+                      v-if="$can('update', 'Documento')"
+                      small icon class="mx-4" @click="editar(props.item.id)" title="Modificar">
                         <v-icon color="deep-purple">edit</v-icon>
                     </v-btn>
                 </td>
