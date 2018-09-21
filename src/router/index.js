@@ -61,9 +61,9 @@ export default new Router({
           Store.setUser(user);
           Store.setDelegacion(delegacion);
           axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;
-          next();
+          return next();
         }
-        else next();
+        else return next();
       },
 
       children: [
@@ -79,7 +79,7 @@ export default new Router({
           component: NuevaSolicitudProfesional,
           props: (route) => ({ dni: route.query.dni ? route.query.dni : null }),
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('create', 'Solicitud')) next();
+            if (Store.state.ability.can('create', 'Solicitud')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -91,7 +91,7 @@ export default new Router({
           component: NuevaSolicitudProfesional,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('update', 'Solicitud') ) next();
+            if (Store.state.ability.can('update', 'Solicitud') ) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -102,7 +102,7 @@ export default new Router({
           name: 'SolicitudLista',
           component: SolicitudLista,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Solicitud')) next();
+            if (Store.state.ability.can('read', 'Solicitud')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -113,7 +113,7 @@ export default new Router({
           name: 'NuevaSolicitudEmpresa',
           component: NuevaSolicitudEmpresa,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('create', 'Solicitud')) next();
+            if (Store.state.ability.can('create', 'Solicitud')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -124,7 +124,7 @@ export default new Router({
           component: NuevaSolicitudEmpresa,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('update', 'Solicitud')) next();
+            if (Store.state.ability.can('update', 'Solicitud')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -139,7 +139,7 @@ export default new Router({
               name: 'MatriculaLista',
               component: MatriculaLista,
               beforeEnter: (to, from, next) => {
-                if (Store.state.ability.can('read', 'Matricula')) next();
+                if (Store.state.ability.can('read', 'Matricula')) return next();
                 alert('No tiene permisos para ingresar!')
                 next(false);
               }
@@ -150,7 +150,7 @@ export default new Router({
               component: Matricula,
               props: true,
               beforeEnter: (to, from, next) => {
-                if (Store.state.ability.can('read', 'Matricula')) next();
+                if (Store.state.ability.can('read', 'Matricula')) return next();
                 alert('No tiene permisos para ingresar!')
                 next(false);
               }
@@ -162,7 +162,7 @@ export default new Router({
               component: Legajo,
               props: true,
               beforeEnter: (to, from, next) => {
-                if (Store.state.ability.can('update', 'Matricula') && Store.state.ability.can('create', 'Legajo')) next();
+                if (Store.state.ability.can('update', 'Matricula') && Store.state.ability.can('create', 'Legajo')) return next();
                 alert('No tiene permisos para ingresar!')
                 next(false);
               }
@@ -176,7 +176,7 @@ export default new Router({
           component: ProfesionalModificar,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('update', 'Profesional')) next();
+            if (Store.state.ability.can('update', 'Profesional')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
@@ -188,7 +188,7 @@ export default new Router({
           component: Legajo,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Legajo')) next();
+            if (Store.state.ability.can('read', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }             
@@ -202,7 +202,7 @@ export default new Router({
             return { id_legajo: route.params.id_legajo, edit: true }
           },
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('update', 'Legajo')) next();
+            if (Store.state.ability.can('update', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }             
@@ -213,7 +213,7 @@ export default new Router({
           name: 'InstitucionLista',
           component: InstitucionLista,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Institucion')) next();
+            if (Store.state.ability.can('read', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }             
@@ -224,7 +224,7 @@ export default new Router({
           name: 'InstitucionNueva',
           component: InstitucionNueva,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('create', 'Institucion')) next();
+            if (Store.state.ability.can('create', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }             
@@ -236,7 +236,7 @@ export default new Router({
           component: InstitucionDetalle,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Institucion')) next();
+            if (Store.state.ability.can('read', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }             
@@ -248,7 +248,7 @@ export default new Router({
           component: InstitucionNueva,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('update', 'Institucion')) next();
+            if (Store.state.ability.can('update', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -259,7 +259,7 @@ export default new Router({
           name: 'UsuarioLista',
           component: UsuarioLista,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Usuario')) next();
+            if (Store.state.ability.can('read', 'Usuario')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -270,7 +270,7 @@ export default new Router({
           name: 'UsuarioNuevo',
           component: UsuarioNuevo,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('create', 'Usuario')) next();
+            if (Store.state.ability.can('create', 'Usuario')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -282,7 +282,7 @@ export default new Router({
           component: UsuarioDetalle,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (to.params.id == Store.state.user.id || this.$can('manage', 'Usuario')) next();
+            if (to.params.id == Store.state.user.id || this.$can('manage', 'Usuario')) return next();
             else next(false);
           },
         },
@@ -292,7 +292,7 @@ export default new Router({
           name: 'BuscadorLegajo',
           component: BuscadorLegajo,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Legajo')) next();
+            if (Store.state.ability.can('read', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -303,7 +303,7 @@ export default new Router({
           name: 'Arqueo',
           component: Arqueo,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Comprobante')) next();
+            if (Store.state.ability.can('read', 'Comprobante')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -314,7 +314,7 @@ export default new Router({
           name: 'SistemaConfiguracion',
           component: SistemaConfiguracion,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('manage', 'ValoresGlobales')) next();
+            if (Store.state.ability.can('manage', 'ValoresGlobales')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -325,7 +325,7 @@ export default new Router({
           name: 'SolicitudSuspensionLista',
           component: SolicitudSuspensionLista,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'SolicitudSuspension')) next();
+            if (Store.state.ability.can('read', 'SolicitudSuspension')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -336,7 +336,7 @@ export default new Router({
           name: 'DocumentoLista',
           component: DocumentoLista,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('read', 'Documento')) next();
+            if (Store.state.ability.can('read', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -347,7 +347,7 @@ export default new Router({
           name: 'DocumentoNuevo',
           component: DocumentoNuevo,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('create', 'Documento')) next();
+            if (Store.state.ability.can('create', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
@@ -359,7 +359,7 @@ export default new Router({
           component: DocumentoNuevo,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('udpate', 'Documento')) next();
+            if (Store.state.ability.can('udpate', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
