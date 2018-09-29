@@ -99,6 +99,18 @@
                               label="Fecha de Constitución"
                           >
                           </input-fecha>
+
+                          <v-select
+                              label="Incumbencias"
+                              max-height="400"
+                              hint="Seleccione las incumbencias"
+                              persistent-hint
+                              multiple                              
+                              :items="opciones.incumbencia"
+                              item-text="valor"
+                              item-value="id"
+                              v-model="solicitud.entidad.incumbencias"
+                          ></v-select>                          
                         </v-flex>
 
                         <v-flex xs6 class="ma-4">
@@ -119,14 +131,15 @@
 
                           <v-select
                             autocomplete
+                            single-line
+                            bottom
                             tabindex="10"
                             item-text="valor"
                             item-value="id"
                             return-object
                             :items="opciones.sociedad"
                             v-model="solicitud.entidad.tipoSociedad"
-                            label="Tipo de Sociedad" single-line bottom
-                            :rules="[rules.required]"
+                            label="Tipo de Sociedad"
                           >
                           </v-select>
                         </v-flex>
@@ -176,7 +189,7 @@
                         tabindex="21"
                         :opciones="opciones.contacto"
                         v-model="solicitud.entidad.contactos"
-                      ></entidad-contactos>                      
+                      ></entidad-contactos>
                     </v-card-text>
                   </v-card>
                   <v-btn color="primary" darken-1 @click.native="nextStep" class="right"
@@ -197,7 +210,7 @@
                     tabindex="27"
                     :opciones="opciones.condicionafip"
                     v-model="solicitud.entidad.condiciones_afip"
-                  ></entidad-condicion-afip>                  
+                  ></entidad-condicion-afip>
                 </v-card-text>
               </v-card>
               <v-btn color="primary" @click.native="nextStep" class="right" tabindex="30"
@@ -211,7 +224,7 @@
                   :complete="valid_representante && step > 6"
                   :rules="[() => step <= 6 || valid_representante]"
                 >
-                  Representante Técnico
+                  Representantes Técnicos
                 </v-stepper-step>
                 <v-stepper-content step="6">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
@@ -263,8 +276,8 @@
                               <template slot="items" slot-scope="props">
                                 <tr>
                                   <td class="justify-center layout px-0">
-                                    <v-btn icon small class="mx-0" @click="selectRepresentantePrimario(props.item)" title="Seleccionar">
-                                      <v-icon color="primary">check</v-icon>
+                                    <v-btn icon small class="mx-0" @click="addRepresentanteTecnico(props.item)">
+                                      <v-icon color="primary">playlist_add</v-icon>
                                     </v-btn>
                                   </td>                                  
                                   <td>{{ props.item.numeroMatricula }}</td>
@@ -278,34 +291,45 @@
                         </v-layout>
 
                         <br>
-                        <span class="ml-3"><b>Representante:</b></span>
+                        <template v-if="representantes_tecnicos.length > 0">
+                          <span class="ml-3"><b>Representantes Técnicos:</b></span>
 
-                        <v-layout row wrap>
-                          <v-flex xs12 class="mx-3">
-                            <v-data-table
-                                hide-actions
-                                :headers="$options.headers.matriculados"
-                                :items="representante"
-                                class="elevation-1"
-                                no-data-text="No se agregaron representates"
-                                no-results-text="No se agregaron representates"
-                                >
-                              <template slot="items" slot-scope="props">
-                                <tr>
-                                  <td>{{ props.item.numeroMatricula }}</td>
-                                  <td>{{ props.item.nombre }}</td>
-                                  <td>{{ props.item.apellido }}</td>
-                                  <td>{{ props.item.dni }}</td>
-                                  <!-- <td>
-                                    <v-btn icon small @click="borrarRepresentante(props.item.numeroMatricula)">
-                                      <v-icon>delete</v-icon>
-                                    </v-btn>
-                                  </td> -->
-                                </tr>
-                              </template>
-                            </v-data-table>
-                          </v-flex>
-                        </v-layout>
+                          <v-layout row wrap>
+                            <v-flex xs12 class="mx-3">
+                              <v-data-table
+                                  hide-actions
+                                  :headers="$options.headers.rep_tecnico"
+                                  :items="representantes_tecnicos"
+                                  class="elevation-1"
+                                  no-data-text="No se agregaron representates"
+                                  no-results-text="No se agregaron representates"
+                                  >
+                                <template slot="items" slot-scope="props">
+                                  <tr>
+                                    <td class="justify-center layout px-0">
+                                      <v-btn icon small class="mx-0" @click="borrarRepresentanteTecnico(props.item.matricula.id)">
+                                        <v-icon color="red">delete</v-icon>
+                                      </v-btn>
+                                    </td>                                    
+                                    <td>{{ props.item.matricula.numeroMatricula }}</td>
+                                    <td>{{ props.item.matricula.entidad.nombre }} {{ props.item.matricula.entidad.apellido }}</td>
+                                    <td>{{ props.item.matricula.entidad.dni }}</td>
+                                    <td>
+                                      <input-fecha
+                                        v-model="props.item.fechaInicio"
+                                      ></input-fecha>
+                                    </td>
+                                    <td>
+                                      <input-fecha
+                                        v-model="props.item.fechaFin"
+                                      ></input-fecha>
+                                    </td>
+                                  </tr>
+                                </template>
+                              </v-data-table>
+                            </v-flex>
+                          </v-layout>
+                        </template>
                     </v-card-text>
                   </v-card>
 
@@ -314,7 +338,7 @@
                 </v-stepper-content>
 
 
-                <!-- PASO 7: REPRESENTANTES SECUNDARIOS -->
+                <!-- PASO 7: REPRESENTANTES LEGALES -->
                 <v-stepper-step step="7" edit-icon="check" editable>
                   Representantes Legales
                 </v-stepper-step>
@@ -386,10 +410,10 @@
                                   <template slot="items" slot-scope="props">
                                     <tr>
                                       <td class="justify-center layout px-0">
-                                        <v-btn icon small class="mx-0" @click="addRepresentanteSecundario(props.item)">
+                                        <v-btn icon small class="mx-0" @click="addRepresentanteLegal(props.item)">
                                           <v-icon color="primary">playlist_add</v-icon>
                                         </v-btn>
-                                      </td>                                      
+                                      </td>
                                       <td>{{ props.item.numeroMatricula }}</td>
                                       <template v-if="props.item.entidad">
                                         <td>{{ props.item.entidad.nombre }}</td>
@@ -419,7 +443,7 @@
                             <v-data-table
                                 hide-actions
                                 :headers="$options.headers.matriculados"
-                                :items="representantes_legales"
+                                :items="solicitud.entidad.representantes_legales"
                                 class="elevation-1"
                                 no-data-text="No se agregaron representates"
                                 no-results-text="No se agregaron representates"
@@ -427,11 +451,11 @@
                               <template slot="items" slot-scope="props">
                                 <tr>
                                   <td class="justify-center layout px-0">
-                                    <v-btn icon small class="mx-0" @click="borrarRepresentante(props.item.numeroMatricula)">
+                                    <v-btn icon small class="mx-0" @click="borrarRepresentanteLegal(props.item.numeroMatricula)">
                                       <v-icon color="red">delete</v-icon>
                                     </v-btn>
-                                  </td>                                  
-                                  
+                                  </td>
+
                                   <td>{{ props.item.numeroMatricula }}</td>
                                   <td>{{ props.item.nombre }}</td>
                                   <td>{{ props.item.apellido }}</td>
@@ -441,10 +465,6 @@
                             </v-data-table>
                           </v-flex>
                         </v-layout>
-
-                      <v-alert class="mt-4" color="error" icon="priority_high" :value="!valid_representante">
-                        Debe seleccionar un representante
-                      </v-alert>
                     </v-card-text>
                   </v-card>
 
@@ -537,13 +557,13 @@ export default {
   props: ['id'],
 
   components: {
-    InputFecha, 
+    InputFecha,
     InputTexto,
     InputNumero,
     NuevaMatriculaExterna,
     EntidadDomicilios,
     EntidadContactos,
-    EntidadCondicionAfip    
+    EntidadCondicionAfip
   },
 
   headers: {
@@ -553,8 +573,16 @@ export default {
       Header('Nombre', 'nombre'),
       Header('Apellido', 'nombre'),
       Header('DNI', 'dni')
+    ],
+
+    rep_tecnico: [
+      Header('N°', 'numero'),
+      Header('Nombre', 'nombre'),
+      Header('DNI', 'dni'),
+      Header('Fecha Inicio', 'fini'),
+      Header('Fecha Cese', 'ffin')
     ]
-  },  
+  },
 
   data () {
     return {
@@ -644,6 +672,14 @@ export default {
   },
 
   computed: {
+    representantes_legales: function() {
+      return this.solicitud.entidad.representantes.filter(r => r.tipo == 'legal');
+    },
+
+    representantes_tecnicos: function() {
+      return this.solicitud.entidad.representantes.filter(r => r.tipo == 'tecnico');
+    },
+
     valid_representante: function() {
       return this.solicitud.entidad.representantes.length > 0;
     },
@@ -652,16 +688,6 @@ export default {
       return this.valid.form_solicitud && this.valid.form_empresa
         && this.valid_domicilios
         && this.valid_representante;
-    },
-
-    representantes_legales: function() {
-      if (!this.solicitud.entidad.representantes.length) return [];
-      return this.solicitud.entidad.representantes.filter(r => r.tipo != 'primario');
-    },
-
-    representante: function() {
-      if (!this.solicitud.entidad.representantes.length) return [];
-      return this.solicitud.entidad.representantes.filter(r => r.tipo == 'primario');
     }
   },
 
@@ -675,6 +701,7 @@ export default {
     ])
     .then(r => {
       this.opciones = r[0].data;
+      this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'profesional');
       this.delegaciones = r[1].data;
       this.datos_cargados = true;
       this.initForm();
@@ -703,6 +730,16 @@ export default {
               this.solicitud.entidad = r.data.entidad;
               this.solicitud.entidad.fechaInicio = utils.getFecha(r.data.entidad.fechaInicio);
               this.solicitud.entidad.fechaConstitucion = utils.getFecha(r.data.entidad.fechaConstitucion);
+              this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias.map(i => i.incumbencia.id);
+              this.solicitud.entidad.representantes = r.data.entidad.representantes.map(r => {
+                if (r.tipo == 'tecnico') {
+                  r.fechaInicio = utils.getFecha(r.fechaInicio);
+                  r.fechaFin = utils.getFecha(r.fechaFin);
+                }
+                return r;
+              });
+              this.valid.form_solicitud = true;
+              this.valid.form_empresa = true;
               this.init(false);
         })
       }
@@ -719,7 +756,7 @@ export default {
       let solicitud = utils.clone(this.solicitud);
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.tipoEmpresa = solicitud.entidad.tipoEmpresa.id;
-      solicitud.entidad.tipoSociedad = solicitud.entidad.tipoSociedad.id;
+      solicitud.entidad.tipoSociedad = solicitud.entidad.tipoSociedad ? solicitud.entidad.tipoSociedad.id : null;
 
       solicitud.entidad.domicilios.forEach(d => {
         d.domicilio.pais = d.domicilio.pais.id;
@@ -735,7 +772,11 @@ export default {
       solicitud.entidad.condiciones_afip.forEach(c => {
         c.condicion_afip = c.condicion_afip.id;
       });
-     
+
+      solicitud.entidad.representantes.forEach(r => {
+        if (r.tipo == 'tecnico') r.matricula = r.matricula.id;
+      })
+
 
       if (!this.id) {
         api.post('/solicitudes', solicitud)
@@ -829,20 +870,19 @@ export default {
       this.table_rep_sec.debouncedUpdate();
     },
 
-    selectRepresentantePrimario: function(matricula) {
-      this.solicitud.entidad.representantes = [{
-        tipo: 'primario',
-        matricula: matricula.id,
-        numeroMatricula: matricula.numeroMatricula,
-        dni: matricula.entidad.dni,
-        apellido: matricula.entidad.apellido,
-        nombre: matricula.entidad.nombre
-      }]
+    addRepresentanteTecnico: function(matricula) {
+      let representante = {
+        tipo: 'tecnico',
+        matricula: matricula,
+        fechaInicio: '',
+        fechaFin: ''
+      };
+      this.solicitud.entidad.representantes.push(representante);
     },
 
-    addRepresentanteSecundario: function(matricula) {
+    addRepresentanteLegal: function(matricula) {
       this.solicitud.entidad.representantes.push({
-        tipo: 'secundario',
+        tipo: 'legal',
         matricula: this.tipo_representante == 'tec' ? matricula.id : null,
         matricula_externa: this.tipo_representante == 'ext' ? matricula.id : null,
         numeroMatricula: matricula.numeroMatricula,
@@ -852,9 +892,14 @@ export default {
       });
     },
 
-    borrarRepresentante: function(numeroMatricula) {
+    borrarRepresentanteLegal: function(numeroMatricula) {
       this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
-                                                  .filter(r => r.numeroMatricula != numeroMatricula);
+                                              .filter(r => r.tipo != 'legal' || r.numeroMatricula != numeroMatricula);
+    },
+
+    borrarRepresentanteTecnico: function(id) {
+      this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
+                                              .filter(r => r.tipo != 'tecnico' || r.matricula.id != id);
     },
 
     imprimir: function() {
@@ -866,7 +911,7 @@ export default {
               'jsp-output-file': `Solicitud ${solicitud.numero} - ${Date.now()}`,
               'jsp-only-gen': false,
               'solicitud_id': item.id
-            });            
+            });
           })
           .catch(e => console.error(e));
     },

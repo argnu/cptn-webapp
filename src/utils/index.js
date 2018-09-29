@@ -6,7 +6,8 @@ export function getFloat(value) {
 }
 
 export function getFecha(fecha) {
-  if (!fecha) return moment(fecha).format('DD/MM/YYYY');
+  if (!fecha) return null;
+  
   if (typeof fecha == 'object')
     return moment(fecha).isValid() ? moment(fecha).format('DD/MM/YYYY') : '';
   else if (fecha.indexOf('/') == -1)
