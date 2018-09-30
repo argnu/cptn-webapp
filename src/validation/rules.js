@@ -1,7 +1,10 @@
 import * as moment from 'moment'
 
 export default {
-  required: value => !!value || 'Dato Obligatorio',
+  required: value => {
+    if (Array.isArray(value)) return value.length > 0 || 'Debe seleccionar al menos un elemento';
+    else return !!value || 'Dato Obligatorio'
+  },
 
   number: value => value && value.length ? (/^\d+(,\d+)?$/.test(value) || 'Formato incorrecto') : true,
 

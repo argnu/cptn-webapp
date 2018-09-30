@@ -181,7 +181,7 @@
 
                       <input-texto
                         label="Observaciones"
-                        maxlength="5"
+                        maxlength="100"
                         uppercase
                         v-model="solicitud.entidad.observaciones"
                         tabindex="12"

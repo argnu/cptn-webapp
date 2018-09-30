@@ -190,6 +190,7 @@ export default {
           track.stop();
         });
       };
+      this.$refs.video_elem.srcObject = stream;
       this.$refs.video_elem.src = window.URL.createObjectURL(stream);
     },
 

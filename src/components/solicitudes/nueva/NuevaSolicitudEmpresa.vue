@@ -443,7 +443,7 @@
                             <v-data-table
                                 hide-actions
                                 :headers="$options.headers.matriculados"
-                                :items="solicitud.entidad.representantes_legales"
+                                :items="representantes_legales"
                                 class="elevation-1"
                                 no-data-text="No se agregaron representates"
                                 no-results-text="No se agregaron representates"
@@ -576,6 +576,7 @@ export default {
     ],
 
     rep_tecnico: [
+      Header('', 'acciones'),
       Header('N°', 'numero'),
       Header('Nombre', 'nombre'),
       Header('DNI', 'dni'),

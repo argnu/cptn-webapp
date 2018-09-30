@@ -282,7 +282,20 @@ export default new Router({
           component: UsuarioDetalle,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (to.params.id == Store.state.user.id || this.$can('manage', 'Usuario')) return next();
+            if (to.params.id == Store.state.user.id || Store.state.ability.can('create', 'Usuario')) 
+              return next();
+            else next(false);
+          },
+        },
+
+        {
+          path: '/usuarios/:id/modificar',
+          name: 'UsuarioModificar',
+          component: UsuarioNuevo,
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (to.params.id == Store.state.user.id || Store.state.ability.can('update', 'Usuario')) 
+              return next();
             else next(false);
           },
         },

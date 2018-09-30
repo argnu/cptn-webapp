@@ -64,7 +64,17 @@
             <v-icon color="primary">assignment</v-icon>
           </v-btn>
 
-          <v-btn small icon class="mx-4" @click="toggleActivo(props.item)"
+          <v-btn 
+            small 
+            icon 
+            class="mx-2"  
+            @click="$router.push(`/usuarios/${props.item.id}/modificar`)" 
+            title="Ver Detalle"
+          >
+            <v-icon color="deep-purple">edit</v-icon>
+          </v-btn>
+
+          <v-btn small icon  @click="toggleActivo(props.item)"
             :title="props.item.activo ? 'Desactivar' : 'Activar'"
           >
             <v-icon color="deep-purple">
