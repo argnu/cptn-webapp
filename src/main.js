@@ -12,6 +12,9 @@ import * as Cookies from 'js-cookie'
 import * as utils from '@/utils'
 import Store from '@/stores/Global'
 
+import { abilitiesPlugin } from '@casl/vue'
+Vue.use(abilitiesPlugin)
+
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false

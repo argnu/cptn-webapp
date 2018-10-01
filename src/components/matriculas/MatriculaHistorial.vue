@@ -16,7 +16,15 @@
               <tr>
                 <td>{{ props.item.fecha | fecha }}</td>
                 <td>{{ props.item.estado.valor }}</td>
-                <td>{{ props.item.documento.tipo.valor }} N° {{ props.item.documento.numero }}</td>
+                <td>
+                    <a v-if="props.item.documento.archivo" :href="getUrlDoc(props.item.documento.id)" target="_blank">
+                        {{ props.item.documento.tipo.valor }} N° {{ props.item.documento.numero }}
+                    </a>
+                    <span v-else>
+                        {{ props.item.documento.tipo.valor }} N° {{ props.item.documento.numero }}
+                    </span>
+                </td>
+                <td>{{ props.item.documento.fecha | fecha }}</td>
               </tr>
             </template>
           </v-data-table>
@@ -27,6 +35,7 @@
 
 <script>
 import api from '@/services/api'
+import config from '@/config'
 import { Header } from '@/model'
 
 export default {
@@ -36,7 +45,8 @@ export default {
     headers: [
         Header('Fecha', 'fecha'),
         Header('Estado', 'estado'),
-        Header('Documento', 'tipo_doc')
+        Header('Documento', 'tipo_doc'),
+        Header('Fecha Doc.', 'fecha_doc'),
     ],
 
     data() {
@@ -58,6 +68,12 @@ export default {
         .then(r => {
             this.historial = r.data;
         })
+    },
+
+    methods: {
+        getUrlDoc: function(id) {
+            return `${config.api}/documentos/${id}/archivo`;
+        }
     }
 
 }

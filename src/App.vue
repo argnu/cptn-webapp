@@ -67,6 +67,10 @@ export default {
     }
   },
 
+  created: function() {
+    if (this.user) this.$ability.update(this.user.rules);
+  },
+
   methods: {
     toggleMenuLateral: function() {
       this.$refs.menu_lateral.toggle();

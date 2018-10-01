@@ -65,7 +65,9 @@
             <v-icon color="primary">assignment</v-icon>
           </v-btn>
 
-          <v-btn small icon class="mx-4" @click="editar(props.item.id)">
+          <v-btn 
+            v-if="$can('update', 'Institucion')"
+            small icon class="mx-4" @click="editar(props.item.id)">
             <v-icon color="deep-purple">edit</v-icon>
           </v-btn>          
         </td>

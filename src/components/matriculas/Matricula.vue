@@ -13,15 +13,15 @@
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-detalle' }">account_box</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-detalle' }">Detalle</span>
         </v-tab>
-        <v-tab href="#tab-cuenta">
+        <v-tab href="#tab-cuenta" v-if="$can('update', 'Matricula')">
           <v-icon :class="{ 'black--text': tab_selected == 'tab-cuenta' }">account_balance</v-icon>
           <span :class="{ 'black--text': tab_selected == 'tab-cuenta' }">Cuenta</span>
         </v-tab>
-        <v-tab href="#tab-pendientes">
+        <v-tab href="#tab-pendientes" v-if="$can('update', 'Matricula')">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">attach_money</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-pendientes' }">Deudas Pendientes</span>
         </v-tab>
-        <v-tab href="#tab-legajo">
+        <v-tab href="#tab-legajo" v-if="$can('update', 'Matricula')">
           <v-icon  :class="{ 'black--text': tab_selected == 'tab-legajo' }">work</v-icon>
           <span  :class="{ 'black--text': tab_selected == 'tab-legajo' }">Legajo Técnico</span>
         </v-tab>
@@ -40,7 +40,7 @@
           </v-card>
         </v-tab-item>
 
-        <v-tab-item id="tab-cuenta">
+        <v-tab-item id="tab-cuenta" v-if="$can('update', 'Matricula')">
           <v-divider></v-divider>
           <v-card>
             <resumen-cuenta
@@ -51,7 +51,7 @@
           </v-card>
         </v-tab-item>
 
-        <v-tab-item id="tab-pendientes">
+        <v-tab-item id="tab-pendientes" v-if="$can('update', 'Matricula')">
           <v-divider></v-divider>
           <v-card>
             <deudas-pendientes
@@ -62,7 +62,7 @@
           </v-card>
         </v-tab-item>
 
-        <v-tab-item id="tab-legajo">
+        <v-tab-item id="tab-legajo" v-if="$can('update', 'Matricula')">
           <v-divider></v-divider>
           <v-card>
             <legajo-lista

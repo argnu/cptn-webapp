@@ -16,6 +16,7 @@
                   label="Tipo de Matrícula:"
                   :items="$options.tipos_matricula"
                   v-model="matricula.tipo"
+                  :rules="[rules.required]"
                 >
                 </v-select>
               </v-flex>
@@ -26,30 +27,31 @@
                 <v-select
                   label="Tipo de Documento:"
                   :items="opciones.documento"
-                  v-model="matricula.documento.tipo"
                   item-text="valor"
                   item-value="id"
-                  :rules="[rules.required]"
+                  @change="chgTipoDoc"
                 >
                 </v-select>
               </v-flex>
 
               <v-flex xs4 class="mx-2">
-                <input-numero
-                  v-model="matricula.documento.numero"
-                  label="N° Acta"
-                  :rules="[rules.required, rules.integer]"
+                <v-select
+                    autocomplete
+                    clearable
+                    :items="documentos"
+                    item-value="id"
+                    item-text="numero"
+                    label="Documento"
+                    v-model="matricula.documento"
+                    :rules="[rules.required]"
                 >
-                </input-numero>
-              </v-flex>
-
-              <v-flex xs4 class="mx-2">
-                <input-fecha
-                  v-model="matricula.documento.fecha"
-                  label="Fecha de Acta"
-                  :rules="[rules.required, rules.fecha]"
-                >
-                </input-fecha>
+                    <template slot="item" slot-scope="data">
+                        <v-list-tile-content>
+                        <v-list-tile-title>N°: {{ data.item.numero }}</v-list-tile-title>
+                        <v-list-tile-sub-title>Fecha: {{ data.item.fecha | fecha }}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </template>
+                </v-select>
               </v-flex>
             </v-layout>
 
@@ -207,11 +209,11 @@
         <td>{{ props.item.estado | upperFirst }}</td>
         <td>
           <v-menu>
-            <v-btn icon slot="activator">
+            <v-btn icon slot="activator" :disabled="!$can('update', 'Solicitud')">
               <v-icon class="blue--text">more_vert</v-icon>
             </v-btn>            
 
-            <v-list>
+            <v-list v-if="$can('update', 'Solicitud')">
               <v-list-tile v-show="props.item.estado == 'Pendiente'" @click="selectSolicitud(props.item)">
                 <v-list-tile-title>
                   <v-icon class="green--text text--darken-2">check_circle</v-icon>
@@ -403,7 +405,8 @@ export default {
       solicitudes: [],
       debouncedUpdate: null,
       submitValidacion: false,
-      opciones: []
+      opciones: [],
+      documentos: []
     }
   },
 
@@ -593,7 +596,14 @@ export default {
         })
         .catch(e => console.error(e));
       }
-    }
+    },
+
+    chgTipoDoc: function(tipo) {
+      if (tipo) { 
+        api.get(`/documentos?tipo=${tipo}&sort=-fecha`)
+        .then(r => this.documentos = r.data.resultados);
+      }
+    }    
   },
 
   components: {

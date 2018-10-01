@@ -22,7 +22,7 @@
         ></input-fecha>
       </v-flex>
 
-      <!-- <v-flex xs4 class="mx-4">
+      <v-flex xs4 class="mx-4">
         <v-select
             label="Delegación:"
             clearable
@@ -33,7 +33,7 @@
             item-value="id"
             @change="updateList"
         ></v-select>
-      </v-flex> -->
+      </v-flex>
   </v-layout>
 
     <v-card>
@@ -176,7 +176,7 @@ export default {
             let url = `/comprobantes?limit=${limit}&offset=${offset}`;
             url += `&fecha[desde]=${this.filtros.fecha_desde}`
             url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
-            // if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
+            if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
 
             if (this.pagination.sortBy) {
                 url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
@@ -200,7 +200,8 @@ export default {
                 'jsp-output-file': `Arqueo - ${Date.now()}`,
                 'jsp-only-gen': false,
                 'fecha_inicio': moment(this.filtros.fecha_desde, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                'fecha_fin': moment(this.filtros.fecha_hasta, 'DD/MM/YYYY').format('YYYY-MM-DD')
+                'fecha_fin': moment(this.filtros.fecha_hasta, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                'delegacion': this.filtros.delegacion
             });
 
             // this.global_state.cursor_wait = true;

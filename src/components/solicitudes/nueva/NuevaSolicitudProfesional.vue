@@ -181,7 +181,7 @@
 
                       <input-texto
                         label="Observaciones"
-                        maxlength="5"
+                        maxlength="100"
                         uppercase
                         v-model="solicitud.entidad.observaciones"
                         tabindex="12"
@@ -641,6 +641,7 @@ export default {
       ])
       .then(r => {
         this.opciones = r[0].data;
+        this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'empresa');
         this.delegaciones = r[1].data;
         this.datos_cargados = true;
         this.init();

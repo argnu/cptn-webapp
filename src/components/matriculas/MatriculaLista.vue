@@ -1,7 +1,7 @@
 <template>
 <v-container class="grey lighten-3">
 
-  
+
   <v-dialog v-model="show_cambio" persistent max-width="70%">
     <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Cambio de Estado de Matrícula</v-toolbar-title>
@@ -19,47 +19,47 @@
                   v-model="cambio_estado.estado"
                   item-text="valor"
                   item-value="id"
+                  :rules="[rules.required]"
                 >
                 </v-select>
               </v-flex>
-            </v-layout>
 
-            <v-layout row class="mt-4">
               <v-flex xs3 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
                   :items="select_items.t_documento"
-                  v-model="cambio_estado.documento.tipo"
                   item-text="valor"
                   item-value="id"
+                  @change="chgTipoDoc"
                 >
                 </v-select>
               </v-flex>
 
               <v-flex xs4 class="mx-4">
-                <input-fecha
-                  v-model="cambio_estado.documento.fecha"
-                  label="Fecha de Resolución/Acta"
-                  :rules="[rules.required, rules.fecha]"
-
+                <v-select
+                    autocomplete
+                    clearable
+                    :items="documentos"
+                    item-value="id"
+                    item-text="numero"
+                    label="Documento"
+                    v-model="cambio_estado.documento"
+                    :rules="[rules.required]"
                 >
-                </input-fecha>
-              </v-flex>
-
-              <v-flex xs3 class="mx-4">
-                <input-numero
-                  v-model="cambio_estado.documento.numero"
-                  label="N° Resolución/Acta"
-                  :rules="[rules.required, rules.integer]"
-                >
-                </input-numero>
+                    <template slot="item" slot-scope="data">
+                        <v-list-tile-content>
+                        <v-list-tile-title>N°: {{ data.item.numero }}</v-list-tile-title>
+                        <v-list-tile-sub-title>Fecha: {{ data.item.fecha | fecha }}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </template>
+                </v-select>
               </v-flex>
             </v-layout>
 
             <v-layout row class="mt-5">
               <v-flex xs12>
-                <v-btn 
-                  class="right green white--text" 
+                <v-btn
+                  class="right green white--text"
                   @click.native="cambiarEstado"
                   :disabled="submit_cambio"
                   :loading="submit_cambio"
@@ -68,6 +68,56 @@
                   <v-icon dark right>check_circle</v-icon>
                 </v-btn>
                 <v-btn class="right red white--text" @click.native="show_cambio = false">
+                  Cancelar
+                  <v-icon dark right>block</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+
+          </v-form>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="show_suspension" persistent max-width="50%">
+    <v-toolbar class="darken-3" color="primary">
+      <v-toolbar-title class="white--text">Solicitar Suspensión</v-toolbar-title>
+    </v-toolbar>
+    <v-card>
+      <v-card-text class="grey lighten-4">
+        <v-container>
+          <v-form lazy-validation ref="form_suspension">
+
+            <v-layout row>
+              <v-flex xs12 class="mx-4">
+                <input-fecha
+                  label="Fecha:"
+                  v-model="form_suspension.fecha"
+                  :rules="[rules.required, rules.fecha]"
+                ></input-fecha>
+
+                <v-text-field
+                  multi-line
+                  label="Motivo:"
+                  v-model="form_suspension.motivo"
+                  :rules="[rules.required]"
+                ></v-text-field>
+              </v-flex>
+            </v-layout>
+
+            <v-layout row class="mt-5">
+              <v-flex xs12>
+                <v-btn
+                  class="right green white--text"
+                  @click.native="solicitarSuspension"
+                  :disabled="submit_suspension"
+                  :loading="submit_suspension"
+                >
+                  Guardar
+                  <v-icon dark right>check_circle</v-icon>
+                </v-btn>
+                <v-btn class="right red white--text" @click.native="show_suspension = false">
                   Cancelar
                   <v-icon dark right>block</v-icon>
                 </v-btn>
@@ -115,46 +165,46 @@
               </v-select>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
-                  v-model="filtros.profesional.dni" 
-                  label="DNI" 
+                <v-text-field
+                  v-model="filtros.profesional.dni"
+                  label="DNI"
                   @input="updateList"
                   clearable
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.cuit" 
-                  label="CUIT" 
+                  v-model="filtros.empresa.cuit"
+                  label="CUIT"
                   @input="updateList"
                 ></v-text-field>
               </div>
             </v-flex>
 
             <v-flex xs12 md3 class="mx-2">
-              <v-text-field 
+              <v-text-field
                 clearable
-                v-model="filtros.numero" 
-                label="N° Matrícula" 
+                v-model="filtros.numero"
+                label="N° Matrícula"
                 @input="updateList"
               ></v-text-field>
 
               <div v-show="filtros.tipoEntidad == 'profesional'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.profesional.apellido" 
-                  label="Apellido" 
+                  v-model="filtros.profesional.apellido"
+                  label="Apellido"
                   @input="updateList"
                 ></v-text-field>
               </div>
 
               <div v-show="filtros.tipoEntidad == 'empresa'">
-                <v-text-field 
+                <v-text-field
                   clearable
-                  v-model="filtros.empresa.nombre" 
-                  label="Nombre" 
+                  v-model="filtros.empresa.nombre"
+                  label="Nombre"
                   @input="updateList"
                 ></v-text-field>
               </div>
@@ -163,10 +213,10 @@
 
           <v-layout row wrap>
             <v-flex xs12>
-              <v-btn                
+              <v-btn
                 @click="limpiarFiltros"
-              >Limpiar Filtros</v-btn>              
-            </v-flex>            
+              >Limpiar Filtros</v-btn>
+            </v-flex>
           </v-layout>
         </v-container>
       </v-expansion-panel-content>
@@ -192,7 +242,7 @@
           <v-btn small icon class="mx-0"  @click="verMatricula(props.item.id)" title="Ver Matrícula">
             <v-icon color="primary">assignment_ind</v-icon>
           </v-btn>
-        </td>     
+        </td>
 
         <td>{{ props.item.numeroMatricula }}</td>
         <td>{{ props.item.numero_solicitud ? props.item.numero_solicitud : props.item.idMigracion }}</td>
@@ -208,11 +258,11 @@
         <td>{{ props.item.estado.valor }}</td>
         <td>
           <v-menu>
-            <v-btn icon slot="activator">
+            <v-btn icon slot="activator" :disabled="!$can('update', 'Matricula')">
               <v-icon class="blue--text">more_vert</v-icon>
             </v-btn>
-            
-            <v-list>
+
+            <v-list v-if="$can('update', 'Matricula')">
               <v-list-tile v-if="props.item.estado.id == 13">
                 <v-list-tile-title>
                   <v-menu open-on-hover top offset-x left>
@@ -227,14 +277,14 @@
                         <v-icon class="text--darken-2 mr-2">print</v-icon>
                         <v-list-tile-title>Credencial</v-list-tile-title>
                       </v-list-tile>
-                      
+
                       <v-list-tile
                         @click="imprimirCertificado(props.item)"
                       >
                         <v-icon class="text--darken-2 mr-2">print</v-icon>
                         <v-list-tile-title>Certificado de Habilitación</v-list-tile-title>
                       </v-list-tile>
-                      
+
                     </v-list>
                   </v-menu>
                 </v-list-tile-title>
@@ -248,6 +298,14 @@
               </v-list-tile>
 
               <v-list-tile
+                v-if="props.item.estado.id == 13"
+                @click="mostrarFormSuspension(props.item.id)"
+              >
+                <v-icon class="primary--text mr-2">gavel</v-icon>
+                <v-list-tile-title>Solicitar Suspensión</v-list-tile-title>
+              </v-list-tile>
+
+              <v-list-tile
                 v-if="filtros.tipoEntidad == 'profesional' && props.item.numeroMatricula.length < 8"
                 @click="rematricular(props.item.entidad.dni)"
               >
@@ -256,7 +314,7 @@
               </v-list-tile>
 
               <v-list-tile
-                v-if="filtros.tipoEntidad == 'profesional'"
+                v-if="filtros.tipoEntidad == 'profesional' && props.item.estado.id == 13"
                 @click="modificarProfesional(props.item.entidad.id)"
               >
                 <v-icon class="blue--text mr-2">edit</v-icon>
@@ -284,13 +342,16 @@ import MixinValidator from '@/components/mixins/MixinValidator'
 
 class CambioEstado {
   constructor() {
-    this.estado = '';
-    this.matricula = '';
-    this.documento = {
-      tipo: '',
-      numero: '',
-      fecha: ''
-    }
+    this.estado = null;
+    this.documento = null;
+  }
+}
+
+class FormSuspension {
+  constructor() {
+    this.fecha = new Date();
+    this.motivo = '';
+    this.matricula = null;
   }
 }
 
@@ -301,7 +362,7 @@ export default {
   components: {
     InputNumero,
     InputFecha
-  },  
+  },
 
   headers: {
     empresa: [
@@ -357,7 +418,12 @@ export default {
 
       show_cambio: false,
       submit_cambio: false,
-      cambio_estado: new CambioEstado()
+      cambio_estado: new CambioEstado(),
+      documentos: [],
+
+      show_suspension: false,
+      submit_suspension: false,
+      form_suspension: new FormSuspension()
     }
   },
 
@@ -382,7 +448,7 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
-    
+
     api.get('/opciones?sort=+valor')
       .then(r => {
         this.select_items.estados = r.data.estadoMatricula;
@@ -441,7 +507,7 @@ export default {
       if (this.$refs.form_cambioestado.validate()) {
         this.submit_cambio = true;
 
-        api.post('/matriculas/cambiar-estado', this.cambio_estado)
+        api.post(`/matriculas/${this.cambio_estado.matricula}/cambiar-estado`, utils.clone(this.cambio_estado))
         .then(r => {
           this.submit_cambio = false;
           this.updateMatriculas();
@@ -459,7 +525,7 @@ export default {
           this.global_state.snackbar.color = 'error';
           this.global_state.snackbar.show = true;
           console.error(e)
-        });        
+        });
       }
     },
 
@@ -482,7 +548,7 @@ export default {
         'jsp-output-file': `Credencial (Frente) ${item.numeroMatricula} - ${Date.now()}`,
         'jsp-only-gen': false,
         'numeroMatricula': item.numeroMatricula
-      });      
+      });
     },
 
     imprimirCertificado: function(item) {
@@ -492,13 +558,76 @@ export default {
         'jsp-output-file': `Cert. Habilitación Matrícula ${item.numeroMatricula} - ${Date.now()}`,
         'jsp-only-gen': false,
         'id_matricula': item.id
-      });      
+      });
     },
 
     modificarProfesional: function(id) {
       this.$router.push(`/profesionales/${id}/modificar`);
-    }
+    },
 
+    mostrarFormSuspension: function(id) {
+      this.show_suspension = true;
+      this.form_suspension.matricula = id;
+    },
+
+    solicitarSuspension: function() {
+      if (this.$refs.form_suspension.validate()) {
+        this.submit_suspension = true;
+
+        api.post('/solicitudes-suspension', utils.clone(this.form_suspension))
+        .then(r => {
+          let id_matricula = this.form_suspension.matricula;
+
+          this.submit_suspension = false;
+          this.updateMatriculas();
+          this.form_suspension = new FormSuspension();
+          this.$refs.form_suspension.reset();
+          this.show_suspension = false;
+          this.global_state.snackbar.msg = 'Solicitud de suspensión generada exitosamente!';
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+
+          reports.open({
+              'jsp-source': 'solicitud_suspension_voluntad.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `Solicitud Suspension - ${Date.now()}`,
+              'jsp-only-gen': false,
+              'matricula_id': id_matricula,
+          });          
+
+          reports.open({
+              'jsp-source': 'anexo_solicitud_suspension.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `Anexo Suspension - ${Date.now()}`,
+              'jsp-only-gen': false,
+              'matricula_id': id_matricula,
+          });          
+          
+          reports.open({
+              'jsp-source': 'ddjjcredencial.jasper',
+              'jsp-format': 'PDF',
+              'jsp-output-file': `DDJJ Credencial - ${Date.now()}`,
+              'jsp-only-gen': false,
+              'matricula_id': id_matricula,
+          });          
+        })
+        .catch(e => {
+          this.submit_suspension = false;
+          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          console.error(e)
+        });
+      }
+    },
+
+    chgTipoDoc: function(tipo) {
+      if (tipo) { 
+        api.get(`/documentos?tipo=${tipo}&sort=-fecha`)
+        .then(r => this.documentos = r.data.resultados);
+      }
+    }
   }
 
 }
