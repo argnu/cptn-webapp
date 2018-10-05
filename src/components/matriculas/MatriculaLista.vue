@@ -314,7 +314,8 @@
               </v-list-tile>
 
               <v-list-tile
-                v-if="filtros.tipoEntidad == 'profesional' && props.item.estado.id == 13"
+                v-if="filtros.tipoEntidad == 'profesional' && props.item.estado.id == 13 
+                  || props.item.estado.id == 24"
                 @click="modificarProfesional(props.item.entidad.id)"
               >
                 <v-icon class="blue--text mr-2">edit</v-icon>

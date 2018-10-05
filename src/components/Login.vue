@@ -33,7 +33,7 @@
               <v-alert
                 color="error"
                 icon="warning"
-                :value="login_error"
+                :value="submit_error"
                 transition="scale-transition"
               >
                 {{ auth_error }}
@@ -47,6 +47,7 @@
                 type="submit"
                 :loading="submitted"
                 :disabled="submitted"
+                
               >
                 <v-icon right dark>fingerprint</v-icon>
                 <span class="ml-3">Iniciar Sesión</span>
@@ -111,12 +112,6 @@ export default {
     }
   },
 
-  computed: {
-    login_error: function() {
-      return this.submitted && this.submit_error;
-    }
-  },
-
 
   methods: {
     autenticar: function() {
@@ -127,6 +122,7 @@ export default {
 
       api.post('/usuarios/auth', this.usuario)
       .then(r => {
+        this.submitted = false;
         this.$ability.update(r.data.rules);
 
         Cookies.set('CPTNUser', JSON.stringify(r.data), 1);
@@ -145,6 +141,7 @@ export default {
       .catch(e => {
         console.error(e);
         this.submit_error = true;
+        this.submitted = false;
         if (e.response.status != 403) console.error(e);
       });
     },
