@@ -73,6 +73,14 @@
           @input="updateList"
           clearable
         ></v-text-field>
+
+        <input-fecha
+          v-if="allFilters"
+          label="Fecha Desde"
+          clearable
+          v-model="filtros.fecha_desde"
+          @input="updateList"
+        ></input-fecha>
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -97,6 +105,14 @@
           @input="updateList"
           clearable
         ></v-text-field>
+
+        <input-fecha
+          v-if="allFilters"
+          label="Fecha Hasta"
+          clearable
+          v-model="filtros.fecha_hasta"
+          @input="updateList"
+        ></input-fecha>        
     </v-flex>
 
     <v-flex xs4 class="mx-4">
@@ -128,6 +144,16 @@
           >
             <v-icon>add</v-icon>
           </v-btn>
+
+          <v-btn
+            v-if="allFilters"
+            absolute dark fab top right
+            color="primary"
+            @click="imprimirLista"
+          >
+            <v-icon>print</v-icon>
+          </v-btn>
+
           <v-data-table
               no-data-text=""
               :headers="headers"
@@ -200,6 +226,7 @@ import api from '@/services/api';
 import reports from '@/services/reports'
 import * as utils from '@/utils'
 import { Header } from '@/model'
+import InputFecha from '@/components/base/InputFecha'
 
 function getHeaders(all) {
   let headers = [
@@ -232,6 +259,10 @@ export default {
       type: Boolean,
       default: () => false
     }
+  },
+
+  components: {
+    InputFecha
   },
 
   filters: {
@@ -340,6 +371,8 @@ export default {
 
       if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
       if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
+      if (this.filtros.fecha_desde) url += `&fecha[desde]=${this.filtros.fecha_desde}`;
+      if (this.filtros.fecha_hasta) url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
       if (this.filtros.numero) url += `&filtros[numero]=${this.filtros.numero}`;
       if (this.filtros.nomenclatura) url += `&filtros[nomenclatura]=${this.filtros.nomenclatura}`;
       if (this.filtros.numero_matricula) url += `&filtros[matricula.numero]=${this.filtros.numero_matricula}`;

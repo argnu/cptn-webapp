@@ -19,3 +19,9 @@ export const Item = (text, value) => ({
     text, 
     value
 })
+
+export const tipos_matricula = [
+    { text: 'TECA', value: 'TECA' },
+    { text: 'TEC-', value: 'TEC-' },
+    { text: 'IDO', value: 'IDO' }
+]

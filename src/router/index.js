@@ -33,6 +33,7 @@ import Arqueo from '@/components/herramientas/Arqueo'
 import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 import SolicitudSuspensionLista from '@/components/listados/SolicitudSuspensionLista'
+import MatriculaFiltroLista from '@/components/listados/MatriculaFiltroLista'
 
 import DocumentoLista from '@/components/documentos/DocumentoLista'
 import DocumentoNuevo from '@/components/documentos/DocumentoNuevo'
@@ -339,6 +340,17 @@ export default new Router({
           component: SolicitudSuspensionLista,
           beforeEnter: (to, from, next) => {
             if (Store.state.ability.can('read', 'SolicitudSuspension')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
+        },
+
+        {
+          path: '/listados/matriculas',
+          name: 'MatriculaFiltroLista',
+          component: MatriculaFiltroLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Matricula')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           
