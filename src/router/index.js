@@ -30,6 +30,7 @@ import UsuarioDetalle from '@/components/usuarios/UsuarioDetalle'
 
 import BuscadorLegajo from '@/components/herramientas/BuscadorLegajo'
 import Arqueo from '@/components/herramientas/Arqueo'
+import ResumenIngresos from '@/components/herramientas/ResumenIngresos'
 import SistemaConfiguracion from '@/components/sistema/SistemaConfiguracion'
 
 import SolicitudSuspensionLista from '@/components/listados/SolicitudSuspensionLista'
@@ -316,6 +317,17 @@ export default new Router({
           path: '/herramientas/arqueo',
           name: 'Arqueo',
           component: Arqueo,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Comprobante')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
+        },
+
+        {
+          path: '/herramientas/resumen-ingresos',
+          name: 'ResumenIngresos',
+          component: ResumenIngresos,
           beforeEnter: (to, from, next) => {
             if (Store.state.ability.can('read', 'Comprobante')) return next();
             alert('No tiene permisos para ingresar!')
