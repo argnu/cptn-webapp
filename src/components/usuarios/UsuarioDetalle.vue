@@ -34,7 +34,7 @@
                 </div>                
 
                 <div>
-                    <b>Rol:</b> {{ usuario.rol | rol }}
+                    <b>Rol:</b> {{ usuario.roles | roles }}
                 </div>                
             </v-flex>
         </v-layout>
@@ -69,11 +69,13 @@ export default {
 
     filters: {
         lista: function(list) {
+            if (!list) return '';
             return list.map(d => d.nombre).join(', ');
         },
 
-        rol: function(rol) {
-            return roles.find(r => r.value === rol).text;
+        roles: function(list) {
+            if (!list) return '';
+            return list.map(r => roles.find(rol => rol.value == r).text).join(', ');
         }
     },
 

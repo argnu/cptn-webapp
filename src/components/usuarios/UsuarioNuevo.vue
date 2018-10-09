@@ -65,7 +65,7 @@
                     label="Contraseña"
                     type="password"
                     v-model="usuario.password"
-                    :rules="[rules.required]"
+                    :rules="id ? [] : [rules.required]"
                 ></v-text-field>
             </v-flex>
 
@@ -75,7 +75,7 @@
                     label="Repetir Contraseña"
                     type="password"
                     v-model="usuario.password_re"
-                    :rules="[rules.required]"
+                    :rules="id ? [] : [rules.required]"
                 ></v-text-field>
             </v-flex>
         </v-layout>
@@ -110,12 +110,13 @@
 
             <v-flex xs12 md3 class="mx-5">
                 <v-select
+                    multiple
                     tabindex="8"
                     v-if="$can('manage', 'Usuario')"
-                    label="Rol"
+                    label="Roles"
                     :items="$options.roles"
                     :rules="[rules.required]"
-                    v-model="usuario.rol"
+                    v-model="usuario.roles"
                 ></v-select>
             </v-flex>
         </v-layout>
