@@ -70,7 +70,7 @@
           clearable
           v-model="filtros.fecha_desde"
           @input="updateList"
-        ></input-fecha>       
+        ></input-fecha>
 
 
         <v-text-field
@@ -236,7 +236,7 @@
         </thead>
         <tbody>
         </tbody>
-    </table>  
+    </table>
 </v-container>
 </template>
 
@@ -314,7 +314,7 @@ export default {
           direccion: ''
         },
         comitente: {
-          cuit: '',
+          nombre: '',
           apellido: '',
         },
         estado: ''
@@ -491,7 +491,7 @@ export default {
         }
       }
 
-      if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;        
+      if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
         api.get(url)
         .then(r => {
@@ -518,8 +518,28 @@ export default {
         })
         .catch(e => {
             console.error(e);
-        })  
-    }  
+        })
+    },
+
+
+    imprimirLista: function() {
+      reports.open({
+        'jsp-source': 'listado_legajos_tecnicos.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Legajos - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'matricula_id': this.id,
+        'estado': this.filtros.estado || '0',
+        'numero_legajo': this.filtros.numero || '0',
+        'nomenclatura': this.filtros.nomenclatura || '0',
+        'fecha_inicio': this.filtros.fecha_desde || '0',
+        'fecha_fin': this.filtros.fecha_hasta || '0',
+        'comitente_nombre': (this.filtros.comitente && this.filtros.comitente.nombre) ? 
+          this.filtros.comitente.nombre :  '0',
+        'comitente_apellido': (this.filtros.comitente && this.filtros.comitente.apellido) ? 
+          this.filtros.comitente.apellido :  '0'
+      });      
+    }    
   },
 
 }
