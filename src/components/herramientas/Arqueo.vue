@@ -201,7 +201,7 @@ export default {
                 'jsp-only-gen': false,
                 'fecha_inicio': moment(this.filtros.fecha_desde, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                 'fecha_fin': moment(this.filtros.fecha_hasta, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                'delegacion': this.filtros.delegacion
+                'delegacion': this.filtros.delegacion || 0
             });
 
             // this.global_state.cursor_wait = true;
