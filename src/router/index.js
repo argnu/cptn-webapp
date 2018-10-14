@@ -17,7 +17,9 @@ import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
 
-import Cobranza from '@/components/cobranzas/Cobranza'
+import PersonaLista from '@/components/personas/PersonaLista'
+import PersonaNueva from '@/components/personas/PersonaNueva'
+
 import Legajo from '@/components/matriculas/legajos/Legajo'
 
 import InstitucionLista from '@/components/instituciones/InstitucionLista'
@@ -397,6 +399,40 @@ export default new Router({
           props: true,
           beforeEnter: (to, from, next) => {
             if (Store.state.ability.can('udpate', 'Documento')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
+        },
+
+        {
+          path: '/personas/lista',
+          name: 'PersonaLista',
+          component: PersonaLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Persona')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
+        },
+
+        {
+          path: '/personas/nueva',
+          name: 'PersonaNueva',
+          component: PersonaNueva,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Persona')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }           
+        },
+
+        {
+          path: '/personas/:id/modificar',
+          name: 'PersonaModificar',
+          component: PersonaNueva,
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Persona')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }           

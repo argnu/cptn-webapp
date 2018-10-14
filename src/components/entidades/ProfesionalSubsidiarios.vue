@@ -1,10 +1,17 @@
 <template>
 <div>
-    <dialog-persona
-        v-model="show_persona"
+  <v-dialog
+    persistent
+    fullscreen
+    v-model="show_persona"
+  >
+    <persona-nueva 
+        dialog
         :dni="nuevo_subsidiario.dni"
+        @cancelar="show_persona = false"
         @created="nuevaPersona"
-    ></dialog-persona>
+    ></persona-nueva>
+  </v-dialog>    
 
     <v-form ref="form_subsidiario" lazy-validation>
         <v-layout row>
@@ -100,7 +107,7 @@ import { Subsidiario, Header } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'
 import InputNumero from '@/components/base/InputNumero'
-import DialogPersona from '@/components/personas/DialogPersona'
+import PersonaNueva from '@/components/personas/PersonaNueva'
 
 export default {
     name: 'ProfesionalCajasPrevisionales',
@@ -124,7 +131,7 @@ export default {
     components: {
         InputTexto,
         InputNumero,
-        DialogPersona
+        PersonaNueva
     },
 
     headers: [

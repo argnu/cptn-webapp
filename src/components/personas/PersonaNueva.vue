@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    persistent
-    fullscreen
-    :value="value"
-    @input="$emit('input', $event)"
-  >
+  <v-container>
     <v-toolbar class="darken-3" color="primary">
       <v-toolbar-title class="white--text">Nueva Persona</v-toolbar-title>
     </v-toolbar>
@@ -12,12 +7,24 @@
       <v-card-text class="grey lighten-4">
         <v-container>
             <v-form ref="form">
+                <v-layout>
+                    <v-flex xs12 class="mx-4">
+                        <v-select
+                        label="Tipo"
+                        :disabled="tipo != undefined && tipo != null"
+                        :items="$options.tipo_persona"
+                        :rules="[rules.required]"
+                        v-model="persona.tipo"
+                        ></v-select>
+                    </v-flex>
+                </v-layout>
+
                 <v-layout row>
-                    <v-flex xs6 class="ma-4">
+                    <v-flex xs6 class="mx-4">
                         <input-numero
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             label="DNI"
-                            maxlength="10"
+                            maxlength="8"
                             clearable
                             v-model="persona.dni"
                             :rules="[rules.required, rules.integer]"
@@ -32,7 +39,7 @@
                         ></input-texto>
 
                         <v-select
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             autocomplete
                             :items="opciones.sexo"
                             item-text="valor"
@@ -45,7 +52,7 @@
                         ></v-select>
 
                         <input-fecha
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             v-model="persona.fechaNacimiento"
                             label="Fecha de Nacimiento"
                             :rules="[rules.required, rules.fecha]"
@@ -56,12 +63,12 @@
                             label="Telefono"
                             maxlength="30"
                             v-model="persona.telefono"
-                        ></v-text-field>                         
+                        ></v-text-field>
                     </v-flex>
 
-                    <v-flex xs6 class="ma-4">
+                    <v-flex xs6 class="mx-4">
                         <input-texto
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             label="Apellido"
                             type="letras"
                             uppercase
@@ -78,7 +85,7 @@
                         ></input-numero>
 
                         <v-select
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             autocomplete
                             :items="opciones.estadocivil"
                             item-text="valor"
@@ -91,7 +98,7 @@
                         ></v-select>
 
                         <input-texto
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             label="Nacionalidad"
                             type="letras"
                             uppercase
@@ -100,43 +107,43 @@
                         ></input-texto>
 
                         <input-texto
-                            v-if="tipo == 'fisica'"
+                            v-if="persona.tipo == 'fisica'"
                             label="Lugar Nacimiento"
                             uppercase
                             maxlength="100"
                             v-model="persona.lugarNacimiento"
-                        ></input-texto>                       
+                        ></input-texto>
                     </v-flex>
-                    </v-layout>
+                </v-layout>
+
+                <v-layout row class="ma-3">
+                    <v-flex xs12>
+                        <v-btn
+                            class="right green white--text"
+                            @click.native="submitPersona"
+                            :disabled="submit_persona"
+                            :loading="submit_persona"
+                            >
+                            Guardar
+                        <v-icon dark right>check_circle</v-icon>
+                        </v-btn>
+
+                        <v-btn class="right red white--text" @click.native="cancelar">
+                            Cancelar
+                            <v-icon dark right>block</v-icon>
+                        </v-btn>
+                    </v-flex>
+                </v-layout>                 
             </v-form>
-
-            <v-layout row class="ma-3">
-              <v-flex xs12>
-                <v-btn
-                  class="right green white--text"
-                  @click.native="submitPersona"
-                  :disabled="submit_persona"
-                  :loading="submit_persona"
-                >
-                  Guardar
-                  <v-icon dark right>check_circle</v-icon>
-                </v-btn>
-
-                <v-btn class="right red white--text" @click.native="$emit('input', false)">
-                  Cancelar
-                  <v-icon dark right>block</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-layout>
         </v-container>
       </v-card-text>
     </v-card>
-  </v-dialog>
+  </v-container>
 </template>
 
 <script>
 import api from '@/services/api'
-import { clone } from '@/utils'
+import { clone, getFecha } from '@/utils'
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
@@ -149,15 +156,16 @@ function crearPersona(tipo) {
 }
 
 export default {
-    name: 'DialogPersona',
+    name: 'PersonaNueva',
 
     props: {
-        value: Boolean,
+        id: [Number, String],
         dni: String,
         cuit: String,
-        tipo: {
-            type: String,
-            default: () => 'fisica'
+        tipo: String,
+        dialog: {
+            type: Boolean,
+            default: () => false
         }
     },
 
@@ -169,9 +177,14 @@ export default {
         InputNumero
     },
 
+    tipo_persona: [
+        { text: 'Física', value: 'fisica' },
+        { text: 'Jurídica', value: 'juridica' }
+    ],
+
     data() {
         return {
-            persona: crearPersona(this.tipo),
+            persona: {},
             opciones: {},
             submit_persona: false
         }
@@ -188,9 +201,22 @@ export default {
     },
 
     created: function() {
+        if (this.tipo) this.persona = crearPersona(tipo);
+        else this.persona = new PersonaFisica();
+
         api.get('/opciones?sort=valor')
         .then(r => {
             this.opciones = r.data;
+            if (this.id) {
+                api.get(`personas/${this.id}`)
+                .then(r => {
+                    this.persona = r.data;
+                    if (this.persona.sexo) this.persona.sexo = this.persona.sexo.id;
+                    if (this.persona.estadoCivil) this.persona.estadoCivil = this.persona.estadoCivil.id;
+                    if (this.persona.fechaNacimiento) this.persona.fechaNacimiento = getFecha(this.persona.fechaNacimiento)
+                })
+                .catch(e => console.error(e));
+            }
         })
         .catch(e => console.error(e));
     },
@@ -199,20 +225,57 @@ export default {
         submitPersona: function() {
             if (this.$refs.form.validate()) {
                 let persona = clone(this.persona);
-                persona.tipo = this.tipo;
                 persona.nombre = persona.nombre.toUpperCase();
                 persona.apellido = persona.apellido ? persona.apellido.toUpperCase() : null
                 persona.nacionalidad = persona.nacionalidad ? persona.nacionalidad.toUpperCase() : null;
                 persona.lugarNacimiento = persona.lugarNacimiento ? persona.lugarNacimiento.toUpperCase() : null;
 
-                api.post('/personas', persona)
-                .then(r => {
-                    this.persona = crearPersona(this.tipo);
-                    this.$refs.form.reset();
-                    this.$emit('created', persona);
-                })
-                .catch(e => console.error(e));
+                if (this.id) {
+                    api.put(`/personas/${this.id}`, persona)
+                    .then(r => {
+                        this.global_state.snackbar.msg = 'Persona modificada exitosamente!';
+                        this.global_state.snackbar.color = 'success';
+                        this.global_state.snackbar.show = true;
+
+                        this.persona = crearPersona(this.tipo);
+                        this.$refs.form.reset();
+                        if (this.dialog) this.$emit('updated', persona);
+                        else this.$router.replace('/personas/lista');
+                    })
+                    .catch(e => {
+                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+                        this.global_state.snackbar.msg = msg;
+                        this.global_state.snackbar.color = 'error';
+                        this.global_state.snackbar.show = true;
+                        console.error(e)
+                    })
+                }
+                else {
+                    api.post('/personas', persona)
+                    .then(r => {
+                        this.global_state.snackbar.msg = 'Persona agregada exitosamente!';
+                        this.global_state.snackbar.color = 'success';
+                        this.global_state.snackbar.show = true;
+
+                        this.persona = crearPersona(this.tipo);
+                        this.$refs.form.reset();
+                        if (this.dialog) this.$emit('created', persona);
+                        else this.$router.replace('/personas/lista');
+                    })
+                    .catch(e => {
+                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+                        this.global_state.snackbar.msg = msg;
+                        this.global_state.snackbar.color = 'error';
+                        this.global_state.snackbar.show = true;
+                        console.error(e)
+                    })
+                }
             }
+        },
+
+        cancelar: function() {
+            if (this.dialog) this.$emit('cancelar');
+            else this.$router.go(-1);
         }
     }
 

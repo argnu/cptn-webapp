@@ -1,12 +1,19 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
-    <dialog-persona
-        v-model="show_persona"
+  <v-dialog
+    persistent
+    fullscreen
+    v-model="show_persona"
+  >
+    <persona-nueva 
+        dialog
         :dni="nuevo_comitente.persona.dni"
         :cuit="nuevo_comitente.persona.cuit"
         :tipo="tipo_comitente"
+        @cancelar="show_persona = false"
         @created="nuevaPersona"
-    ></dialog-persona>
+    ></persona-nueva>
+  </v-dialog>        
 
     <matricula-datos-basicos :matricula="matricula">
     </matricula-datos-basicos>
@@ -653,7 +660,7 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import DialogPersona from '@/components/personas/DialogPersona'
+import PersonaNueva from '@/components/personas/PersonaNueva'
 
 const tipo_persona = [
   Header('Física', 'fisica'),
@@ -710,7 +717,7 @@ export default {
   mixins: [MixinValidator],
 
   components: {
-    DialogPersona,
+    PersonaNueva,
     InputTexto,
     InputFecha,
     InputNumero,
