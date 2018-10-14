@@ -1,5 +1,13 @@
 <template>
   <v-container class="grey lighten-3" v-if="matricula">
+    <dialog-persona
+        v-model="show_persona"
+        :dni="nuevo_comitente.persona.dni"
+        :cuit="nuevo_comitente.persona.cuit"
+        :tipo="tipo_comitente"
+        @created="nuevaPersona"
+    ></dialog-persona>
+
     <matricula-datos-basicos :matricula="matricula">
     </matricula-datos-basicos>
 
@@ -89,56 +97,56 @@
                       @change="chgTipoComitente"
                     ></v-select>
 
-                  <input-texto
-                    tabindex="4"
+                  <v-text-field
+                    disabled
                     label="Nombre"
-                    type="letras"
-                    uppercase
                     v-model="nuevo_comitente.persona.nombre"
                     :rules="[rules.required]"
-                  ></input-texto>
+                  ></v-text-field>
 
-                  <input-texto
-                    tabindex="5"
+                  <v-text-field
                     v-if="nuevo_comitente.persona.tipo == 'fisica'"
+                    disabled
                     label="Apellido"
-                    type="letras"
-                    uppercase
                     v-model="nuevo_comitente.persona.apellido"
                     :rules="[rules.required]"
-                  ></input-texto>
+                  ></v-text-field>
 
-                    <input-numero
-                      label="Porcentaje"
-                      tabindex="9"
-                      decimal
-                      v-model="nuevo_comitente.porcentaje"
-                      :rules="[rules.required]"
-                    ></input-numero>
+                  <input-numero
+                    label="Porcentaje"
+                    tabindex="9"
+                    decimal
+                    v-model="nuevo_comitente.porcentaje"
+                    :rules="[rules.required]"
+                  ></input-numero>
                 </v-flex>
 
                 <v-flex xs6>
                     <input-numero
-                      tabindex="6"
                       v-if="nuevo_comitente.persona.tipo == 'fisica'"
-                      label="DNI"
+                      tabindex="6"
+                      label="Buscar DNI"
                       maxlength="8"
+                      append-icon="search"
                       v-model="nuevo_comitente.persona.dni"
+                      @change="chgDni"
                       :rules="[rules.required, rules.integer, rules.dni]"
                     ></input-numero>
 
                     <input-numero
-                      label="CUIT/CUIL"
                       tabindex="7"
                       maxlength="11"
+                      :disabled="nuevo_comitente.persona.tipo == 'fisica'"
+                      :label="nuevo_comitente.persona.tipo == 'fisica' ? 'CUIT/CUIL' : 'Buscar CUIT'"
+                      :append-icon="nuevo_comitente.persona.tipo == 'fisica' ? '' : 'search'"
                       v-model="nuevo_comitente.persona.cuit"
                       :rules="[rules.cuit]"
-                    >
-                    </input-numero>
+                      @change="chgCuit"
+                    ></input-numero>
 
                   <v-text-field
+                    disabled
                     label="Telefono"
-                    tabindex="8"
                     v-model="nuevo_comitente.persona.telefono"
                   ></v-text-field>
                 </v-flex>
@@ -175,7 +183,7 @@
                           </v-btn>
                           <v-btn icon small class="mx-4" @click="editComitente(props.index)">
                             <v-icon color="deep-purple">edit</v-icon>
-                          </v-btn>                          
+                          </v-btn>
                         </template>
                       </td>
                       <td>{{ props.item.persona.cuit }}</td>
@@ -238,7 +246,7 @@
                   item-text="nombre"
                   item-value="id"
                   :items="paises"
-                  label="País"                  
+                  label="País"
                   v-model="legajo.domicilio.pais"
                   :disabled="legajo.id > 0 && !this.edit"
                   return-object
@@ -409,7 +417,7 @@
                           </v-btn>
                           <v-btn icon small class="mx-4" @click="editTareaItem(props.index)">
                             <v-icon color="deep-purple">edit</v-icon>
-                          </v-btn>                          
+                          </v-btn>
                         </template>
                       </td>
                       <td>{{ getDescItem(props.item.item) }}</td>
@@ -637,6 +645,7 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
+import rules from '@/validation/rules'
 import { Header, Domicilio, Comitente } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
@@ -644,6 +653,7 @@ import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import DialogPersona from '@/components/personas/DialogPersona'
 
 const tipo_persona = [
   Header('Física', 'fisica'),
@@ -699,6 +709,15 @@ export default {
 
   mixins: [MixinValidator],
 
+  components: {
+    DialogPersona,
+    InputTexto,
+    InputFecha,
+    InputNumero,
+    Typeahead,
+    MatriculaDatosBasicos
+  },
+
   headers: {
     items: [
       Header('', 'acciones'),
@@ -745,7 +764,8 @@ export default {
       nuevo_item: LegajoItem(),
       comitente_edit: null,
       tareaitem_edit: null,
-      submitted: false
+      submitted: false,
+      show_persona: false
     }
   },
 
@@ -870,42 +890,54 @@ export default {
       else this.nuevo_comitente = new Comitente(e);
     },
 
-    chgCuitComitente: function() {
-      if (this.nuevo_comitente.persona.cuit && this.nuevo_comitente.persona.cuit.length) {
-        api.get(`/personas?cuit=${this.nuevo_comitente.persona.cuit}`)
+    chgCuit: function() {
+      if (this.tipo_comitente == 'juridica') {
+        api.get(`/personas?tipo=juridica&cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
-          if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
+          console.log(r.data)
+          if (r.data.length > 0) {
+            this.nuevo_comitente.persona = r.data[0];
+          }
+          else if (rules.cuit(this.nuevo_comitente.persona.cuit) === true) {
+              if (confirm('No existe ninguna persona jurídica registrada con dicho cuit. Desea cargarla?')) {
+                this.show_persona = true;
+              }
+          }
         })
       }
     },
 
     chgDni: function(e) {
-      if (this.nuevo_comitente.persona.dni) {
-        if (this.nuevo_comitente.persona.tipo == 'fisica' && this.nuevo_comitente.persona.dni.length) {
-          console.log(this.nuevo_comitente.persona.dni)
-          api.get(`/personas?dni=${this.nuevo_comitente.persona.dni}`)
-          .then(r => {
-            if (r.data.length)  this.nuevo_comitente.persona = r.data[0];
-          })
+      api.get(`/personas?tipo=fisica&dni=${this.nuevo_comitente.persona.dni}`)
+      .then(r => {
+        if (r.data.length > 0) {
+            this.nuevo_comitente.persona = r.data[0];
         }
-      }
+        else if (rules.dni(this.nuevo_comitente.persona.dni) === true) {
+            if (confirm('No existe ninguna persona física registrada con dicho dni. Desea cargarla?')) {
+              this.show_persona = true;
+            }
+        }
+      })
     },
 
     guardarComitente: function() {
       if (this.$refs.form_comitente.validate()) {
-        this.nuevo_comitente.persona.nombre = this.nuevo_comitente.persona.nombre.toUpperCase();
-        this.nuevo_comitente.persona.apellido = this.nuevo_comitente.persona.apellido ? this.nuevo_comitente.persona.apellido.toUpperCase() : null;
-        
-        if (this.comitente_edit != null) {
-          Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
-          this.comitente_edit = null;
-        }
-        else {
-          this.legajo.comitentes.push(this.nuevo_comitente);
-        }
+        let buscar_com = this.legajo.comitentes.find(c => this.nuevo_comitente.persona.id === c.persona.id);
 
-        this.nuevo_comitente = new Comitente('fisica');
-        this.$refs.form_comitente.reset();
+        if (!buscar_com || this.comitente_edit != null) {
+          if (this.comitente_edit != null) {
+            Vue.set(this.legajo.comitentes, this.comitente_edit, this.nuevo_comitente);
+            this.comitente_edit = null;
+          }
+          else {
+            this.legajo.comitentes.push(this.nuevo_comitente);
+          }
+
+          this.nuevo_comitente = new Comitente('fisica');
+          this.$refs.form_comitente.reset();
+        }
+        else alert('Ya existe la misma persona en el listado!');
       }
     },
 
@@ -976,16 +1008,19 @@ export default {
       legajo.items.forEach(i => {
         if (i.item.id) i.item = i.item.id;
       })
+      legajo.comitentes.forEach(c => {
+        c.persona = c.persona.id;
+      })
 
       return legajo;
     },
 
     submit: function() {
-      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate() 
+      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate()
         || !this.$refs.form_aportes.validate()) return alert('El formulario contiene errores. Por favor revisar');
       if (!this.valid_form) return alert('El formulario contiene errores. Por favor revisar');
 
-      this.submitted = true; 
+      this.submitted = true;
 
       if (this.edit) {
         api.put(`/legajos/${this.legajo.id}`, this.prepare())
@@ -1026,7 +1061,12 @@ export default {
           }
           else console.error(e);
         });
-      } 
+      }
+    },
+
+    nuevaPersona: function(persona) {
+      this.nuevo_comitente.persona = persona;
+      this.show_persona = false;
     },
 
     imprimir: function() {
@@ -1042,14 +1082,6 @@ export default {
       })
     }
   },
-
-  components: {
-    InputTexto,
-    InputFecha,
-    InputNumero,
-    Typeahead,
-    MatriculaDatosBasicos
-  }
 
 }
 </script>

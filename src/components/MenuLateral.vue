@@ -52,6 +52,25 @@
       <v-divider></v-divider>
 
       <v-list-group
+        v-if="$can('read', 'Persona')"
+        prepend-icon="list"
+      >
+        <v-list-tile slot="activator">
+          <v-list-tile-title>Personas</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/personas/nueva')">
+          <v-list-tile-sub-title>Nueva Persona</v-list-tile-sub-title>
+        </v-list-tile>
+
+        <v-list-tile @click="goto('/personas/lista')">
+          <v-list-tile-sub-title>Ver Listado</v-list-tile-sub-title>
+        </v-list-tile>
+      </v-list-group>
+
+      <v-divider></v-divider>
+
+      <v-list-group
         prepend-icon="school"
       >
         <v-list-tile slot="activator">

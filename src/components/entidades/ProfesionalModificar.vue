@@ -470,15 +470,13 @@ export default {
                 this.profesional.formaciones.push(formacion_nueva);
             }
 
-            this.profesional.subsidiarios = [];
-            for(let subsidiario of r[0].data.subsidiarios) {
-                let subsidiario_nuevo = { id: subsidiario.id };
-                subsidiario_nuevo.dni = subsidiario.dni;
-                subsidiario_nuevo.apellido = subsidiario.apellido;
-                subsidiario_nuevo.nombre = subsidiario.nombre;
-                subsidiario_nuevo.porcentaje = subsidiario.porcentaje.toString();
-                this.profesional.subsidiarios.push(subsidiario_nuevo);
-            }
+            r[0].data.subsidiarios.forEach(s => {
+                s.dni = s.persona.dni;
+                s.apellido = s.persona.apellido;
+                s.nombre = s.persona.nombre;
+                s.persona = s.persona.id;
+            });
+            this.profesional.subsidiarios = r[0].data.subsidiarios;
 
             this.opciones = r[1].data;
             this.delegaciones = r[2].data;
