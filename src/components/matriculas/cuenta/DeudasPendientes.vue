@@ -182,16 +182,20 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import { calculoIntereses } from '@/utils/cobranza'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 
 export default {
   name: 'DeudasPendientes',
+
   props: ['id', 'botonNueva'],
+
+  mixins: [MixinGlobalState],
 
   components: {
     InputFecha,
@@ -200,13 +204,13 @@ export default {
   },
 
   headers: [
-    Header('Sel.', 'check'),
-    Header('Fecha', 'fecha', true),
-    Header('Fecha de Venc.', 'fecha_vencimiento', true),
-    Header('Descripción', 'descripcion'),
-    Header('Importe', 'total'),
-    Header('Intereses', 'interes'),
-    Header('', 'acciones')
+    ColumnHeader('Sel.', 'check'),
+    ColumnHeader('Fecha', 'fecha', true),
+    ColumnHeader('Fecha de Venc.', 'fecha_vencimiento', true),
+    ColumnHeader('Descripción', 'descripcion'),
+    ColumnHeader('Importe', 'total'),
+    ColumnHeader('Intereses', 'interes'),
+    ColumnHeader('', 'acciones')
   ],
 
   data () {

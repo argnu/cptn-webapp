@@ -69,7 +69,7 @@
 
 <script>
 import * as utils from '@/utils'
-import { EntidadCondicionAfip, Header } from '@/model'
+import { EntidadCondicionAfip, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -97,9 +97,9 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Tipo', 'tipo'),
-        Header('Descripción', 'descripcion')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Tipo', 'tipo'),
+        ColumnHeader('Descripción', 'descripcion')
     ],
 
     data() {

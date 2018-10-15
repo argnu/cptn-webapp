@@ -14,7 +14,7 @@
             <v-layout>
                 <v-flex xs12 md3 class="mx-4">
                 <v-select
-                    :items="$options.tipo"
+                    :items="opciones_globales.tipo"
                     label="Tipo"
                     single-line bottom
                     v-model="filtros.tipo"
@@ -103,7 +103,7 @@
 
 <script>
 import api from '@/services/api'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Personas'
 
 export default {
@@ -112,24 +112,19 @@ export default {
 
   headers: {
     juridica: [
-      Header('', 'acciones'),
-      Header('CUIT', 'cuit', true),
-      Header('Nombre', 'nombre', true)
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('CUIT', 'cuit', true),
+      ColumnHeader('Nombre', 'nombre', true)
     ],
 
     fisica: [
-      Header('', 'acciones'),
-      Header('DNI', 'dni', true),
-      Header('Nombre', 'nombre', true),
-      Header('Apellido', 'apellido', true),
-      Header('CUIT/CUIL', 'cuit', true)
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('DNI', 'dni', true),
+      ColumnHeader('Nombre', 'nombre', true),
+      ColumnHeader('Apellido', 'apellido', true),
+      ColumnHeader('CUIT/CUIL', 'cuit', true)
     ]
   },
-
-    tipo: [
-        { text: 'Física', value: 'fisica' },
-        { text: 'Jurídica', value: 'juridica' }
-    ],
 
   data() {
     return {

@@ -114,7 +114,7 @@
                     tabindex="8"
                     v-if="$can('manage', 'Usuario')"
                     label="Roles"
-                    :items="$options.roles"
+                    :items="opciones_globales.roles"
                     :rules="[rules.required]"
                     v-model="usuario.roles"
                 ></v-select>
@@ -149,9 +149,10 @@
 import Vue from 'vue'
 import api from '@/services/api'
 import * as utils from '@/utils'
-import { Header } from '@/model'
-import { Usuario, roles } from '@/model/Usuario'
+import { ColumnHeader } from '@/model'
+import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import InputTexto from '@/components/base/InputTexto'
 
 
@@ -162,17 +163,15 @@ export default {
         id: [Number,String]
     },
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto
     },
 
-    roles,
-
     headers: [
-        Header('Borrar', 'borrar'),
-        Header('Nombre', 'nombre')
+        ColumnHeader('Borrar', 'borrar'),
+        ColumnHeader('Nombre', 'nombre')
     ],
 
     data() {

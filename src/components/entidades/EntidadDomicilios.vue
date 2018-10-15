@@ -152,15 +152,16 @@
 <script>
 import * as utils from '@/utils'
 import api from '@/services/api'
-import { Domicilio, EntidadCondicionAfip, Header } from '@/model'
+import { Domicilio, EntidadCondicionAfip, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import InputTexto from '@/components/base/InputTexto'
 
 
 const tipos_domicilio = [
-    Header('Real (Domicilio Declarado en DNI)', 'real'),
-    Header('Legal (Domicilio Profesional)', 'legal'),
-    Header('Especial (Domicilio Constituido)', 'especial')
+    ColumnHeader('Real (Domicilio Declarado en DNI)', 'real'),
+    ColumnHeader('Legal (Domicilio Profesional)', 'legal'),
+    ColumnHeader('Especial (Domicilio Constituido)', 'especial')
 ]
 
 const EntidadDomicilio = () => ({
@@ -180,20 +181,20 @@ export default {
         tabindex: [String,Number]
     },
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Tipo', 'tipo'),
-        Header('País', 'pais'),
-        Header('Provincia', 'provincia'),
-        Header('Departamento', 'departamento'),
-        Header('Localidad', 'localidad'),
-        Header('Dirección', 'direccion'),
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Tipo', 'tipo'),
+        ColumnHeader('País', 'pais'),
+        ColumnHeader('Provincia', 'provincia'),
+        ColumnHeader('Departamento', 'departamento'),
+        ColumnHeader('Localidad', 'localidad'),
+        ColumnHeader('Dirección', 'direccion'),
     ],
 
     data() {

@@ -137,7 +137,7 @@
                     return-object
                     item-text="valor"
                     item-value="id"
-                    :items="opciones.matricula"
+                    :items="global_state.opciones.matricula"
                     v-model="nuevo_titulo.tipo_matricula"
                 >
                 </v-select>
@@ -155,7 +155,7 @@
                     label="Nivel"
                     autocomplete
                     return-object
-                    :items="opciones.niveles_titulos"
+                    :items="global_state.opciones.niveles_titulos"
                     item-value="id"
                     item-text="valor"
                     v-model="nuevo_titulo.nivel"
@@ -166,7 +166,7 @@
                 <v-select
                     tabindex="12"
                     label="Incumbencias"
-                    :items="opciones.incumbencia"
+                    :items="global_state.opciones.incumbencia"
                     item-text="valor"
                     item-value="id"
                     v-model="nuevo_titulo.incumbencias"
@@ -250,10 +250,11 @@
 import Vue from 'vue'
 import api from '@/services/api'
 import * as utils from '@/utils'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 
 export default {
@@ -261,25 +262,19 @@ export default {
 
     props: ['id'],
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Nombre', 'nombre'),
-        Header('Nivel', 'nivel'),
-        Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Incumbencias', 'incumbencias'),
-        Header('Válido', 'valido'),
-    ],
-
-    tipos_matricula: [
-        { text: 'TECA', value: 'TECA' },
-        { text: 'TEC-', value: 'TEC-' },
-        { text: 'IDO', value: 'IDO' }
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Nombre', 'nombre'),
+        ColumnHeader('Nivel', 'nivel'),
+        ColumnHeader('Tipo de Matrícula', 'tipo_matricula'),
+        ColumnHeader('Incumbencias', 'incumbencias'),
+        ColumnHeader('Válido', 'valido'),
     ],
 
     data() {
@@ -287,7 +282,6 @@ export default {
             institucion: new Institucion(),
             nuevo_titulo: new Titulo(),
             titulo_edit: null,
-            opciones: {},
             paises: [],
             provincias: [],
             departamentos: [],
@@ -304,13 +298,9 @@ export default {
     },
 
     created: function() {
-        Promise.all([
-            api.get('/paises'),
-            api.get('/opciones')
-        ])
+        api.get('/paises')
         .then(r => {
-            this.paises = r[0].data;
-            this.opciones = r[1].data;
+            this.paises = r.data;
             if (this.id) {
                 api.get(`/instituciones/${this.id}`)
                 .then(r => {

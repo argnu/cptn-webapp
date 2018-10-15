@@ -15,7 +15,7 @@
               <v-flex xs4 class="mx-4">
                 <v-select
                   label="Estado:"
-                  :items="select_items.estados"
+                  :items="global_state.opciones.estadoMatricula"
                   v-model="cambio_estado.estado"
                   item-text="valor"
                   item-value="id"
@@ -27,7 +27,7 @@
               <v-flex xs3 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
-                  :items="select_items.t_documento"
+                  :items="global_state.opciones.documento"
                   item-text="valor"
                   item-value="id"
                   @change="chgTipoDoc"
@@ -144,7 +144,7 @@
           <v-layout row wrap>
             <v-flex xs12 md3 class="mx-2">
               <v-select
-                :items="select_items.tipo"
+                :items="opciones_globales.tipo_entidad"
                 label="Tipo de Entidad"
                 single-line bottom
                 v-model="filtros.tipoEntidad"
@@ -153,7 +153,7 @@
 
             <v-flex xs12 md3 class="mx-2">
               <v-select
-                :items="select_items.estados"
+                :items="global_state.opciones.estadoMatricula"
                 item-value="id"
                 item-text="valor"
                 label="Estado"
@@ -336,9 +336,10 @@ import reports from '@/services/reports'
 import * as _ from 'lodash'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
-import { Matricula, Header} from '@/model'
+import { Matricula, ColumnHeader} from '@/model'
 import ListaStore from '@/stores/listados/Matriculas'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 class CambioEstado {
   constructor() {
@@ -357,7 +358,8 @@ class FormSuspension {
 
 export default {
   name: 'MatriculaLista',
-  mixins: [MixinValidator],
+  
+  mixins: [MixinGlobalState, MixinValidator],
 
   components: {
     InputNumero,
@@ -366,24 +368,24 @@ export default {
 
   headers: {
     empresa: [
-      Header('', 'ver'),
-      Header('N° Matrícula', 'numeroMatricula', true),
-      Header('N° Solicitud', 'numeroSolicitud', true),
-      Header('Nombre', 'nombreEmpresa', true),
-      Header('CUIT', 'cuit', true),
-      Header('Estado', 'estado', true),
-      Header('Menú', 'acciones')
+      ColumnHeader('', 'ver'),
+      ColumnHeader('N° Matrícula', 'numeroMatricula', true),
+      ColumnHeader('N° Solicitud', 'numeroSolicitud', true),
+      ColumnHeader('Nombre', 'nombreEmpresa', true),
+      ColumnHeader('CUIT', 'cuit', true),
+      ColumnHeader('Estado', 'estado', true),
+      ColumnHeader('Menú', 'acciones')
     ],
 
     profesional: [
-      Header('', 'ver'),
-      Header('N° Matrícula', 'numeroMatricula', true),
-      Header('N° Solicitud', 'numeroSolicitud'),
-      Header('Apellido', 'apellido', true),
-      Header('Nombre', 'nombre', true),
-      Header('DNI', 'dni', true),
-      Header('Estado', 'estado', true),
-      Header('Menú', 'acciones')
+      ColumnHeader('', 'ver'),
+      ColumnHeader('N° Matrícula', 'numeroMatricula', true),
+      ColumnHeader('N° Solicitud', 'numeroSolicitud'),
+      ColumnHeader('Apellido', 'apellido', true),
+      ColumnHeader('Nombre', 'nombre', true),
+      ColumnHeader('DNI', 'dni', true),
+      ColumnHeader('Estado', 'estado', true),
+      ColumnHeader('Menú', 'acciones')
     ]
   },
 
@@ -393,21 +395,6 @@ export default {
       filtros: ListaStore.state.filtros,
       totalItems: 0,
       loading: false,
-
-      select_items: {
-        tipo: [{
-            text: 'Profesionales',
-            value: 'profesional'
-          },
-          {
-            text: 'Empresas',
-            value: 'empresa'
-          }
-        ],
-
-        estados: [],
-        t_documento: []
-      },
 
       expand: {
         filtros: true
@@ -448,13 +435,6 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, {
       'maxWait': 1000
     });
-
-    api.get('/opciones?sort=+valor')
-      .then(r => {
-        this.select_items.estados = r.data.estadoMatricula;
-        this.select_items.t_documento = r.data.documento;
-      })
-      .catch(e => console.error(e));
   },
 
   methods: {

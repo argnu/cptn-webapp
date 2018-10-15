@@ -653,18 +653,20 @@ import reports from '@/services/reports'
 import * as moment from 'moment'
 import * as utils from '@/utils'
 import rules from '@/validation/rules'
-import { Header, Domicilio, Comitente } from '@/model'
+import { ColumnHeader, Domicilio, Comitente } from '@/model'
+import { SelectItem } from '@/opciones'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
 import Typeahead from '@/components/base/Typeahead'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import PersonaNueva from '@/components/personas/PersonaNueva'
 
 const tipo_persona = [
-  Header('Física', 'fisica'),
-  Header('Jurídica', 'juridica')
+  SelectItem('Física', 'fisica'),
+  SelectItem('Jurídica', 'juridica')
 ]
 
 const LegajoItem = () => ({
@@ -714,7 +716,7 @@ export default {
     }
   },
 
-  mixins: [MixinValidator],
+  mixins: [MixinGlobalState, MixinValidator],
 
   components: {
     PersonaNueva,
@@ -727,18 +729,18 @@ export default {
 
   headers: {
     items: [
-      Header('', 'acciones'),
-      Header('Descripción', 'descripcion', false),
-      Header('Valor', 'valor', false)
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('Descripción', 'descripcion', false),
+      ColumnHeader('Valor', 'valor', false)
     ],
 
     comitentes: [
-      Header('', 'acciones'),
-      Header('CUIT/CUIL', 'cuit', false),
-      Header('Nombre', 'nombre', false),
-      Header('Apellido', 'apellido', false),
-      Header('DNI', 'dni', false),
-      Header('%', 'porcentaje', false)
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('CUIT/CUIL', 'cuit', false),
+      ColumnHeader('Nombre', 'nombre', false),
+      ColumnHeader('Apellido', 'apellido', false),
+      ColumnHeader('DNI', 'dni', false),
+      ColumnHeader('%', 'porcentaje', false)
     ]
   },
 

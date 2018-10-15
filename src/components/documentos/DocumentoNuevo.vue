@@ -12,7 +12,7 @@
             <v-flex xs12 md3 class="mx-5 mb-3 mt-4">
                 <v-select
                   label="Tipo:"
-                  :items="tipos_doc"
+                  :items="global_state.opciones.documento"
                   v-model="documento.tipo"
                   item-text="valor"
                   item-value="id"
@@ -73,6 +73,7 @@
 import api from '@/services/api'
 import * as utils from '@/utils'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import Documento from '@/model/Documento'
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
@@ -82,7 +83,7 @@ export default {
     name: 'DocumentoNuevo',
     props: ['id'],
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputNumero,
@@ -92,8 +93,7 @@ export default {
     data() {
         return {
             documento: new Documento(),
-            submitted: false,
-            tipos_doc: []
+            submitted: false
         }
     },
 
@@ -108,14 +108,9 @@ export default {
     },    
 
     created: function() {
-        api.get('/opciones')
-        .then(r => { 
-            this.tipos_doc = r.data.documento
-            if (this.id) {
-                return this.initDocumento()
-            }
-        })
-        .catch(e => console.error(e));
+        if (this.id) {
+            return this.initDocumento()
+        }
     },
 
     methods: {

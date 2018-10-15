@@ -12,7 +12,7 @@
                         <v-select
                         label="Tipo"
                         :disabled="tipo != undefined && tipo != null"
-                        :items="$options.tipo_persona"
+                        :items="opciones_globales.tipo_persona"
                         :rules="[rules.required]"
                         v-model="persona.tipo"
                         ></v-select>
@@ -41,7 +41,7 @@
                         <v-select
                             v-if="persona.tipo == 'fisica'"
                             autocomplete
-                            :items="opciones.sexo"
+                            :items="global_state.opciones.sexo"
                             item-text="valor"
                             item-value="id"
                             label="Sexo"
@@ -87,7 +87,7 @@
                         <v-select
                             v-if="persona.tipo == 'fisica'"
                             autocomplete
-                            :items="opciones.estadocivil"
+                            :items="global_state.opciones.estadocivil"
                             item-text="valor"
                             item-value="id"
                             label="Estado Civil"
@@ -148,6 +148,7 @@ import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import { PersonaFisica, PersonaJuridica } from '@/model'
 
 function crearPersona(tipo) {
@@ -169,7 +170,7 @@ export default {
         }
     },
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto,
@@ -177,15 +178,10 @@ export default {
         InputNumero
     },
 
-    tipo_persona: [
-        { text: 'Física', value: 'fisica' },
-        { text: 'Jurídica', value: 'juridica' }
-    ],
 
     data() {
         return {
             persona: {},
-            opciones: {},
             submit_persona: false
         }
     },
@@ -204,21 +200,16 @@ export default {
         if (this.tipo) this.persona = crearPersona(tipo);
         else this.persona = new PersonaFisica();
 
-        api.get('/opciones?sort=valor')
-        .then(r => {
-            this.opciones = r.data;
-            if (this.id) {
-                api.get(`personas/${this.id}`)
-                .then(r => {
-                    this.persona = r.data;
-                    if (this.persona.sexo) this.persona.sexo = this.persona.sexo.id;
-                    if (this.persona.estadoCivil) this.persona.estadoCivil = this.persona.estadoCivil.id;
-                    if (this.persona.fechaNacimiento) this.persona.fechaNacimiento = getFecha(this.persona.fechaNacimiento)
-                })
-                .catch(e => console.error(e));
-            }
-        })
-        .catch(e => console.error(e));
+        if (this.id) {
+            api.get(`personas/${this.id}`)
+            .then(r => {
+                this.persona = r.data;
+                if (this.persona.sexo) this.persona.sexo = this.persona.sexo.id;
+                if (this.persona.estadoCivil) this.persona.estadoCivil = this.persona.estadoCivil.id;
+                if (this.persona.fechaNacimiento) this.persona.fechaNacimiento = getFecha(this.persona.fechaNacimiento)
+            })
+            .catch(e => console.error(e));
+        }
     },
 
     methods: {

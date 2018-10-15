@@ -208,7 +208,7 @@
                 <v-card-text>
                   <entidad-condicion-afip
                     tabindex="27"
-                    :opciones="opciones.condicionafip"
+                    :opciones="condiciones_afip"
                     v-model="solicitud.entidad.condiciones_afip"
                   ></entidad-condicion-afip>
                 </v-card-text>
@@ -540,11 +540,12 @@
 <script>
 import api from '@/services/api'
 import * as utils from '@/utils'
-import { Solicitud, Header } from '@/model'
+import { Solicitud, ColumnHeader } from '@/model'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import NuevaMatriculaExterna from '@/components/NuevaMatriculaExterna'
 import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
@@ -553,7 +554,9 @@ import EntidadCondicionAfip from '@/components/entidades/EntidadCondicionAfip'
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [MixinValidator, NuevaSolicitud],
+
+  mixins: [MixinGlobalState, MixinValidator, NuevaSolicitud],
+
   props: ['id'],
 
   components: {
@@ -568,20 +571,20 @@ export default {
 
   headers: {
     matriculados: [
-      Header('', 'acciones'),
-      Header('N°', 'numero'),
-      Header('Nombre', 'nombre'),
-      Header('Apellido', 'nombre'),
-      Header('DNI', 'dni')
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('N°', 'numero'),
+      ColumnHeader('Nombre', 'nombre'),
+      ColumnHeader('Apellido', 'nombre'),
+      ColumnHeader('DNI', 'dni')
     ],
 
     rep_tecnico: [
-      Header('', 'acciones'),
-      Header('N°', 'numero'),
-      Header('Nombre', 'nombre'),
-      Header('DNI', 'dni'),
-      Header('Fecha Inicio', 'fini'),
-      Header('Fecha Cese', 'ffin')
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('N°', 'numero'),
+      ColumnHeader('Nombre', 'nombre'),
+      ColumnHeader('DNI', 'dni'),
+      ColumnHeader('Fecha Inicio', 'fini'),
+      ColumnHeader('Fecha Cese', 'ffin')
     ]
   },
 
@@ -689,6 +692,10 @@ export default {
       return this.valid.form_solicitud && this.valid.form_empresa
         && this.valid_domicilios
         && this.valid_representante;
+    },
+
+    condiciones_afip: function() {
+      return this.global_state.opciones.condicionafip.filter(c => c.t_entidad != 'profesional');
     }
   },
 
@@ -696,14 +703,9 @@ export default {
     this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
     this.table_rep_sec.debouncedUpdate = _.debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
 
-    Promise.all([
-      api.get('/opciones?sort=valor'),
-      api.get('/delegaciones')
-    ])
+    api.get('/delegaciones')
     .then(r => {
-      this.opciones = r[0].data;
-      this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'profesional');
-      this.delegaciones = r[1].data;
+      this.delegaciones = r.data;
       this.datos_cargados = true;
       this.initForm();
     })

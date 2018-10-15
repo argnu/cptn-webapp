@@ -14,7 +14,7 @@
             <v-flex xs12 md3 class="mx-4">
                 <v-select
                   label="Tipo:"
-                  :items="tipos_doc"
+                  :items="global_state.opciones.documento"
                   v-model="filtros.tipo"
                   item-text="valor"
                   item-value="id"
@@ -117,28 +117,30 @@ import * as utils from '@/utils'
 import config from '@/config'
 import api from '@/services/api'
 import * as _ from 'lodash'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import Pagination from '@/model/Pagination'
 import InputFecha from '@/components/base/InputFecha'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'DocumentoLista',
+
+  mixins: [MixinGlobalState],
 
   components: {
       InputFecha
   },
 
   headers: [
-    Header('', 'acciones'),
-    Header('Tipo', 'tipo', true),
-    Header('Fecha', 'fecha', true),
-    Header('N°', 'numero', true),
-    Header('Archivo', 'archivo')
+    ColumnHeader('', 'acciones'),
+    ColumnHeader('Tipo', 'tipo', true),
+    ColumnHeader('Fecha', 'fecha', true),
+    ColumnHeader('N°', 'numero', true),
+    ColumnHeader('Archivo', 'archivo')
   ],
 
   data() {
     return {
-        tipos_doc: [],
       pagination: Pagination(25),
       filtros: {
           fecha: null,
@@ -174,11 +176,6 @@ export default {
     this.debouncedUpdate = _.debounce(this.update, 600, {
       'maxWait': 1000
     });
-
-    api.get('/opciones')
-    .then(r => {
-        this.tipos_doc = r.data.documento;
-    })
   },
 
   methods: {

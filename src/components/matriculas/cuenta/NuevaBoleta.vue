@@ -15,7 +15,7 @@
                     label="Tipo de Comprobante"
                     item-text="descripcion"
                     item-value="id"
-                    :items="tipos_comprobante"
+                    :items="global_state.opciones.comprobante"
                     v-model="boleta.tipo_comprobante"
                     :rules="[rules.required]"
                 ></v-select>
@@ -108,11 +108,12 @@
 import api from '@/services/api'
 import * as utils from '@/utils'
 import * as moment from 'moment'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputTexto from '@/components/base/InputTexto'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import Store from '@/stores/Global'
 
 class Boleta {
@@ -136,8 +137,10 @@ class BoletaItem {
 
 export default {
     name: 'NuevaBoleta',
+
     props: ['idMatricula'],
-    mixins: [MixinValidator],
+
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputFecha,
@@ -146,10 +149,10 @@ export default {
     },
 
     headers: [
-        Header('Item', 'item'),
-        Header('Descripción', 'descripcion'),
-        Header('Importe', 'importe'),
-        Header('', 'acciones')
+        ColumnHeader('Item', 'item'),
+        ColumnHeader('Descripción', 'descripcion'),
+        ColumnHeader('Importe', 'importe'),
+        ColumnHeader('', 'acciones')
     ],
 
     data() {
@@ -161,7 +164,6 @@ export default {
             },
             boleta: new Boleta(),
             boleta_item: new BoletaItem(1),
-            tipos_comprobante: [],
             submitted: false,
             dias_vencimiento: 0
         }
@@ -174,13 +176,10 @@ export default {
     },
 
     created: function() {
-        Promise.all([
-            api.get('/opciones?sort=+valor'),
-            api.get('/valores-globales?variable=6') //Variable días de vencimiento
-        ])        
+        //Variable días de vencimiento
+        api.get('/valores-globales?variable=6')
         .then(r => {
-            this.tipos_comprobante = r[0].data.comprobante;
-            this.dias_vencimiento = r[1].data[0].valor;
+            this.dias_vencimiento = r.data[0].valor;
             this.chgFecha(this.boleta.fecha);
         })
     },

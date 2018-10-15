@@ -12,7 +12,7 @@
               <v-flex xs5 class="mx-4">
                 <v-select
                   label="Tipo de Documento:"
-                  :items="tipos_doc"
+                  :items="global_state.opciones.documento"
                   item-text="valor"
                   item-value="id"
                   @change="chgTipoDoc"
@@ -80,7 +80,7 @@
         ></input-fecha>
 
         <v-select
-            :items="estados_solicitud"
+            :items="global_state.opciones.estadoSolicitud"
             label="Estado de Solicitud"
             single-line bottom
             clearable
@@ -212,16 +212,17 @@ import * as _ from 'lodash'
 import * as utils from '@/utils'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 
 export default {
     name: 'SolicitudSuspensionLista',
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputFecha,
@@ -229,12 +230,12 @@ export default {
     },
 
     headers: [
-        Header('Fecha', 'fecha', true),
-        Header('N° Suspension', 'id', true),
-        Header('Estado', 'estado', true),
-        Header('N° Matrícula', 'matricula.numero', true),
-        Header('Detalle Matricula', 'detalle_matricula'),
-        Header('', 'acciones')
+        ColumnHeader('Fecha', 'fecha', true),
+        ColumnHeader('N° Suspension', 'id', true),
+        ColumnHeader('Estado', 'estado', true),
+        ColumnHeader('N° Matrícula', 'matricula.numero', true),
+        ColumnHeader('Detalle Matricula', 'detalle_matricula'),
+        ColumnHeader('', 'acciones')
     ],
 
     filters: {
@@ -247,7 +248,6 @@ export default {
     data() {
         return {
             solicitudes: [],
-            estados_solicitud: [],
             filtros: {
                 fecha_desde: moment().startOf('year').format('DD/MM/YYYY'),
                 fecha_hasta: moment().format('DD/MM/YYYY'),
@@ -265,8 +265,6 @@ export default {
             debouncedUpdate: null,
 
             selected: null,
-            tipos_doc: [],
-            show_aprobar: false,
             submit_aprobar: false,
             documento: null,
             documentos: []
@@ -294,12 +292,6 @@ export default {
         this.debouncedUpdate = _.debounce(this.update, 600, {
             'maxWait': 1000
         });
-
-        api.get('/opciones')
-        .then(r => {
-            this.estados_solicitud = r.data.estadoSolicitud;
-            this.tipos_doc = r.data.documento;
-        })
     },
 
     methods: {

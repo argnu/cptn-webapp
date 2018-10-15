@@ -129,7 +129,7 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import * as utils from '@/utils'
 import moment from 'moment'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
 import DetalleBoleta from '@/components/matriculas/cuenta/detalles/DetalleBoleta'
 import DetalleComprobante from '@/components/matriculas/cuenta/detalles/DetalleComprobante'
@@ -138,12 +138,13 @@ import DetalleExencion from '@/components/matriculas/cuenta/detalles/DetalleExen
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta';
 import InputFecha from '@/components/base/InputFecha';
 import MixinValidator from '@/components/mixins/MixinValidator';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'ResumenCuenta',
   props: ['id'],
 
-  mixins: [MixinValidator],
+  mixins: [MixinGlobalState, MixinValidator],
 
   components: {
     MatriculaDatosBasicos,
@@ -155,14 +156,14 @@ export default {
   },
 
   headers: [
-    Header('+', 'detalle'),
-    Header('Fecha', 'fecha', true),
-    Header('Fecha de Venc.', 'fecha_vencimiento', true),
-    Header('Descripción', 'descripcion', true),
-    Header('Estado', 'estado', true),
-    Header('Deudor', 'debe', true),
-    Header('Acre.', 'haber', true),
-    Header('', 'acciones')
+    ColumnHeader('+', 'detalle'),
+    ColumnHeader('Fecha', 'fecha', true),
+    ColumnHeader('Fecha de Venc.', 'fecha_vencimiento', true),
+    ColumnHeader('Descripción', 'descripcion', true),
+    ColumnHeader('Estado', 'estado', true),
+    ColumnHeader('Deudor', 'debe', true),
+    ColumnHeader('Acre.', 'haber', true),
+    ColumnHeader('', 'acciones')
   ],
 
   data () {

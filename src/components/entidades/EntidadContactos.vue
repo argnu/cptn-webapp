@@ -90,7 +90,7 @@
 
 <script>
 import * as utils from '@/utils'
-import { Contacto, Telefono, Header } from '@/model'
+import { Contacto, Telefono, ColumnHeader } from '@/model'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'
@@ -123,9 +123,9 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Tipo', 'tipo'),
-        Header('Valor', 'valor')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Tipo', 'tipo'),
+        ColumnHeader('Valor', 'valor')
     ],
 
     data() {

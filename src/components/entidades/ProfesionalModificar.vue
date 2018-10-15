@@ -35,7 +35,7 @@
                 autocomplete
                 label="Sexo"
                 tabindex="7"
-                :items="opciones.sexo"
+                :items="global_state.opciones.sexo"
                 item-text="valor"
                 item-value="id"
                 return-object
@@ -85,7 +85,7 @@
             <v-select
                 autocomplete
                 tabindex="8"
-                :items="opciones.estadocivil"
+                :items="global_state.opciones.estadocivil"
                 item-text="valor"
                 item-value="id"
                 return-object
@@ -158,7 +158,7 @@
             <v-flex x12>
                 <entidad-contactos
                     tabindex="13"
-                    :opciones="opciones.contacto"
+                    :opciones="global_state.opciones.contacto"
                     v-model="profesional.contactos"
                 ></entidad-contactos>
             </v-flex>
@@ -174,7 +174,7 @@
             <v-flex x12>
                 <entidad-condicion-afip
                     tabindex="18"
-                    :opciones="opciones.condicionafip"
+                    :opciones="global_state.opciones.condicionafip"
                     v-model="profesional.condiciones_afip"
                 ></entidad-condicion-afip>
             </v-flex>
@@ -189,7 +189,7 @@
             <v-flex x12>
                 <profesional-formaciones
                     tabindex="21"
-                    :niveles="opciones.niveles_titulos"
+                    :niveles="global_state.opciones.niveles_titulos"
                     v-model="profesional.formaciones"
                 ></profesional-formaciones>
             </v-flex>
@@ -372,6 +372,7 @@ import api from '@/services/api'
 import * as utils from '@/utils'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import { Profesional } from '@/model';
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
@@ -390,7 +391,7 @@ export default {
 
     props: ['id'],
 
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto,
@@ -411,7 +412,6 @@ export default {
             profesional: null,
             foto: null,
             firma: null,
-            opciones: {},
             deAcuerdo: true,
             publicar_todos: false,
             delegaciones: [],
@@ -456,7 +456,6 @@ export default {
     created: function() {
         Promise.all([
             api.get(`/profesionales/${this.id}`),
-            api.get('/opciones?sort=valor'),
             api.get('/delegaciones')
         ])
         .then(r => {
@@ -478,8 +477,7 @@ export default {
             });
             this.profesional.subsidiarios = r[0].data.subsidiarios;
 
-            this.opciones = r[1].data;
-            this.delegaciones = r[2].data;
+            this.delegaciones = r[1].data;
             this.show_cargando = false;
         })
         .catch(e => console.error(e));

@@ -177,7 +177,7 @@
 <script>
 import api from '@/services/api'
 import * as utils from '@/utils'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import InputTexto from '@/components/base/InputTexto'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -195,12 +195,12 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Nombre', 'nombre'),
-        Header('Nivel', 'nivel'),
-        Header('Tipo de Matrícula', 'tipo_matricula'),
-        Header('Incumbencias', 'incumbencias'),
-        Header('Válido', 'valido')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Nombre', 'nombre'),
+        ColumnHeader('Nivel', 'nivel'),
+        ColumnHeader('Tipo de Matrícula', 'tipo_matricula'),
+        ColumnHeader('Incumbencias', 'incumbencias'),
+        ColumnHeader('Válido', 'valido')
     ],
 
     filters: {

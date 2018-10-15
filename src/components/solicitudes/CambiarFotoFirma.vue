@@ -47,10 +47,13 @@ import api from '@/services/api';
 import Store from '@/stores/Global';
 import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
 import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'CambiarFotoFirma',
   props: ['profesional'],
+
+  mixins: [MixinGlobalState],
 
   components: {
     ProfesionalAddFoto,

@@ -36,17 +36,17 @@
 <script>
 import api from '@/services/api'
 import config from '@/config'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 
 export default {
     name: 'MatriculaHistorial',
     props: ['id'],
 
     headers: [
-        Header('Fecha', 'fecha'),
-        Header('Estado', 'estado'),
-        Header('Documento', 'tipo_doc'),
-        Header('Fecha Doc.', 'fecha_doc'),
+        ColumnHeader('Fecha', 'fecha'),
+        ColumnHeader('Estado', 'estado'),
+        ColumnHeader('Documento', 'tipo_doc'),
+        ColumnHeader('Fecha Doc.', 'fecha_doc'),
     ],
 
     data() {

@@ -89,21 +89,24 @@ import * as _ from 'lodash'
 import * as utils from '@/utils'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
     name: 'Arqueo',
+
+    mixins: [MixinGlobalState],
 
     components: {
         InputFecha
     },
 
     headers: [
-        Header('N° Recibo', 'numero', true),
-        Header('N° Matrícula', 'matricula.numero', true),
-        Header('Detalle Matrícula', 'detalle_matricula'),
-        Header('Importe', 'importe_total', true, 'right')
+        ColumnHeader('N° Recibo', 'numero', true),
+        ColumnHeader('N° Matrícula', 'matricula.numero', true),
+        ColumnHeader('Detalle Matrícula', 'detalle_matricula'),
+        ColumnHeader('Importe', 'importe_total', true, 'right')
     ],
 
     filters: {

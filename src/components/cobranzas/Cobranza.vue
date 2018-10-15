@@ -158,7 +158,7 @@
 
 <script>
 import api from '@/services/api'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import * as utils from '@/utils'
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
@@ -206,11 +206,11 @@ export default {
   },
 
   headers: [
-    Header('', 'borrar'),
-    Header('Forma de Pago', 'forma'),
-    Header('Importe', 'importe'),
-    Header('N° Cheque', 'numero_cheque'),
-    Header('Banco', 'banco')
+    ColumnHeader('', 'borrar'),
+    ColumnHeader('Forma de Pago', 'forma'),
+    ColumnHeader('Importe', 'importe'),
+    ColumnHeader('N° Cheque', 'numero_cheque'),
+    ColumnHeader('Banco', 'banco')
   ],
 
   data () {

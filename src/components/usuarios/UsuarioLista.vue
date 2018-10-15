@@ -97,19 +97,19 @@
 import * as utils from '@/utils'
 import api from '@/services/api'
 import * as _ from 'lodash'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Usuarios'
 
 export default {
   name: 'UsuarioLista',
 
   headers: [
-    Header('', 'acciones'),
-    Header('Usuario', 'username', true),
-    Header('Nombre', 'nombre', true),
-    Header('Apellido', 'apellido', true),
-    Header('Email', 'email', true),
-    Header('Activo', 'activo')
+    ColumnHeader('', 'acciones'),
+    ColumnHeader('Usuario', 'username', true),
+    ColumnHeader('Nombre', 'nombre', true),
+    ColumnHeader('Apellido', 'apellido', true),
+    ColumnHeader('Email', 'email', true),
+    ColumnHeader('Activo', 'activo')
   ],
 
   data() {

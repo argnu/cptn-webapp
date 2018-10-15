@@ -103,7 +103,7 @@ import moment from 'moment'
 import api from '@/services/api'
 import rules from '@/validation/rules'
 import { clone } from '@/utils'
-import { Subsidiario, Header } from '@/model'
+import { Subsidiario, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'
 import InputNumero from '@/components/base/InputNumero'
@@ -135,11 +135,11 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('DNI', 'dni'),
-        Header('Apellido', 'apellido'),
-        Header('Nombre', 'nombre'),
-        Header('Porcentaje', 'porcentaje')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('DNI', 'dni'),
+        ColumnHeader('Apellido', 'apellido'),
+        ColumnHeader('Nombre', 'nombre'),
+        ColumnHeader('Porcentaje', 'porcentaje')
     ],
 
     computed: {

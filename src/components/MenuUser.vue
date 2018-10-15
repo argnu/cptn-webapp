@@ -54,7 +54,7 @@ export default {
     },
 
     irPerfil: function() {
-      this.$router.push({ path: `/usuarios/${this.user.id}` });
+      this.$router.push({ path: `/usuarios/${Store.state.user.id}` });
     }
   },
 

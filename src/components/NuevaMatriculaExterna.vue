@@ -104,6 +104,7 @@ import api from '@/services/api'
 import { PersonaFisica } from '@/model/Persona'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -117,7 +118,7 @@ class Matricula {
 
 export default {
     name: 'NuevaMatriculaExterna',
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto,

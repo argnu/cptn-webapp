@@ -150,7 +150,7 @@
 import moment from 'moment'
 import api from '@/services/api'
 import * as utils from '@/utils'
-import { Formacion, Header } from '@/model'
+import { Formacion, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputFecha from '@/components/base/InputFecha';
 
@@ -178,13 +178,13 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Título', 'titulo'),
-        Header('Institución', 'institucion'),
-        Header('Fecha Egreso', 'fechaEgreso'),
-        Header('Fecha Emisión', 'fechaEmision'),
-        Header('Lapso Emisión', 'tiempoEmision'),
-        Header('Principal', 'principal')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Título', 'titulo'),
+        ColumnHeader('Institución', 'institucion'),
+        ColumnHeader('Fecha Egreso', 'fechaEgreso'),
+        ColumnHeader('Fecha Emisión', 'fechaEmision'),
+        ColumnHeader('Lapso Emisión', 'tiempoEmision'),
+        ColumnHeader('Principal', 'principal')
     ],
 
     computed: {

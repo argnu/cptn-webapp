@@ -274,7 +274,7 @@
                 <v-card-text>
                   <entidad-condicion-afip
                     tabindex="29"
-                    :opciones="opciones.condicionafip"
+                    :opciones="condiciones_afip"
                     v-model="solicitud.entidad.condiciones_afip"
                   ></entidad-condicion-afip>
                 </v-card-text>
@@ -540,11 +540,7 @@ import reports from '@/services/reports'
 import moment from 'moment'
 import rules from '@/validation/rules.js'
 import * as utils from '@/utils'
-import {
-  Solicitud,
-  Subsidiario,
-  Header
-} from '@/model';
+import { Solicitud, Subsidiario} from '@/model';
 import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
@@ -552,6 +548,7 @@ import InputNumero from '@/components/base/InputNumero';
 import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
 import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
 import MixinValidator from '@/components/mixins/MixinValidator';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
 import EntidadContactos from '@/components/entidades/EntidadContactos'
@@ -565,7 +562,7 @@ export default {
 
   props: ['id', 'dni'],
 
-  mixins: [MixinValidator, NuevaSolicitud],
+  mixins: [MixinGlobalState, MixinValidator, NuevaSolicitud],
 
   components: {
     InputTexto,
@@ -625,6 +622,10 @@ export default {
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
+    },
+
+    condiciones_afip: function() {
+      return this.global_state.opciones.condicionafip.filter(c => c.t_entidad != 'empresa');
     }
   },
 
@@ -635,18 +636,13 @@ export default {
   },
 
   created: function() {
-    Promise.all([
-        api.get('/opciones?sort=valor'),
-        api.get('/delegaciones')
-      ])
-      .then(r => {
-        this.opciones = r[0].data;
-        this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'empresa');
-        this.delegaciones = r[1].data;
-        this.datos_cargados = true;
-        this.init();
-      })
-      .catch(e => console.error(e));
+    api.get('/delegaciones')
+    .then(r => {
+      this.delegaciones = r.data;
+      this.datos_cargados = true;
+      this.init();
+    })
+    .catch(e => console.error(e));
   },
 
 

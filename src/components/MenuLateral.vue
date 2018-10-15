@@ -179,9 +179,13 @@
 </template>
 
 <script>
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'MenuLateral',
+
+  mixins: [MixinGlobalState],
+
   data () {
     return {
       show_drawer: false,

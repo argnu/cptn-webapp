@@ -84,16 +84,16 @@
 import * as utils from '@/utils'
 import api from '@/services/api'
 import * as _ from 'lodash'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Instituciones'
 
 export default {
   name: 'lista-solicitud',
 
   headers: [
-    Header('', 'acciones'),
-    Header('CUE', 'cue', true),
-    Header('Nombre', 'nombre', true)
+    ColumnHeader('', 'acciones'),
+    ColumnHeader('CUE', 'cue', true),
+    ColumnHeader('Nombre', 'nombre', true)
   ],
 
   data() {

@@ -100,7 +100,7 @@ import moment from 'moment'
 import api from '@/services/api'
 import * as utils from '@/utils'
 import VariableGlobal from '@/components/sistema/VariableGlobal'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 
 class Variable {
     constructor() {
@@ -119,11 +119,11 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Variable', 'descripcion'),
-        Header('Fecha Inicio', 'fecha_inicio'),
-        Header('Fecha Fin', 'fecha_fin'),
-        Header('Valor', 'valor')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Variable', 'descripcion'),
+        ColumnHeader('Fecha Inicio', 'fecha_inicio'),
+        ColumnHeader('Fecha Fin', 'fecha_fin'),
+        ColumnHeader('Valor', 'valor')
     ],
 
     data() {
