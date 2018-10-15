@@ -148,7 +148,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 import { ColumnHeader } from '@/model'
 import { Usuario } from '@/model/Usuario'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -232,7 +232,7 @@ export default {
         submit: function() {
             if (this.$refs.form.validate() && this.valid_pass) {
                 this.submitted = true;
-                let usuario = utils.clone(this.usuario);
+                let usuario = clone(this.usuario);
                 usuario.username = usuario.username.toUpperCase();
                 usuario.nombre = usuario.nombre.toUpperCase();
                 usuario.apellido = usuario.apellido.toUpperCase();
@@ -241,38 +241,20 @@ export default {
                 if (!this.id) {
                     api.post('/usuarios', usuario)
                     .then(r => {
+                        this.snackOk('Nuevo usuario creado exitosamente!');
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Nuevo usuario creado exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.replace('/usuarios/lista');
                     })
-                    .catch(e => {
-                        this.submitted = false;
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e);
-                    })
+                    .catch(e => this.snackError(e))
                 }
                 else {
                     api.put(`/usuarios/${this.id}`, usuario)
                     .then(r => {
+                        this.snackOk('Usuario modificado exitosamente!');
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Usuario modificado exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.replace('/usuarios/lista');
                     })
-                    .catch(e => {
-                        this.submitted = false;
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e);
-                    })
+                    .catch(e => this.snackError(e))
                 }
             }
         }

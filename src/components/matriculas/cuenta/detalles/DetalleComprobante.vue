@@ -51,7 +51,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils';
+;
 import { ColumnHeader } from '@/model'
 
 let formas_pago = [];

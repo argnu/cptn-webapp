@@ -54,7 +54,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils';
+;
 import { ColumnHeader } from '@/model'
 import DetalleBoleta from './DetalleBoleta'
 

@@ -106,8 +106,8 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils'
-import * as moment from 'moment'
+import { getFloat } from '@/utils'
+import moment from 'moment'
 import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import InputTexto from '@/components/base/InputTexto'
@@ -209,29 +209,19 @@ export default {
             this.submitted = true;
             if (this.$refs.form_boleta.validate()) {
                 this.boleta.matricula = this.idMatricula;
-                this.boleta.total = this.boleta.items.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
+                this.boleta.total = this.boleta.items.reduce((prev, act) => prev + getFloat(act.importe), 0);
                 this.boleta.delegacion = Store.state.delegacion.id;
                 api.post('/boletas', this.boleta)
                 .then(r => {
+                    this.snackOk('Nueva boleta creada exitosamente!');
                     this.submitted = false;
                     this.boleta = new Boleta();
-                    this.global_state.snackbar.msg = 'Nueva boleta creada exitosamente!';
-                    this.global_state.snackbar.color = 'success';
-                    this.global_state.snackbar.show = true;
                     this.$emit('update');
                     setTimeout(() => this.$refs.form_boleta.reset(), 10);
                 })
-                .catch(e => this.submitError(e));
+                .catch(e => this.snackError(e));
             }
-        },
-
-        submitError: function(e) {
-            this.submitted = false;
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-        },
+        }
     }
 
 }

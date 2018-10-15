@@ -156,7 +156,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updatePersonas, 600, {
+    this.debouncedUpdate = debounce(this.updatePersonas, 600, {
       'maxWait': 1000
     });
   },

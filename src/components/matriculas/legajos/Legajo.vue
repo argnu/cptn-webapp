@@ -650,8 +650,8 @@
 import Vue from 'vue'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import * as moment from 'moment'
-import * as utils from '@/utils'
+import moment from 'moment'
+import { getFloat, clone } from '@/utils'
 import rules from '@/validation/rules'
 import { ColumnHeader, Domicilio, Comitente } from '@/model'
 import { SelectItem } from '@/opciones'
@@ -790,7 +790,7 @@ export default {
 
     suma_comitentes: function() {
       if (!this.legajo.comitentes.length) return 0;
-      return this.legajo.comitentes.reduce((prev, act) => prev + utils.getFloat(act.porcentaje), 0);
+      return this.legajo.comitentes.reduce((prev, act) => prev + getFloat(act.porcentaje), 0);
     },
 
     valid_comitentes: function() {
@@ -957,7 +957,7 @@ export default {
     editComitente: function(index) {
       this.$refs.form_comitente.reset();
       this.comitente_edit = index;
-      this.nuevo_comitente = utils.clone(this.legajo.comitentes[index]);
+      this.nuevo_comitente = clone(this.legajo.comitentes[index]);
       this.tipo_comitente = this.nuevo_comitente.persona.tipo;
     },
 
@@ -987,7 +987,7 @@ export default {
 
     editTareaItem: function(index) {
       this.tareaitem_edit = index;
-      this.nuevo_item = utils.clone(this.legajo.items[index]);
+      this.nuevo_item = clone(this.legajo.items[index]);
       if (this.legajo.items[index].item.descripcion) this.nuevo_item.item = this.legajo.items[index].item.descripcion;
     },
 
@@ -1004,16 +1004,16 @@ export default {
     },
 
     prepare: function() {
-      let legajo = utils.clone(this.legajo);
+      let legajo = clone(this.legajo);
       if (legajo.domicilio.localidad.id) legajo.domicilio.localidad = legajo.domicilio.localidad.id;
       legajo.delegacion = this.global_state.delegacion.id;
       legajo.tipo = legajo.tipo.id;
-      legajo.aporte_bruto = utils.getFloat(legajo.aporte_bruto);
-      legajo.aporte_neto = utils.getFloat(legajo.aporte_neto);
-      legajo.aporte_neto_bonificacion = utils.getFloat(legajo.aporte_neto_bonificacion);
-      legajo.honorarios_presupuestados = utils.getFloat(legajo.honorarios_presupuestados);
-      legajo.honorarios_reales = utils.getFloat(legajo.honorarios_reales);
-      legajo.porcentaje_cumplimiento = utils.getFloat(legajo.porcentaje_cumplimiento);
+      legajo.aporte_bruto = getFloat(legajo.aporte_bruto);
+      legajo.aporte_neto = getFloat(legajo.aporte_neto);
+      legajo.aporte_neto_bonificacion = getFloat(legajo.aporte_neto_bonificacion);
+      legajo.honorarios_presupuestados = getFloat(legajo.honorarios_presupuestados);
+      legajo.honorarios_reales = getFloat(legajo.honorarios_reales);
+      legajo.porcentaje_cumplimiento = getFloat(legajo.porcentaje_cumplimiento);
       legajo.items.forEach(i => {
         if (i.item.id) i.item = i.item.id;
       })
@@ -1034,41 +1034,25 @@ export default {
       if (this.edit) {
         api.put(`/legajos/${this.legajo.id}`, this.prepare())
         .then(r => {
+          this.snackOk('Legajo modificado exitosamente!');
           this.submitted = false;
-          this.global_state.snackbar.msg = 'Legajo modificado exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
           this.$router.go(-1);
         })
         .catch(e => {
           this.submitted = false;
-          if (e.response && e.response.status != 500) {
-          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-          this.global_state.snackbar.msg = msg;
-          this.global_state.snackbar.color = 'error';
-          this.global_state.snackbar.show = true;
-          }
-          else console.error(e);
+          this.snackError(e);
         });
       }
       else {
         api.put(`/matriculas/${this.id_matricula}/legajos`, this.prepare())
         .then(r => {
           this.submitted = false;
-          this.global_state.snackbar.msg = 'Nuevo legajo creado exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
+          this.snackOk('Nuevo legajo creado exitosamente!');
           this.$router.go(-1);
         })
         .catch(e => {
           this.submitted = false;
-          if (e.response && e.response.status != 500) {
-          let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-          this.global_state.snackbar.msg = msg;
-          this.global_state.snackbar.color = 'error';
-          this.global_state.snackbar.show = true;
-          }
-          else console.error(e);
+          this.snackError(e);
         });
       }
     },

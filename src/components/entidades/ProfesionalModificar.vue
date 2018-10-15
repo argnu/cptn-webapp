@@ -369,7 +369,7 @@
 import Vue from 'vue'
 import moment from 'moment'
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { diffDatesStr, getFecha, clone } from '@/utils'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator';
 import MixinGlobalState from '@/components/mixins/MixinGlobalState'
@@ -459,13 +459,13 @@ export default {
             api.get('/delegaciones')
         ])
         .then(r => {
-            this.profesional = utils.clone(r[0].data);
-            this.profesional.fechaNacimiento = utils.getFecha(r[0].data.fechaNacimiento)
+            this.profesional = clone(r[0].data);
+            this.profesional.fechaNacimiento = getFecha(r[0].data.fechaNacimiento)
 
             this.profesional.formaciones = [];
             for(let formacion of r[0].data.formaciones) {
                 let formacion_nueva = formacion;
-                formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
+                formacion_nueva.tiempoEmision = diffDatesStr(moment(formacion.fechaEmision), moment());
                 this.profesional.formaciones.push(formacion_nueva);
             }
 
@@ -500,7 +500,7 @@ export default {
         },
 
         prepare: function() {
-            let profesional = utils.clone(this.profesional);
+            let profesional = clone(this.profesional);
 
             profesional.nombre = profesional.nombre.toUpperCase();
             profesional.nacionalidad = profesional.nacionalidad ? profesional.nacionalidad.toUpperCase() : null;
@@ -552,14 +552,12 @@ export default {
                     this.guardando = true;
                     api.put(`/profesionales/${this.id}`, this.prepare())
                     .then(r => {
+                        this.snackOk('Profesional actualizado exitosamente!');
                         this.guardando = false;
-                        this.global_state.snackbar.msg = 'Profesional actualizado exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.go(-1);
                     })
                     .catch(e => {
-                        this.submitError(e);
+                        this.snackError(e);
                         this.guardando = false;
                     });
                 }

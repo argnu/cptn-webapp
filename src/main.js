@@ -6,8 +6,8 @@ import router from './router'
 import Vuetify from 'vuetify'
 
 import 'vuetify/dist/vuetify.min.css'
-import * as moment from 'moment'
-import * as utils from '@/utils'
+import moment from 'moment'
+import { round, getFloat} from '@/utils'
 
 import { abilitiesPlugin } from '@casl/vue'
 Vue.use(abilitiesPlugin)
@@ -29,8 +29,8 @@ Vue.filter('fecha', function (str) {
 
 Vue.filter('round', function (number) {
   if (!number) return 0;
-  if (typeof number == 'number') return utils.round(number, 2);
-  else if (typeof number == 'string') return utils.round(utils.getFloat(number), 2);
+  if (typeof number == 'number') return round(number, 2);
+  else if (typeof number == 'string') return round(getFloat(number), 2);
 });
 
 Vue.filter('upperFirst', function (str) {

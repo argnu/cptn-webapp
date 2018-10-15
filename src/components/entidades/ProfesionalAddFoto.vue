@@ -105,7 +105,7 @@
 </style>
 
 <script>
-import * as utils from '@/utils'
+import { isMobile } from '@/utils'
 import Cropper from 'cropperjs'
 import axios from 'axios'
 
@@ -127,7 +127,7 @@ export default {
     }
   },
 
-  isMobile: utils.isMobile,
+  isMobile,
 
   data() {
     return {

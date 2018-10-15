@@ -71,7 +71,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { getFecha } from '@/utils'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import Documento from '@/model/Documento'
@@ -119,7 +119,7 @@ export default {
             .then(r => {
                 this.documento.tipo = r.data.tipo.id;
                 this.documento.numero = r.data.numero;
-                this.documento.fecha = utils.getFecha(r.data.fecha);
+                this.documento.fecha = getFecha(r.data.fecha);
             });
         },
         submit: function() {            
@@ -132,39 +132,27 @@ export default {
                 if (this.id) {
                     api.put(`/documentos/${this.id}`, fd)
                     .then(r => {
+                        this.snackOk('Documento actualizado exitosamente!');
                         this.submitted = false;
-                        this.documento = new Documento();
-                        this.global_state.snackbar.msg = 'Documento modificado exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
+                        this.documento = new Documento();                        
                         this.$router.go(-1);
                     })
                     .catch(e => {
                         this.submitted = false;
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e);
+                        this.snackError(e);
                     })
                 }
                 else {
                     api.post('/documentos', fd)
                     .then(r => {
+                        this.snackOk('Documento creado exitosamente!');
                         this.submitted = false;
                         this.documento = new Documento();
-                        this.global_state.snackbar.msg = 'Nuevo documento creado exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.replace('/documentos/lista');
                     })
                     .catch(e => {
                         this.submitted = false;
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e);
+                        this.snackError(e);
                     })
                 }
             }

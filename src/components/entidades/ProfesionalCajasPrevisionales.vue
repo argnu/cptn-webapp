@@ -52,7 +52,6 @@
 <script>
 import moment from 'moment'
 import api from '@/services/api'
-import * as utils from '@/utils'
 import { Formacion, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'

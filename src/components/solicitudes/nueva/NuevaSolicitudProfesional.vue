@@ -539,7 +539,7 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import moment from 'moment'
 import rules from '@/validation/rules.js'
-import * as utils from '@/utils'
+import { getFecha, clone, diffDatesStr } from '@/utils'
 import { Solicitud, Subsidiario} from '@/model';
 import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
@@ -665,7 +665,7 @@ export default {
       if (this.id) {
         return api.get(`/solicitudes/${this.id}`)
         .then(r => {
-            this.solicitud.fecha = utils.getFecha(r.data.fecha);
+            this.solicitud.fecha = getFecha(r.data.fecha);
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
             this.solicitud.estado = r.data.estado;
             this.fillProfesional(r.data.entidad);
@@ -673,7 +673,7 @@ export default {
         });
       }
       else {
-        this.solicitud.fecha = utils.getFecha();
+        this.solicitud.fecha = getFecha();
         this.solicitud.delegacion = +this.global_state.delegacion.id;
 
         if (this.dni) {
@@ -687,13 +687,13 @@ export default {
     },
 
     fillProfesional: function(entidad) {
-      this.solicitud.entidad = utils.clone(entidad);
-      this.solicitud.entidad.fechaNacimiento = utils.getFecha(entidad.fechaNacimiento)
+      this.solicitud.entidad = clone(entidad);
+      this.solicitud.entidad.fechaNacimiento = getFecha(entidad.fechaNacimiento)
 
       this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = formacion;
-        formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
+        formacion_nueva.tiempoEmision = diffDatesStr(moment(formacion.fechaEmision), moment());
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
 
@@ -743,7 +743,7 @@ export default {
     },
 
     prepare: function() {
-      let solicitud = utils.clone(this.solicitud);
+      let solicitud = clone(this.solicitud);
 
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.nacionalidad = solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad.toUpperCase() : null;
@@ -794,27 +794,26 @@ export default {
       if (!this.id) {
         api.post('/solicitudes', this.prepare())
           .then(r => {
+            this.snackOk('Nueva solicitud creada exitosamente!');
             this.guardando = false;
             this.id_creada = r.data.id;
             this.show_imprimir = true;
             this.$refs.firma.reset();
-            this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => this.submitError(e));
+          .catch(e => { 
+            this.snackError(e);
+            this.guardando = false;
+          });
       }
       else {
         api.put(`/solicitudes/${this.id}`, this.prepare())
           .then(r => {
             this.guardando = false;
-            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
+            this.snackOk('Solicitud modificada exitosamente!')
             this.$router.replace('/solicitudes/lista');
           })
           .catch(e => {
-            this.submitError(e);
+            this.snackError(e);
             this.guardando = false;
           });
       }

@@ -127,7 +127,7 @@
 import Vue from 'vue'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import * as utils from '@/utils'
+import { clone, sortByFecha, sortByNumber, sortByString } from '@/utils'
 import moment from 'moment'
 import { ColumnHeader } from '@/model'
 import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
@@ -206,11 +206,11 @@ export default {
 
     'pagination.sortBy': function(sortBy) {
       if (sortBy) {
-        if (sortBy.includes('fecha')) this.resumen = this.resumen.sort(utils.sortByFecha(sortBy));
-        else if (sortBy == 'debe' || sortBy == 'haber') this.resumen = this.resumen.sort(utils.sortByNumber(sortBy));
-        else this.resumen = this.resumen.sort(utils.sortByString(sortBy));
+        if (sortBy.includes('fecha')) this.resumen = this.resumen.sort(sortByFecha(sortBy));
+        else if (sortBy == 'debe' || sortBy == 'haber') this.resumen = this.resumen.sort(sortByNumber(sortBy));
+        else this.resumen = this.resumen.sort(sortByString(sortBy));
       }
-      else this.resumen = utils.clone(this.resumen_original);
+      else this.resumen = clone(this.resumen_original);
     }
   },
 
@@ -274,8 +274,8 @@ export default {
 
        this.resumen = resumen;
        this.paneles = resumen.map(r => false);
-       this.resumen_original = utils.clone(resumen);
-       this.resumen = this.resumen.sort(utils.sortByFecha('fecha_vencimiento'));
+       this.resumen_original = clone(resumen);
+       this.resumen = this.resumen.sort(sortByFecha('fecha_vencimiento'));
        this.loading = false;
      })
      .catch(e => console.error(e));
@@ -329,35 +329,18 @@ export default {
             estado: 11
           })
           .then(r => {
+            this.snackOk('Boleta anulada exitosamente!');
             this.updateBoletas();
-            this.global_state.snackbar.msg = 'Boleta anulada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => {
-            this.submit_cambio = false;
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e)
-          });
+          .catch(e => this.snackError(e));
         }
         else if (item.tipo == 'comprobante') {
           api.post(`/comprobantes/${item.id}/anular`)
           .then(r => {
+            this.snackOk('Recibo anulado exitosamente!');
             this.updateBoletas();
-            this.global_state.snackbar.msg = 'Recibo anulado exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e)
-          });
+          .catch(e => this.snackError(e));
         }
       }
     }

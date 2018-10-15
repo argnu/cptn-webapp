@@ -208,8 +208,8 @@
 
 <script>
 import moment from 'moment'
-import * as _ from 'lodash'
-import * as utils from '@/utils'
+import { debounce } from 'lodash'
+
 import api from '@/services/api'
 import reports from '@/services/reports'
 import { ColumnHeader } from '@/model'
@@ -289,7 +289,7 @@ export default {
     },
 
     created: function() {
-        this.debouncedUpdate = _.debounce(this.update, 600, {
+        this.debouncedUpdate = debounce(this.update, 600, {
             'maxWait': 1000
         });
     },
@@ -402,13 +402,11 @@ export default {
             if (this.$refs.form_aprobar.validate()) {
                 api.post(`/solicitudes-suspension/${this.selected.id}/aprobar`, { documento: this.documento })
                 .then(r => {
+                    this.snackOk('Solicitud de suspensión aprobada exitosamente!');
                     this.submit_aprobar = false;
                     this.show_aprobar = false;
                     this.documento = null;
                     this.update();
-                    this.global_state.snackbar.msg = 'Solicitud de suspensión aprobada exitosamente!';
-                    this.global_state.snackbar.color = 'success';
-                    this.global_state.snackbar.show = true;
 
                     reports.open({
                         'jsp-source': 'certificado_suspension_matricula.jasper',
@@ -419,12 +417,8 @@ export default {
                     });                    
                 })
                 .catch(e => {
+                    this.snackError(e);
                     this.submit_aprobar = false;
-                    let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                    this.global_state.snackbar.msg = msg;
-                    this.global_state.snackbar.color = 'error';
-                    this.global_state.snackbar.show = true;
-                    console.error(e)
                 });            
             }
         },

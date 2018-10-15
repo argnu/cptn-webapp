@@ -322,7 +322,7 @@
 </template>
 
 <script>
-import * as utils from '@/utils';
+;
 import * as headers from '@/model/Headers'
 
 export default {

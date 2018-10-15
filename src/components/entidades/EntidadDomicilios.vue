@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 import api from '@/services/api'
 import { Domicilio, EntidadCondicionAfip, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -293,7 +293,7 @@ export default {
             if (this.$refs.form_domicilio.validate()) {
                 this.nuevo_domicilio.domicilio.direccion = this.nuevo_domicilio.domicilio.direccion.toUpperCase();
 
-                let domicilios = utils.clone(this.value);
+                let domicilios = clone(this.value);
 
                 if (this.domicilio_edit != null && this.value[this.domicilio_edit]) {
                     this.nuevo_domicilio.tipo = this.value[this.domicilio_edit].tipo;
@@ -311,7 +311,7 @@ export default {
 
         copiarDomicilio: function(tipo) {
             let domicilio_copiar = this.value.find(d => d.tipo == tipo).domicilio;
-            this.nuevo_domicilio.domicilio = utils.clone(domicilio_copiar);
+            this.nuevo_domicilio.domicilio = clone(domicilio_copiar);
             this.changeCombosDomicilio();
         },
 
@@ -333,12 +333,12 @@ export default {
 
         edit: function(index) {
             this.domicilio_edit = index;
-            this.nuevo_domicilio = utils.clone(this.value[index]);
+            this.nuevo_domicilio = clone(this.value[index]);
             this.changeCombosDomicilio();
         },
 
         borrar: function(index) {
-            let domicilios = utils.clone(this.value);
+            let domicilios = clone(this.value);
             domicilios.splice(index, 1);
             this.$emit('input', domicilios);
         },

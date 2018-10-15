@@ -243,7 +243,7 @@
 <script>
 import api from '@/services/api';
 import reports from '@/services/reports'
-import * as utils from '@/utils'
+
 import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import MixinGlobalState from '@/components/mixins/MixinGlobalState'
@@ -360,7 +360,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateLegajos, 600, {
+    this.debouncedUpdate = debounce(this.updateLegajos, 600, {
       'maxWait': 1000
     });
     
@@ -445,20 +445,14 @@ export default {
         estado: this.nuevo_estado
       })
       .then(r => {
+        this.snackOk('Estado de matrícula modificado exitosamente!');
         this.submit_cambio = false;
         this.show_cambio_estado = false;
         this.updateList();
-        this.global_state.snackbar.msg = 'Estado de matrícula modificado exitosamente!';
-        this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;
       })
       .catch(e => {
         this.submit_cambio = false;
-        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-        this.global_state.snackbar.msg = msg;
-        this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;
-        console.error(e)
+        this.snackError(e);
       });
     },
 

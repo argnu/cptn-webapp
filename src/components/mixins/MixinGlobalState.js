@@ -28,12 +28,18 @@ export default {
       },
     
       methods: {
-        showError: function(e) {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.message;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e);
+        snackOk: function(msg) {
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'success';
+          this.global_state.snackbar.show = true;
+        },
+
+        snackError: function(e) {
+          let msg = (!e.response || e.response.status === 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+          this.global_state.snackbar.msg = msg;
+          this.global_state.snackbar.color = 'error';
+          this.global_state.snackbar.show = true;
+          console.error(e)
         }    
       }
 }

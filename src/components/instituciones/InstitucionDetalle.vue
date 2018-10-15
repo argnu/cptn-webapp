@@ -176,7 +176,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 import { ColumnHeader } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import InputTexto from '@/components/base/InputTexto'
@@ -234,13 +234,13 @@ export default {
             return api.get(`/instituciones/${this.id}`)
             .then(r => {
                 this.institucion = r.data
-                this.institucion_mod = utils.clone(r.data);
+                this.institucion_mod = clone(r.data);
             });
         },
 
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
-                let titulo = utils.clone(this.nuevo_titulo);
+                let titulo = clone(this.nuevo_titulo);
                 titulo.nombre = titulo.nombre.toUpperCase();
 
                 if (titulo.tipo_matricula) titulo.tipo_matricula = titulo.tipo_matricula.id;

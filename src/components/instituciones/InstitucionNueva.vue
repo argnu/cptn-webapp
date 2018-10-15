@@ -249,7 +249,7 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 import { ColumnHeader } from '@/model'
 import { Institucion, Titulo } from '@/model/Institucion'
 import InputTexto from '@/components/base/InputTexto'
@@ -378,7 +378,7 @@ export default {
 
         addTitulo: function() {
             if (this.$refs.form_titulo.validate()) {
-                let titulo = utils.clone(this.nuevo_titulo);
+                let titulo = clone(this.nuevo_titulo);
                 titulo.nombre = titulo.nombre.toUpperCase();
 
                 if (this.titulo_edit == null) {
@@ -396,7 +396,7 @@ export default {
 
         editTitulo: function(index) {
             this.titulo_edit = index;
-            this.nuevo_titulo = utils.clone(this.institucion.titulos[index]);
+            this.nuevo_titulo = clone(this.institucion.titulos[index]);
         },
 
         borrarTitulo: function(index) {
@@ -410,7 +410,7 @@ export default {
         submit: function() {
             if (this.$refs.form_basico.validate()) {
                 this.submitted = true;
-                let institucion = utils.clone(this.institucion);
+                let institucion = clone(this.institucion);
                 institucion.nombre = institucion.nombre.toUpperCase();
                 institucion.cue = institucion.cue.toUpperCase();
                 if (institucion.domicilio.localidad.id) institucion.domicilio.localidad = institucion.domicilio.localidad.id;
@@ -425,41 +425,27 @@ export default {
                 if (this.id) {
                     api.put(`/instituciones/${this.id}`, institucion)
                     .then(r => {
+                        this.snackOk('Institución actualizada exitosamente!');
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Institución actualizada exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.replace('/instituciones/lista');
                     })
                     .catch(e => {
                         this.submitted = false;
                         if (e.response.status == 409)
                             alert('No es posible eliminar el título. Existen profesionales relacionados al mismo');
-                        else {
-                            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                            this.global_state.snackbar.msg = msg;
-                            this.global_state.snackbar.color = 'error';
-                            this.global_state.snackbar.show = true;
-                            console.error(e);                            
-                        }                        
+                        else this.snackError(e);
                     })
                 }
                 else {
                     api.post('/instituciones', institucion)
                     .then(r => {
+                        this.snackOk('Institución creada exitosamente!')
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Nueva institución creada exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
                         this.$router.replace('/instituciones/lista');
                     })
                     .catch(e => {
+                        this.snackError(e);
                         this.submitted = false;
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e);
                     })
                 }
             }

@@ -145,18 +145,16 @@ export default {
                 api.post('/matriculas-externas', this.matricula)
                 .then(r => {
                     if (r.status == 201) {
+                        this.snackOk('Matriculado externo cargado exitosamente')
                         this.matricula = new Matricula();
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Matriculado externo cargado exitosamente';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;       
                         this.$emit('nueva');
                         this.$refs.form_matricula.reset();
                     }
                 })
                 .catch(e => {
                     this.submitted = false;
-                    this.showError(e)
+                    this.snackError(e)
                 });
             }
         },

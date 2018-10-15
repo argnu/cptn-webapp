@@ -539,7 +539,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { getFecha, clone } from '@/utils'
 import { Solicitud, ColumnHeader } from '@/model'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
@@ -700,8 +700,8 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
-    this.table_rep_sec.debouncedUpdate = _.debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
+    this.debouncedUpdate = debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    this.table_rep_sec.debouncedUpdate = debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
 
     api.get('/delegaciones')
     .then(r => {
@@ -728,16 +728,16 @@ export default {
         api.get(`/solicitudes/${this.id}`)
         .then(r => {
               this.solicitud = new Solicitud('empresa');
-              this.solicitud.fecha = utils.getFecha(r.data.fecha);
+              this.solicitud.fecha = getFecha(r.data.fecha);
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.entidad = r.data.entidad;
-              this.solicitud.entidad.fechaInicio = utils.getFecha(r.data.entidad.fechaInicio);
-              this.solicitud.entidad.fechaConstitucion = utils.getFecha(r.data.entidad.fechaConstitucion);
+              this.solicitud.entidad.fechaInicio = getFecha(r.data.entidad.fechaInicio);
+              this.solicitud.entidad.fechaConstitucion = getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias.map(i => i.incumbencia.id);
               this.solicitud.entidad.representantes = r.data.entidad.representantes.map(r => {
                 if (r.tipo == 'tecnico') {
-                  r.fechaInicio = utils.getFecha(r.fechaInicio);
-                  r.fechaFin = utils.getFecha(r.fechaFin);
+                  r.fechaInicio = getFecha(r.fechaInicio);
+                  r.fechaFin = getFecha(r.fechaFin);
                 }
                 return r;
               });
@@ -756,7 +756,7 @@ export default {
     submit: function() {
       this.guardando = true;
 
-      let solicitud = utils.clone(this.solicitud);
+      let solicitud = clone(this.solicitud);
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.tipoEmpresa = solicitud.entidad.tipoEmpresa.id;
       solicitud.entidad.tipoSociedad = solicitud.entidad.tipoSociedad ? solicitud.entidad.tipoSociedad.id : null;
@@ -784,28 +784,21 @@ export default {
       if (!this.id) {
         api.post('/solicitudes', solicitud)
             .then(r => {
+              this.snackOk('Nueva solicitud creada exitosamente!');
               this.guardando = false;
-              this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-              this.global_state.snackbar.color = 'success';
-              this.global_state.snackbar.show = true;
               this.$router.push('/solicitudes/lista')
 
             })
-            .catch(e => this.submitError(e));
+            .catch(e => this.snackError(e));
       }
       else {
         api.put(`/solicitudes/${this.id}`, solicitud)
           .then(r => {
+            this.snackOk('Solicitud modificada exitosamente!');
             this.guardando = false;
-            if (r.status != 200) {
-              this.submitError(e);
-            }
-            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => this.submitError(e));
+          .catch(e => this.snackError(e));
       }
     },
 

@@ -81,9 +81,9 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
+
 import api from '@/services/api'
-import * as _ from 'lodash'
+import { debounce } from 'lodash'
 import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Instituciones'
 
@@ -126,7 +126,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateInstituciones, 600, {
+    this.debouncedUpdate = debounce(this.updateInstituciones, 600, {
       'maxWait': 1000
     });
   },

@@ -224,42 +224,24 @@ export default {
                 if (this.id) {
                     api.put(`/personas/${this.id}`, persona)
                     .then(r => {
-                        this.global_state.snackbar.msg = 'Persona modificada exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
-
+                        this.snackOk('Persona modificada exitosamente!');
                         this.persona = crearPersona(this.tipo);
                         this.$refs.form.reset();
                         if (this.dialog) this.$emit('updated', persona);
                         else this.$router.replace('/personas/lista');
                     })
-                    .catch(e => {
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e)
-                    })
+                    .catch(e => this.snackError(e))
                 }
                 else {
                     api.post('/personas', persona)
                     .then(r => {
-                        this.global_state.snackbar.msg = 'Persona agregada exitosamente!';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;
-
+                        this.snackOk('Persona agregada exitosamente!');
                         this.persona = crearPersona(this.tipo);
                         this.$refs.form.reset();
                         if (this.dialog) this.$emit('created', persona);
                         else this.$router.replace('/personas/lista');
                     })
-                    .catch(e => {
-                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-                        this.global_state.snackbar.msg = msg;
-                        this.global_state.snackbar.color = 'error';
-                        this.global_state.snackbar.show = true;
-                        console.error(e)
-                    })
+                    .catch(e => this.snackError(e))
                 }
             }
         },

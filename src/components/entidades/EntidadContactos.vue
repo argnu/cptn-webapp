@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 import { Contacto, Telefono, ColumnHeader } from '@/model'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -158,7 +158,7 @@ export default {
                     this.nuevo_contacto.valor = `+${this.nuevo_telefono.pais}-${this.nuevo_telefono.provincia}-${this.nuevo_telefono.numero}`;
                 }
 
-                let contactos = utils.clone(this.value);
+                let contactos = clone(this.value);
 
                 if (this.contacto_edit == null) contactos.push(this.nuevo_contacto);
                 else contactos[this.contacto_edit] = this.nuevo_contacto;
@@ -173,7 +173,7 @@ export default {
 
         edit: function(index) {
             this.contacto_edit = index;
-            this.nuevo_contacto = utils.clone(this.value[index]);
+            this.nuevo_contacto = clone(this.value[index]);
             if (this.nuevo_contacto.tipo.id === 1 || this.nuevo_contacto.tipo.id === 2) {
                 let params = this.nuevo_contacto.valor.substring(1, this.nuevo_contacto.valor.length).split('-')
                 if (!this.nuevo_contacto.valor[0] == '+') params[0] = '54';
@@ -189,7 +189,7 @@ export default {
         },
 
         borrar: function(index) {
-            let contactos = utils.clone(this.value);
+            let contactos = clone(this.value);
             contactos.splice(index, 1);
             this.$emit('input', contactos);
         },

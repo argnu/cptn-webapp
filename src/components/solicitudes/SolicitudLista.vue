@@ -331,12 +331,12 @@
 </template>
 
 <script>
-import * as moment from 'moment'
+import moment from 'moment'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import * as _ from 'lodash'
+import { debounce } from 'lodash'
 import { Matricula, ColumnHeader } from '@/model'
-import * as utils from '@/utils'
+
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
@@ -394,7 +394,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
+    this.debouncedUpdate = debounce(this.updateSolicitudes, 150);
   },
 
   watch: {
@@ -521,6 +521,7 @@ export default {
 
         api.post('/matriculas', this.matricula)
         .then(r => {
+          this.snackOk('Solicitud aprobada exitosamente!');
 
           reports.open({
             'jsp-source': 'certificado_matriculado_habilitado.jasper',
@@ -535,9 +536,6 @@ export default {
           this.matricula = new Matricula();
           this.$refs.form_aprobacion.reset();
           this.show_validar = false;
-          this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
         })
         .catch(e => {
           this.submitValidacion = false;
@@ -568,12 +566,10 @@ export default {
         // 3 ES ESTADO 'Rechazada'
         api.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
-            this.updateSolicitudes();
-            this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
+          this.snackOk('Solicitud rechazada exitosamente!');
+          this.updateSolicitudes();
         })
-        .catch(e => console.error(e));
+        .catch(e => this.snackError(e));
       }
     },
 

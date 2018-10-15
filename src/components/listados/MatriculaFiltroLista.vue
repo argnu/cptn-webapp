@@ -138,8 +138,8 @@
 
 <script>
 import moment from 'moment'
-import * as _ from 'lodash'
-import * as utils from '@/utils'
+import { debounce } from 'lodash'
+
 import api from '@/services/api'
 import reports from '@/services/reports'
 import { ColumnHeader } from '@/model'
@@ -218,7 +218,7 @@ export default {
     },
 
     created: function() {
-        this.debouncedUpdate = _.debounce(this.update, 600, {
+        this.debouncedUpdate = debounce(this.update, 600, {
             'maxWait': 1000
         });
     },

@@ -85,7 +85,7 @@
 <script>
 import api from '@/services/api'
 import * as Cookies from 'js-cookie'
-import * as utils from '@/utils'
+
 import Store from '@/stores/Global'
 import InputTexto from '@/components/base/InputTexto'
 
