@@ -243,7 +243,7 @@
 <script>
 import api from '@/services/api';
 import reports from '@/services/reports'
-
+import { debounce } from 'lodash'
 import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import MixinGlobalState from '@/components/mixins/MixinGlobalState'
@@ -360,9 +360,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = debounce(this.updateLegajos, 600, {
-      'maxWait': 1000
-    });
+    this.debouncedUpdate = debounce(this.updateLegajos, 800);
     
     this.updateLegajos();
   },

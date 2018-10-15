@@ -172,9 +172,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = debounce(this.update, 600, {
-      'maxWait': 1000
-    });
+    this.debouncedUpdate = debounce(this.update, 800)
   },
 
   methods: {
