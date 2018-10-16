@@ -789,21 +789,28 @@ export default {
               this.$router.push('/solicitudes/lista')
 
             })
-            .catch(e => this.submitError(e));
+            .catch(e => {
+              let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+              this.global_state.snackbar.msg = msg;
+              this.global_state.snackbar.color = 'error';
+              this.global_state.snackbar.show = true;              
+            });
       }
       else {
         api.put(`/solicitudes/${this.id}`, solicitud)
           .then(r => {
             this.guardando = false;
-            if (r.status != 200) {
-              this.submitError(e);
-            }
             this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => this.submitError(e));
+          .catch(e => {
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;            
+          });
       }
     },
 

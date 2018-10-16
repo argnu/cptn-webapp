@@ -563,7 +563,10 @@ export default {
                         this.$router.go(-1);
                     })
                     .catch(e => {
-                        this.submitError(e);
+                        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+                        this.global_state.snackbar.msg = msg;
+                        this.global_state.snackbar.color = 'error';
+                        this.global_state.snackbar.show = true;                        
                         this.guardando = false;
                     });
                 }
