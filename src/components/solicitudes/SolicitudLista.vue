@@ -335,7 +335,7 @@ import * as moment from 'moment'
 import api from '@/services/api'
 import reports from '@/services/reports'
 import * as _ from 'lodash'
-import { Matricula, Header } from '@/model'
+import { Matricula, Header, tipos_matricula } from '@/model'
 import * as utils from '@/utils'
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
@@ -349,11 +349,7 @@ export default {
   name: 'lista-solicitud',
   mixins: [MixinValidator],
 
-  tipos_matricula: [
-    { text: 'TECA', value: 'TECA' },
-    { text: 'TEC-', value: 'TEC-' },
-    { text: 'IDO', value: 'IDO' }
-  ],
+  tipos_matricula,
 
   select_items: {
     estado: [

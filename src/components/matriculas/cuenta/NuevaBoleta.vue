@@ -222,17 +222,16 @@ export default {
                     this.$emit('update');
                     setTimeout(() => this.$refs.form_boleta.reset(), 10);
                 })
-                .catch(e => this.submitError(e));
+                .catch(e => {
+                    this.submitted = false;
+                    console.log(e.response.data)
+                    let msg = (!e.response || e.response.status === 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+                    this.global_state.snackbar.msg = msg;
+                    this.global_state.snackbar.color = 'error';
+                    this.global_state.snackbar.show = true;                    
+                });
             }
-        },
-
-        submitError: function(e) {
-            this.submitted = false;
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-        },
+        }
     }
 
 }

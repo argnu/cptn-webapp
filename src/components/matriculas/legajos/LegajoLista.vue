@@ -65,6 +65,13 @@
           clearable
         ></v-select>
 
+        <input-fecha
+          label="Fecha Desde"
+          clearable
+          v-model="filtros.fecha_desde"
+          @input="updateList"
+        ></input-fecha>
+
 
         <v-text-field
           v-if="allFilters"
@@ -89,6 +96,13 @@
           @input="updateList"
           clearable
         ></v-text-field>
+
+        <input-fecha
+          label="Fecha Hasta"
+          clearable
+          v-model="filtros.fecha_hasta"
+          @input="updateList"
+        ></input-fecha>
 
         <v-text-field
           v-if="allFilters"
@@ -128,6 +142,25 @@
           >
             <v-icon>add</v-icon>
           </v-btn>
+
+          <v-btn
+            v-if="!allFilters"
+            absolute dark fab top left
+            color="primary"
+            @click="imprimirLista"
+          >
+            <v-icon>print</v-icon>
+          </v-btn>
+
+          <v-btn
+            v-if="allFilters"
+            absolute dark fab top right
+            color="primary"
+            @click="exportar"
+          >
+            <v-icon>grid_on</v-icon>
+          </v-btn>
+
           <v-data-table
               no-data-text=""
               :headers="headers"
@@ -152,14 +185,14 @@
                   <v-btn icon slot="activator" :disabled="!$can('update', 'Legajo')">
                     <v-icon class="blue--text">more_vert</v-icon>
                   </v-btn>
-                  
+
                   <v-list v-if="$can('update', 'Legajo')">
                     <v-list-tile @click="imprimir(props.item.id)" title="Imprimir">
                       <v-icon class="text--darken-2 mr-2">print</v-icon>
                       <v-list-tile-title>Imprimir</v-list-tile-title>
                     </v-list-tile>
 
-                    <v-list-tile                  
+                    <v-list-tile
                         v-if="props.item.estado.id == 1 || props.item.estado.id == 4"
                         title="Cambiar Estado"
                         @click="chgEstado(props.item)"
@@ -168,16 +201,16 @@
                       <v-list-tile-title>Cambiar Estado</v-list-tile-title>
                     </v-list-tile>
 
-                    <v-list-tile                  
+                    <v-list-tile
                         v-if="props.item.estado.id == 1 || props.item.estado.id == 4"
-                        @click="editar(props.item.id)"                   
+                        @click="editar(props.item.id)"
                     >
                       <v-icon color="deep-purple" class="text--darken-2 mr-2">edit</v-icon>
                       <v-list-tile-title>Modificar</v-list-tile-title>
                     </v-list-tile>
 
-                    <v-list-tile                  
-                      @click="verDetalle(props.item.id)" 
+                    <v-list-tile
+                      @click="verDetalle(props.item.id)"
                       title="Ver Detalle"
                     >
                       <v-icon color="primary" class="text--darken-2 mr-2">launch</v-icon>
@@ -185,13 +218,25 @@
                     </v-list-tile>
                   </v-list>
                 </v-menu>
-              </td>                
+              </td>
             </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>
+
+    <table style="display:none" ref="tabla_export" id="tabla_export">
+        <thead>
+            <tr>
+                <th style="text-align:right" v-for="header of headers" :key="header.value">
+                    {{ header.text }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </v-container>
 </template>
 
@@ -200,6 +245,7 @@ import api from '@/services/api';
 import reports from '@/services/reports'
 import * as utils from '@/utils'
 import { Header } from '@/model'
+import InputFecha from '@/components/base/InputFecha'
 
 function getHeaders(all) {
   let headers = [
@@ -234,6 +280,10 @@ export default {
     }
   },
 
+  components: {
+    InputFecha
+  },
+
   filters: {
     lista_comitentes: function(lista) {
       return lista.map(c => `${c.persona.nombre} ${c.persona.tipo == 'fisica' ? c.persona.apellido : ''}`)
@@ -264,7 +314,7 @@ export default {
           direccion: ''
         },
         comitente: {
-          cuit: '',
+          nombre: '',
           apellido: '',
         },
         estado: ''
@@ -340,6 +390,8 @@ export default {
 
       if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
       if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
+      if (this.filtros.fecha_desde) url += `&fecha[desde]=${this.filtros.fecha_desde}`;
+      if (this.filtros.fecha_hasta) url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
       if (this.filtros.numero) url += `&filtros[numero]=${this.filtros.numero}`;
       if (this.filtros.nomenclatura) url += `&filtros[nomenclatura]=${this.filtros.nomenclatura}`;
       if (this.filtros.numero_matricula) url += `&filtros[matricula.numero]=${this.filtros.numero_matricula}`;
@@ -407,13 +459,87 @@ export default {
       })
       .catch(e => {
         this.submit_cambio = false;
-        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.msg;
+        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
         this.global_state.snackbar.msg = msg;
         this.global_state.snackbar.color = 'error';
         this.global_state.snackbar.show = true;
         console.error(e)
-      });       
-    }
+      });
+    },
+
+    exportar: function() {
+        this.global_state.cursor_wait = true;
+        let tabla = this.$refs.tabla_export;
+
+      let url = '/legajos?';
+
+      if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
+      if (this.filtros.estado) url += `&estado=${this.filtros.estado}`;
+      if (this.filtros.fecha_desde) url += `&fecha[desde]=${this.filtros.fecha_desde}`;
+      if (this.filtros.fecha_hasta) url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
+      if (this.filtros.numero) url += `&filtros[numero]=${this.filtros.numero}`;
+      if (this.filtros.nomenclatura) url += `&filtros[nomenclatura]=${this.filtros.nomenclatura}`;
+      if (this.filtros.numero_matricula) url += `&filtros[matricula.numero]=${this.filtros.numero_matricula}`;
+      if (this.filtros.comitente) {
+        for(let f in this.filtros.comitente) {
+          if (this.filtros.comitente[f]) url += `&filtros[comitente.${f}]=${this.filtros.comitente[f]}`;
+        }
+      }
+      if (this.filtros.domicilio) {
+        for(let f in this.filtros.domicilio) {
+          if (this.filtros.domicilio[f]) url += `&filtros[domicilio.${f}]=${this.filtros.domicilio[f]}`;
+        }
+      }
+
+      if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
+
+        api.get(url)
+        .then(r => {
+            let rows = '';
+            for(let legajo of r.data.resultados) {
+                rows += `
+                <tr>
+                  <td>${ this.$options.filters.fecha(legajo.fecha_solicitud) }</td>
+                  <td>${ legajo.matricula.numeroMatricula }</td>
+                  <td>${ legajo.estado.valor }</td>
+                  <td>${ legajo.tipo.valor }</td>
+                  <td>${ legajo.numero_legajo }</td>
+                  <td>${ legajo.nomenclatura }</td>
+                  <td>${ this.$options.filters.lista_comitentes(legajo.comitentes)}</td>
+                  <td>${ legajo.domicilio.direccion }</td>
+                </tr>
+                `;
+            }
+
+            tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
+
+            window.open('data:application/vnd.ms-excel;base64,' + btoa(this.$refs.tabla_export.outerHTML));
+            this.global_state.cursor_wait = false;
+        })
+        .catch(e => {
+            console.error(e);
+        })
+    },
+
+
+    imprimirLista: function() {
+      reports.open({
+        'jsp-source': 'listado_legajos_tecnicos.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Legajos - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'matricula_id': this.id,
+        'estado': this.filtros.estado || '0',
+        'numero_legajo': this.filtros.numero || '0',
+        'nomenclatura': this.filtros.nomenclatura || '0',
+        'fecha_inicio': this.filtros.fecha_desde || '0',
+        'fecha_fin': this.filtros.fecha_hasta || '0',
+        'comitente_nombre': (this.filtros.comitente && this.filtros.comitente.nombre) ? 
+          this.filtros.comitente.nombre :  '0',
+        'comitente_apellido': (this.filtros.comitente && this.filtros.comitente.apellido) ? 
+          this.filtros.comitente.apellido :  '0'
+      });      
+    }    
   },
 
 }

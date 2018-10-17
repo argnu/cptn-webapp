@@ -95,6 +95,10 @@
         <v-list-tile v-if="$can('read', 'SolicitudSuspension')" @click="goto('/listados/solicitudes-suspension')">
           <v-list-tile-sub-title>Solicitudes de Suspensión</v-list-tile-sub-title>
         </v-list-tile>
+
+        <v-list-tile v-if="$can('read', 'Matricula')" @click="goto('/listados/matriculas')">
+          <v-list-tile-sub-title>Profesionales</v-list-tile-sub-title>
+        </v-list-tile>
       </v-list-group>
 
       <v-divider></v-divider>
@@ -112,6 +116,10 @@
 
         <v-list-tile v-if="$can('read', 'Comprobante')" @click="goto('/herramientas/arqueo')">
           <v-list-tile-sub-title>Arqueo</v-list-tile-sub-title>
+        </v-list-tile>
+
+        <v-list-tile v-if="$can('read', 'Comprobante')" @click="goto('/herramientas/resumen-ingresos')">
+          <v-list-tile-sub-title>Resumen de Ingresos</v-list-tile-sub-title>
         </v-list-tile>
       </v-list-group>
 

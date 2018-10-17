@@ -677,7 +677,7 @@ export default {
         });
       }
       else {
-        this.solicitud.fecha = utils.getFecha();
+        this.solicitud.fecha = utils.getFecha(new Date());
         this.solicitud.delegacion = +this.global_state.delegacion.id;
 
         if (this.dni) {
@@ -806,7 +806,12 @@ export default {
             this.global_state.snackbar.color = 'success';
             this.global_state.snackbar.show = true;
           })
-          .catch(e => this.submitError(e));
+          .catch(e => {
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;            
+          });
       }
       else {
         api.put(`/solicitudes/${this.id}`, this.prepare())
@@ -818,18 +823,21 @@ export default {
             this.$router.replace('/solicitudes/lista');
           })
           .catch(e => {
-            this.submitError(e);
+            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
+            this.global_state.snackbar.msg = msg;
+            this.global_state.snackbar.color = 'error';
+            this.global_state.snackbar.show = true;
             this.guardando = false;
           });
       }
     },
 
     imprimir: function() {
-      let id = this.id_creada;
-      if (!id) id = this.id;
+      let id = this.id_creada || this.id;
+
       Promise.all([
         api.get(`/solicitudes/${id}`),
-        api.get(`/matriculas?entidad=${id}`)
+        api.get(`/matriculas?solicitud[id]=${id}`)
       ])
       .then(rs => {
         let solicitud = rs[0].data;
