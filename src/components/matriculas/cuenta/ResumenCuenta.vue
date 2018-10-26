@@ -294,8 +294,10 @@ export default {
       let param_id = 'boleta_id';
       let titulo = 'Boleta';
       let numero = item.numero
+      console.log(item.tipo)
 
       if (item.tipo == 'volante') {
+        nombre_reporte = 'volante';
         titulo = 'Volante de Pago';
         param_id = 'volante_id';
         numero = item.id;

@@ -137,7 +137,7 @@
                     <td>{{ props.item.matricula.numero }}</td>
                     <td>{{ props.item.matricula | detalle_matricula }}</td>
                     <td>
-                        <v-menu v-if="props.item.estado.id == 1">
+                        <v-menu>
                             <v-btn icon slot="activator">
                             <v-icon class="blue--text">more_vert</v-icon>
                             </v-btn>
@@ -152,6 +152,15 @@
                                         </div>
                                         <v-list>
                                             <v-list-tile
+                                                v-if="props.item.estado.id == 2"
+                                                @click="imprimirCertificado(props.item.matricula.id)"
+                                            >
+                                                <v-icon class="text--darken-2 mr-2">print</v-icon>
+                                                <v-list-tile-title>Certificado</v-list-tile-title>
+                                            </v-list-tile>
+
+                                            <v-list-tile
+                                                v-if="props.item.estado.id == 1"
                                                 @click="imprimir(props.item.matricula.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
@@ -159,6 +168,7 @@
                                             </v-list-tile>
 
                                             <v-list-tile
+                                                v-if="props.item.estado.id == 1"
                                                 @click="imprimirAnexo(props.item.matricula.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
@@ -166,6 +176,7 @@
                                             </v-list-tile>
 
                                             <v-list-tile
+                                                v-if="props.item.estado.id == 1"
                                                 @click="imprimirDDJJ(props.item.matricula.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
@@ -398,6 +409,16 @@ export default {
                 'jsp-only-gen': false,
                 'matricula_id': id_matricula,
             });
+        },
+
+        imprimirCertificado: function(id_matricula) {
+            reports.open({
+                'jsp-source': 'certificado_suspension_matricula.jasper',
+                'jsp-format': 'PDF',
+                'jsp-output-file': `Certificado Suspension - ${Date.now()}`,
+                'jsp-only-gen': false,
+                'matricula_id': id_matricula,
+            });                  
         },
 
         mostrarAprobar: function(solicitud) {
