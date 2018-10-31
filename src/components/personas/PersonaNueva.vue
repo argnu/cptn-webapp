@@ -163,7 +163,10 @@ export default {
         id: [Number, String],
         dni: String,
         cuit: String,
-        tipo: String,
+        tipo: { 
+            type: String,
+            default: () => 'fisica'
+        },
         dialog: {
             type: Boolean,
             default: () => false
@@ -197,7 +200,7 @@ export default {
     },
 
     created: function() {
-        if (this.tipo) this.persona = crearPersona(tipo);
+        if (this.tipo) this.persona = crearPersona(this.tipo);
         else this.persona = new PersonaFisica();
 
         if (this.id) {
@@ -238,6 +241,7 @@ export default {
                         this.snackOk('Persona agregada exitosamente!');
                         this.persona = crearPersona(this.tipo);
                         this.$refs.form.reset();
+                        persona.id = r.data.id;
                         if (this.dialog) this.$emit('created', persona);
                         else this.$router.replace('/personas/lista');
                     })

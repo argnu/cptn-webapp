@@ -137,7 +137,6 @@
                       append-icon="search"
                       v-model="nuevo_comitente.persona.dni"
                       @change="chgDni"
-                      :rules="[rules.required, rules.integer, rules.dni]"
                     ></input-numero>
 
                     <input-numero
@@ -147,7 +146,6 @@
                       :label="nuevo_comitente.persona.tipo == 'fisica' ? 'CUIT/CUIL' : 'Buscar CUIT'"
                       :append-icon="nuevo_comitente.persona.tipo == 'fisica' ? '' : 'search'"
                       v-model="nuevo_comitente.persona.cuit"
-                      :rules="[rules.cuit]"
                       @change="chgCuit"
                     ></input-numero>
 
@@ -203,7 +201,7 @@
 
                 <br>
 
-                <v-alert color="error" icon="priority_high" :value="!this.legajo.id && !valid_comitentes">
+                <v-alert color="error" icon="priority_high" :value="!valid_comitentes">
                   Los porcentajes deben sumar 100%
                 </v-alert>
               </v-flex>
@@ -904,8 +902,8 @@ export default {
         api.get(`/personas?tipo=juridica&cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
           console.log(r.data)
-          if (r.data.length > 0) {
-            this.nuevo_comitente.persona = r.data[0];
+          if (r.data.resultados.length > 0) {
+            this.nuevo_comitente.persona = r.resultados.data[0];
           }
           else if (rules.cuit(this.nuevo_comitente.persona.cuit) === true) {
               if (confirm('No existe ninguna persona jurídica registrada con dicho cuit. Desea cargarla?')) {
@@ -919,8 +917,8 @@ export default {
     chgDni: function(e) {
       api.get(`/personas?tipo=fisica&dni=${this.nuevo_comitente.persona.dni}`)
       .then(r => {
-        if (r.data.length > 0) {
-            this.nuevo_comitente.persona = r.data[0];
+        if (r.data.resultados.length > 0) {
+            this.nuevo_comitente.persona = r.data.resultados[0];
         }
         else if (rules.dni(this.nuevo_comitente.persona.dni) === true) {
             if (confirm('No existe ninguna persona física registrada con dicho dni. Desea cargarla?')) {

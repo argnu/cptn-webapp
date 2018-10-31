@@ -210,11 +210,11 @@ export default {
         chgDni: function() {
             api.get(`/personas?tipo=fisica&dni=${this.nuevo_subsidiario.dni}`)
             .then(r => {
-                    this.nuevo_subsidiario.persona = null;
-                    this.nuevo_subsidiario.nombre = null;
-                    this.nuevo_subsidiario.apellido = null;
-                if (r.data.length > 0) {
-                    let persona = r.data[0];
+                this.nuevo_subsidiario.persona = null;
+                this.nuevo_subsidiario.nombre = null;
+                this.nuevo_subsidiario.apellido = null;
+                if (r.data.resultados.length > 0) {
+                    let persona = r.data.resultados[0];
                     this.nuevo_subsidiario.persona = persona.id;
                     this.nuevo_subsidiario.nombre = persona.nombre;
                     this.nuevo_subsidiario.apellido = persona.apellido;
