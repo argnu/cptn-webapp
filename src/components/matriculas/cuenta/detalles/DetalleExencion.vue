@@ -24,7 +24,7 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils';
+;
 import DetalleBoleta from './DetalleBoleta'
 
 export default {

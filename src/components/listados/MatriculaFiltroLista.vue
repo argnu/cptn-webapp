@@ -10,7 +10,7 @@
         <v-select
             label="Tipo de Matrícula:"
             multiple
-            :items="$options.tipos_matricula"
+            :items="opciones_globales.tipos_matricula"
             v-model="filtros.tipo"
             :rules="[rules.required]"
         >
@@ -20,7 +20,7 @@
       <v-flex xs6 class="mx-4">
         <v-select
             label="Estado:"
-            :items="estados"
+            :items="global_state.opciones.estados"
             v-model="filtros.estado"
             item-text="valor"
             item-value="id"
@@ -138,38 +138,37 @@
 
 <script>
 import moment from 'moment'
-import * as _ from 'lodash'
-import * as utils from '@/utils'
+import { debounce } from 'lodash'
+
 import api from '@/services/api'
 import reports from '@/services/reports'
-import { Header, tipos_matricula } from '@/model'
+import { ColumnHeader } from '@/model'
+
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 
 export default {
     name: 'MatriculaFiltroLista',
 
-    mixins: [MixinValidator],
-
-    tipos_matricula,
+    mixins: [MixinGlobalState, MixinValidator],
 
     headers: [
-        Header('N°', 'numero'),
-        Header('Estado', 'estado'),
-        Header('Apellido', 'apellido'),
-        Header('Nombre', 'nombre'),
-        Header('DNI', 'dni'),
-        Header('Domicilio Real', 'dom_real'),
-        Header('Domicilio Legal', 'dom_legal'),
-        Header('Domicilio Especial', 'dom_esp'),
-        Header('Titulos', 'titulos'),
-        Header('Difusión', 'difusion')
+        ColumnHeader('N°', 'numero'),
+        ColumnHeader('Estado', 'estado'),
+        ColumnHeader('Apellido', 'apellido'),
+        ColumnHeader('Nombre', 'nombre'),
+        ColumnHeader('DNI', 'dni'),
+        ColumnHeader('Domicilio Real', 'dom_real'),
+        ColumnHeader('Domicilio Legal', 'dom_legal'),
+        ColumnHeader('Domicilio Especial', 'dom_esp'),
+        ColumnHeader('Titulos', 'titulos'),
+        ColumnHeader('Difusión', 'difusion')
     ],
 
     data() {
         return {
             matriculas: [],
-            estados: [],
             check_all: true,
             filtros: {
                 tipo: ['TECA'],
@@ -219,14 +218,7 @@ export default {
     },
 
     created: function() {
-        this.debouncedUpdate = _.debounce(this.update, 600, {
-            'maxWait': 1000
-        });
-
-        api.get('/opciones')
-        .then(r => {
-            this.estados = r.data.estadoMatricula;
-        })
+        this.debouncedUpdate = debounce(this.update, 800);
     },
 
     methods: {

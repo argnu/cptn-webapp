@@ -208,7 +208,7 @@
                 <v-card-text>
                   <entidad-condicion-afip
                     tabindex="27"
-                    :opciones="opciones.condicionafip"
+                    :opciones="condiciones_afip"
                     v-model="solicitud.entidad.condiciones_afip"
                   ></entidad-condicion-afip>
                 </v-card-text>
@@ -539,12 +539,13 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils'
-import { Solicitud, Header } from '@/model'
+import { getFecha, clone } from '@/utils'
+import { Solicitud, ColumnHeader } from '@/model'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
 import NuevaMatriculaExterna from '@/components/NuevaMatriculaExterna'
 import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
@@ -553,7 +554,9 @@ import EntidadCondicionAfip from '@/components/entidades/EntidadCondicionAfip'
 
 export default {
   name: 'nueva-solicitud-empresa',
-  mixins: [MixinValidator, NuevaSolicitud],
+
+  mixins: [MixinGlobalState, MixinValidator, NuevaSolicitud],
+
   props: ['id'],
 
   components: {
@@ -568,20 +571,20 @@ export default {
 
   headers: {
     matriculados: [
-      Header('', 'acciones'),
-      Header('N°', 'numero'),
-      Header('Nombre', 'nombre'),
-      Header('Apellido', 'nombre'),
-      Header('DNI', 'dni')
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('N°', 'numero'),
+      ColumnHeader('Nombre', 'nombre'),
+      ColumnHeader('Apellido', 'nombre'),
+      ColumnHeader('DNI', 'dni')
     ],
 
     rep_tecnico: [
-      Header('', 'acciones'),
-      Header('N°', 'numero'),
-      Header('Nombre', 'nombre'),
-      Header('DNI', 'dni'),
-      Header('Fecha Inicio', 'fini'),
-      Header('Fecha Cese', 'ffin')
+      ColumnHeader('', 'acciones'),
+      ColumnHeader('N°', 'numero'),
+      ColumnHeader('Nombre', 'nombre'),
+      ColumnHeader('DNI', 'dni'),
+      ColumnHeader('Fecha Inicio', 'fini'),
+      ColumnHeader('Fecha Cese', 'ffin')
     ]
   },
 
@@ -689,21 +692,20 @@ export default {
       return this.valid.form_solicitud && this.valid.form_empresa
         && this.valid_domicilios
         && this.valid_representante;
+    },
+
+    condiciones_afip: function() {
+      return this.global_state.opciones.condicionafip.filter(c => c.t_entidad != 'profesional');
     }
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
-    this.table_rep_sec.debouncedUpdate = _.debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
+    this.debouncedUpdate = debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
+    this.table_rep_sec.debouncedUpdate = debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
 
-    Promise.all([
-      api.get('/opciones?sort=valor'),
-      api.get('/delegaciones')
-    ])
+    api.get('/delegaciones')
     .then(r => {
-      this.opciones = r[0].data;
-      this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'profesional');
-      this.delegaciones = r[1].data;
+      this.delegaciones = r.data;
       this.datos_cargados = true;
       this.initForm();
     })
@@ -726,16 +728,16 @@ export default {
         api.get(`/solicitudes/${this.id}`)
         .then(r => {
               this.solicitud = new Solicitud('empresa');
-              this.solicitud.fecha = utils.getFecha(r.data.fecha);
+              this.solicitud.fecha = getFecha(r.data.fecha);
               this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
               this.solicitud.entidad = r.data.entidad;
-              this.solicitud.entidad.fechaInicio = utils.getFecha(r.data.entidad.fechaInicio);
-              this.solicitud.entidad.fechaConstitucion = utils.getFecha(r.data.entidad.fechaConstitucion);
+              this.solicitud.entidad.fechaInicio = getFecha(r.data.entidad.fechaInicio);
+              this.solicitud.entidad.fechaConstitucion = getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias.map(i => i.incumbencia.id);
               this.solicitud.entidad.representantes = r.data.entidad.representantes.map(r => {
                 if (r.tipo == 'tecnico') {
-                  r.fechaInicio = utils.getFecha(r.fechaInicio);
-                  r.fechaFin = utils.getFecha(r.fechaFin);
+                  r.fechaInicio = getFecha(r.fechaInicio);
+                  r.fechaFin = getFecha(r.fechaFin);
                 }
                 return r;
               });
@@ -754,7 +756,7 @@ export default {
     submit: function() {
       this.guardando = true;
 
-      let solicitud = utils.clone(this.solicitud);
+      let solicitud = clone(this.solicitud);
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.tipoEmpresa = solicitud.entidad.tipoEmpresa.id;
       solicitud.entidad.tipoSociedad = solicitud.entidad.tipoSociedad ? solicitud.entidad.tipoSociedad.id : null;
@@ -782,35 +784,21 @@ export default {
       if (!this.id) {
         api.post('/solicitudes', solicitud)
             .then(r => {
+              this.snackOk('Nueva solicitud creada exitosamente!');
               this.guardando = false;
-              this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-              this.global_state.snackbar.color = 'success';
-              this.global_state.snackbar.show = true;
               this.$router.push('/solicitudes/lista')
 
             })
-            .catch(e => {
-              let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-              this.global_state.snackbar.msg = msg;
-              this.global_state.snackbar.color = 'error';
-              this.global_state.snackbar.show = true;              
-            });
+            .catch(e => this.snackError(e));
       }
       else {
         api.put(`/solicitudes/${this.id}`, solicitud)
           .then(r => {
+            this.snackOk('Solicitud modificada exitosamente!');
             this.guardando = false;
-            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
             this.$router.replace('/solicitudes/lista');
           })
-          .catch(e => {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;            
-          });
+          .catch(e => this.snackError(e));
       }
     },
 

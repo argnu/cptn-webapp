@@ -104,6 +104,7 @@ import api from '@/services/api'
 import { PersonaFisica } from '@/model/Persona'
 import rules from '@/validation/rules.js'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import InputNumero from '@/components/base/InputNumero'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -117,7 +118,7 @@ class Matricula {
 
 export default {
     name: 'NuevaMatriculaExterna',
-    mixins: [MixinValidator],
+    mixins: [MixinGlobalState, MixinValidator],
 
     components: {
         InputTexto,
@@ -144,18 +145,16 @@ export default {
                 api.post('/matriculas-externas', this.matricula)
                 .then(r => {
                     if (r.status == 201) {
+                        this.snackOk('Matriculado externo cargado exitosamente')
                         this.matricula = new Matricula();
                         this.submitted = false;
-                        this.global_state.snackbar.msg = 'Matriculado externo cargado exitosamente';
-                        this.global_state.snackbar.color = 'success';
-                        this.global_state.snackbar.show = true;       
                         this.$emit('nueva');
                         this.$refs.form_matricula.reset();
                     }
                 })
                 .catch(e => {
                     this.submitted = false;
-                    this.showError(e)
+                    this.snackError(e)
                 });
             }
         },

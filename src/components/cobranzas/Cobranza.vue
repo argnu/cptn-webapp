@@ -158,8 +158,8 @@
 
 <script>
 import api from '@/services/api'
-import { Header } from '@/model'
-import * as utils from '@/utils'
+import { ColumnHeader } from '@/model'
+import { getFloat, clone } from '@/utils'
 import InputTexto from '@/components/base/InputTexto'
 import InputFecha from '@/components/base/InputFecha'
 import InputNumero from '@/components/base/InputNumero'
@@ -206,11 +206,11 @@ export default {
   },
 
   headers: [
-    Header('', 'borrar'),
-    Header('Forma de Pago', 'forma'),
-    Header('Importe', 'importe'),
-    Header('N° Cheque', 'numero_cheque'),
-    Header('Banco', 'banco')
+    ColumnHeader('', 'borrar'),
+    ColumnHeader('Forma de Pago', 'forma'),
+    ColumnHeader('Importe', 'importe'),
+    ColumnHeader('N° Cheque', 'numero_cheque'),
+    ColumnHeader('Banco', 'banco')
   ],
 
   data () {
@@ -235,7 +235,7 @@ export default {
 
     total: function() {
       if (!this.items_pago.length) return 0;
-      return this.items_pago.reduce((prev, act) => prev + utils.getFloat(act.importe), 0);
+      return this.items_pago.reduce((prev, act) => prev + getFloat(act.importe), 0);
     },
 
     form_valid: function() {
@@ -243,7 +243,7 @@ export default {
     },
 
     supera_importe: function() {
-      return this.total + utils.getFloat(this.nueva_forma_pago.importe) > this.importe;
+      return this.total + getFloat(this.nueva_forma_pago.importe) > this.importe;
     }
   },
 
@@ -299,7 +299,7 @@ export default {
 
     pagar: function() {
       if (this.form_valid) {
-        let pagos = utils.clone(this.items_pago)
+        let pagos = clone(this.items_pago)
         this.items_pago = [];
         this.$emit('aceptar', pagos);
       }

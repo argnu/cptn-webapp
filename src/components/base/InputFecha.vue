@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import * as moment from 'moment'
-import * as utils from '@/utils'
+import moment from 'moment'
+import { getFecha } from '@/utils'
 
 export default {
   name: 'input-fecha',
@@ -67,9 +67,9 @@ export default {
   computed: {
     formatted: function() {
       let fecha = moment(this.value, 'DD/MM/YYYY', true);
-      if (fecha.isValid()) return utils.getFecha(fecha);
+      if (fecha.isValid()) return getFecha(fecha);
       if (this.value && this.value.match(/^\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/))
-        return utils.getFecha(this.value);
+        return getFecha(this.value);
       return this.value;
     }
   },
@@ -79,16 +79,16 @@ export default {
       this.show_dialog = false;
       let fecha = moment(this.datepicker);
       if (fecha.isValid()) { 
-        this.$emit('input', utils.getFecha(fecha));
-        this.$emit('change', utils.getFecha(fecha));
+        this.$emit('input', getFecha(fecha));
+        this.$emit('change', getFecha(fecha));
       }
     },
 
     updatePicker: function(e) {
       let fecha = moment(e, 'DD/MM/YYYY', true);
       if (fecha.isValid()) { 
-        this.$emit('input', utils.getFecha(fecha));
-        this.$emit('change', utils.getFecha(fecha));   
+        this.$emit('input', getFecha(fecha));
+        this.$emit('change', getFecha(fecha));   
         this.datepicker = fecha.toISOString().substring(0,10);
       }
     },

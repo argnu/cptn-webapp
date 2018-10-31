@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import api from '@/services/api'
-import * as utils from '@/utils'
+
 import rules from '@/validation/rules.js'
 
 

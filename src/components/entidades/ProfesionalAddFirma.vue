@@ -103,7 +103,7 @@
 
 <script>
 import axios from 'axios'
-import * as utils from '@/utils'
+import { getCanvasJPEG } from '@/utils'
 import Cropper from 'cropperjs'
 
 let cropper;
@@ -283,7 +283,7 @@ export default {
         },
 
         guardar: function() {
-            let data_uri = utils.getCanvasJPEG(this.$refs.lienzo);
+            let data_uri = getCanvasJPEG(this.$refs.lienzo);
             this.$refs.img.setAttribute('src', data_uri);
             this.tipo_firma = 'imagen';
             this.$emit('change', data_uri);

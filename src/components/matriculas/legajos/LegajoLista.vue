@@ -12,7 +12,7 @@
               <v-flex xs12 class="mx-4">
                 <v-select
                   label="Estado:"
-                  :items="estados_legajo"
+                  :items="global_state.opciones.estadoLegajo"
                   v-model="nuevo_estado"
                   item-text="valor"
                   item-value="id"
@@ -46,7 +46,7 @@
   <v-layout row>
     <v-flex xs4 class="mx-4">
         <v-select
-          :items="tipos_legajo"
+          :items="global_state.opciones.legajo"
           item-text="valor"
           item-value="id"
           v-model="filtros.tipo"
@@ -56,7 +56,7 @@
         ></v-select>
 
         <v-select
-          :items="estados_legajo"
+          :items="global_state.opciones.estadoLegajo"
           item-text="valor"
           item-value="id"
           v-model="filtros.estado"
@@ -243,24 +243,25 @@
 <script>
 import api from '@/services/api';
 import reports from '@/services/reports'
-import * as utils from '@/utils'
-import { Header } from '@/model'
+import { debounce } from 'lodash'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
-function getHeaders(all) {
+function getColumnHeaders(all) {
   let headers = [
-      Header('Fecha', 'fecha_solicitud', true),
-      Header('Estado', 'estado', true),
-      Header('Tipo', 'tipo', true),
-      Header('N° Legajo', 'numero', true),
-      Header('Nomenclatura', 'nomenclatura', true),
-      Header('Comitentes', 'comitentes'),
-      Header('Dirección', 'direccion', true),
-      Header('', 'acciones')
+      ColumnHeader('Fecha', 'fecha_solicitud', true),
+      ColumnHeader('Estado', 'estado', true),
+      ColumnHeader('Tipo', 'tipo', true),
+      ColumnHeader('N° Legajo', 'numero', true),
+      ColumnHeader('Nomenclatura', 'nomenclatura', true),
+      ColumnHeader('Comitentes', 'comitentes'),
+      ColumnHeader('Dirección', 'direccion', true),
+      ColumnHeader('', 'acciones')
   ];
 
   if (all) {
-    headers.splice(1, 0, Header('N° Matrícula', 'numero_matricula', true));
+    headers.splice(1, 0, ColumnHeader('N° Matrícula', 'numero_matricula', true));
   }
 
   return headers;
@@ -270,6 +271,8 @@ function getHeaders(all) {
 export default {
 
   name: 'LegajoLista',
+
+  mixins: [MixinGlobalState],
 
   props: {
     id: Number,
@@ -293,11 +296,9 @@ export default {
 
   data () {
     return {
-      headers: getHeaders(this.allFilters),
+      headers: getColumnHeaders(this.allFilters),
       legajos: [],
       loading: false,
-      tipos_legajo: [],
-      estados_legajo: [],
 
       show_cambio_estado: false,
       nuevo_estado: '',
@@ -359,16 +360,8 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateLegajos, 600, {
-      'maxWait': 1000
-    });
-
-    api.get('/opciones')
-    .then(r => {
-      this.tipos_legajo = r.data.legajo
-      this.estados_legajo = r.data.estadoLegajo;
-    });
-
+    this.debouncedUpdate = debounce(this.updateLegajos, 800);
+    
     this.updateLegajos();
   },
 
@@ -450,20 +443,14 @@ export default {
         estado: this.nuevo_estado
       })
       .then(r => {
+        this.snackOk('Estado de matrícula modificado exitosamente!');
         this.submit_cambio = false;
         this.show_cambio_estado = false;
         this.updateList();
-        this.global_state.snackbar.msg = 'Estado de matrícula modificado exitosamente!';
-        this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;
       })
       .catch(e => {
         this.submit_cambio = false;
-        let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-        this.global_state.snackbar.msg = msg;
-        this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;
-        console.error(e)
+        this.snackError(e);
       });
     },
 

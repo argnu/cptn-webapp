@@ -12,9 +12,9 @@
     </v-snackbar>
 
     <v-toolbar dark class="darken-1" color="primary">
-      <v-toolbar-side-icon 
+      <v-toolbar-side-icon
         v-if="isDelegacionSelected"
-        @click="toggleMenuLateral" 
+        @click="toggleMenuLateral"
       ></v-toolbar-side-icon>
 
       <img class="ml-5" src="/static/logo.jpg" style="max-height:100%">
@@ -27,7 +27,7 @@
           <v-list-tile-sub-title style="font-size:120%">
             {{ delegacion ? delegacion.nombre : '' }}
           </v-list-tile-sub-title>
-        </v-list-tile-content> 
+        </v-list-tile-content>
 
         <menu-user></menu-user>
       </v-toolbar-items>
@@ -47,11 +47,16 @@
 </template>
 
 <script>
+import api from '@/services/api'
 import MenuUser from '@/components/MenuUser'
 import MenuLateral from '@/components/MenuLateral'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
+import Store from '@/stores/Global'
 
 export default {
   name: 'app',
+
+  mixins: [MixinGlobalState],
 
   computed: {
     isLogged: function() {

@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
-import { EntidadCondicionAfip, Header } from '@/model'
+import { clone } from '@/utils'
+import { EntidadCondicionAfip, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -97,9 +97,9 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Tipo', 'tipo'),
-        Header('Descripción', 'descripcion')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Tipo', 'tipo'),
+        ColumnHeader('Descripción', 'descripcion')
     ],
 
     data() {
@@ -113,7 +113,7 @@ export default {
         guardar: function () {
             if (this.$refs.form_condafip.validate()) {
                 this.nueva_condafip.descripcion = this.nueva_condafip.descripcion.toUpperCase();
-                let condiciones_afip = utils.clone(this.value);
+                let condiciones_afip = clone(this.value);
 
                 if (this.condafip_edit == null) condiciones_afip.push(this.nueva_condafip);
                 else condiciones_afip[this.condafip_edit] = this.nueva_condafip;
@@ -127,7 +127,7 @@ export default {
 
         edit: function(index) {
             this.condafip_edit = index;
-            this.nueva_condafip = utils.clone(this.value[index]);
+            this.nueva_condafip = clone(this.value[index]);
         },
 
         cancelarEdit: function() {
@@ -137,7 +137,7 @@ export default {
         },
 
         borrar: function( index) {
-            let condiciones_afip = utils.clone(this.value);
+            let condiciones_afip = clone(this.value);
             condiciones_afip.splice(index, 1);
             this.$emit('input', condiciones_afip);
         },        

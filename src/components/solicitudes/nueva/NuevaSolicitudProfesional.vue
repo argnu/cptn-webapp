@@ -274,7 +274,7 @@
                 <v-card-text>
                   <entidad-condicion-afip
                     tabindex="29"
-                    :opciones="opciones.condicionafip"
+                    :opciones="condiciones_afip"
                     v-model="solicitud.entidad.condiciones_afip"
                   ></entidad-condicion-afip>
                 </v-card-text>
@@ -539,12 +539,8 @@ import api from '@/services/api'
 import reports from '@/services/reports'
 import moment from 'moment'
 import rules from '@/validation/rules.js'
-import * as utils from '@/utils'
-import {
-  Solicitud,
-  Subsidiario,
-  Header
-} from '@/model';
+import { getFecha, clone, diffDatesStr } from '@/utils'
+import { Solicitud, Subsidiario} from '@/model';
 import InputTexto from '@/components/base/InputTexto';
 import InputFecha from '@/components/base/InputFecha';
 import InputTelefono from '@/components/base/InputTelefono';
@@ -552,6 +548,7 @@ import InputNumero from '@/components/base/InputNumero';
 import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
 import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
 import MixinValidator from '@/components/mixins/MixinValidator';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud';
 import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
 import EntidadContactos from '@/components/entidades/EntidadContactos'
@@ -565,7 +562,7 @@ export default {
 
   props: ['id', 'dni'],
 
-  mixins: [MixinValidator, NuevaSolicitud],
+  mixins: [MixinGlobalState, MixinValidator, NuevaSolicitud],
 
   components: {
     InputTexto,
@@ -625,6 +622,10 @@ export default {
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_profesional
         && this.valid_subsidiarios && this.valid_domicilios;
+    },
+
+    condiciones_afip: function() {
+      return this.global_state.opciones.condicionafip.filter(c => c.t_entidad != 'empresa');
     }
   },
 
@@ -635,18 +636,13 @@ export default {
   },
 
   created: function() {
-    Promise.all([
-        api.get('/opciones?sort=valor'),
-        api.get('/delegaciones')
-      ])
-      .then(r => {
-        this.opciones = r[0].data;
-        this.opciones.condicionafip = this.opciones.condicionafip.filter(c => c.t_entidad != 'empresa');
-        this.delegaciones = r[1].data;
-        this.datos_cargados = true;
-        this.init();
-      })
-      .catch(e => console.error(e));
+    api.get('/delegaciones')
+    .then(r => {
+      this.delegaciones = r.data;
+      this.datos_cargados = true;
+      this.init();
+    })
+    .catch(e => console.error(e));
   },
 
 
@@ -669,7 +665,7 @@ export default {
       if (this.id) {
         return api.get(`/solicitudes/${this.id}`)
         .then(r => {
-            this.solicitud.fecha = utils.getFecha(r.data.fecha);
+            this.solicitud.fecha = getFecha(r.data.fecha);
             this.solicitud.delegacion = this.delegaciones.find(d => d.nombre == r.data.delegacion).id;
             this.solicitud.estado = r.data.estado;
             this.fillProfesional(r.data.entidad);
@@ -677,7 +673,7 @@ export default {
         });
       }
       else {
-        this.solicitud.fecha = utils.getFecha(new Date());
+        this.solicitud.fecha = getFecha();
         this.solicitud.delegacion = +this.global_state.delegacion.id;
 
         if (this.dni) {
@@ -691,13 +687,13 @@ export default {
     },
 
     fillProfesional: function(entidad) {
-      this.solicitud.entidad = utils.clone(entidad);
-      this.solicitud.entidad.fechaNacimiento = utils.getFecha(entidad.fechaNacimiento)
+      this.solicitud.entidad = clone(entidad);
+      this.solicitud.entidad.fechaNacimiento = getFecha(entidad.fechaNacimiento)
 
       this.solicitud.entidad.formaciones = [];
       for(let formacion of entidad.formaciones) {
         let formacion_nueva = formacion;
-        formacion_nueva.tiempoEmision = utils.diffDatesStr(moment(formacion.fechaEmision), moment());
+        formacion_nueva.tiempoEmision = diffDatesStr(moment(formacion.fechaEmision), moment());
         this.solicitud.entidad.formaciones.push(formacion_nueva);
       }
 
@@ -747,7 +743,7 @@ export default {
     },
 
     prepare: function() {
-      let solicitud = utils.clone(this.solicitud);
+      let solicitud = clone(this.solicitud);
 
       solicitud.entidad.nombre = solicitud.entidad.nombre.toUpperCase();
       solicitud.entidad.nacionalidad = solicitud.entidad.nacionalidad ? solicitud.entidad.nacionalidad.toUpperCase() : null;
@@ -798,35 +794,26 @@ export default {
       if (!this.id) {
         api.post('/solicitudes', this.prepare())
           .then(r => {
+            this.snackOk('Nueva solicitud creada exitosamente!');
             this.guardando = false;
             this.id_creada = r.data.id;
             this.show_imprimir = true;
             this.$refs.firma.reset();
-            this.global_state.snackbar.msg = 'Nueva solicitud creada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;            
+          .catch(e => { 
+            this.snackError(e);
+            this.guardando = false;
           });
       }
       else {
         api.put(`/solicitudes/${this.id}`, this.prepare())
           .then(r => {
             this.guardando = false;
-            this.global_state.snackbar.msg = 'Solicitud modificada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
+            this.snackOk('Solicitud modificada exitosamente!')
             this.$router.replace('/solicitudes/lista');
           })
           .catch(e => {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
+            this.snackError(e);
             this.guardando = false;
           });
       }

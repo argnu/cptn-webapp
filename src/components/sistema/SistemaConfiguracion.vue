@@ -98,9 +98,9 @@
 <script>
 import moment from 'moment'
 import api from '@/services/api'
-import * as utils from '@/utils'
+import { getFecha, clone } from '@/utils'
 import VariableGlobal from '@/components/sistema/VariableGlobal'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 
 class Variable {
     constructor() {
@@ -119,11 +119,11 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Variable', 'descripcion'),
-        Header('Fecha Inicio', 'fecha_inicio'),
-        Header('Fecha Fin', 'fecha_fin'),
-        Header('Valor', 'valor')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Variable', 'descripcion'),
+        ColumnHeader('Fecha Inicio', 'fecha_inicio'),
+        ColumnHeader('Fecha Fin', 'fecha_fin'),
+        ColumnHeader('Valor', 'valor')
     ],
 
     data() {
@@ -165,9 +165,9 @@ export default {
         },
 
         editar: function(variable) {
-            this.variable_form = utils.clone(variable);
-            this.variable_form.fecha_inicio = utils.getFecha(this.variable_form.fecha_inicio);
-            this.variable_form.fecha_fin = utils.getFecha(this.variable_form.fecha_fin);
+            this.variable_form = clone(variable);
+            this.variable_form.fecha_inicio = getFecha(this.variable_form.fecha_inicio);
+            this.variable_form.fecha_fin = getFecha(this.variable_form.fecha_fin);
             this.edit = variable.id;
             this.$refs.form_variable.reset();
             this.show_dialog = true;
@@ -193,7 +193,7 @@ export default {
             else if (!this.edit && !this.checkFechas())
                 this.error_msg = 'Error: revisar la fecha de inicio de validez establecida, podría haber dos valores válidos en el mismo rango de fechas.';
             else {
-                let variable = utils.clone(this.variable_form);
+                let variable = clone(this.variable_form);
                 variable.variable = variable.variable.id;
 
                 if (this.edit) {

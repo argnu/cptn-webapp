@@ -2,10 +2,11 @@ import { Entidad } from '@/model/Entidad';
 
 export class Subsidiario {
   constructor() {
-    this.dni = '';
-    this.apellido = '';
-    this.nombre = '';
-    this.porcentaje = '';
+    this.persona = null;
+    this.dni = null;
+    this.apellido = null
+    this.nombre = null;
+    this.porcentaje = null;
   }
 }
 
