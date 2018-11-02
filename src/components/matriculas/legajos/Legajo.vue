@@ -137,6 +137,7 @@
                       append-icon="search"
                       v-model="nuevo_comitente.persona.dni"
                       @change="chgDni"
+                      :append-icon-cb="chgDni"
                     ></input-numero>
 
                     <input-numero

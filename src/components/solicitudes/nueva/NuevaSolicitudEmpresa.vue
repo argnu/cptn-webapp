@@ -1,5 +1,18 @@
 <template>
   <v-container fluid>
+    <v-dialog
+      persistent
+      fullscreen
+      v-model="show_persona"
+    >
+      <persona-nueva 
+          dialog
+          :dni="rep_legal.dni"
+          @cancelar="show_persona = false"
+          @created="nuevaPersona"
+      ></persona-nueva>
+    </v-dialog>    
+
       <v-layout row wrap>
         <v-flex xs10>
           <form v-on:submit.prevent="submit">
@@ -345,98 +358,42 @@
                 <v-stepper-content step="7">
                   <v-card class="grey lighten-4 elevation-4 mb-2">
                     <v-card-text>
-
-                        <v-radio-group v-model="tipo_representante" row @change="updateListSec">
-                          <v-radio label="Matriculado TEC" value="tec" ></v-radio>
-                          <v-radio label="Matriculado Externo" value="ext"></v-radio>
-                        </v-radio-group>
-
                         <v-layout row wrap>
-                          <v-flex xs1  class="mx-3">
-                            <div class="ma-4">Filtrar:</div>
-                          </v-flex>
                           <v-flex xs3  class="mx-3">
-                            <v-text-field
-                              label="N° Matrícula"
-                              maxlength="12"
-                              @input="updateListSec"
-                              v-model="table_rep_sec.filtros.numero"
-                            >
-                            </v-text-field>
+                            <input-numero
+                                label="Buscar DNI"
+                                maxlength="8"
+                                append-icon="search"
+                                v-model="rep_legal.dni"
+                                @change="chgDni"
+                                :append-icon-cb="chgDni"
+                            ></input-numero>
                           </v-flex>
+
                           <v-flex xs3>
                             <v-text-field
+                              disabled
                               label="Apellido"
-                              maxlength="30"
-                              @input="updateListSec"
-                              v-model="table_rep_sec.filtros.apellido"
+                              v-model="rep_legal.apellido"
                             >
                             </v-text-field>
                           </v-flex>
+
                           <v-flex xs3  class="mx-3">
                             <v-text-field
-                              label="DNI"
-                              maxlength="8"
-                              @input="updateListSec"
-                              v-model="table_rep_sec.filtros.dni"
+                              disabled
+                              label="Nombre"
+                              v-model="rep_legal.nombre"
                             >
                             </v-text-field>
                           </v-flex>
-                        </v-layout>
 
-                        <v-layout row>
-                          <v-flex xs12 class="ma-3">
-                            <v-card class="elevation-1" >
-                              <v-card-text>
-                                <v-btn
-                                  v-show="tipo_representante == 'ext'"
-                                  absolute dark fab top right small
-                                  color="green"
-                                  @click="expand_add = true"
-                                >
-                                  <v-icon>add</v-icon>
-                                </v-btn>
-
-                                <v-data-table
-                                    :rows-per-page-items="[5, 10, 25]"
-                                    :headers="$options.headers.matriculados"
-                                    :items="table_rep_sec.matriculas"
-                                    no-data-text="No se encontraron matriculados"
-                                    no-results-text="No se encontraron matriculados"
-                                    :pagination.sync="table_rep_sec.pagination"
-                                    :total-items="table_rep_sec.total"
-                                    :loading="table_rep_sec.loading"
-                                >
-                                  <template slot="items" slot-scope="props">
-                                    <tr>
-                                      <td class="justify-center layout px-0">
-                                        <v-btn icon small class="mx-0" @click="addRepresentanteLegal(props.item)">
-                                          <v-icon color="primary">playlist_add</v-icon>
-                                        </v-btn>
-                                      </td>
-                                      <td>{{ props.item.numeroMatricula }}</td>
-                                      <template v-if="props.item.entidad">
-                                        <td>{{ props.item.entidad.nombre }}</td>
-                                        <td>{{ props.item.entidad.apellido }}</td>
-                                        <td>{{ props.item.entidad.dni }}</td>
-                                      </template>
-                                      <template v-else>
-                                        <td>{{ props.item.nombre }}</td>
-                                        <td>{{ props.item.apellido }}</td>
-                                        <td>{{ props.item.dni }}</td>
-                                      </template>
-                                    </tr>
-                                  </template>
-                                </v-data-table>
-                              </v-card-text>
-
-                             </v-card>
-
+                          <v-flex xs1  class="mx-3">
+                            <v-btn class="right mb-4" light @click="addRepresentanteLegal">
+                                Guardar
+                            </v-btn>
                           </v-flex>
                         </v-layout>
-
-                        <br>
-                        <span class="ml-3"><b>Representantes Legales:</b></span>
 
                         <v-layout row wrap>
                           <v-flex xs12 class="mx-3">
@@ -451,15 +408,31 @@
                               <template slot="items" slot-scope="props">
                                 <tr>
                                   <td class="justify-center layout px-0">
-                                    <v-btn icon small class="mx-0" @click="borrarRepresentanteLegal(props.item.numeroMatricula)">
+                                    <v-btn icon small class="mx-0" @click="borrarRepresentanteLegal(props.item)">
                                       <v-icon color="red">delete</v-icon>
                                     </v-btn>
                                   </td>
 
-                                  <td>{{ props.item.numeroMatricula }}</td>
-                                  <td>{{ props.item.nombre }}</td>
-                                  <td>{{ props.item.apellido }}</td>
-                                  <td>{{ props.item.dni }}</td>
+                                  <template v-if="props.item.id && props.item.matricula">
+                                    <td>{{ props.item.matricula.numeroMatricula }}</td>
+                                    <td>{{ props.item.matricula.entidad.dni }}</td>
+                                    <td>{{ props.item.matricula.entidad.nombre }}</td>
+                                    <td>{{ props.item.matricula.entidad.apellido }}</td>                                    
+                                  </template>
+
+                                  <template v-else-if="props.item.id && props.item.persona">
+                                    <td></td>
+                                    <td>{{ props.item.persona.dni }}</td>
+                                    <td>{{ props.item.persona.nombre }}</td>
+                                    <td>{{ props.item.persona.apellido }}</td>                                    
+                                  </template>
+
+                                  <template v-else>
+                                    <td>{{ props.item.numero }}</td>
+                                    <td>{{ props.item.dni }}</td>
+                                    <td>{{ props.item.nombre }}</td>
+                                    <td>{{ props.item.apellido }}</td>                                    
+                                  </template>
                                 </tr>
                               </template>
                             </v-data-table>
@@ -517,28 +490,13 @@
           </v-container>
         </div>
       </v-layout>
-
-
-    <v-dialog v-model="expand_add" fullscreen transition="dialog-bottom-transition" :overlay="false">
-      <v-card>
-        <v-toolbar dark class="blue">
-          <v-toolbar-title class="white--text">Agregar Matriculado Externo</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon @click="expand_add = false">
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-toolbar>
-
-        <nueva-matricula-externa
-          @nueva="addMatriculaExterna"
-        ></nueva-matricula-externa>
-      </v-card>
-    </v-dialog>
     </v-container>
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import api from '@/services/api'
+import rules from '@/validation/rules'
 import { getFecha, clone } from '@/utils'
 import { Solicitud, ColumnHeader } from '@/model'
 import InputNumero from '@/components/base/InputNumero'
@@ -547,7 +505,7 @@ import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import NuevaSolicitud from '@/components/solicitudes/nueva/NuevaSolicitud'
-import NuevaMatriculaExterna from '@/components/NuevaMatriculaExterna'
+import PersonaNueva from '@/components/personas/PersonaNueva'
 import EntidadDomicilios from '@/components/entidades/EntidadDomicilios'
 import EntidadContactos from '@/components/entidades/EntidadContactos'
 import EntidadCondicionAfip from '@/components/entidades/EntidadCondicionAfip'
@@ -563,7 +521,7 @@ export default {
     InputFecha,
     InputTexto,
     InputNumero,
-    NuevaMatriculaExterna,
+    PersonaNueva,
     EntidadDomicilios,
     EntidadContactos,
     EntidadCondicionAfip
@@ -618,25 +576,14 @@ export default {
 
       matricula_selected: {},
       guardando: false,
-
-      pagination_sec: {
-        page: 1,
-        rowsPerPage: 5
-      },
-
-      table_rep_sec: {
-        debounceUpdate: null,
-        loading: false,
-        matriculas: [],
-        total: 0,
-        filtros: {
-          numero: '',
-          dni: '',
-          apellido: ''
-        }
-      },
-
-      expand_add: false
+      expand_add: false,
+      show_persona: false,
+      rep_legal: {
+        persona: null,
+        dni: null,
+        nombre: null,
+        apellido: null
+      }
     }
   },
 
@@ -656,20 +603,6 @@ export default {
     pagination: {
       handler () {
         this.updateMatriculas();
-      },
-      deep: true
-    },
-
-    pagination_sec: {
-      handler () {
-        this.updateMatriculasSec();
-      },
-      deep: true
-    },
-
-    'table_rep_sec.filtros': {
-      handler () {
-        this.updateMatriculasSec();
       },
       deep: true
     }
@@ -701,7 +634,6 @@ export default {
 
   created: function() {
     this.debouncedUpdate = debounce(this.updateMatriculas, 600, { 'maxWait': 1000 });
-    this.table_rep_sec.debouncedUpdate = debounce(this.updateMatriculasSec, 600, { 'maxWait': 1000 });
 
     api.get('/delegaciones')
     .then(r => {
@@ -721,7 +653,6 @@ export default {
     initForm: function() {
       this.step = 1;
       this.updateMatriculas();
-      this.updateMatriculasSec();
 
       if (this.id) {
         this.show_cargando = true;
@@ -735,10 +666,8 @@ export default {
               this.solicitud.entidad.fechaConstitucion = getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias.map(i => i.incumbencia.id);
               this.solicitud.entidad.representantes = r.data.entidad.representantes.map(r => {
-                if (r.tipo == 'tecnico') {
-                  r.fechaInicio = getFecha(r.fechaInicio);
-                  r.fechaFin = getFecha(r.fechaFin);
-                }
+                r.fechaInicio = getFecha(r.fechaInicio);
+                r.fechaFin = getFecha(r.fechaFin);
                 return r;
               });
               this.valid.form_solicitud = true;
@@ -777,7 +706,8 @@ export default {
       });
 
       solicitud.entidad.representantes.forEach(r => {
-        if (r.tipo == 'tecnico') r.matricula = r.matricula.id;
+        if (r.matricula) r.matricula = r.matricula.id;
+        if (r.persona) r.persona = r.persona.id;
       })
 
 
@@ -811,31 +741,6 @@ export default {
       if (next) this.step = +this.step + 1;
     },
 
-    updateMatriculasSec: function() {
-      this.table_rep_sec.loading = true;
-      this.table_rep_sec.matriculas = [];
-
-      let offset = (this.table_rep_sec.pagination.page - 1) * this.table_rep_sec.pagination.rowsPerPage;
-      let limit = this.table_rep_sec.pagination.rowsPerPage;
-
-
-      let url;
-      if (this.tipo_representante == 'ext') url = `/matriculas-externas?limit=${limit}&offset=${offset}`;
-      else url = `/matriculas?entidad[tipo]=profesional&estado=13&limit=${limit}&offset=${offset}`;
-
-      if (this.table_rep_sec.filtros.numero) url += `&filtros[numero]=${this.table_rep_sec.filtros.numero}`;
-      if (this.table_rep_sec.filtros.dni) url+=`&filtros[profesional.dni]=${this.table_rep_sec.filtros.dni}`;
-      if (this.table_rep_sec.filtros.apellido) url+=`&filtros[profesional.apellido]=${this.table_rep_sec.filtros.apellido}`;
-
-      api.get(url)
-           .then(r => {
-             this.table_rep_sec.matriculas = r.data.resultados;
-             this.table_rep_sec.total = r.data.totalQuery;
-             this.table_rep_sec.loading = false;
-           })
-           .catch(e => console.error(e));
-    },
-
     updateMatriculas: function() {
       this.loading = true;
       this.matriculados = [];
@@ -862,10 +767,6 @@ export default {
       this.debouncedUpdate();
     },
 
-    updateListSec: function() {
-      this.table_rep_sec.debouncedUpdate();
-    },
-
     addRepresentanteTecnico: function(matricula) {
       let representante = {
         tipo: 'tecnico',
@@ -876,21 +777,19 @@ export default {
       this.solicitud.entidad.representantes.push(representante);
     },
 
-    addRepresentanteLegal: function(matricula) {
-      this.solicitud.entidad.representantes.push({
-        tipo: 'legal',
-        matricula: this.tipo_representante == 'tec' ? matricula.id : null,
-        matricula_externa: this.tipo_representante == 'ext' ? matricula.id : null,
-        numeroMatricula: matricula.numeroMatricula,
-        dni: matricula.entidad ? matricula.entidad.dni : matricula.dni,
-        apellido: matricula.entidad ? matricula.entidad.apellido : matricula.apellido,
-        nombre: matricula.entidad ? matricula.entidad.nombre : matricula.nombre
-      });
+    addRepresentanteLegal: function() {
+      let representante = this.rep_legal;
+      representante.tipo = 'legal';
+      this.solicitud.entidad.representantes.push(clone(representante));
     },
 
-    borrarRepresentanteLegal: function(numeroMatricula) {
-      this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
-                                              .filter(r => r.tipo != 'legal' || r.numeroMatricula != numeroMatricula);
+    borrarRepresentanteLegal: function(representante) {
+      if (representante.persona)
+        this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
+                                                .filter(r => r.tipo != 'legal' || r.persona != representante.persona);
+      else 
+        this.solicitud.entidad.representantes = this.solicitud.entidad.representantes
+                                                .filter(r => r.tipo != 'legal' || r.matricula != representante.matricula);      
     },
 
     borrarRepresentanteTecnico: function(id) {
@@ -912,9 +811,48 @@ export default {
           .catch(e => console.error(e));
     },
 
-    addMatriculaExterna: function() {
-      this.updateMatriculasSec();
-      this.expand_add = false;
+    chgDni: function() {
+      this.rep_legal.persona = null;
+      this.rep_legal.matricula = null;
+      this.rep_legal.numero = null;
+      this.rep_legal.nombre = null;
+      this.rep_legal.apellido = null;
+
+      api.get(`/matriculas?filtros[profesional.dni]=${this.rep_legal.dni}`)
+      .then(r => {
+        if (r.data.resultados.length > 0) {
+          let matricula = r.data.resultados[0];
+          this.rep_legal.matricula = matricula;
+          this.rep_legal.numero = matricula.numeroMatricula;
+          this.rep_legal.nombre = matricula.entidad.nombre;
+          this.rep_legal.apellido = matricula.entidad.apellido;          
+        }
+        else {
+          return api.get(`/personas?tipo=fisica&dni=${this.rep_legal.dni}`)
+          .then(r => {
+              if (r.data.resultados.length > 0) {
+                  let persona = r.data.resultados[0];
+                  this.rep_legal.persona = persona.id;
+                  this.rep_legal.nombre = persona.nombre;
+                  this.rep_legal.apellido = persona.apellido;
+              }
+              else if (rules.dni(this.rep_legal.dni) === true) {
+                  if (confirm('No existe ninguna persona registrada con dicho dni. Desea cargarla?')) {
+                      this.show_persona = true;
+                  }
+              }
+          })
+        }
+      })
+      .catch(e => console.error(e));
+    },    
+
+    nuevaPersona: function(persona) {
+        this.rep_legal.persona = persona.id;
+        this.rep_legal.dni = persona.dni;
+        this.rep_legal.nombre = persona.nombre;
+        this.rep_legal.apellido = persona.apellido;
+        this.show_persona = false;
     }
   }
 }

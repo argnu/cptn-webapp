@@ -23,6 +23,7 @@
                     append-icon="search"
                     v-model="nuevo_subsidiario.dni"
                     @change="chgDni"
+                    :append-icon-cb="chgDni"
                     :rules="[rules.required, rules.integer, rules.dni]"
                 ></input-numero>
 

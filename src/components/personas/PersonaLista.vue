@@ -102,12 +102,16 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import api from '@/services/api'
 import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Personas'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'lista-solicitud',
+
+  mixins: [MixinGlobalState],
 
 
   headers: {
