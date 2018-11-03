@@ -48,14 +48,13 @@
                             single-line
                             bottom
                             v-model="persona.sexo"
-                            :rules="[rules.required]"
                         ></v-select>
 
                         <input-fecha
                             v-if="persona.tipo == 'fisica'"
                             v-model="persona.fechaNacimiento"
                             label="Fecha de Nacimiento"
-                            :rules="[rules.required, rules.fecha]"
+                            :rules="[rules.fecha]"
                         >
                         </input-fecha>
 
@@ -81,7 +80,7 @@
                             label="CUIT/CUIL"
                             maxlength="11"
                             v-model="persona.cuit"
-                            :rules="[rules.cuit]"
+                            :rules="persona.tipo == 'fisica' ? []: [rules.cuit]"
                         ></input-numero>
 
                         <v-select
@@ -94,7 +93,6 @@
                             single-line
                             bottom
                             v-model="persona.estadoCivil"
-                            :rules="[rules.required]"
                         ></v-select>
 
                         <input-texto
@@ -163,10 +161,7 @@ export default {
         id: [Number, String],
         dni: String,
         cuit: String,
-        tipo: { 
-            type: String,
-            default: () => 'fisica'
-        },
+        tipo: String,
         dialog: {
             type: Boolean,
             default: () => false

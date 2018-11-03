@@ -14,7 +14,7 @@
             <v-layout>
                 <v-flex xs12 md3 class="mx-4">
                 <v-select
-                    :items="opciones_globales.tipo"
+                    :items="opciones_globales.tipo_persona"
                     label="Tipo"
                     single-line bottom
                     v-model="filtros.tipo"
@@ -30,6 +30,14 @@
                   @input="updateList"
                   clearable
                 ></v-text-field>
+
+                <v-text-field
+                  v-if="filtros.tipo == 'fisica'"
+                  v-model="filtros.apellido"
+                  label="Apellido"
+                  @input="updateList"
+                  clearable
+                ></v-text-field>                
             </v-flex>
 
             <v-flex xs12 md3 class="mx-4">
@@ -39,13 +47,20 @@
                   @input="updateList"
                   clearable
                 ></v-text-field>
+
+                <v-text-field
+                  v-if="filtros.tipo == 'fisica'"
+                  v-model="filtros.dni"
+                  label="DNI"
+                  @input="updateList"
+                  clearable
+                ></v-text-field>                
             </v-flex>
 
             <v-flex xs12 md3 class="mx-4">
               <v-btn @click="limpiarFiltros">
                 Limpiar Filtros
               </v-btn>
-
             </v-flex>
           </v-layout>
         </v-container>
@@ -75,9 +90,9 @@
             <v-icon color="deep-purple">edit</v-icon>
           </v-btn>
 
-          <v-btn 
+          <v-btn
             v-if="$can('delete', 'Persona')"
-            small icon class="mx-4" 
+            small icon class="mx-4"
             @click="borrar(props.item.id)"
           >
             <v-icon color="error">delete</v-icon>
@@ -183,8 +198,10 @@ export default {
       let url = `/personas?limit=${limit}&offset=${offset}`;
 
       if (this.filtros.tipo) url += `&tipo=${this.filtros.tipo}`;
-    //   if (this.filtros.nombre) url += `&filtros[nombre]=${this.filtros.nombre}`;
-    //   if (this.filtros.cue) url += `&filtros[cue]=${this.filtros.cue}`;
+      if (this.filtros.nombre) url += `&filtros[nombre]=${this.filtros.nombre}`;
+      if (this.filtros.tipo == 'fisica' && this.filtros.apellido) url += `&filtros[apellido]=${this.filtros.apellido}`;
+      if (this.filtros.tipo == 'fisica' && this.filtros.dni) url += `&filtros[dni]=${this.filtros.dni}`;
+      if (this.filtros.cuit) url += `&filtros[cuit]=${this.filtros.cuit}`;
 
       if (this.pagination.sortBy) url+=`&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
 
@@ -210,7 +227,7 @@ export default {
                 alert('No es posible eliminar la persona. Existen elementos relacionados a la misma. Por ej.: comitentes o subsidiarios');
             else console.error(e);
         })
-    },    
+    },
 
   }
 
