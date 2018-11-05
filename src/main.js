@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
-
+import colors from 'vuetify/es5/util/colors'
 import 'vuetify/dist/vuetify.min.css'
 import moment from 'moment'
 import { round, getFloat} from '@/utils'
