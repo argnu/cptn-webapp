@@ -109,7 +109,7 @@
                       <v-select
                         autocomplete
                         tabindex="7"
-                        :items="opciones.sexo"
+                        :items="global_state.opciones.sexo"
                         item-text="valor"
                         item-value="id"
                         return-object
@@ -161,7 +161,7 @@
                       <v-select
                         autocomplete
                         tabindex="8"
-                        :items="opciones.estadocivil"
+                        :items="global_state.opciones.estadocivil"
                         item-text="valor"
                         item-value="id"
                         return-object
@@ -253,7 +253,7 @@
                 <v-card-text>
                   <entidad-contactos
                     tabindex="23"
-                    :opciones="opciones.contacto"
+                    :opciones="global_state.opciones.contacto"
                     v-model="solicitud.entidad.contactos"
                   ></entidad-contactos>
                 </v-card-text>
@@ -297,7 +297,7 @@
                 <v-card-text>
                   <profesional-formaciones
                     tabindex="33"
-                    :niveles="opciones.niveles_titulos"
+                    :niveles="global_state.opciones.niveles_titulos"
                     v-model="solicitud.entidad.formaciones"
                   ></profesional-formaciones>
 

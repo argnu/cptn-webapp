@@ -99,7 +99,7 @@
                             item-text="valor"
                             item-value="id"
                             return-object
-                            :items="opciones.empresa"
+                            :items="global_state.opciones.empresa"
                             v-model="solicitud.entidad.tipoEmpresa"
                             label="Tipo de Empresa" single-line bottom
                             :rules="[rules.required]"
@@ -119,7 +119,7 @@
                               hint="Seleccione las incumbencias"
                               persistent-hint
                               multiple                              
-                              :items="opciones.incumbencia"
+                              :items="global_state.opciones.incumbencia"
                               item-text="valor"
                               item-value="id"
                               v-model="solicitud.entidad.incumbencias"
@@ -150,7 +150,7 @@
                             item-text="valor"
                             item-value="id"
                             return-object
-                            :items="opciones.sociedad"
+                            :items="global_state.opciones.sociedad"
                             v-model="solicitud.entidad.tipoSociedad"
                             label="Tipo de Sociedad"
                           >
@@ -200,7 +200,7 @@
                     <v-card-text>
                       <entidad-contactos
                         tabindex="21"
-                        :opciones="opciones.contacto"
+                        :opciones="global_state.opciones.contacto"
                         v-model="solicitud.entidad.contactos"
                       ></entidad-contactos>
                     </v-card-text>

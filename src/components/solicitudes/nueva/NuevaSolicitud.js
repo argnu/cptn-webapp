@@ -1,8 +1,3 @@
-import Vue from 'vue'
-import api from '@/services/api'
-
-import rules from '@/validation/rules.js'
-
 
 export default {
   data () {
@@ -10,8 +5,7 @@ export default {
       show_cargando: false,
       datos_cargados: false,
       step: 1,
-      delegaciones: [],
-      opciones: {},
+      delegaciones: []
     }
   },
 
