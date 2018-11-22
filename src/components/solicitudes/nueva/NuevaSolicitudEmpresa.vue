@@ -666,7 +666,7 @@ export default {
               this.solicitud.entidad.fechaInicio = getFecha(r.data.entidad.fechaInicio);
               this.solicitud.entidad.fechaConstitucion = getFecha(r.data.entidad.fechaConstitucion);
               this.solicitud.entidad.incumbencias = r.data.entidad.incumbencias.map(i => i.incumbencia.id);
-              this.solicitud.entidad.representantes = r.data.entidad.representantes.map(r => {
+              this.solicitud.entidad.representantes = r.data.entidad.representantes.filter(r => r != null).map(r => {
                 r.fechaInicio = getFecha(r.fechaInicio);
                 r.fechaFin = getFecha(r.fechaFin);
                 return r;
