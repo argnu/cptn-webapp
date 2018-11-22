@@ -496,6 +496,7 @@
 <script>
 import { debounce } from 'lodash'
 import api from '@/services/api'
+import reports from '@/services/reports'
 import rules from '@/validation/rules'
 import { getFecha, clone } from '@/utils'
 import { Solicitud, ColumnHeader } from '@/model'
@@ -799,13 +800,13 @@ export default {
 
     imprimir: function() {
       api.get(`/solicitudes/${this.id}`)
-          .then(s => {
+          .then(solicitud => {
             reports.open({
               'jsp-source': 'solicitud_matricula_empresa.jasper',
               'jsp-format': 'PDF',
               'jsp-output-file': `Solicitud ${solicitud.numero} - ${Date.now()}`,
               'jsp-only-gen': false,
-              'solicitud_id': item.id
+              'solicitud_id': this.id
             });
           })
           .catch(e => console.error(e));
