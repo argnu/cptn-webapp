@@ -214,10 +214,6 @@ export default {
     }
   },
 
-  created: function() {
-    this.updateBoletas();
-  },
-
   methods: {
     updateBoletas: function() {
       this.loading = true;

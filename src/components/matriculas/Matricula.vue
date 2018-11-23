@@ -44,7 +44,6 @@
           <v-divider></v-divider>
           <v-card>
             <resumen-cuenta
-              v-if="tab_selected == 'tab-cuenta'"
               :id="matricula.id"
               ref="resumen"
             ></resumen-cuenta>
@@ -55,7 +54,7 @@
           <v-divider></v-divider>
           <v-card>
             <deudas-pendientes
-              v-if="tab_selected == 'tab-pendientes'"
+              ref="deudas"
               :id="matricula.id"
               :boton-nueva="matricula.estado.id == 13"
               @update="update"
@@ -67,7 +66,7 @@
           <v-divider></v-divider>
           <v-card>
             <legajo-lista
-              v-if="tab_selected == 'tab-legajo'"
+              ref="legajos"
               :id="matricula.id"
               :show-add="matricula.estado.id == 13"
             ></legajo-lista>
@@ -78,7 +77,7 @@
           <v-divider></v-divider>
           <v-card>
             <matricula-historial
-              v-if="tab_selected == 'tab-historial'"
+              ref="historial"
               :id="matricula.id"
             ></matricula-historial>
           </v-card>
@@ -114,6 +113,14 @@ export default {
     return {
       matricula: null,
       tab_selected: 'tab-detalle'
+    }
+  },
+
+  watch: {
+    tab_selected: function(new_val) {
+      if (new_val == 'tab-cuenta') this.$refs.resumen.updateBoletas();
+      else if (new_val == 'tab-pendientes') this.$refs.deudas.updateBoletas();
+      else if (new_val == 'tab-legajo') this.$refs.legajos.updateLegajos();
     }
   },
 

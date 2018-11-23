@@ -219,7 +219,10 @@ export default {
                     this.$emit('update');
                     setTimeout(() => this.$refs.form_boleta.reset(), 10);
                 })
-                .catch(e => this.snackError(e));
+                .catch(e => { 
+                    this.submitted = false;
+                    this.snackError(e);
+                });
             }
         }
     }
