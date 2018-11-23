@@ -18,19 +18,22 @@
                   </v-avatar>
                 </v-flex>
 
-                <v-flex xs4>
+                <v-flex xs2 class="mx-4">
                   <div class="mb-2">N° Matrícula: {{ matricula.numeroMatricula }}</div>
                   <template v-if="matricula.entidad.tipo == 'profesional'">
                     <div class="mb-2">Apellido: {{ matricula.entidad.apellido }}</div>
                     <div class="mb-2">Nombre: {{ matricula.entidad.nombre }}</div>
                   </template>
-                  <div class="mb-2">N° Solicitud: {{ matricula.numero_solicitud ? matricula.numero_solicitud : matricula.idMigracion }}</div>
-                  <div class="mb-2">Estado: {{ matricula.estado.valor }}</div>
-
                   <v-alert :value="es_joven_prof" type="info">JOVEN PROFESIONAL</v-alert>
                 </v-flex>
 
-                <v-flex xs2>
+                <v-flex xs2 class="mx-4">
+                  <div class="mb-2" v-if="matricula.numero_solicitud">N° Solicitud: {{ matricula.numero_solicitud }}</div>
+                  <div class="mb-2" v-if="matricula.idMigracion">N° Leg. Físico: {{ matricula.idMigracion }}</div>
+                  <div class="mb-2">Estado: {{ matricula.estado.valor }}</div>                  
+                </v-flex>
+
+                <v-flex xs4>
                   <img
                     v-if="matricula.entidad.firma"
                     :src="profesional_firma"
