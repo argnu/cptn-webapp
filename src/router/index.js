@@ -408,7 +408,7 @@ export default new Router({
           component: DocumentoNuevo,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (Store.state.ability.can('udpate', 'Documento')) return next();
+            if (Store.state.ability.can('update', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }
