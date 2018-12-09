@@ -1,39 +1,39 @@
-import { Header } from './index'
+import { ColumnHeader } from './index'
 
 export const Contactos = [
-    Header('Tipo', 'tipo'),
-    Header('Valor', 'valor'),
+    ColumnHeader('Tipo', 'tipo'),
+    ColumnHeader('Valor', 'valor'),
 ];
 
 export const Formaciones = [
-      { text: 'Tipo', value: 'tipo' , sortable: false },
-      { text: 'Título', value: 'titulo' , sortable: false },
-      { text: 'Institución', value: 'institucion' , sortable: false },
-      { text: 'Fecha Egreso', value: 'fechaEgreso' , sortable: false },
-      { text: 'Fecha Emisión', value: 'fechaEmision' , sortable: false }
+      ColumnHeader('Tipo', 'tipo'),
+      ColumnHeader('Título', 'titulo'),
+      ColumnHeader('Institución', 'institucion'),
+      ColumnHeader('Fecha Egreso', 'fechaEgreso'),
+      ColumnHeader('Fecha Emisión', 'fechaEmision')
   ];
 
 export const Subsidiarios = [
-    { text: 'Nombre', value: 'nombre' , sortable: false },
-    { text: 'Apellido', value: 'apellido' , sortable: false },
-    { text: 'DNI', value: 'dni' , sortable: false },
-    { text: 'Porcentaje', value: 'porcentaje' , sortable: false }
+    ColumnHeader('Nombre', 'nombre'),
+    ColumnHeader('Apellido', 'apellido'),
+    ColumnHeader('DNI', 'dni'),
+    ColumnHeader('Porcentaje', 'porcentaje')
   ];
 
 export const Incumbencias = [
-    { text: 'Nombre', value: 'nombre' , sortable: false }
+    ColumnHeader('Nombre', 'nombre')
   ];
 
 export const Representantes = [
-    { text: 'N° Matrícula', value: 'numero_matricula' , sortable: false },
-    { text: 'DNI', value: 'dni' , sortable: false },
-    { text: 'Apellido', value: 'apellido' , sortable: false },
-    { text: 'Nombre', value: 'nombre' , sortable: false },
-    { text: 'Fecha Inicio', value: 'fecha_inicio' , sortable: false },
-    { text: 'Fecha Fin', value: 'fecha_fin' , sortable: false }
+    ColumnHeader('N° Matrícula', 'numero_matricula'),
+    ColumnHeader('DNI', 'dni'),
+    ColumnHeader('Apellido', 'apellido'),
+    ColumnHeader('Nombre', 'nombre'),
+    ColumnHeader('Fecha Inicio', 'fecha_inicio'),
+    ColumnHeader('Fecha Fin', 'fecha_fin')
   ];
 
 export const CondicionesAfip = [
-    Header('Tipo', 'tipo'),
-    Header('Descripción', 'descripcion')
+    ColumnHeader('Tipo', 'tipo'),
+    ColumnHeader('Descripción', 'descripcion')
   ];

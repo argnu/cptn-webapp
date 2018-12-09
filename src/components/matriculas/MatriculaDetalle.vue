@@ -274,9 +274,9 @@
                   </th>
                 </template>
                   <template slot="items" slot-scope="props">
-                  <td>{{ props.item.nombre }}</td>
-                  <td>{{ props.item.apellido }}</td>
-                  <td>{{ props.item.dni }}</td>
+                  <td>{{ props.item.persona.nombre }}</td>
+                  <td>{{ props.item.persona.apellido }}</td>
+                  <td>{{ props.item.persona.dni }}</td>
                   <td>{{ props.item.porcentaje }}</td>
                 </template>
                 </v-data-table>
@@ -322,7 +322,7 @@
 </template>
 
 <script>
-import * as utils from '@/utils';
+;
 import * as headers from '@/model/Headers'
 
 export default {

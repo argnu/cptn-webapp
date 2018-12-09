@@ -81,19 +81,19 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
+
 import api from '@/services/api'
-import * as _ from 'lodash'
-import { Header } from '@/model'
+import { debounce } from 'lodash'
+import { ColumnHeader } from '@/model'
 import ListaStore from '@/stores/listados/Instituciones'
 
 export default {
   name: 'lista-solicitud',
 
   headers: [
-    Header('', 'acciones'),
-    Header('CUE', 'cue', true),
-    Header('Nombre', 'nombre', true)
+    ColumnHeader('', 'acciones'),
+    ColumnHeader('CUE', 'cue', true),
+    ColumnHeader('Nombre', 'nombre', true)
   ],
 
   data() {
@@ -126,9 +126,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateInstituciones, 600, {
-      'maxWait': 1000
-    });
+    this.debouncedUpdate = debounce(this.updateInstituciones, 800);
   },
 
   methods: {

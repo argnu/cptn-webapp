@@ -9,6 +9,7 @@
         :disabled="disabled"
         :value="formatted"
         :maxlength="maxlength"
+        :append-icon="appendIcon"
         @keypress="keypress($event)"
         @input="update($event, 'input')"
         @change="update($event, 'change')"
@@ -61,6 +62,10 @@ export default {
       },
 
       maxlength: {
+          type: String
+      },
+
+      appendIcon: {
           type: String
       }
     },

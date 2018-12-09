@@ -21,7 +21,7 @@ export default {
     this.state.delegacion = delegacion;
   },
 
-  setOptions(opciones) {
+  setOpciones(opciones) {
     this.state.opciones = opciones;
   },
 

@@ -53,13 +53,15 @@
 <script>
 import Vue from 'vue'
 import api from '@/services/api'
-import { Usuario, roles } from '@/model/Usuario'
-import * as utils from '@/utils'
+import { Usuario } from '@/model/Usuario'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
     name: 'UsuarioDetalle',
 
     props: ['id'],
+
+    mixins: [MixinGlobalState],
 
     data() {
         return {
@@ -75,7 +77,7 @@ export default {
 
         roles: function(list) {
             if (!list) return '';
-            return list.map(r => roles.find(rol => rol.value == r).text).join(', ');
+            return list.map(r => this.opciones_globales.roles.find(rol => rol.value == r).text).join(', ');
         }
     },
 

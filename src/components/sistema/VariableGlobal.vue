@@ -64,7 +64,7 @@ import InputTexto from '@/components/base/InputTexto'
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
-import * as utils from '@/utils'
+import { clone } from '@/utils'
 
 export default {
     name: 'VariableGlobal',
@@ -81,7 +81,7 @@ export default {
 
     methods: {
         chgVariable: function(atributo, valor) {
-            let variable = utils.clone(this.value);
+            let variable = clone(this.value);
             variable[atributo] = valor;
             this.$emit('input', variable);
         },

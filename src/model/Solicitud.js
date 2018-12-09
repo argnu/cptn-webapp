@@ -1,6 +1,6 @@
 import { Profesional } from '@/model/Profesional'
 import { Empresa } from '@/model/Empresa'
-import * as moment from 'moment'
+import moment from 'moment'
 
 export class Solicitud {
   constructor(tipo) {

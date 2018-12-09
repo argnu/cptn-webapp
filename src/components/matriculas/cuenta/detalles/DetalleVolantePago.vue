@@ -54,8 +54,8 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils';
-import { Header } from '@/model'
+;
+import { ColumnHeader } from '@/model'
 import DetalleBoleta from './DetalleBoleta'
 
 export default {
@@ -67,9 +67,9 @@ export default {
   },
 
   headers: [
-    Header('N°', 'item' ),
-    Header('Descripción', 'descripcion'),
-    Header('Importe', 'importe')
+    ColumnHeader('N°', 'item' ),
+    ColumnHeader('Descripción', 'descripcion'),
+    ColumnHeader('Importe', 'importe')
   ],
 
   data () {

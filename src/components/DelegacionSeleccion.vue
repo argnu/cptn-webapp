@@ -40,7 +40,7 @@ export default {
     },
 
     created: function() {
-        api.get(`/usuarios/${this.user.id}/delegaciones`)
+        api.get(`/usuarios/${Store.state.user.id}/delegaciones`)
         .then(r => this.delegaciones = r.data)
         .catch(e => console.error(e));
     },

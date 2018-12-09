@@ -47,10 +47,13 @@ import api from '@/services/api';
 import Store from '@/stores/Global';
 import ProfesionalAddFoto from '@/components/entidades/ProfesionalAddFoto';
 import ProfesionalAddFirma from '@/components/entidades/ProfesionalAddFirma';
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'CambiarFotoFirma',
   props: ['profesional'],
+
+  mixins: [MixinGlobalState],
 
   components: {
     ProfesionalAddFoto,
@@ -113,16 +116,12 @@ export default {
       Promise.all(proms)
         .then(r => {
           this.submitted = false;
-          this.global_state.snackbar.msg = 'Imágenes modificadas exitosamente';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
+          this.snackOk('Imágenes modificadas exitosamente');
           this.$emit('cerrar');
         })
         .catch(e => {
           this.submitted = false;
-          this.global_state.snackbar.msg = 'Error al modificar imágenes';
-          this.global_state.snackbar.color = 'error';
-          this.global_state.snackbar.show = true;
+          alert('Error al modificar imágenes');
         });
     }
   }

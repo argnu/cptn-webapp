@@ -51,13 +51,14 @@
 
 <script>
 import api from '@/services/api'
-import * as utils from '@/utils';
-import { Header } from '@/model'
+;
+import { ColumnHeader } from '@/model'
 
 let formas_pago = [];
 
 export default {
   name: 'DetalleComprobante',
+  
   props: ['id'],
 
   data () {
@@ -69,15 +70,15 @@ export default {
 
   headers: {
     comprobante: [
-      Header('N°', 'item' ),
-      Header('Descripción', 'descripcion'),
-      Header('Importe', 'importe')
+      ColumnHeader('N°', 'item' ),
+      ColumnHeader('Descripción', 'descripcion'),
+      ColumnHeader('Importe', 'importe')
     ],
 
     pago: [
-      Header('Forma de Pago', 'forma_pago'),
-      Header('Fecha', 'fecha'),
-      Header('Importe', 'importe')
+      ColumnHeader('Forma de Pago', 'forma_pago'),
+      ColumnHeader('Fecha', 'fecha'),
+      ColumnHeader('Importe', 'importe')
     ]
   },
 

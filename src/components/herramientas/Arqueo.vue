@@ -85,25 +85,27 @@
 
 <script>
 import moment from 'moment'
-import * as _ from 'lodash'
-import * as utils from '@/utils'
+import { debounce } from 'lodash'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import { Header } from '@/model'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
     name: 'Arqueo',
+
+    mixins: [MixinGlobalState],
 
     components: {
         InputFecha
     },
 
     headers: [
-        Header('N° Recibo', 'numero', true),
-        Header('N° Matrícula', 'matricula.numero', true),
-        Header('Detalle Matrícula', 'detalle_matricula'),
-        Header('Importe', 'importe_total', true, 'right')
+        ColumnHeader('N° Recibo', 'numero', true),
+        ColumnHeader('N° Matrícula', 'matricula.numero', true),
+        ColumnHeader('Detalle Matrícula', 'detalle_matricula'),
+        ColumnHeader('Importe', 'importe_total', true, 'right')
     ],
 
     filters: {
@@ -152,9 +154,7 @@ export default {
     },
 
     created: function() {
-        this.debouncedUpdate = _.debounce(this.update, 600, {
-            'maxWait': 1000
-        });
+        this.debouncedUpdate = debounce(this.update, 800);
 
         api.get('/delegaciones')
         .then(r => {
@@ -203,50 +203,6 @@ export default {
                 'fecha_fin': moment(this.filtros.fecha_hasta, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                 'delegacion': this.filtros.delegacion || 0
             });
-
-            // this.global_state.cursor_wait = true;
-            // let tabla = this.$refs.tabla_export;
-            // let url = `/comprobantes?`;
-            // url += `&fecha[desde]=${this.filtros.fecha_desde}`
-            // url += `&fecha[hasta]=${this.filtros.fecha_hasta}`;
-            // if (this.filtros.delegacion) url += `&delegacion=${this.filtros.delegacion}`;
-
-            // if (this.pagination.sortBy) {
-            //     url += `&sort=${this.pagination.descending ? '-' : '+'}${this.pagination.sortBy}`;
-            // }
-
-            // api.get(url)
-            // .then(r => {
-            //     let rows = '';
-            //     let total = 0;
-            //     for(let comprobante of r.data.resultados) {
-            //         rows += `
-            //         <tr>
-            //             <td style="mso-number-format:'0'">${comprobante.numero}</td>
-            //             <td style="mso-number-format:'\@'">${comprobante.matricula.numero}</td>
-            //             <td style="mso-number-format:'\@';white-space:nowrap;">${this.$options.filters.detalle_matricula(comprobante.matricula)}</td>
-            //             <td style="mso-number-format:'0\.00';text-align:right">${comprobante.importe_total.toString().replace('.', ',')}</td>
-            //         </tr>
-            //         `;
-            //         total += comprobante.importe_total;
-            //     }
-
-            //     rows += `
-            //         <tr>
-            //             <td colspan="3" style="text-align:right"><b>Total</b></td>
-            //             <td style="mso-number-format:'0\.00';text-align:right">${utils.round(total, 2).toString().replace('.', ',')}</td>
-            //         </tr>
-            //         `;
-
-            //     tabla.getElementsByTagName('tbody')[0].innerHTML = rows;
-            //     // utils.download(`Arqueo.xlsx`,
-            //     //     'data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
-            //     window.open('data:application/vnd.ms-excel;base64,' + btoa(tabla.outerHTML));
-            //     this.global_state.cursor_wait = false;
-            // })
-            // .catch(e => {
-            //     console.error(e);
-            // })
         }
     }
 

@@ -85,7 +85,7 @@
 <script>
 import api from '@/services/api'
 import * as Cookies from 'js-cookie'
-import * as utils from '@/utils'
+
 import Store from '@/stores/Global'
 import InputTexto from '@/components/base/InputTexto'
 
@@ -135,6 +135,10 @@ export default {
             this.auth_error = 'El usuario no tiene delegaciones asociadas';
           }
           else this.delegaciones = r.data
+
+          return api.get('/opciones?sort=+valor')
+          .then(r => Store.setOpciones(r.data))
+          .catch(e => console.error(e));          
         })
         .catch(e => console.error(e));        
       })

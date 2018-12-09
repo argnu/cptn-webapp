@@ -14,7 +14,7 @@
             <v-flex xs12 md3 class="mx-4">
                 <v-select
                   label="Tipo:"
-                  :items="tipos_doc"
+                  :items="global_state.opciones.documento"
                   v-model="filtros.tipo"
                   item-text="valor"
                   item-value="id"
@@ -113,32 +113,33 @@
 </template>
 
 <script>
-import * as utils from '@/utils'
 import config from '@/config'
 import api from '@/services/api'
-import * as _ from 'lodash'
-import { Header } from '@/model'
+import { debounce } from 'lodash'
+import { ColumnHeader } from '@/model'
 import Pagination from '@/model/Pagination'
 import InputFecha from '@/components/base/InputFecha'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 export default {
   name: 'DocumentoLista',
+
+  mixins: [MixinGlobalState],
 
   components: {
       InputFecha
   },
 
   headers: [
-    Header('', 'acciones'),
-    Header('Tipo', 'tipo', true),
-    Header('Fecha', 'fecha', true),
-    Header('N°', 'numero', true),
-    Header('Archivo', 'archivo')
+    ColumnHeader('', 'acciones'),
+    ColumnHeader('Tipo', 'tipo', true),
+    ColumnHeader('Fecha', 'fecha', true),
+    ColumnHeader('N°', 'numero', true),
+    ColumnHeader('Archivo', 'archivo')
   ],
 
   data() {
     return {
-        tipos_doc: [],
       pagination: Pagination(25),
       filtros: {
           fecha: null,
@@ -171,14 +172,7 @@ export default {
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.update, 600, {
-      'maxWait': 1000
-    });
-
-    api.get('/opciones')
-    .then(r => {
-        this.tipos_doc = r.data.documento;
-    })
+    this.debouncedUpdate = debounce(this.update, 800)
   },
 
   methods: {
@@ -212,12 +206,12 @@ export default {
       else url+='&sort=-fecha';
 
       api.get(url)
-        .then(r => {
-            this.documentos = r.data.resultados;
-            this.pagination.totalItems = r.data.totalQuery;
-            this.loading = false;
-        })
-        .catch(e => console.error(e));
+      .then(r => {
+          this.documentos = r.data.resultados;
+          this.pagination.totalItems = r.data.totalQuery;
+          this.loading = false;
+      })
+      .catch(e => console.error(e));
     },
 
     getUrlArchivo: function(id) {
@@ -228,21 +222,13 @@ export default {
         if (confirm('Está segura/o que desea eliminar el documento?')) {
             api.delete(`/documentos/${id}`)
             .then(r => {
-                this.update();
-                this.global_state.snackbar.msg = 'Documento eliminado exitosamente!';
-                this.global_state.snackbar.color = 'success';
-                this.global_state.snackbar.show = true;
+              this.snackOk('Documento eliminado exitosamente!');
+              this.update();
             })
             .catch(e => {
                 if (e.response.status == 409)
                     alert('No es posible eliminar el documento. Existen elementos relacionados al mismo');
-                else {
-                  let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-                  this.global_state.snackbar.msg = msg;
-                  this.global_state.snackbar.color = 'error';
-                  this.global_state.snackbar.show = true;
-                  console.error(e)
-                }
+                else this.snackError(e);
             })
         }
     },

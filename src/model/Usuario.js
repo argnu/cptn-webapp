@@ -10,9 +10,3 @@ export class Usuario {
         this.rol = '';
     }
 }
-
-export const roles = [
-    { text: 'Administrador', value: 'admin' },
-    { text: 'Usuario Sistema CPTN', value: 'usuario_cptn' },
-    { text: 'Moderador Títulos', value: 'moderador_titulos' }
-]

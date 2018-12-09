@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import * as Cookies from 'js-cookie'
 import * as axios from 'axios'
+import api from '@/services/api'
 import Store from '@/stores/Global'
 import Login from '@/components/Login'
 import MainContainer from '@/components/MainContainer'
@@ -17,7 +18,9 @@ import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
 
-import Cobranza from '@/components/cobranzas/Cobranza'
+import PersonaLista from '@/components/personas/PersonaLista'
+import PersonaNueva from '@/components/personas/PersonaNueva'
+
 import Legajo from '@/components/matriculas/legajos/Legajo'
 
 import InstitucionLista from '@/components/instituciones/InstitucionLista'
@@ -63,7 +66,16 @@ export default new Router({
           Store.setUser(user);
           Store.setDelegacion(delegacion);
           axios.defaults.headers.common['Authorization'] = `JWT ${user.token}`;
-          return next();
+
+          api.get('/opciones?sort=+valor')
+          .then(r => { 
+            Store.setOpciones(r.data);
+            return next();
+          })
+          .catch(e => { 
+            console.error(e)
+            nexxt(false);
+          });
         }
         else return next();
       },
@@ -193,7 +205,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }             
+          }
         },
 
         {
@@ -207,7 +219,7 @@ export default new Router({
             if (Store.state.ability.can('update', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }             
+          }
         },
 
         {
@@ -218,7 +230,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }             
+          }
         },
 
         {
@@ -229,7 +241,7 @@ export default new Router({
             if (Store.state.ability.can('create', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }             
+          }
         },
 
         {
@@ -241,7 +253,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }             
+          }
         },
 
         {
@@ -253,7 +265,7 @@ export default new Router({
             if (Store.state.ability.can('update', 'Institucion')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -264,7 +276,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Usuario')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -275,7 +287,7 @@ export default new Router({
             if (Store.state.ability.can('create', 'Usuario')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -284,7 +296,7 @@ export default new Router({
           component: UsuarioDetalle,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (to.params.id == Store.state.user.id || Store.state.ability.can('create', 'Usuario')) 
+            if (to.params.id == Store.state.user.id || Store.state.ability.can('create', 'Usuario'))
               return next();
             else next(false);
           },
@@ -296,7 +308,7 @@ export default new Router({
           component: UsuarioNuevo,
           props: true,
           beforeEnter: (to, from, next) => {
-            if (to.params.id == Store.state.user.id || Store.state.ability.can('update', 'Usuario')) 
+            if (to.params.id == Store.state.user.id || Store.state.ability.can('update', 'Usuario'))
               return next();
             else next(false);
           },
@@ -310,7 +322,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Legajo')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -321,7 +333,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Comprobante')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -332,7 +344,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Comprobante')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -343,7 +355,7 @@ export default new Router({
             if (Store.state.ability.can('manage', 'ValoresGlobales')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -354,7 +366,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'SolicitudSuspension')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -365,7 +377,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Matricula')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -376,7 +388,7 @@ export default new Router({
             if (Store.state.ability.can('read', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -387,7 +399,7 @@ export default new Router({
             if (Store.state.ability.can('create', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
         },
 
         {
@@ -399,7 +411,41 @@ export default new Router({
             if (Store.state.ability.can('update', 'Documento')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
-          }           
+          }
+        },
+
+        {
+          path: '/personas/lista',
+          name: 'PersonaLista',
+          component: PersonaLista,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('read', 'Persona')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
+        },
+
+        {
+          path: '/personas/nueva',
+          name: 'PersonaNueva',
+          component: PersonaNueva,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('create', 'Persona')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
+        },
+
+        {
+          path: '/personas/:id/modificar',
+          name: 'PersonaModificar',
+          component: PersonaNueva,
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Persona')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
         }
       ]
     },

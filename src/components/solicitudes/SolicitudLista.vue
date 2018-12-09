@@ -14,7 +14,7 @@
               <v-flex xs4 class="mx-2">
                 <v-select
                   label="Tipo de Matrícula:"
-                  :items="$options.tipos_matricula"
+                  :items="opciones_globales.tipos_matricula"
                   v-model="matricula.tipo"
                   :rules="[rules.required]"
                 >
@@ -26,7 +26,7 @@
               <v-flex xs4 class="mx-2">
                 <v-select
                   label="Tipo de Documento:"
-                  :items="opciones.documento"
+                  :items="global_state.opciones.documento"
                   item-text="valor"
                   item-value="id"
                   @change="chgTipoDoc"
@@ -104,14 +104,14 @@
           <v-layout row wrap>
             <v-flex xs12 md3 class="mx-3">
               <v-select
-                :items="$options.select_items.tipo"
+                :items="opciones_globales.tipo_entidad"
                 label="Tipo de Entidad"
                 single-line bottom
                 v-model="filtros.tipoEntidad"
               ></v-select>
 
               <v-select
-                :items="$options.select_items.estado"
+                :items="opciones_globales.estado_solicitud"
                 label="Estado de Solicitud"
                 single-line bottom
                 clearable
@@ -331,15 +331,16 @@
 </template>
 
 <script>
-import * as moment from 'moment'
+import moment from 'moment'
 import api from '@/services/api'
 import reports from '@/services/reports'
-import * as _ from 'lodash'
-import { Matricula, Header, tipos_matricula } from '@/model'
-import * as utils from '@/utils'
+import { debounce } from 'lodash'
+import { Matricula, ColumnHeader } from '@/model'
+
 import InputNumero from '@/components/base/InputNumero'
 import InputFecha from '@/components/base/InputFecha'
 import MixinValidator from '@/components/mixins/MixinValidator'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 import CambiarFotoFirma from '@/components/solicitudes/CambiarFotoFirma'
 import Store from '@/stores/Global'
 import ListaStore from '@/stores/listados/Solicitudes'
@@ -347,40 +348,27 @@ import ListaStore from '@/stores/listados/Solicitudes'
 
 export default {
   name: 'lista-solicitud',
-  mixins: [MixinValidator],
 
-  tipos_matricula,
-
-  select_items: {
-    estado: [
-      { text: 'Pendiente', value: 'Pendiente' },
-      { text: 'Aprobada', value: 'Aprobada' },
-      { text: 'Rechazada', value: 'Rechazada' }
-    ],
-    tipo: [
-      { text: 'Profesionales', value: 'profesional' },
-      { text: 'Empresas', value: 'empresa' }
-    ]
-  }, 
+  mixins: [MixinGlobalState, MixinValidator],
 
   headers: {
     empresa: [
-      Header('N°', 'numero', true),
-      Header('Fecha', 'fecha', true),
-      Header('Nombre', 'nombreEmpresa', true),
-      Header('CUIT', 'cuit', true),
-      Header('Estado', 'estado', true),
-      Header('Menú', 'acciones')
+      ColumnHeader('N°', 'numero', true),
+      ColumnHeader('Fecha', 'fecha', true),
+      ColumnHeader('Nombre', 'nombreEmpresa', true),
+      ColumnHeader('CUIT', 'cuit', true),
+      ColumnHeader('Estado', 'estado', true),
+      ColumnHeader('Menú', 'acciones')
     ],
 
     profesional: [
-      Header('N°', 'numero', true),
-      Header('Fecha', 'fecha', true),
-      Header('Apellido', 'apellido', true),
-      Header('Nombre', 'nombre', true),
-      Header('DNI', 'dni', true),
-      Header('Estado', 'estado', true),
-      Header('Menú', 'acciones')
+      ColumnHeader('N°', 'numero', true),
+      ColumnHeader('Fecha', 'fecha', true),
+      ColumnHeader('Apellido', 'apellido', true),
+      ColumnHeader('Nombre', 'nombre', true),
+      ColumnHeader('DNI', 'dni', true),
+      ColumnHeader('Estado', 'estado', true),
+      ColumnHeader('Menú', 'acciones')
     ]
   },
 
@@ -401,17 +389,12 @@ export default {
       solicitudes: [],
       debouncedUpdate: null,
       submitValidacion: false,
-      opciones: [],
       documentos: []
     }
   },
 
   created: function() {
-    this.debouncedUpdate = _.debounce(this.updateSolicitudes, 150);
-    api.get('/opciones')
-    .then(r => {
-      this.opciones = r.data;
-    })
+    this.debouncedUpdate = debounce(this.updateSolicitudes, 150);
   },
 
   watch: {
@@ -538,6 +521,7 @@ export default {
 
         api.post('/matriculas', this.matricula)
         .then(r => {
+          this.snackOk('Solicitud aprobada exitosamente!');
 
           reports.open({
             'jsp-source': 'certificado_matriculado_habilitado.jasper',
@@ -552,9 +536,6 @@ export default {
           this.matricula = new Matricula();
           this.$refs.form_aprobacion.reset();
           this.show_validar = false;
-          this.global_state.snackbar.msg = 'Solicitud aprobada exitosamente!';
-          this.global_state.snackbar.color = 'success';
-          this.global_state.snackbar.show = true;
         })
         .catch(e => {
           this.submitValidacion = false;
@@ -585,12 +566,10 @@ export default {
         // 3 ES ESTADO 'Rechazada'
         api.patch(`/solicitudes/${id}`, { estado: 3 })
         .then(r => {
-            this.updateSolicitudes();
-            this.global_state.snackbar.msg = 'Solicitud rechazada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
+          this.snackOk('Solicitud rechazada exitosamente!');
+          this.updateSolicitudes();
         })
-        .catch(e => console.error(e));
+        .catch(e => this.snackError(e));
       }
     },
 

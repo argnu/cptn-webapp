@@ -180,18 +180,21 @@
 <script>
 import api from '@/services/api'
 import reports from '@/services/reports'
-import * as moment from 'moment'
-import * as utils from '@/utils'
-import { Header } from '@/model'
-import { calculoIntereses } from '@/utils/cobranza'
+import moment from 'moment'
+import { clone, calculoIntereses, round, getFecha, sortByFecha } from '@/utils'
+import { ColumnHeader } from '@/model'
 import InputFecha from '@/components/base/InputFecha'
 import Cobranza from '@/components/cobranzas/Cobranza'
 import NuevaBoleta from '@/components/matriculas/cuenta/NuevaBoleta'
+import MixinGlobalState from '@/components/mixins/MixinGlobalState'
 
 
 export default {
   name: 'DeudasPendientes',
+
   props: ['id', 'botonNueva'],
+
+  mixins: [MixinGlobalState],
 
   components: {
     InputFecha,
@@ -200,13 +203,13 @@ export default {
   },
 
   headers: [
-    Header('Sel.', 'check'),
-    Header('Fecha', 'fecha', true),
-    Header('Fecha de Venc.', 'fecha_vencimiento', true),
-    Header('Descripción', 'descripcion'),
-    Header('Importe', 'total'),
-    Header('Intereses', 'interes'),
-    Header('', 'acciones')
+    ColumnHeader('Sel.', 'check'),
+    ColumnHeader('Fecha', 'fecha', true),
+    ColumnHeader('Fecha de Venc.', 'fecha_vencimiento', true),
+    ColumnHeader('Descripción', 'descripcion'),
+    ColumnHeader('Importe', 'total'),
+    ColumnHeader('Intereses', 'interes'),
+    ColumnHeader('', 'acciones')
   ],
 
   data () {
@@ -246,7 +249,7 @@ export default {
         let num = act.tipo == 'boleta' ? act.total : act.subtotal;
         return prev + (act.checked ? num : 0);
       }, 0);
-      return utils.round(suma, 2);
+      return round(suma, 2);
     },
 
     intereses_total: function() {
@@ -255,11 +258,11 @@ export default {
         let num = act.tipo == 'boleta' ? act.interes : act.interes_total;
         return prev + (act.checked ? num : 0);
       }, 0);
-      return utils.round(suma, 2);
+      return round(suma, 2);
     },
 
     importe_total: function() {
-      return utils.round(this.subtotal + this.intereses_total, 2);
+      return round(this.subtotal + this.intereses_total, 2);
     },
 
     boletas_selected: function() {
@@ -276,7 +279,6 @@ export default {
     .then(r => {
       this.interes_tasa = r[0].data[0].valor;
       this.interes_dias = r[1].data[0].valor;
-      this.updateBoletas();
     })
     .catch(e => console.error(e))
   },
@@ -297,7 +299,7 @@ export default {
           b.tipo = 'boleta';
           b.checked = false;
           b.descripcion = b.items[0].descripcion;
-          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
+          b.interes = calculoIntereses(b, getFecha(this.fecha_pago), this.interes_tasa, this.interes_dias);
           this.boletas.push(b);
         });
 
@@ -310,8 +312,8 @@ export default {
           this.boletas.push(v);
         });
 
-        this.boletas_original = utils.clone(this.boletas);
-        this.boletas = this.boletas.sort(utils.sortByFecha('fecha_vto'));
+        this.boletas_original = clone(this.boletas);
+        this.boletas = this.boletas.sort(sortByFecha('fecha_vto'));
         this.loading = false;
       })
       .catch(e => console.error(e));
@@ -320,7 +322,7 @@ export default {
     updateIntereses: function() {
       this.boletas.forEach(b => {
         if (b.tipo == 'boleta') {
-          b.interes = calculoIntereses(b, utils.getFecha(this.fecha_pago), this.interes_tasa, this.interes.dias)
+          b.interes = calculoIntereses(b, getFecha(this.fecha_pago), this.interes_tasa, this.interes.dias)
         }
       });
     },
@@ -343,9 +345,7 @@ export default {
       api.post('comprobantes', comprobante)
       .then(r => {
         console.info(`Comprobante ${r.data.id} generado!`);
-        this.global_state.snackbar.msg = 'Comprobante generado exitosamente!';
-        this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;
+        this.snackOk('Comprobante generado exitosamente!')
         this.expand_pago = false;
 
         reports.open({
@@ -366,17 +366,11 @@ export default {
       let boletas = this.boletas.filter(b => b.checked);
 
       if (!boletas.length) {
-        this.global_state.snackbar.msg = 'Debe seleccionar al menos una boleta';
-        this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;
-        return;
+        return alert('Debe seleccionar al menos una boleta!');
       }
 
       if (boletas.some(b => b.tipo == 'volante')) {
-        this.global_state.snackbar.msg = 'No puede haber volantes de pago seleccionar para generar un volante';
-        this.global_state.snackbar.color = 'error';
-        this.global_state.snackbar.show = true;
-        return;
+        return alert('No puede haber volantes de pago seleccionar para generar un volante');
       }
 
       let volante = {
@@ -391,13 +385,11 @@ export default {
 
       api.post('volantespago', volante)
       .then(r => {
+        this.snackOk('Volante de pago generado exitosamente!');
         let volante = r.data;
         console.info(`Volante ${volante.id} generado!`);
         volante.tipo = 'volante';
         this.imprimir(volante);
-        this.global_state.snackbar.msg = 'Volante de pago generado exitosamente!';
-        this.global_state.snackbar.color = 'success';
-        this.global_state.snackbar.show = true;
         this.updateBoletas();
         this.$emit('update');
       })
@@ -448,35 +440,18 @@ export default {
             estado: 11
           })
           .then(r => {
+            this.snackOk('Boleta anulada exitosamente!')
             this.updateBoletas();
-            this.global_state.snackbar.msg = 'Boleta anulada exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => {
-            this.submit_cambio = false;
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e)
-          });
+          .catch(e => this.snackError(e));
         }
         else if (item.tipo == 'volante') {
           api.post(`/volantespago/${item.id}/anular`)
           .then(r => {
+            this.snackOk('Volante anulado exitosamente!')
             this.updateBoletas();
-            this.global_state.snackbar.msg = 'Volante anulado exitosamente!';
-            this.global_state.snackbar.color = 'success';
-            this.global_state.snackbar.show = true;
           })
-          .catch(e => {
-            let msg = (!e.response || e.response.status == 500) ? 'Ha ocurrido un error en la conexión' : e.response.data.mensaje;
-            this.global_state.snackbar.msg = msg;
-            this.global_state.snackbar.color = 'error';
-            this.global_state.snackbar.show = true;
-            console.error(e)
-          });
+          .catch(e => this.snackError(e));
         }        
       }
     }    

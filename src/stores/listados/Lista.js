@@ -1,13 +1,9 @@
+import Pagination from '@/model/Pagination'
+
 export class StoreLista {
     constructor(filtros) {
         this.state = {
-            pagination: {
-                page: 1,
-                rowsPerPage: 25,
-                descending: null,
-                sortBy: null
-            },
-
+            pagination: Pagination(25),
             filtros: filtros ? filtros : {}
         };
     }

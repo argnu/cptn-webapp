@@ -149,8 +149,8 @@
 <script>
 import moment from 'moment'
 import api from '@/services/api'
-import * as utils from '@/utils'
-import { Formacion, Header } from '@/model'
+import { clone, diffDatesStr } from '@/utils'
+import { Formacion, ColumnHeader } from '@/model'
 import MixinValidator from '@/components/mixins/MixinValidator'
 import InputFecha from '@/components/base/InputFecha';
 
@@ -178,13 +178,13 @@ export default {
     },
 
     headers: [
-        Header('', 'acciones'),
-        Header('Título', 'titulo'),
-        Header('Institución', 'institucion'),
-        Header('Fecha Egreso', 'fechaEgreso'),
-        Header('Fecha Emisión', 'fechaEmision'),
-        Header('Lapso Emisión', 'tiempoEmision'),
-        Header('Principal', 'principal')
+        ColumnHeader('', 'acciones'),
+        ColumnHeader('Título', 'titulo'),
+        ColumnHeader('Institución', 'institucion'),
+        ColumnHeader('Fecha Egreso', 'fechaEgreso'),
+        ColumnHeader('Fecha Emisión', 'fechaEmision'),
+        ColumnHeader('Lapso Emisión', 'tiempoEmision'),
+        ColumnHeader('Principal', 'principal')
     ],
 
     computed: {
@@ -235,7 +235,7 @@ export default {
 
         guardar: function() {
             if (this.$refs.form_formacion.validate()) {
-                let formaciones = utils.clone(this.value);
+                let formaciones = clone(this.value);
 
                 if (this.formacion_edit == null) formaciones.push(this.nueva_formacion);
                 else formaciones[this.formacion_edit] = this.nueva_formacion;
@@ -249,7 +249,7 @@ export default {
 
         edit: function(index) {
             this.formacion_edit = index;
-            this.nueva_formacion = utils.clone(this.value[index]);
+            this.nueva_formacion = clone(this.value[index]);
             if (this.nueva_formacion.id) {
                 this.nueva_formacion.institucion = this.nueva_formacion.titulo.institucion;
                 this.nueva_formacion.nivel = this.nueva_formacion.titulo.nivel;
@@ -258,7 +258,7 @@ export default {
         },
 
         borrar: function(index) {
-            let formaciones = utils.clone(this.value);
+            let formaciones = clone(this.value);
             formaciones.splice(index, 1);
             this.$emit('input', formaciones);
         },
@@ -273,7 +273,7 @@ export default {
             this.nueva_formacion.tiempoEmision = '';
             let fecha = moment(this.nueva_formacion.fechaEmision, 'DD/MM/YYYY', true);
             if (fecha.isValid()) {
-                this.nueva_formacion.tiempoEmision = utils.diffDatesStr(fecha, moment());
+                this.nueva_formacion.tiempoEmision = diffDatesStr(fecha, moment());
             }
         },
 
