@@ -902,9 +902,8 @@ export default {
       if (this.tipo_comitente == 'juridica') {
         api.get(`/personas?tipo=juridica&cuit=${this.nuevo_comitente.persona.cuit}`)
         .then(r => {
-          console.log(r.data)
           if (r.data.resultados.length > 0) {
-            this.nuevo_comitente.persona = r.resultados.data[0];
+            this.nuevo_comitente.persona = r.data.resultados[0];
           }
           else if (rules.cuit(this.nuevo_comitente.persona.cuit) === true) {
               if (confirm('No existe ninguna persona jurídica registrada con dicho cuit. Desea cargarla?')) {
@@ -1024,8 +1023,8 @@ export default {
     },
 
     submit: function() {
-      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate()
-        || !this.$refs.form_aportes.validate()) return alert('El formulario contiene errores. Por favor revisar');
+      if (!this.$refs.form_basico.validate() || !this.$refs.form_ubicacion.validate()) return alert('El formulario contiene errores. Por favor revisar');
+      else if (this.legajo.tipo.id == 3 && !this.$refs.form_aportes.validate()) return alert('El formulario contiene errores. Por favor revisar');
       if (!this.valid_form) return alert('El formulario contiene errores. Por favor revisar');
 
       this.submitted = true;

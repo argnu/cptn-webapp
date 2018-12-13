@@ -191,6 +191,10 @@ export default {
 
         cuit: function(new_cuit) {
             this.persona.cuit = new_cuit;
+        },
+
+        tipo: function(new_cuit) {
+            this.persona = crearPersona(this.tipo);
         }
     },
 
