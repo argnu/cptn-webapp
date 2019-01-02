@@ -17,6 +17,7 @@ import Matricula from '@/components/matriculas/Matricula'
 import MatriculaLista from '@/components/matriculas/MatriculaLista'
 import DeudasPendientes from '@/components/matriculas/cuenta/DeudasPendientes'
 import ProfesionalModificar from '@/components/entidades/ProfesionalModificar'
+import EmpresaModificar from '@/components/entidades/EmpresaModificar'
 
 import PersonaLista from '@/components/personas/PersonaLista'
 import PersonaNueva from '@/components/personas/PersonaNueva'
@@ -191,6 +192,18 @@ export default new Router({
           props: true,
           beforeEnter: (to, from, next) => {
             if (Store.state.ability.can('update', 'Profesional')) return next();
+            alert('No tiene permisos para ingresar!')
+            next(false);
+          }
+        },
+
+        {
+          path: '/empresas/:id/modificar',
+          name: 'EmpresaModificar',
+          component: EmpresaModificar,
+          props: true,
+          beforeEnter: (to, from, next) => {
+            if (Store.state.ability.can('update', 'Empresa')) return next();
             alert('No tiene permisos para ingresar!')
             next(false);
           }

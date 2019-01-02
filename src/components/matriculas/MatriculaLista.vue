@@ -313,12 +313,10 @@
                 <v-list-tile-title>Rematricular</v-list-tile-title>
               </v-list-tile>
 
-              <v-list-tile
-                v-if="filtros.tipoEntidad == 'profesional'"
-                @click="modificarProfesional(props.item.entidad.id)"
+              <v-list-tile @click="modificarDatos(props.item.entidad.id)"
               >
                 <v-icon class="blue--text mr-2">edit</v-icon>
-                <v-list-tile-title>Modificar Datos Prof.</v-list-tile-title>
+                <v-list-tile-title>Modificar Datos</v-list-tile-title>
               </v-list-tile>
             </v-list>
           </v-menu>
@@ -535,8 +533,11 @@ export default {
       });
     },
 
-    modificarProfesional: function(id) {
-      this.$router.push(`/profesionales/${id}/modificar`);
+    modificarDatos: function(id) {
+      if (this.filtros.tipoEntidad == 'profesional')
+        this.$router.push(`/profesionales/${id}/modificar`);
+      else (this.filtros.tipoEntidad == 'empresa')
+        this.$router.push(`/empresas/${id}/modificar`);
     },
 
     mostrarFormSuspension: function(id) {
