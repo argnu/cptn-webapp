@@ -100,6 +100,15 @@
 
         <v-text-field
           class="mx-5"
+          label="Bonificación"
+          :value="bonificacion_total"
+          prefix="$"
+          readonly
+        >
+        </v-text-field>
+
+        <v-text-field
+          class="mx-5"
           label="Importe Total"
           :value="importe_total"
           prefix="$"
@@ -261,8 +270,19 @@ export default {
       return round(suma, 2);
     },
 
+    bonificacion_total: function() {
+      if (!this.boletas.length) return 0;
+      let suma = this.boletas.reduce((prev, act) => {
+        let num = act.tipo_comprobante.id == 16 ? act.total : 0;
+        return prev + (act.checked ? num : 0);
+      }, 0);
+      let bonificacion = 1140; // dos cuotas mensuales (variable global importe de Derecho anual /12 *2)
+      if (suma==6840 && this.boletas.length==12) return bonificacion;
+      else return 0;
+    },
+
     importe_total: function() {
-      return round(this.subtotal + this.intereses_total, 2);
+      return round(this.subtotal + this.intereses_total - this.bonificacion_total, 2);
     },
 
     boletas_selected: function() {
@@ -338,6 +358,7 @@ export default {
         fecha_vencimiento: moment(),
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
+        bonificacion_total: this.bonificacion_total,
         importe_total: this.importe_total,
         delegacion: this.global_state.delegacion.id
       }
