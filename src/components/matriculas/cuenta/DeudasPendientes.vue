@@ -218,6 +218,7 @@ export default {
     ColumnHeader('Descripción', 'descripcion'),
     ColumnHeader('Importe', 'total'),
     ColumnHeader('Intereses', 'interes'),
+    ColumnHeader('Bonificacion', 'bonificacion'),
     ColumnHeader('', 'acciones')
   ],
 
@@ -234,7 +235,8 @@ export default {
         descending: false
       },
       interes_tasa: 2.8,
-      interes_dias: 30
+      interes_dias: 30,
+      derecho_anual: 0,
     }
   },
 
@@ -255,7 +257,7 @@ export default {
     subtotal: function() {
       if (!this.boletas.length) return 0;
       let suma = this.boletas.reduce((prev, act) => {
-        let num = act.tipo == 'boleta' ? act.total : act.subtotal;
+        let num = act.tipo == 'boleta' ? act.total : act.subtotal - act.bonificacion_total;
         return prev + (act.checked ? num : 0);
       }, 0);
       return round(suma, 2);
@@ -271,14 +273,17 @@ export default {
     },
 
     bonificacion_total: function() {
-      if (!this.boletas.length) return 0;
-      let suma = this.boletas.reduce((prev, act) => {
-        let num = act.tipo_comprobante.id == 16 ? act.total : 0;
-        return prev + (act.checked ? num : 0);
-      }, 0);
-      let bonificacion = 1140; // dos cuotas mensuales (variable global importe de Derecho anual /12 *2)
-      if (suma==6840 && this.boletas.length==12) return bonificacion;
-      else return 0;
+      if (!this.boletas_selected.length) return 0;
+      let boletas_filter = this.boletas_selected.filter(b => {
+        let anio = moment(b.fecha, 'YYYY-MM-DD').year();
+        return (b.tipo_comprobante && b.tipo_comprobante.id == 16) && anio == new Date().getFullYear();
+      });
+      
+      let fecha_limite_bonificacion = moment('2019-04-01', 'YYYY-MM-DD');
+      if (boletas_filter.length == 12 && moment().isBefore(fecha_limite_bonificacion)) 
+        return (this.derecho_anual/12) * 2;
+      else 
+        return 0;
     },
 
     importe_total: function() {
@@ -293,12 +298,13 @@ export default {
   created: function() {
     Promise.all([
         api.get('/valores-globales?variable=3'), //Recupero tasa de interes(id=3) válido en la fecha
-        api.get('/valores-globales?variable=4')    //Recupero día de interés(id=4) válido en la fecha
+        api.get('/valores-globales?variable=4'),    //Recupero día de interés(id=4) válido en la fecha
+        api.get('/valores-globales?variable=5')    //Recupero derecho anual
     ])
-
     .then(r => {
       this.interes_tasa = r[0].data[0].valor;
       this.interes_dias = r[1].data[0].valor;
+      this.derecho_anual = r[2].data[0].valor;
     })
     .catch(e => console.error(e))
   },
@@ -327,7 +333,7 @@ export default {
           v.tipo = 'volante';
           v.checked = false;
           v.descripcion = 'Volante de Pago';
-          v.total = v.subtotal;
+          v.total = v.subtotal - v.bonificacion_total;
           v.interes = v.intereses_total;
           this.boletas.push(v);
         });
@@ -348,10 +354,8 @@ export default {
     },
 
     pagar: function(items_pago) {
-      let boletas = this.boletas.filter(b => b.checked);
-
       let comprobante = {
-        boletas,
+        boletas: clone(this.boletas_selected),
         items_pago,
         matricula: this.id,
         fecha: moment(),
@@ -384,23 +388,22 @@ export default {
     },
 
     generarVolante: function() {
-      let boletas = this.boletas.filter(b => b.checked);
-
-      if (!boletas.length) {
+      if (!this.boletas_selected.length) {
         return alert('Debe seleccionar al menos una boleta!');
       }
 
-      if (boletas.some(b => b.tipo == 'volante')) {
-        return alert('No puede haber volantes de pago seleccionar para generar un volante');
+      if (this.boletas_selected.some(b => b.tipo == 'volante')) {
+        return alert('No puede haber volantes de pago seleccionados para generar un volante');
       }
 
       let volante = {
-        boletas,
+        boletas: clone(this.boletas_selected),
         matricula: this.id,
         fecha: moment(),
         subtotal: this.subtotal,
         interes_total: this.intereses_total,
         importe_total: this.importe_total,
+        bonificacion_total: this.bonificacion_total,
         delegacion: this.global_state.delegacion.id
       }
 
