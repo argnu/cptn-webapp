@@ -7,6 +7,7 @@
     >
       <persona-nueva
           dialog
+          tipo="fisica"
           :dni="rep_legal.dni"
           @cancelar="show_persona = false"
           @created="nuevaPersona"
@@ -308,30 +309,30 @@
                 <template slot="items" slot-scope="props">
                 <tr>
                     <td class="justify-center layout px-0">
-                    <v-btn icon small class="mx-0" @click="borrarRepresentanteLegal(props.item)">
-                        <v-icon color="red">delete</v-icon>
-                    </v-btn>
+                        <v-btn icon small class="mx-0" @click="borrarRepresentanteLegal(props.item)">
+                            <v-icon color="red">delete</v-icon>
+                        </v-btn>
                     </td>
 
                     <template v-if="props.item.id && props.item.matricula">
-                    <td>{{ props.item.matricula.numeroMatricula }}</td>
-                    <td>{{ props.item.matricula.entidad.dni }}</td>
-                    <td>{{ props.item.matricula.entidad.nombre }}</td>
-                    <td>{{ props.item.matricula.entidad.apellido }}</td>
+                        <td>{{ props.item.matricula.numeroMatricula }}</td>
+                        <td>{{ props.item.matricula.entidad.nombre }}</td>
+                        <td>{{ props.item.matricula.entidad.apellido }}</td>
+                        <td>{{ props.item.matricula.entidad.dni }}</td>
                     </template>
 
                     <template v-else-if="props.item.id && props.item.persona">
-                    <td></td>
-                    <td>{{ props.item.persona.dni }}</td>
-                    <td>{{ props.item.persona.nombre }}</td>
-                    <td>{{ props.item.persona.apellido }}</td>
+                        <td></td>
+                        <td>{{ props.item.persona.nombre }}</td>
+                        <td>{{ props.item.persona.apellido }}</td>
+                        <td>{{ props.item.persona.dni }}</td>
                     </template>
 
                     <template v-else>
-                    <td>{{ props.item.numero }}</td>
-                    <td>{{ props.item.dni }}</td>
-                    <td>{{ props.item.nombre }}</td>
-                    <td>{{ props.item.apellido }}</td>
+                        <td>{{ props.item.numero }}</td>
+                        <td>{{ props.item.nombre }}</td>
+                        <td>{{ props.item.apellido }}</td>
+                        <td>{{ props.item.dni }}</td>
                     </template>
                 </tr>
                 </template>
@@ -400,20 +401,20 @@ export default {
 
     headers: {
         matriculados: [
-        ColumnHeader('', 'acciones'),
-        ColumnHeader('N°', 'numero'),
-        ColumnHeader('Nombre', 'nombre'),
-        ColumnHeader('Apellido', 'nombre'),
-        ColumnHeader('DNI', 'dni')
+            ColumnHeader('', 'acciones'),
+            ColumnHeader('N°', 'numero'),
+            ColumnHeader('Nombre', 'nombre'),
+            ColumnHeader('Apellido', 'nombre'),
+            ColumnHeader('DNI', 'dni')
         ],
 
         rep_tecnico: [
-        ColumnHeader('', 'acciones'),
-        ColumnHeader('N°', 'numero'),
-        ColumnHeader('Nombre', 'nombre'),
-        ColumnHeader('DNI', 'dni'),
-        ColumnHeader('Fecha Inicio', 'fini'),
-        ColumnHeader('Fecha Cese', 'ffin')
+            ColumnHeader('', 'acciones'),
+            ColumnHeader('N°', 'numero'),
+            ColumnHeader('Nombre', 'nombre'),
+            ColumnHeader('DNI', 'dni'),
+            ColumnHeader('Fecha Inicio', 'fini'),
+            ColumnHeader('Fecha Cese', 'ffin')
         ]
     },
 
@@ -574,8 +575,8 @@ export default {
         },
 
         borrarRepresentanteTecnico: function(id) {
-        this.empresa.representantes = this.empresa.representantes
-                                                .filter(r => r.tipo != 'tecnico' || r.matricula.id != id);
+            this.empresa.representantes = this.empresa.representantes
+            .filter(r => r.tipo != 'tecnico' || r.matricula.id != id);
         },
 
 
