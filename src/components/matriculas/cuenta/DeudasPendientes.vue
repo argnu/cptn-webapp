@@ -218,7 +218,6 @@ export default {
     ColumnHeader('Descripción', 'descripcion'),
     ColumnHeader('Importe', 'total'),
     ColumnHeader('Intereses', 'interes'),
-    ColumnHeader('Bonificacion', 'bonificacion'),
     ColumnHeader('', 'acciones')
   ],
 
