@@ -1,5 +1,18 @@
 <template>
   <v-container v-if="empresa">
+    <v-dialog
+      persistent
+      fullscreen
+      v-model="show_persona"
+    >
+      <persona-nueva
+          dialog
+          :dni="rep_legal.dni"
+          @cancelar="show_persona = false"
+          @created="nuevaPersona"
+      ></persona-nueva>
+    </v-dialog>
+
     <v-toolbar color="primary">
       <v-toolbar-title class="white--text">Modificación de Datos de la Empresa</v-toolbar-title>
     </v-toolbar>
@@ -46,12 +59,12 @@
                     max-height="400"
                     hint="Seleccione las incumbencias"
                     persistent-hint
-                    multiple                              
+                    multiple
                     :items="global_state.opciones.incumbencia"
                     item-text="valor"
                     item-value="id"
                     v-model="empresa.incumbencias"
-                ></v-select>                          
+                ></v-select>
             </v-flex>
 
             <v-flex xs6 class="ma-4">
@@ -190,7 +203,7 @@
                     <v-btn icon small class="mx-0" @click="addRepresentanteTecnico(props.item)">
                         <v-icon color="primary">playlist_add</v-icon>
                     </v-btn>
-                    </td>                                  
+                    </td>
                     <td>{{ props.item.numeroMatricula }}</td>
                     <td>{{ props.item.entidad.nombre }}</td>
                     <td>{{ props.item.entidad.apellido }}</td>
@@ -219,7 +232,7 @@
                         <v-btn icon small class="mx-0" @click="borrarRepresentanteTecnico(props.item.matricula.id)">
                         <v-icon color="red">delete</v-icon>
                         </v-btn>
-                    </td>                                    
+                    </td>
                     <td>{{ props.item.matricula.numeroMatricula }}</td>
                     <td>{{ props.item.matricula.entidad.nombre }} {{ props.item.matricula.entidad.apellido }}</td>
                     <td>{{ props.item.matricula.entidad.dni }}</td>
@@ -238,13 +251,13 @@
                 </v-data-table>
             </v-flex>
             </v-layout>
-        </template>        
+        </template>
 
         <br>
         <v-divider></v-divider>
         <br><br>
 
-        <span class="subheading blue--text text--darken-4 ml-4"><b>Representantes Legales</b></span>        
+        <span class="subheading blue--text text--darken-4 ml-4"><b>Representantes Legales</b></span>
         <v-layout row wrap class="mt-4 ml-2">
             <v-flex xs3  class="mx-3">
             <input-numero
@@ -304,27 +317,27 @@
                     <td>{{ props.item.matricula.numeroMatricula }}</td>
                     <td>{{ props.item.matricula.entidad.dni }}</td>
                     <td>{{ props.item.matricula.entidad.nombre }}</td>
-                    <td>{{ props.item.matricula.entidad.apellido }}</td>                                    
+                    <td>{{ props.item.matricula.entidad.apellido }}</td>
                     </template>
 
                     <template v-else-if="props.item.id && props.item.persona">
                     <td></td>
                     <td>{{ props.item.persona.dni }}</td>
                     <td>{{ props.item.persona.nombre }}</td>
-                    <td>{{ props.item.persona.apellido }}</td>                                    
+                    <td>{{ props.item.persona.apellido }}</td>
                     </template>
 
                     <template v-else>
                     <td>{{ props.item.numero }}</td>
                     <td>{{ props.item.dni }}</td>
                     <td>{{ props.item.nombre }}</td>
-                    <td>{{ props.item.apellido }}</td>                                    
+                    <td>{{ props.item.apellido }}</td>
                     </template>
                 </tr>
                 </template>
             </v-data-table>
             </v-flex>
-        </v-layout>        
+        </v-layout>
 
 
         <v-layout row wrap>
@@ -402,8 +415,8 @@ export default {
         ColumnHeader('Fecha Inicio', 'fini'),
         ColumnHeader('Fecha Cese', 'ffin')
         ]
-    },   
-    
+    },
+
     watch: {
         filtros: {
             handler () {
@@ -419,7 +432,7 @@ export default {
             },
             deep: true
         }
-    },    
+    },
 
     data() {
         return {
@@ -457,7 +470,7 @@ export default {
                 dni: null,
                 nombre: null,
                 apellido: null
-            }            
+            }
         }
     },
 
@@ -476,7 +489,7 @@ export default {
 
         valid_domicilios: function() {
             return this.empresa.domicilios.length > 0;
-        }, 
+        },
 
         valid_form: function() {
             return this.valid.form_empresa
@@ -555,9 +568,9 @@ export default {
         if (representante.persona)
             this.empresa.representantes = this.empresa.representantes
                                                     .filter(r => r.tipo != 'legal' || r.persona != representante.persona);
-        else 
+        else
             this.empresa.representantes = this.empresa.representantes
-                                                    .filter(r => r.tipo != 'legal' || r.matricula != representante.matricula);      
+                                                    .filter(r => r.tipo != 'legal' || r.matricula != representante.matricula);
         },
 
         borrarRepresentanteTecnico: function(id) {
@@ -577,30 +590,30 @@ export default {
             .then(r => {
                 if (r.data.resultados.length > 0) {
                 let matricula = r.data.resultados[0];
-                this.rep_legal.matricula = matricula;
-                this.rep_legal.numero = matricula.numeroMatricula;
-                this.rep_legal.nombre = matricula.entidad.nombre;
-                this.rep_legal.apellido = matricula.entidad.apellido;          
+                    this.rep_legal.matricula = matricula;
+                    this.rep_legal.numero = matricula.numeroMatricula;
+                    this.rep_legal.nombre = matricula.entidad.nombre;
+                    this.rep_legal.apellido = matricula.entidad.apellido;
                 }
                 else {
-                return api.get(`/personas?tipo=fisica&dni=${this.rep_legal.dni}`)
-                .then(r => {
-                    if (r.data.resultados.length > 0) {
-                        let persona = r.data.resultados[0];
-                        this.rep_legal.persona = persona.id;
-                        this.rep_legal.nombre = persona.nombre;
-                        this.rep_legal.apellido = persona.apellido;
-                    }
-                    else if (rules.dni(this.rep_legal.dni) === true) {
-                        if (confirm('No existe ninguna persona registrada con dicho dni. Desea cargarla?')) {
-                            this.show_persona = true;
+                    return api.get(`/personas?tipo=fisica&dni=${this.rep_legal.dni}`)
+                    .then(r => {
+                        if (r.data.resultados.length > 0) {
+                            let persona = r.data.resultados[0];
+                            this.rep_legal.persona = persona.id;
+                            this.rep_legal.nombre = persona.nombre;
+                            this.rep_legal.apellido = persona.apellido;
                         }
-                    }
-                })
+                        else if (rules.dni(this.rep_legal.dni) === true) {
+                            if (confirm('No existe ninguna persona registrada con dicho dni. Desea cargarla?')) {
+                                this.show_persona = true;
+                            }
+                        }
+                    })
                 }
             })
             .catch(e => console.error(e));
-        },    
+        },
 
         nuevaPersona: function(persona) {
             this.rep_legal.persona = persona.id;
@@ -634,7 +647,7 @@ export default {
             empresa.representantes.forEach(r => {
                 if (r.matricula) r.matricula = r.matricula.id;
                 if (r.persona) r.persona = r.persona.id;
-            })            
+            })
 
             return empresa;
         },
