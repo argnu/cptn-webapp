@@ -646,9 +646,10 @@ export default {
             });
 
             empresa.representantes.forEach(r => {
-                if (r.matricula) r.matricula = r.matricula.id;
-                if (r.persona) r.persona = r.persona.id;
+                if (r.matricula && r.matricula.id) r.matricula = r.matricula.id;
+                if (r.persona && r.persona.id) r.persona = r.persona.id;
             })
+            console.log(empresa.representantes)
 
             return empresa;
         },
