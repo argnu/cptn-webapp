@@ -227,10 +227,10 @@ export default {
                     api.put(`/personas/${this.id}`, persona)
                     .then(r => {
                         this.snackOk('Persona modificada exitosamente!');
-                        this.persona = crearPersona(this.tipo);
-                        this.$refs.form.reset();
-                        if (this.dialog) this.$emit('updated', persona);
+                        this.$refs.form.reset();                        
+                        if (this.dialog) this.$emit('updated', clone(persona));                    
                         else this.$router.replace('/personas/lista');
+                        this.persona = crearPersona(this.tipo);
                     })
                     .catch(e => this.snackError(e))
                 }
@@ -238,11 +238,11 @@ export default {
                     api.post('/personas', persona)
                     .then(r => {
                         this.snackOk('Persona agregada exitosamente!');
-                        this.persona = crearPersona(this.tipo);
                         this.$refs.form.reset();
                         persona.id = r.data.id;
-                        if (this.dialog) this.$emit('created', persona);
+                        if (this.dialog) this.$emit('created', clone(persona));
                         else this.$router.replace('/personas/lista');
+                        this.persona = crearPersona(this.tipo);
                     })
                     .catch(e => this.snackError(e))
                 }
