@@ -68,6 +68,7 @@ export default {
     },
 
     es_joven_prof: function() {
+      if (this.matricula.entidad.tipo == 'empresa') return false;
       let profesional = this.matricula.entidad;
       let anios = moment().diff(profesional.fechaNacimiento, 'years');
 
