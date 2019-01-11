@@ -1,6 +1,16 @@
 <template>
     <v-container>
-      <v-layout row wrap class="mt-4">
+
+      <!-- <v-layout row class="my-1">
+        <v-flex xs12>
+          <v-btn class="blue right" dark @click="imprimirBonificaciones">
+            <v-icon class="mr-2">print</v-icon>
+            Reporte Bonificaciones
+          </v-btn>
+        </v-flex>
+      </v-layout> -->
+
+      <v-layout row wrap>
         <v-flex xs1 class="mt-5 mx-5">
           <b>Filtrar:</b>
         </v-flex>
@@ -130,7 +140,6 @@ import reports from '@/services/reports'
 import { clone, sortByFecha, sortByNumber, sortByString } from '@/utils'
 import moment from 'moment'
 import { ColumnHeader } from '@/model'
-import MatriculaDatosBasicos from '@/components/matriculas/MatriculaDatosBasicos';
 import DetalleBoleta from '@/components/matriculas/cuenta/detalles/DetalleBoleta'
 import DetalleComprobante from '@/components/matriculas/cuenta/detalles/DetalleComprobante'
 import DetalleVolantePago from '@/components/matriculas/cuenta/detalles/DetalleVolantePago'
@@ -147,7 +156,6 @@ export default {
   mixins: [MixinGlobalState, MixinValidator],
 
   components: {
-    MatriculaDatosBasicos,
     DetalleExencion,
     DetalleBoleta,
     DetalleComprobante,
@@ -311,6 +319,16 @@ export default {
         'jsp-output-file': `${titulo} N° ${numero} - ${Date.now()}`,
         'jsp-only-gen': false,
         [param_id]: item.id
+      });
+    },
+
+    imprimirBonificaciones: function() {
+      reports.open({
+        'jsp-source': 'bonificacion_aportes.jasper',
+        'jsp-format': 'PDF',
+        'jsp-output-file': `Bonificaciones - ${Date.now()}`,
+        'jsp-only-gen': false,
+        'matricula_id': this.id
       });
     },
 

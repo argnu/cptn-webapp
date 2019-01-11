@@ -276,9 +276,10 @@ export default {
             debouncedUpdate: null,
 
             selected: null,
+            show_aprobar: false,
             submit_aprobar: false,
             documento: null,
-            documentos: []
+            documentos: [],
         }
     },
 
