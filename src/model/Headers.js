@@ -33,6 +33,13 @@ export const Representantes = [
     ColumnHeader('Fecha Fin', 'fecha_fin')
   ];
 
+export const RepresentantesLegales = [
+    ColumnHeader('N° Matrícula', 'numero_matricula'),
+    ColumnHeader('DNI', 'dni'),
+    ColumnHeader('Apellido', 'apellido'),
+    ColumnHeader('Nombre', 'nombre')
+  ];
+
 export const CondicionesAfip = [
     ColumnHeader('Tipo', 'tipo'),
     ColumnHeader('Descripción', 'descripcion')
