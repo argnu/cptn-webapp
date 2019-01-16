@@ -284,21 +284,20 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-   
 
         <br>
 
         <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
-          <v-expansion-panel-content v-model="expand.representantes" class="blue lighten-4 grey--text text--darken-3">
+          <v-expansion-panel-content v-model="expand.representantes_tecnicos" class="blue lighten-4 grey--text text--darken-3">
             <div slot="header"><b>Representantes Técnicos</b></div>
             <v-card class="white">
               <v-card-text >
                 <v-data-table
                   :headers="$options.headers.Representantes"
-                  :items="matricula.entidad.representantes"
+                  :items="representantes_tecnicos"
                   hide-actions
                   class="elevation-1 mt-4"
-                  no-data-text="No hay representantes"
+                  no-data-text="No hay representantes técnicos"
                 >
                   <template slot="headers" slot-scope="props">
                           <th v-for="header of props.headers" :key="header.value" class="pa-3">
@@ -306,10 +305,51 @@
                           </th>
                         </template>
                   <template slot="items" slot-scope="props">
-                          <td>{{ props.item.numeroMatricula }}</td>
-                          <td>{{ props.item.dni }}</td>
-                          <td>{{ props.item.apellido }}</td>
-                          <td>{{ props.item.nombre }}</td>
+                          <td>{{ props.item.matricula.numeroMatricula }}</td>
+                          <td>{{ props.item.matricula.entidad.dni }}</td>
+                          <td>{{ props.item.matricula.entidad.apellido }}</td>
+                          <td>{{ props.item.matricula.entidad.nombre }}</td>
+                          <td>{{ props.item.fechaInicio | fecha }}</td>
+                          <td>{{ props.item.fechaFin | fecha }}</td>
+                        </template>
+                </v-data-table>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <br>
+
+        <v-expansion-panel expand v-if="matricula.entidad.tipo == 'empresa'">
+          <v-expansion-panel-content v-model="expand.representantes_legales" class="blue lighten-4 grey--text text--darken-3">
+            <div slot="header"><b>Representantes Legales</b></div>
+            <v-card class="white">
+              <v-card-text >
+                <v-data-table
+                  :headers="$options.headers.RepresentantesLegales"
+                  :items="representantes_legales"
+                  hide-actions
+                  class="elevation-1 mt-4"
+                  no-data-text="No hay representantes legales"
+                >
+                  <template slot="headers" slot-scope="props">
+                          <th v-for="header of props.headers" :key="header.value" class="pa-3">
+                            <b>{{ header.text }}</b>
+                          </th>
+                        </template>
+                  <template slot="items" slot-scope="props">
+                          <template v-if="props.item.matricula">
+                            <td>{{ props.item.matricula.numeroMatricula }}</td>
+                            <td>{{ props.item.matricula.entidad.dni }}</td>
+                            <td>{{ props.item.matricula.entidad.apellido }}</td>
+                            <td>{{ props.item.matricula.entidad.nombre }}</td>
+                          </template>
+                          <template v-else>
+                            <td></td>
+                            <td>{{ props.item.persona.dni }}</td>
+                            <td>{{ props.item.persona.apellido }}</td>
+                            <td>{{ props.item.persona.nombre }}</td>
+                          </template>
                           <td>{{ props.item.fechaInicio | fecha }}</td>
                           <td>{{ props.item.fechaFin | fecha }}</td>
                         </template>
@@ -340,7 +380,8 @@ export default {
         formaciones: false,
         caja: false,
         subsidiarios: false,
-        representantes: false
+        representantes_legales: false,
+        representantes_tecnicos: false
       },
     }
   },
@@ -362,6 +403,18 @@ export default {
       if (!this.matricula.entidad.domicilios.length) return null;
       let dom = this.matricula.entidad.domicilios.find(d => d.tipo == 'especial');
       return dom ? dom.domicilio : null;
+    },
+
+    representantes_legales: function() {
+      if (this.matricula.entidad.representantes)
+        return this.matricula.entidad.representantes.filter(r => r.tipo == 'legal');
+      else return [];
+    },
+
+    representantes_tecnicos: function() {
+      if (this.matricula.entidad.representantes)
+        return this.matricula.entidad.representantes.filter(r => r.tipo == 'tecnico');
+      else return [];
     }
   }
 

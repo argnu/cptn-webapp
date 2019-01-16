@@ -514,7 +514,6 @@ export default {
             this.empresa = clone(r[0].data);
             this.empresa.fechaInicio = getFecha(r[0].data.fechaInicio)
             this.empresa.fechaConstitucion = getFecha(r[0].data.fechaConstitucion);
-            console.log(this.empresa.incumbencias)
             this.empresa.incumbencias = r[0].data.incumbencias.map(i => i.incumbencia.id);
 
             this.delegaciones = r[1].data;
