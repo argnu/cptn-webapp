@@ -277,11 +277,16 @@ export default {
         let anio = moment(b.fecha, 'YYYY-MM-DD').year();
         return (b.tipo_comprobante && b.tipo_comprobante.id == 16) && anio == new Date().getFullYear();
       });
-      
+
+      let boletas_anio_actual = this.boletas.filter(b => {
+        let anio = moment(b.fecha, 'YYYY-MM-DD').year();
+        return (b.tipo_comprobante && b.tipo_comprobante.id == 16) && anio == new Date().getFullYear();
+      });
+
       let fecha_limite_bonificacion = moment('2019-04-01', 'YYYY-MM-DD');
-      if (boletas_filter.length == 12 && moment().isBefore(fecha_limite_bonificacion)) 
+      if (boletas_filter.length == boletas_anio_actual.length && moment().isBefore(fecha_limite_bonificacion))
         return (this.derecho_anual/12) * 2;
-      else 
+      else
         return 0;
     },
 
@@ -475,9 +480,9 @@ export default {
             this.updateBoletas();
           })
           .catch(e => this.snackError(e));
-        }        
+        }
       }
-    }    
+    }
   },
 
 }

@@ -188,10 +188,19 @@
                                 </v-list-tile>
 
                                 <v-list-tile
+                                    v-show="props.item.estado.id == 1"
                                     @click="mostrarAprobar(props.item)"
                                 >
                                     <v-icon class="green--text mr-2">check_circle</v-icon>
                                     <v-list-tile-title>Aprobar</v-list-tile-title>
+                                </v-list-tile>
+
+                                <v-list-tile
+                                    v-show="props.item.estado.id == 1"
+                                    @click="rechazar(props.item.id)"
+                                >
+                                    <v-icon class="red--text text--darken-2">thumb_down</v-icon>
+                                    <span class="ml-2">Rechazar</span>
                                 </v-list-tile>
                             </v-list>
                         </v-menu>
@@ -411,7 +420,7 @@ export default {
                 'jsp-output-file': `Certificado Suspension - ${Date.now()}`,
                 'jsp-only-gen': false,
                 'matricula_id': id_matricula,
-            });                  
+            });
         },
 
         mostrarAprobar: function(solicitud) {
@@ -436,21 +445,33 @@ export default {
                         'jsp-output-file': `Certificado Suspension - ${Date.now()}`,
                         'jsp-only-gen': false,
                         'matricula_id': this.selected.matricula.id,
-                    });                    
+                    });
                 })
                 .catch(e => {
                     this.snackError(e);
                     this.submit_aprobar = false;
-                });            
+                });
             }
         },
 
         chgTipoDoc: function(tipo) {
-            if (tipo) { 
+            if (tipo) {
                 api.get(`/documentos?tipo=${tipo}&sort=-fecha`)
                 .then(r => this.documentos = r.data.resultados);
             }
-        }         
+        },
+
+        rechazar: function(id) {
+            if (confirm('Esta segura/o que desea Rechazar la Solicitud de Suspensión seleccionada?')) {
+                // 3 ES ESTADO 'Rechazada'
+                api.patch(`/solicitudes-suspension/${id}`, { estado: 3 })
+                .then(r => {
+                    this.snackOk('Solicitud rechazada exitosamente!');
+                    this.update();
+                })
+                .catch(e => this.snackError(e));
+            }
+        },
     }
 
 }
