@@ -161,7 +161,7 @@
 
                                             <v-list-tile
                                                 v-if="props.item.estado.id == 1"
-                                                @click="imprimir(props.item.matricula.id)"
+                                                @click="imprimir(props.item.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
                                                 <v-list-tile-title>Solicitud</v-list-tile-title>
@@ -169,7 +169,7 @@
 
                                             <v-list-tile
                                                 v-if="props.item.estado.id == 1"
-                                                @click="imprimirAnexo(props.item.id)"
+                                                @click="imprimirAnexo(props.item.matricula.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
                                                 <v-list-tile-title>Anexo</v-list-tile-title>
