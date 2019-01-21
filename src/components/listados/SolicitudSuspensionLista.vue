@@ -169,7 +169,7 @@
 
                                             <v-list-tile
                                                 v-if="props.item.estado.id == 1"
-                                                @click="imprimirAnexo(props.item.matricula.id)"
+                                                @click="imprimirAnexo(props.item.id)"
                                             >
                                                 <v-icon class="text--darken-2 mr-2">print</v-icon>
                                                 <v-list-tile-title>Anexo</v-list-tile-title>
@@ -383,13 +383,13 @@ export default {
             })
         },
 
-        imprimir: function(id_matricula) {
+        imprimir: function(id_solicitud) {
             reports.open({
                 'jsp-source': 'solicitud_suspension_voluntad.jasper',
                 'jsp-format': 'PDF',
                 'jsp-output-file': `Solicitud Suspension - ${Date.now()}`,
                 'jsp-only-gen': false,
-                'matricula_id': id_matricula,
+                'solicitud_id': id_solicitud,
             });
         },
 
