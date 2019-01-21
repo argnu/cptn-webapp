@@ -284,7 +284,7 @@ export default {
       });
 
       let fecha_limite_bonificacion = moment('2019-04-01', 'YYYY-MM-DD');
-      if (boletas_filter.length == boletas_anio_actual.length && moment().isBefore(fecha_limite_bonificacion))
+      if (boletas_filter.length > 0 && boletas_filter.length == boletas_anio_actual.length && moment().isBefore(fecha_limite_bonificacion))
         return (this.derecho_anual/12) * 2;
       else
         return 0;
