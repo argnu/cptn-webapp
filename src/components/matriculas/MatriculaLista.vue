@@ -536,7 +536,7 @@ export default {
     modificarDatos: function(id) {
       if (this.filtros.tipoEntidad == 'profesional')
         this.$router.push(`/profesionales/${id}/modificar`);
-      else (this.filtros.tipoEntidad == 'empresa')
+      else if (this.filtros.tipoEntidad == 'empresa')
         this.$router.push(`/empresas/${id}/modificar`);
     },
 
