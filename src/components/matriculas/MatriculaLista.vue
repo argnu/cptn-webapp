@@ -564,7 +564,7 @@ export default {
               'jsp-format': 'PDF',
               'jsp-output-file': `Solicitud Suspension - ${Date.now()}`,
               'jsp-only-gen': false,
-              'matricula_id': id_matricula,
+              'solicitud_id': r.data.id,
           });          
 
           reports.open({
