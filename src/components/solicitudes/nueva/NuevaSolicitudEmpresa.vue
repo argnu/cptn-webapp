@@ -234,8 +234,7 @@
 
                 <!-- PASO 6: REPRESENTANTE -->
                 <v-stepper-step step="6" edit-icon="check" editable
-                  :complete="valid_representante && step > 6"
-                  :rules="[() => step <= 6 || valid_representante]"
+                  :complete="step > 6"
                 >
                   Representantes Técnicos
                 </v-stepper-step>
@@ -618,14 +617,9 @@ export default {
       return this.solicitud.entidad.representantes.filter(r => r.tipo == 'tecnico');
     },
 
-    valid_representante: function() {
-      return this.solicitud.entidad.representantes.length > 0;
-    },
-
     valid_form: function() {
       return this.valid.form_solicitud && this.valid.form_empresa
-        && this.valid_domicilios
-        && this.valid_representante;
+        && this.valid_domicilios;
     },
 
     condiciones_afip: function() {

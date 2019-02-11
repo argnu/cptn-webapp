@@ -941,8 +941,9 @@ export default {
             this.legajo.comitentes.push(this.nuevo_comitente);
           }
 
-          this.nuevo_comitente = new Comitente('fisica');
           this.$refs.form_comitente.reset();
+          this.nuevo_comitente = new Comitente('fisica');
+          this.tipo_comitente = 'fisica';
         }
         else alert('Ya existe la misma persona en el listado!');
       }
