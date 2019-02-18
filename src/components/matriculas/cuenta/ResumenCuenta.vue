@@ -9,6 +9,41 @@
           </v-btn>
         </v-flex>
       </v-layout> -->
+      <v-dialog v-model="show_anular" max-width="40%">
+        <v-card>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title class="white--text">Anular Comprobante</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="show_anular = false">
+                <v-icon>close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-container>
+            <v-layout>
+              <v-flex xs12>
+                  <v-text-field
+                    label="Descripción"
+                    multi-line
+                    v-model="anulado_desc"
+                  ></v-text-field>
+
+                  <v-btn
+                      class="green darken-1 white--text right"
+                      @click.native="anular"
+                  >
+                      Guardar
+                      <v-icon dark right>check_circle</v-icon>
+                  </v-btn>
+
+                  <v-btn dark class="red right" @click="show_anular = false">
+                      Cancelar
+                      <v-icon dark right>block</v-icon>
+                  </v-btn>
+                </v-flex>
+              </v-layout>
+          </v-container>
+        </v-card>
+      </v-dialog>      
 
       <v-layout row wrap>
         <v-flex xs1 class="mt-5 mx-5">
@@ -94,7 +129,7 @@
                         <v-list-tile
                           v-if="props.item.estado && props.item.estado.id == 1 || !props.item.anulado"
                           title="Anular"
-                          @click="anular(props.item)"
+                          @click="showAnular(props.item)"
                         >
                           <v-icon class="mr-2" color="error">cancel_presentation</v-icon>
                           Anular
@@ -195,7 +230,10 @@ export default {
         id: null,
         tipo: null,
         titulo: ''
-      }
+      },
+      show_anular: false,
+      anulado_desc: '',
+      item_anular: null      
     }
   },
 
@@ -336,28 +374,33 @@ export default {
       Vue.set(this.paneles, index, !this.paneles[index]);
     },
 
-    anular: function(item) {
-      let tipo = item.tipo == 'boleta' ? 'la boleta' : 'el recibo';
+    showAnular: function(item) {
+      this.anulado_desc = '';
+      this.show_anular = true;
+      this.item_anular = item;
+    },
 
-      if (confirm(`Está segura/o que desea anular ${tipo}?`)) {
-        if (item.tipo == 'boleta') {
-          api.patch(`/boletas/${item.id}`, {
-            estado: 11
-          })
-          .then(r => {
-            this.snackOk('Boleta anulada exitosamente!');
-            this.updateBoletas();
-          })
-          .catch(e => this.snackError(e));
-        }
-        else if (item.tipo == 'comprobante') {
-          api.post(`/comprobantes/${item.id}/anular`)
-          .then(r => {
-            this.snackOk('Recibo anulado exitosamente!');
-            this.updateBoletas();
-          })
-          .catch(e => this.snackError(e));
-        }
+    anular: function() {
+      if (this.item_anular.tipo == 'boleta') {
+        api.patch(`/boletas/${this.item_anular.id}`, {
+          anulado_desc: this.anulado_desc,
+          estado: 11
+        })
+        .then(r => {
+          this.show_anular = false;
+          this.snackOk('Boleta anulada exitosamente!');
+          this.updateBoletas();
+        })
+        .catch(e => this.snackError(e));
+      }
+      else if (this.item_anular.tipo == 'comprobante') {
+        api.post(`/comprobantes/${this.item_anular.id}/anular`, {anulado_desc: this.anulado_desc})
+        .then(r => {
+          this.show_anular = false;
+          this.snackOk('Recibo anulado exitosamente!');
+          this.updateBoletas();
+        })
+        .catch(e => this.snackError(e));
       }
     }
   }

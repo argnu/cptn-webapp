@@ -1,5 +1,40 @@
 <template>
   <v-container>
+    <v-dialog v-model="show_anular" max-width="40%">
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-toolbar-title class="white--text">Anular Boleta/Volante de Pago</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="show_anular = false">
+              <v-icon>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-container>
+          <v-layout>
+            <v-flex xs12>
+                <v-text-field
+                  label="Descripción"
+                  multi-line
+                  v-model="anulado_desc"
+                ></v-text-field>
+
+                <v-btn
+                    class="green darken-1 white--text right"
+                    @click.native="anular"
+                >
+                    Guardar
+                    <v-icon dark right>check_circle</v-icon>
+                </v-btn>
+
+                <v-btn dark class="red right" @click="show_anular = false">
+                    Cancelar
+                    <v-icon dark right>block</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+        </v-container>
+      </v-card>
+    </v-dialog>
 
     <v-layout row class="my-4" v-if="botonNueva">
       <v-flex xs12>
@@ -59,7 +94,7 @@
 
                     <v-list-tile
                       title="Anular"
-                      @click="anular(props.item)"
+                      @click="showAnular(props.item)"
                     >
                       <v-icon class="mr-2" color="error">cancel_presentation</v-icon>
                       Anular
@@ -236,6 +271,9 @@ export default {
       interes_tasa: 2.8,
       interes_dias: 30,
       derecho_anual: 0,
+      show_anular: false,
+      anulado_desc: '',
+      item_anular: null
     }
   },
 
@@ -459,28 +497,33 @@ export default {
       this.$refs.cobranza.reset();
     },
 
-    anular: function(item) {
-      let tipo = item.tipo == 'boleta' ? 'la boleta' : 'el volante';
+    showAnular: function(item) {
+      this.anulado_desc = '';
+      this.show_anular = true;
+      this.item_anular = item;
+    },
 
-      if (confirm(`Está segura/o que desea anular ${tipo}?`)) {
-        if (item.tipo == 'boleta') {
-          api.patch(`/boletas/${item.id}`, {
-            estado: 11
-          })
-          .then(r => {
-            this.snackOk('Boleta anulada exitosamente!')
-            this.updateBoletas();
-          })
-          .catch(e => this.snackError(e));
-        }
-        else if (item.tipo == 'volante') {
-          api.post(`/volantespago/${item.id}/anular`)
-          .then(r => {
-            this.snackOk('Volante anulado exitosamente!')
-            this.updateBoletas();
-          })
-          .catch(e => this.snackError(e));
-        }
+    anular: function() {
+      if (this.item_anular.tipo == 'boleta') {
+        api.patch(`/boletas/${this.item_anular.id}`, {
+          anulado_desc: this.anulado_desc,
+          estado: 11
+        })
+        .then(r => {
+          this.show_anular = false;
+          this.snackOk('Boleta anulada exitosamente!')
+          this.updateBoletas();
+        })
+        .catch(e => this.snackError(e));
+      }
+      else if (this.item_anular.tipo == 'volante') {
+        api.post(`/volantespago/${this.item_anular.id}/anular`, { anulado_desc: this.anulado_desc })
+        .then(r => {
+          this.show_anular = false;
+          this.snackOk('Volante anulado exitosamente!')
+          this.updateBoletas();
+        })
+        .catch(e => this.snackError(e));
       }
     }
   },
